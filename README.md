@@ -15,7 +15,7 @@ The [*fixed* crate] provides fixed-point numbers.
   * [`FixedI64`] and [`FixedU64`] are 64-bit fixed-point numbers.
   * [`FixedI128`] and [`FixedU128`] are 128-bit fixed-point numbers.
 
-An <i>n</i>-bit fixed-point number has <i>f</i>&nbsp;=&nbsp;`Frac` fractional
+An <i>n</i>-bit fixed-point number has <i>f</i>&nbsp;=&nbsp;`FRAC` fractional
 bits where 0&nbsp;≤&nbsp;<i>f</i>&nbsp;≤&nbsp;<i>n</i>, and
 <i>n</i>&nbsp;&minus;&nbsp;<i>f</i> integer bits. For example,
 <code>[FixedI32]\<24></code> is a 32-bit signed fixed-point number with
@@ -34,10 +34,6 @@ and the value lies in the range &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;0.
 for signed numbers like <code>[FixedI32]\<32></code>, and in the range
 0&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;1 for unsigned numbers like
 <code>[FixedU32]\<32></code>.
-
-In version 1 the [*typenum* crate] is used for the fractional bit count `Frac`;
-the plan is to to have a major version 2 with [const generics] instead when the
-Rust compiler support for them is powerful enough.
 
 The main features are
 
@@ -308,7 +304,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [*half* crate]: https://crates.io/crates/half
 [*num-traits* crate]: https://crates.io/crates/num-traits
 [*serde* crate]: https://crates.io/crates/serde
-[*typenum* crate]: https://crates.io/crates/typenum
 [CORDIC]: https://en.wikipedia.org/wiki/CORDIC
 [FixedI32]: https://docs.rs/fixed/~1.13/fixed/struct.FixedI32.html
 [FixedU32]: https://docs.rs/fixed/~1.13/fixed/struct.FixedU32.html
@@ -356,4 +351,3 @@ shall be dual licensed as above, without any additional terms or conditions.
 [`i32`]: https://doc.rust-lang.org/nightly/core/primitive.i32.html
 [`to_num`]: https://docs.rs/fixed/~1.13/fixed/struct.FixedI32.html#method.to_num
 [`u32`]: https://doc.rust-lang.org/nightly/core/primitive.u32.html
-[const generics]: https://github.com/rust-lang/rust/issues/44580

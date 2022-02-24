@@ -22,7 +22,7 @@ macro_rules! fixed_frac {
         $UFixed:ident, $UInner:ident, $Signedness:tt
     ) => {
         /// The implementation of items in this block depends on the
-        /// number of fractional bits `Frac`.
+        /// number of fractional bits `FRAC`.
         impl<const FRAC: u32> $Fixed<FRAC>
         where
             If<{FRAC <= $nbits}>: True,

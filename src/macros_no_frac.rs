@@ -25,7 +25,7 @@ macro_rules! fixed_no_frac {
         $HasDouble:tt, $Double:ident[$s_double:expr], $DoubleInner:ty, $s_nbits_2:expr
     ) => {
         /// The implementation of items in this block is independent
-        /// of the number of fractional bits `Frac`.
+        /// of the number of fractional bits `FRAC`.
         impl<const FRAC: u32> $Fixed<FRAC> {
             comment! {
                 "Zero.
@@ -44,7 +44,7 @@ assert_eq!(Fix::ZERO, Fix::from_bits(0));
             comment! {
                 "The difference between any two successive representable numbers, <i>Δ</i>.
 
-If the number has <i>f</i>&nbsp;=&nbsp;`Frac` fractional bits, then
+If the number has <i>f</i>&nbsp;=&nbsp;`FRAC` fractional bits, then
 <i>Δ</i>&nbsp;=&nbsp;1/2<sup><i>f</i></sup>.
 
 # Examples
@@ -67,7 +67,7 @@ assert_eq!(Fix::DELTA, 0.0625);
                 if_signed_unsigned! {
                     $Signedness,
                     concat!(
-                        "If the number has <i>f</i>&nbsp;=&nbsp;`Frac` fractional bits,
+                        "If the number has <i>f</i>&nbsp;=&nbsp;`FRAC` fractional bits,
 then the minimum is &minus;2<sup>", $s_nbits_m1, "</sup>/2<sup><i>f</i></sup>."
                     ),
                     "The minimum of unsigned numbers is 0."
@@ -88,7 +88,7 @@ assert_eq!(Fix::MIN, Fix::from_bits(", $s_inner, "::MIN));
             comment! {
                 "The largest value that can be represented.
 
-If the number has <i>f</i>&nbsp;=&nbsp;`Frac` fractional bits, then the maximum is
+If the number has <i>f</i>&nbsp;=&nbsp;`FRAC` fractional bits, then the maximum is
 (2<sup>",
                 if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
                 "</sup>&nbsp;&minus;&nbsp;1)/2<sup><i>f</i></sup>.

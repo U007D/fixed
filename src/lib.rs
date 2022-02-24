@@ -24,7 +24,7 @@ The [*fixed* crate] provides fixed-point numbers.
   * [`FixedI64`] and [`FixedU64`] are 64-bit fixed-point numbers.
   * [`FixedI128`] and [`FixedU128`] are 128-bit fixed-point numbers.
 
-An <i>n</i>-bit fixed-point number has <i>f</i>&nbsp;=&nbsp;`Frac` fractional
+An <i>n</i>-bit fixed-point number has <i>f</i>&nbsp;=&nbsp;`FRAC` fractional
 bits where 0&nbsp;≤&nbsp;<i>f</i>&nbsp;≤&nbsp;<i>n</i>, and
 <i>n</i>&nbsp;&minus;&nbsp;<i>f</i> integer bits. For example,
 <code>[FixedI32]\<24></code> is a 32-bit signed fixed-point number with
@@ -43,10 +43,6 @@ and the value lies in the range &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;0.
 for signed numbers like <code>[FixedI32]\<32></code>, and in the range
 0&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;1 for unsigned numbers like
 <code>[FixedU32]\<32></code>.
-
-In version 1 the [*typenum* crate] is used for the fractional bit count `Frac`;
-the plan is to to have a major version 2 with [const generics] instead when the
-Rust compiler support for them is powerful enough.
 
 The main features are
 
@@ -262,7 +258,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [*half* crate]: https://crates.io/crates/half
 [*num-traits* crate]: https://crates.io/crates/num-traits
 [*serde* crate]: https://crates.io/crates/serde
-[*typenum* crate]: https://crates.io/crates/typenum
 [CORDIC]: https://en.wikipedia.org/wiki/CORDIC
 [LICENSE-APACHE]: https://www.apache.org/licenses/LICENSE-2.0
 [LICENSE-MIT]: https://opensource.org/licenses/MIT
@@ -290,7 +285,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [`from_str_hex`]: FixedI32::from_str_hex
 [`from_str_octal`]: FixedI32::from_str_octal
 [`to_num`]: FixedI32::to_num
-[const generics]: https://github.com/rust-lang/rust/issues/44580
 */
 #![cfg_attr(not(feature = "std"), no_std)]
 #![warn(missing_docs)]
@@ -436,9 +430,9 @@ macro_rules! fixed {
         comment! {
             $description, "-bit ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
-            " number with `Frac` fractional bits.
+            " number with `FRAC` fractional bits.
 
-The number has ", $s_nbits, " bits, of which <i>f</i>&nbsp;=&nbsp;`Frac` are
+The number has ", $s_nbits, " bits, of which <i>f</i>&nbsp;=&nbsp;`FRAC` are
 fractional bits and ", $s_nbits, "&nbsp;&minus;&nbsp;<i>f</i> are integer bits.
 The value <i>x</i> can lie in the range ",
             if_signed_unsigned!(
@@ -473,11 +467,7 @@ range ",
             ),
             ".
 
-`Frac` is an [`Unsigned`] as provided by the [*typenum* crate]; the plan is to
-to have a major version 2 with [const generics] instead when the Rust compiler
-support for them is powerful enough.
-
-`", $s_fixed, "<Frac>` has the same size, alignment and ABI as [`", $s_inner, "`];
+`", $s_fixed, "<FRAC>` has the same size, alignment and ABI as [`", $s_inner, "`];
 it is `#[repr(transparent)]` with [`", $s_inner, "`] as the only non-zero-sized field.
 
 # Examples
@@ -493,9 +483,6 @@ assert_eq!(two_point_75, ", $s_fixed, "::<3>::from_bits(11 << 1));
 assert_eq!(two_point_75, 2.75);
 assert_eq!(two_point_75.to_string(), \"2.8\");
 ```
-
-[*typenum* crate]: https://crates.io/crates/typenum
-[const generics]: https://github.com/rust-lang/rust/issues/44580
 ";
             #[repr(transparent)]
             pub struct $Fixed<const FRAC: u32> {
@@ -528,14 +515,14 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
             }
         }
 
-        // inherent methods that do not require Frac bounds, some of which can thus be const
+        // inherent methods that do not require FRAC bounds, some of which can thus be const
         fixed_no_frac! {
             $Fixed[$s_fixed]($Inner[$s_inner], $s_nbits, $s_nbits_m1, $s_nbits_m2),
             $nbytes, $nbits, $bytes_val, $rev_bytes_val, $be_bytes, $le_bytes,
             $UFixed[$s_ufixed], $UInner, $Signedness,
             $HasDouble, $Double[$s_double], $DoubleInner, $s_nbits_2
         }
-        // inherent methods that require Frac bounds, and cannot be const
+        // inherent methods that require FRAC bounds, and cannot be const
         fixed_frac! {
             $Fixed[$s_fixed]($Inner[$s_inner], $nbits, $s_nbits, $s_nbits_m1, $s_nbits_m4),
             $UFixed, $UInner, $Signedness

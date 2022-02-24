@@ -1786,10 +1786,10 @@ impl<'a, F: 'a + Fixed> Product<&'a Wrapping<F>> for Wrapping<F> {
 //
 // To work around this, we provide implementations like this:
 //
-//     impl<Frac> Op<i8> for Wrapping<FixedI8<Frac>> { /* ... */ }
-//     impl<Frac> Op<&i8> for Wrapping<FixedI8<Frac>> { /* ... */ }
-//     impl<Frac> Op<i16> for Wrapping<FixedI16<Frac>> { /* ... */ }
-//     impl<Frac> Op<&i16> for Wrapping<FixedI16<Frac>> { /* ... */ }
+//     impl<const FRAC: u32> Op<i8> for Wrapping<FixedI8<FRAC>> { /* ... */ }
+//     impl<const FRAC: u32> Op<&i8> for Wrapping<FixedI8<FRAC>> { /* ... */ }
+//     impl<const FRAC: u32> Op<i16> for Wrapping<FixedI16<FRAC>> { /* ... */ }
+//     impl<const FRAC: u32> Op<&i16> for Wrapping<FixedI16<FRAC>> { /* ... */ }
 //     ...
 
 macro_rules! op_bits {
