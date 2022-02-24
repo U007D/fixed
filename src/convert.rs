@@ -15,70 +15,70 @@
 
 use crate::{
     traits::{FromFixed, LosslessTryFrom, LossyFrom, ToFixed},
+    types::extra::{If, True},
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8,
 };
-use core::{convert::TryFrom, ops::Sub};
+use core::convert::TryFrom;
 use half::{bf16, f16};
 
 macro_rules! convert {
     (
-        ($SrcU:ident, $SrcI:ident, $SrcBits:ident, $SrcLeEqU:ident) ->
-            ($DstU:ident, $DstI:ident, $DstBits:ident, $DstBitsM1:ident, $DstLeEqU:ident)
+        ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
-        impl<FracSrc: $SrcLeEqU, FracDst: $DstLeEqU> From<$SrcU<FracSrc>> for $DstU<FracDst>
+        impl<const FRAC_SRC: u32, const FRAC_DST: u32> From<$SrcU<FRAC_SRC>> for $DstU<FRAC_DST>
         where
-            FracSrc: IsLessOrEqual<FracDst, Output = True>,
-            $SrcBits: Sub<FracSrc>,
-            $DstBits: Sub<FracDst>,
-            Diff<$SrcBits, FracSrc>: IsLessOrEqual<Diff<$DstBits, FracDst>, Output = True>,
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ FRAC_SRC <= FRAC_DST }>: True,
+            If<{ $nbits_src - FRAC_SRC <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts a fixed-pint number.
             ///
             /// This conversion never fails (infallible) and does not
             /// lose any precision (lossless).
             #[inline]
-            fn from(src: $SrcU<FracSrc>) -> Self {
+            fn from(src: $SrcU<FRAC_SRC>) -> Self {
                 let unshifted = Self::from_bits(src.to_bits().into()).to_bits();
-                let shift = FracDst::U32 - FracSrc::U32;
+                let shift = FRAC_DST - FRAC_SRC;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<FracSrc: $SrcLeEqU, FracDst: $DstLeEqU> From<$SrcI<FracSrc>> for $DstI<FracDst>
+        impl<const FRAC_SRC: u32, const FRAC_DST: u32> From<$SrcI<FRAC_SRC>> for $DstI<FRAC_DST>
         where
-            FracSrc: IsLessOrEqual<FracDst, Output = True>,
-            $SrcBits: Sub<FracSrc>,
-            $DstBits: Sub<FracDst>,
-            Diff<$SrcBits, FracSrc>: IsLessOrEqual<Diff<$DstBits, FracDst>, Output = True>,
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ FRAC_SRC <= FRAC_DST }>: True,
+            If<{ $nbits_src - FRAC_SRC <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts a fixed-pint number.
             ///
             /// This conversion never fails (infallible) and does not
             /// lose any precision (lossless).
             #[inline]
-            fn from(src: $SrcI<FracSrc>) -> Self {
+            fn from(src: $SrcI<FRAC_SRC>) -> Self {
                 let unshifted = Self::from_bits(src.to_bits().into()).to_bits();
-                let shift = FracDst::U32 - FracSrc::U32;
+                let shift = FRAC_DST - FRAC_SRC;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<FracSrc: $SrcLeEqU, FracDst: $DstLeEqU> From<$SrcU<FracSrc>> for $DstI<FracDst>
+        impl<const FRAC_SRC: u32, const FRAC_DST: u32> From<$SrcU<FRAC_SRC>> for $DstI<FRAC_DST>
         where
-            FracSrc: IsLessOrEqual<FracDst, Output = True>,
-            $SrcBits: Sub<FracSrc>,
-            $DstBitsM1: Sub<FracDst>,
-            Diff<$SrcBits, FracSrc>: IsLessOrEqual<Diff<$DstBitsM1, FracDst>, Output = True>,
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ FRAC_SRC <= FRAC_DST }>: True,
+            If<{ $nbits_src - FRAC_SRC + 1 <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts a fixed-pint number.
             ///
             /// This conversion never fails (infallible) and does not
             /// lose any precision (lossless).
             #[inline]
-            fn from(src: $SrcU<FracSrc>) -> Self {
+            fn from(src: $SrcU<FRAC_SRC>) -> Self {
                 let unshifted = Self::from_bits(src.to_bits().into()).to_bits();
-                let shift = FracDst::U32 - FracSrc::U32;
+                let shift = FRAC_DST - FRAC_SRC;
                 Self::from_bits(unshifted << shift)
             }
         }
@@ -86,51 +86,50 @@ macro_rules! convert {
 }
 
 macro_rules! convert_lossless {
-    (
-        ($Src:ident, $SrcBits:ident, $SrcLeEqU:ident) ->
-            ($Dst:ident, $DstBits:ident, $DstLeEqU:ident)
-    ) => {
+    (($Src:ident, $nbits_src:expr) -> ($Dst:ident, $nbits_dst:expr)) => {
         // lossless because Src::FRAC_NBITS <= Dst::FRAC_NBITS
-        impl<FracSrc: $SrcLeEqU, FracDst: $DstLeEqU> LosslessTryFrom<$Src<FracSrc>>
-            for $Dst<FracDst>
+        impl<const FRAC_SRC: u32, const FRAC_DST: u32> LosslessTryFrom<$Src<FRAC_SRC>>
+            for $Dst<FRAC_DST>
         where
-            FracSrc: IsLessOrEqual<FracDst, Output = True>,
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ FRAC_SRC <= FRAC_DST }>: True,
         {
             /// Converts a fixed-pint number.
             ///
             /// This conversion may fail (fallible) but does not lose
             /// precision (lossless).
             #[inline]
-            fn lossless_try_from(src: $Src<FracSrc>) -> Option<Self> {
+            fn lossless_try_from(src: $Src<FRAC_SRC>) -> Option<Self> {
                 Self::checked_from_fixed(src)
             }
         }
     };
-    ($Src:ident, $SrcBits:ident, $SrcLeEqU:ident) => {
-        convert_lossless! { ($Src, $SrcBits, $SrcLeEqU) -> (FixedI8, U8, LeEqU8) }
-        convert_lossless! { ($Src, $SrcBits, $SrcLeEqU) -> (FixedI16, U16, LeEqU16) }
-        convert_lossless! { ($Src, $SrcBits, $SrcLeEqU) -> (FixedI32, U32, LeEqU32) }
-        convert_lossless! { ($Src, $SrcBits, $SrcLeEqU) -> (FixedI64, U64, LeEqU64) }
-        convert_lossless! { ($Src, $SrcBits, $SrcLeEqU) -> (FixedI128, U128, LeEqU128) }
-        convert_lossless! { ($Src, $SrcBits, $SrcLeEqU) -> (FixedU8, U8, LeEqU8) }
-        convert_lossless! { ($Src, $SrcBits, $SrcLeEqU) -> (FixedU16, U16, LeEqU16) }
-        convert_lossless! { ($Src, $SrcBits, $SrcLeEqU) -> (FixedU32, U32, LeEqU32) }
-        convert_lossless! { ($Src, $SrcBits, $SrcLeEqU) -> (FixedU64, U64, LeEqU64) }
-        convert_lossless! { ($Src, $SrcBits, $SrcLeEqU) -> (FixedU128, U128, LeEqU128) }
+    ($Src:ident, $nbits_src:expr) => {
+        convert_lossless! { ($Src, $nbits_src) -> (FixedI8, 8) }
+        convert_lossless! { ($Src, $nbits_src) -> (FixedI16, 16) }
+        convert_lossless! { ($Src, $nbits_src) -> (FixedI32, 32) }
+        convert_lossless! { ($Src, $nbits_src) -> (FixedI64, 64) }
+        convert_lossless! { ($Src, $nbits_src) -> (FixedI128, 128) }
+        convert_lossless! { ($Src, $nbits_src) -> (FixedU8, 8) }
+        convert_lossless! { ($Src, $nbits_src) -> (FixedU16, 16) }
+        convert_lossless! { ($Src, $nbits_src) -> (FixedU32, 32) }
+        convert_lossless! { ($Src, $nbits_src) -> (FixedU64, 64) }
+        convert_lossless! { ($Src, $nbits_src) -> (FixedU128, 128) }
     };
 }
 
 macro_rules! convert_lossy {
     (
-        ($SrcU:ident, $SrcI:ident, $SrcBits:ident, $SrcLeEqU:ident) ->
-            ($DstU:ident, $DstI:ident, $DstBits:ident, $DstBitsM1:ident, $DstLeEqU:ident)
+        ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
         // unsigned -> unsigned, infallible because Src::INT_NBITS <= Dst::INT_NBITS
-        impl<FracSrc: $SrcLeEqU, FracDst: $DstLeEqU> LossyFrom<$SrcU<FracSrc>> for $DstU<FracDst>
+        impl<const FRAC_SRC: u32, const FRAC_DST: u32> LossyFrom<$SrcU<FRAC_SRC>>
+            for $DstU<FRAC_DST>
         where
-            $SrcBits: Sub<FracSrc>,
-            $DstBits: Sub<FracDst>,
-            Diff<$SrcBits, FracSrc>: IsLessOrEqual<Diff<$DstBits, FracDst>, Output = True>,
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ $nbits_src - FRAC_SRC <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts a fixed-pint number.
             ///
@@ -139,17 +138,18 @@ macro_rules! convert_lossy {
             /// that cannot be represented in the destination are
             /// discarded, which rounds towards &minus;∞.
             #[inline]
-            fn lossy_from(src: $SrcU<FracSrc>) -> Self {
+            fn lossy_from(src: $SrcU<FRAC_SRC>) -> Self {
                 src.to_num()
             }
         }
 
         // signed -> signed, infallible because Src::INT_NBITS <= Dst::INT_NBITS
-        impl<FracSrc: $SrcLeEqU, FracDst: $DstLeEqU> LossyFrom<$SrcI<FracSrc>> for $DstI<FracDst>
+        impl<const FRAC_SRC: u32, const FRAC_DST: u32> LossyFrom<$SrcI<FRAC_SRC>>
+            for $DstI<FRAC_DST>
         where
-            $SrcBits: Sub<FracSrc>,
-            $DstBits: Sub<FracDst>,
-            Diff<$SrcBits, FracSrc>: IsLessOrEqual<Diff<$DstBits, FracDst>, Output = True>,
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ $nbits_src - FRAC_SRC <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts a fixed-pint number.
             ///
@@ -158,17 +158,18 @@ macro_rules! convert_lossy {
             /// that cannot be represented in the destination are
             /// discarded, which rounds towards &minus;∞.
             #[inline]
-            fn lossy_from(src: $SrcI<FracSrc>) -> Self {
+            fn lossy_from(src: $SrcI<FRAC_SRC>) -> Self {
                 src.to_num()
             }
         }
 
         // signed -> signed, infallible because Src::INT_NBITS <= Dst::INT_NBITS - 1
-        impl<FracSrc: $SrcLeEqU, FracDst: $DstLeEqU> LossyFrom<$SrcU<FracSrc>> for $DstI<FracDst>
+        impl<const FRAC_SRC: u32, const FRAC_DST: u32> LossyFrom<$SrcU<FRAC_SRC>>
+            for $DstI<FRAC_DST>
         where
-            $SrcBits: Sub<FracSrc>,
-            $DstBitsM1: Sub<FracDst>,
-            Diff<$SrcBits, FracSrc>: IsLessOrEqual<Diff<$DstBitsM1, FracDst>, Output = True>,
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ $nbits_src - FRAC_SRC + 1 <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts a fixed-pint number.
             ///
@@ -177,64 +178,57 @@ macro_rules! convert_lossy {
             /// that cannot be represented in the destination are
             /// discarded, which rounds towards &minus;∞.
             #[inline]
-            fn lossy_from(src: $SrcU<FracSrc>) -> Self {
+            fn lossy_from(src: $SrcU<FRAC_SRC>) -> Self {
                 src.to_num()
             }
         }
     };
-    ($SrcU:ident, $SrcI:ident, $SrcBits:ident, $SrcLeEqU:ident) => {
-        convert_lossy! {
-            ($SrcU, $SrcI, $SrcBits, $SrcLeEqU) -> (FixedU8, FixedI8, U8, U7, LeEqU8)
-        }
-        convert_lossy! {
-            ($SrcU, $SrcI, $SrcBits, $SrcLeEqU) -> (FixedU16, FixedI16, U16, U15, LeEqU16)
-        }
-        convert_lossy! {
-            ($SrcU, $SrcI, $SrcBits, $SrcLeEqU) -> (FixedU32, FixedI32, U32, U31, LeEqU32)
-        }
-        convert_lossy! {
-            ($SrcU, $SrcI, $SrcBits, $SrcLeEqU) -> (FixedU64, FixedI64, U64, U63, LeEqU64)
-        }
-        convert_lossy! {
-            ($SrcU, $SrcI, $SrcBits, $SrcLeEqU) -> (FixedU128, FixedI128, U128, U127, LeEqU128)
-        }
+    ($SrcU:ident, $SrcI:ident, $nbits_src:expr) => {
+        convert_lossy! { ($SrcU, $SrcI, $nbits_src) -> (FixedU8, FixedI8, 8) }
+        convert_lossy! { ($SrcU, $SrcI, $nbits_src) -> (FixedU16, FixedI16, 16) }
+        convert_lossy! { ($SrcU, $SrcI, $nbits_src) -> (FixedU32, FixedI32, 32) }
+        convert_lossy! { ($SrcU, $SrcI, $nbits_src) -> (FixedU64, FixedI64, 64) }
+        convert_lossy! { ($SrcU, $SrcI, $nbits_src) -> (FixedU128, FixedI128, 128) }
     };
 }
 
-convert! { (FixedU8, FixedI8, U8, LeEqU8) -> (FixedU16, FixedI16, U16, U15, LeEqU16) }
-convert! { (FixedU8, FixedI8, U8, LeEqU8) -> (FixedU32, FixedI32, U32, U31, LeEqU32) }
-convert! { (FixedU8, FixedI8, U8, LeEqU8) -> (FixedU64, FixedI64, U64, U63, LeEqU64) }
-convert! { (FixedU8, FixedI8, U8, LeEqU8) -> (FixedU128, FixedI128, U128, U127, LeEqU128) }
+convert! { (FixedU8, FixedI8, 8) -> (FixedU16, FixedI16, 16) }
+convert! { (FixedU8, FixedI8, 8) -> (FixedU32, FixedI32, 32) }
+convert! { (FixedU8, FixedI8, 8) -> (FixedU64, FixedI64, 64) }
+convert! { (FixedU8, FixedI8, 8) -> (FixedU128, FixedI128, 128) }
 
-convert! { (FixedU16, FixedI16, U16, LeEqU16) -> (FixedU32, FixedI32, U32, U31, LeEqU32) }
-convert! { (FixedU16, FixedI16, U16, LeEqU16) -> (FixedU64, FixedI64, U64, U63, LeEqU64) }
-convert! { (FixedU16, FixedI16, U16, LeEqU16) -> (FixedU128, FixedI128, U128, U127, LeEqU128) }
+convert! { (FixedU16, FixedI16, 16) -> (FixedU32, FixedI32, 32) }
+convert! { (FixedU16, FixedI16, 16) -> (FixedU64, FixedI64, 64) }
+convert! { (FixedU16, FixedI16, 16) -> (FixedU128, FixedI128, 128) }
 
-convert! { (FixedU32, FixedI32, U32, LeEqU32) -> (FixedU64, FixedI64, U64, U63, LeEqU64) }
-convert! { (FixedU32, FixedI32, U32, LeEqU32) -> (FixedU128, FixedI128, U128, U127, LeEqU128) }
+convert! { (FixedU32, FixedI32, 32) -> (FixedU64, FixedI64, 64) }
+convert! { (FixedU32, FixedI32, 32) -> (FixedU128, FixedI128, 128) }
 
-convert! { (FixedU64, FixedI64, U64, LeEqU64) -> (FixedU128, FixedI128, U128, U127, LeEqU128) }
+convert! { (FixedU64, FixedI64, 64) -> (FixedU128, FixedI128, 128) }
 
-convert_lossless! { FixedI8, U8, LeEqU8 }
-convert_lossless! { FixedI16, U16, LeEqU16 }
-convert_lossless! { FixedI32, U32, LeEqU32 }
-convert_lossless! { FixedI64, U64, LeEqU64 }
-convert_lossless! { FixedI128, U128, LeEqU128 }
-convert_lossless! { FixedU8, U8, LeEqU8 }
-convert_lossless! { FixedU16, U16, LeEqU16 }
-convert_lossless! { FixedU32, U32, LeEqU32 }
-convert_lossless! { FixedU64, U64, LeEqU64 }
-convert_lossless! { FixedU128, U128, LeEqU128 }
+convert_lossless! { FixedI8, 8 }
+convert_lossless! { FixedI16, 16 }
+convert_lossless! { FixedI32, 32 }
+convert_lossless! { FixedI64, 64 }
+convert_lossless! { FixedI128, 128 }
+convert_lossless! { FixedU8, 8 }
+convert_lossless! { FixedU16, 16 }
+convert_lossless! { FixedU32, 32 }
+convert_lossless! { FixedU64, 64 }
+convert_lossless! { FixedU128, 128 }
 
-convert_lossy! { FixedU8, FixedI8, U8, LeEqU8 }
-convert_lossy! { FixedU16, FixedI16, U16, LeEqU16 }
-convert_lossy! { FixedU32, FixedI32, U32, LeEqU32 }
-convert_lossy! { FixedU64, FixedI64, U64, LeEqU64 }
-convert_lossy! { FixedU128, FixedI128, U128, LeEqU128 }
+convert_lossy! { FixedU8, FixedI8, 8 }
+convert_lossy! { FixedU16, FixedI16, 16 }
+convert_lossy! { FixedU32, FixedI32, 32 }
+convert_lossy! { FixedU64, FixedI64, 64 }
+convert_lossy! { FixedU128, FixedI128, 128 }
 
 macro_rules! int_to_fixed {
-    ($Src:ident, $Dst:ident, $LeEqU:ident) => {
-        impl<Frac: $LeEqU> LosslessTryFrom<$Src> for $Dst<Frac> {
+    ($Src:ident, $Dst:ident, $nbits:expr) => {
+        impl<const FRAC: u32> LosslessTryFrom<$Src> for $Dst<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             /// Converts an integer to a fixed-point number.
             ///
             /// This conversion may fail (fallible) but cannot lose
@@ -258,16 +252,16 @@ macro_rules! int_to_fixed {
             }
         })?
 
-        int_to_fixed! { $Src, FixedI8, LeEqU8 }
-        int_to_fixed! { $Src, FixedI16, LeEqU16 }
-        int_to_fixed! { $Src, FixedI32, LeEqU32 }
-        int_to_fixed! { $Src, FixedI64, LeEqU64 }
-        int_to_fixed! { $Src, FixedI128, LeEqU128 }
-        int_to_fixed! { $Src, FixedU8, LeEqU8 }
-        int_to_fixed! { $Src, FixedU16, LeEqU16 }
-        int_to_fixed! { $Src, FixedU32, LeEqU32 }
-        int_to_fixed! { $Src, FixedU64, LeEqU64 }
-        int_to_fixed! { $Src, FixedU128, LeEqU128 }
+        int_to_fixed! { $Src, FixedI8, 8 }
+        int_to_fixed! { $Src, FixedI16, 16 }
+        int_to_fixed! { $Src, FixedI32, 32 }
+        int_to_fixed! { $Src, FixedI64, 64 }
+        int_to_fixed! { $Src, FixedI128, 128 }
+        int_to_fixed! { $Src, FixedU8, 8 }
+        int_to_fixed! { $Src, FixedU16, 16 }
+        int_to_fixed! { $Src, FixedU32, 32 }
+        int_to_fixed! { $Src, FixedU64, 64 }
+        int_to_fixed! { $Src, FixedU128, 128 }
 
         $(impl LossyFrom<$Src> for $Dst {
             /// Converts an integer to a fixed-point number.
@@ -283,28 +277,27 @@ macro_rules! int_to_fixed {
 }
 
 int_to_fixed! { bool }
-int_to_fixed! { i8, FixedI8<U0> }
-int_to_fixed! { i16, FixedI16<U0> }
-int_to_fixed! { i32, FixedI32<U0> }
-int_to_fixed! { i64, FixedI64<U0> }
-int_to_fixed! { i128, FixedI128<U0> }
+int_to_fixed! { i8, FixedI8<0> }
+int_to_fixed! { i16, FixedI16<0> }
+int_to_fixed! { i32, FixedI32<0> }
+int_to_fixed! { i64, FixedI64<0> }
+int_to_fixed! { i128, FixedI128<0> }
 int_to_fixed! { isize }
-int_to_fixed! { u8, FixedU8<U0> }
-int_to_fixed! { u16, FixedU16<U0> }
-int_to_fixed! { u32, FixedU32<U0> }
-int_to_fixed! { u64, FixedU64<U0> }
-int_to_fixed! { u128, FixedU128<U0> }
+int_to_fixed! { u8, FixedU8<0> }
+int_to_fixed! { u16, FixedU16<0> }
+int_to_fixed! { u32, FixedU32<0> }
+int_to_fixed! { u64, FixedU64<0> }
+int_to_fixed! { u128, FixedU128<0> }
 int_to_fixed! { usize }
 
 macro_rules! int_to_wider_fixed {
     (
-        ($SrcU:ident, $SrcI:ident, $SrcBits:ident, $SrcLeEqU:ident) ->
-            ($DstU:ident, $DstI:ident, $DstBits:ident, $DstBitsM1:ident, $DstLeEqU:ident)
+        ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
-        impl<FracDst: $DstLeEqU> From<$SrcU> for $DstU<FracDst>
+        impl<const FRAC_DST: u32> From<$SrcU> for $DstU<FRAC_DST>
         where
-            $DstBits: Sub<FracDst>,
-            $SrcBits: IsLessOrEqual<Diff<$DstBits, FracDst>, Output = True>,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ $nbits_src <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -313,15 +306,15 @@ macro_rules! int_to_wider_fixed {
             #[inline]
             fn from(src: $SrcU) -> Self {
                 let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = FracDst::U32;
+                let shift = FRAC_DST;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<FracDst: $DstLeEqU> From<$SrcI> for $DstI<FracDst>
+        impl<const FRAC_DST: u32> From<$SrcI> for $DstI<FRAC_DST>
         where
-            $DstBits: Sub<FracDst>,
-            $SrcBits: IsLessOrEqual<Diff<$DstBits, FracDst>, Output = True>,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ $nbits_src <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -330,15 +323,15 @@ macro_rules! int_to_wider_fixed {
             #[inline]
             fn from(src: $SrcI) -> Self {
                 let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = FracDst::U32;
+                let shift = FRAC_DST;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<FracDst: $DstLeEqU> From<$SrcU> for $DstI<FracDst>
+        impl<const FRAC_DST: u32> From<$SrcU> for $DstI<FRAC_DST>
         where
-            $DstBitsM1: Sub<FracDst>,
-            $SrcBits: IsLessOrEqual<Diff<$DstBitsM1, FracDst>, Output = True>,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ $nbits_src + 1 <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -347,15 +340,15 @@ macro_rules! int_to_wider_fixed {
             #[inline]
             fn from(src: $SrcU) -> Self {
                 let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = FracDst::U32;
+                let shift = FRAC_DST;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<FracDst: $DstLeEqU> LossyFrom<$SrcU> for $DstU<FracDst>
+        impl<const FRAC_DST: u32> LossyFrom<$SrcU> for $DstU<FRAC_DST>
         where
-            $DstBits: Sub<FracDst>,
-            $SrcBits: IsLessOrEqual<Diff<$DstBits, FracDst>, Output = True>,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ $nbits_src <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -367,10 +360,10 @@ macro_rules! int_to_wider_fixed {
             }
         }
 
-        impl<FracDst: $DstLeEqU> LossyFrom<$SrcI> for $DstI<FracDst>
+        impl<const FRAC_DST: u32> LossyFrom<$SrcI> for $DstI<FRAC_DST>
         where
-            $DstBits: Sub<FracDst>,
-            $SrcBits: IsLessOrEqual<Diff<$DstBits, FracDst>, Output = True>,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ $nbits_src <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -382,10 +375,10 @@ macro_rules! int_to_wider_fixed {
             }
         }
 
-        impl<FracDst: $DstLeEqU> LossyFrom<$SrcU> for $DstI<FracDst>
+        impl<const FRAC_DST: u32> LossyFrom<$SrcU> for $DstI<FRAC_DST>
         where
-            $DstBitsM1: Sub<FracDst>,
-            $SrcBits: IsLessOrEqual<Diff<$DstBitsM1, FracDst>, Output = True>,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ $nbits_src + 1 <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -399,23 +392,23 @@ macro_rules! int_to_wider_fixed {
     };
 }
 
-int_to_wider_fixed! { (u8, i8, U8, LeEqU8) -> (FixedU16, FixedI16, U16, U15, LeEqU16) }
-int_to_wider_fixed! { (u8, i8, U8, LeEqU8) -> (FixedU32, FixedI32, U32, U31, LeEqU32) }
-int_to_wider_fixed! { (u8, i8, U8, LeEqU8) -> (FixedU64, FixedI64, U64, U63, LeEqU64) }
-int_to_wider_fixed! { (u8, i8, U8, LeEqU8) -> (FixedU128, FixedI128, U128, U127, LeEqU128) }
-int_to_wider_fixed! { (u16, i16, U16, LeEqU16) -> (FixedU32, FixedI32, U32, U31, LeEqU32) }
-int_to_wider_fixed! { (u16, i16, U16, LeEqU16) -> (FixedU64, FixedI64, U64, U63, LeEqU64) }
-int_to_wider_fixed! { (u16, i16, U16, LeEqU16) -> (FixedU128, FixedI128, U128, U127, LeEqU128) }
-int_to_wider_fixed! { (u32, i32, U32, LeEqU32) -> (FixedU64, FixedI64, U64, U63, LeEqU64) }
-int_to_wider_fixed! { (u32, i32, U32, LeEqU32) -> (FixedU128, FixedI128, U128, U127, LeEqU128) }
-int_to_wider_fixed! { (u64, i64, U64, LeEqU64) -> (FixedU128, FixedI128, U128, U127, LeEqU128) }
+int_to_wider_fixed! { (u8, i8, 8) -> (FixedU16, FixedI16, 16) }
+int_to_wider_fixed! { (u8, i8, 8) -> (FixedU32, FixedI32, 32) }
+int_to_wider_fixed! { (u8, i8, 8) -> (FixedU64, FixedI64, 64) }
+int_to_wider_fixed! { (u8, i8, 8) -> (FixedU128, FixedI128, 128) }
+int_to_wider_fixed! { (u16, i16, 16) -> (FixedU32, FixedI32, 32) }
+int_to_wider_fixed! { (u16, i16, 16) -> (FixedU64, FixedI64, 64) }
+int_to_wider_fixed! { (u16, i16, 16) -> (FixedU128, FixedI128, 128) }
+int_to_wider_fixed! { (u32, i32, 32) -> (FixedU64, FixedI64, 64) }
+int_to_wider_fixed! { (u32, i32, 32) -> (FixedU128, FixedI128, 128) }
+int_to_wider_fixed! { (u64, i64, 64) -> (FixedU128, FixedI128, 128) }
 
 macro_rules! bool_to_fixed {
-    ($DstU:ident, $DstI:ident, $DstBits:ident, $DstBitsM1:ident, $DstLeEqU:ident) => {
-        impl<FracDst: $DstLeEqU> From<bool> for $DstU<FracDst>
+    ($DstU:ident, $DstI:ident, $nbits_dst:expr) => {
+        impl<const FRAC_DST: u32> From<bool> for $DstU<FRAC_DST>
         where
-            $DstBits: Sub<FracDst>,
-            U1: IsLessOrEqual<Diff<$DstBits, FracDst>, Output = True>,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ 1 <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
             ///
@@ -424,15 +417,15 @@ macro_rules! bool_to_fixed {
             #[inline]
             fn from(src: bool) -> Self {
                 let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = FracDst::U32;
+                let shift = FRAC_DST;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<FracDst: $DstLeEqU> From<bool> for $DstI<FracDst>
+        impl<const FRAC_DST: u32> From<bool> for $DstI<FRAC_DST>
         where
-            $DstBitsM1: Sub<FracDst>,
-            U1: IsLessOrEqual<Diff<$DstBitsM1, FracDst>, Output = True>,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ 2 <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
             ///
@@ -441,15 +434,15 @@ macro_rules! bool_to_fixed {
             #[inline]
             fn from(src: bool) -> Self {
                 let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = FracDst::U32;
+                let shift = FRAC_DST;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<FracDst: $DstLeEqU> LossyFrom<bool> for $DstU<FracDst>
+        impl<const FRAC_DST: u32> LossyFrom<bool> for $DstU<FRAC_DST>
         where
-            $DstBits: Sub<FracDst>,
-            U1: IsLessOrEqual<Diff<$DstBits, FracDst>, Output = True>,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ 1 <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
             ///
@@ -461,10 +454,10 @@ macro_rules! bool_to_fixed {
             }
         }
 
-        impl<FracDst: $DstLeEqU> LossyFrom<bool> for $DstI<FracDst>
+        impl<const FRAC_DST: u32> LossyFrom<bool> for $DstI<FRAC_DST>
         where
-            $DstBitsM1: Sub<FracDst>,
-            U1: IsLessOrEqual<Diff<$DstBitsM1, FracDst>, Output = True>,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ 2 <= $nbits_dst - FRAC_DST }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
             ///
@@ -478,32 +471,32 @@ macro_rules! bool_to_fixed {
     };
 }
 
-bool_to_fixed! { FixedU8, FixedI8, U8, U7, LeEqU8 }
-bool_to_fixed! { FixedU16, FixedI16, U16, U15, LeEqU16 }
-bool_to_fixed! { FixedU32, FixedI32, U32, U31, LeEqU32 }
-bool_to_fixed! { FixedU64, FixedI64, U64, U63, LeEqU64 }
-bool_to_fixed! { FixedU128, FixedI128, U128, U127, LeEqU128 }
+bool_to_fixed! { FixedU8, FixedI8, 8 }
+bool_to_fixed! { FixedU16, FixedI16, 16 }
+bool_to_fixed! { FixedU32, FixedI32, 32 }
+bool_to_fixed! { FixedU64, FixedI64, 64 }
+bool_to_fixed! { FixedU128, FixedI128, 128 }
 
 macro_rules! fixed_to_int {
     (($SrcU:ident, $SrcI:ident) -> ($DstU:ident, $DstI:ident)) => {
-        impl From<$SrcU<U0>> for $DstU {
+        impl From<$SrcU<0>> for $DstU {
             /// Converts a fixed-point number with no fractional bits to an integer.
             ///
             /// This conversion never fails (infallible) and cannot
             /// lose any fractional bits (lossless).
             #[inline]
-            fn from(src: $SrcU<U0>) -> Self {
+            fn from(src: $SrcU<0>) -> Self {
                 src.to_bits().into()
             }
         }
 
-        impl From<$SrcI<U0>> for $DstI {
+        impl From<$SrcI<0>> for $DstI {
             /// Converts a fixed-point number with no fractional bits to an integer.
             ///
             /// This conversion never fails (infallible) and cannot
             /// lose any fractional bits (lossless).
             #[inline]
-            fn from(src: $SrcI<U0>) -> Self {
+            fn from(src: $SrcI<0>) -> Self {
                 src.to_bits().into()
             }
         }
@@ -511,13 +504,13 @@ macro_rules! fixed_to_int {
     (($SrcU:ident, $SrcI:ident) -> wider ($DstU:ident, $DstI:ident)) => {
         fixed_to_int! { ($SrcU, $SrcI) -> ($DstU, $DstI) }
 
-        impl From<$SrcU<U0>> for $DstI {
+        impl From<$SrcU<0>> for $DstI {
             /// Converts a fixed-point number with no fractional bits to an integer.
             ///
             /// This conversion never fails (infallible) and cannot
             /// lose any fractional bits (lossless).
             #[inline]
-            fn from(src: $SrcU<U0>) -> Self {
+            fn from(src: $SrcU<0>) -> Self {
                 src.to_bits().into()
             }
         }
@@ -576,26 +569,25 @@ macro_rules! fixed_to_int_lossless {
     };
 }
 
-fixed_to_int_lossless! { FixedI8<U0>}
-fixed_to_int_lossless! { FixedI16<U0>}
-fixed_to_int_lossless! { FixedI32<U0>}
-fixed_to_int_lossless! { FixedI64<U0>}
-fixed_to_int_lossless! { FixedI128<U0>}
-fixed_to_int_lossless! { FixedU8<U0>}
-fixed_to_int_lossless! { FixedU16<U0>}
-fixed_to_int_lossless! { FixedU32<U0>}
-fixed_to_int_lossless! { FixedU64<U0>}
-fixed_to_int_lossless! { FixedU128<U0>}
+fixed_to_int_lossless! { FixedI8<0>}
+fixed_to_int_lossless! { FixedI16<0>}
+fixed_to_int_lossless! { FixedI32<0>}
+fixed_to_int_lossless! { FixedI64<0>}
+fixed_to_int_lossless! { FixedI128<0>}
+fixed_to_int_lossless! { FixedU8<0>}
+fixed_to_int_lossless! { FixedU16<0>}
+fixed_to_int_lossless! { FixedU32<0>}
+fixed_to_int_lossless! { FixedU64<0>}
+fixed_to_int_lossless! { FixedU128<0>}
 
 macro_rules! fixed_to_int_lossy {
     (
-        ($SrcU:ident, $SrcI:ident, $SrcBits:ident, $SrcLeEqU:ident) ->
-            ($DstU:ident, $DstI:ident, $DstBits:ident, $DstBitsM1:ident, $DstLeEqU:ident)
+        ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
-        impl<FracSrc: $SrcLeEqU> LossyFrom<$SrcU<FracSrc>> for $DstU
+        impl<const FRAC_SRC: u32> LossyFrom<$SrcU<FRAC_SRC>> for $DstU
         where
-            $SrcBits: Sub<FracSrc>,
-            Diff<$SrcBits, FracSrc>: IsLessOrEqual<$DstBits, Output = True>,
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ $nbits_src - FRAC_SRC <= $nbits_dst }>: True,
         {
             /// Converts a fixed-point number to an integer.
             ///
@@ -603,15 +595,15 @@ macro_rules! fixed_to_int_lossy {
             /// precision (lossy). Any fractional bits in the source
             /// are discarded, which rounds towards &minus;∞.
             #[inline]
-            fn lossy_from(src: $SrcU<FracSrc>) -> Self {
+            fn lossy_from(src: $SrcU<FRAC_SRC>) -> Self {
                 src.to_num()
             }
         }
 
-        impl<FracSrc: $SrcLeEqU> LossyFrom<$SrcI<FracSrc>> for $DstI
+        impl<const FRAC_SRC: u32> LossyFrom<$SrcI<FRAC_SRC>> for $DstI
         where
-            $SrcBits: Sub<FracSrc>,
-            Diff<$SrcBits, FracSrc>: IsLessOrEqual<$DstBits, Output = True>,
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ $nbits_src - FRAC_SRC <= $nbits_dst }>: True,
         {
             /// Converts a fixed-point number to an integer.
             ///
@@ -619,15 +611,15 @@ macro_rules! fixed_to_int_lossy {
             /// precision (lossy). Any fractional bits in the source
             /// are discarded, which rounds towards &minus;∞.
             #[inline]
-            fn lossy_from(src: $SrcI<FracSrc>) -> Self {
+            fn lossy_from(src: $SrcI<FRAC_SRC>) -> Self {
                 src.to_num()
             }
         }
 
-        impl<FracSrc: $SrcLeEqU> LossyFrom<$SrcU<FracSrc>> for $DstI
+        impl<const FRAC_SRC: u32> LossyFrom<$SrcU<FRAC_SRC>> for $DstI
         where
-            $SrcBits: Sub<FracSrc>,
-            Diff<$SrcBits, FracSrc>: IsLessOrEqual<$DstBitsM1, Output = True>,
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ $nbits_src - FRAC_SRC + 1 <= $nbits_dst }>: True,
         {
             /// Converts a fixed-point number to an integer.
             ///
@@ -635,38 +627,26 @@ macro_rules! fixed_to_int_lossy {
             /// precision (lossy). Any fractional bits in the source
             /// are discarded, which rounds towards &minus;∞.
             #[inline]
-            fn lossy_from(src: $SrcU<FracSrc>) -> Self {
+            fn lossy_from(src: $SrcU<FRAC_SRC>) -> Self {
                 src.to_num()
             }
         }
     };
-    ($SrcU:ident, $SrcI:ident, $SrcBits:ident, $SrcLeEqU:ident) => {
-        fixed_to_int_lossy! {
-            ($SrcU, $SrcI, $SrcBits, $SrcLeEqU) -> (u8, i8, U8, U7, LeEqU8)
-        }
-        fixed_to_int_lossy! {
-            ($SrcU, $SrcI, $SrcBits, $SrcLeEqU) -> (u16, i16, U16, U15, LeEqU16)
-        }
-        fixed_to_int_lossy! {
-            ($SrcU, $SrcI, $SrcBits, $SrcLeEqU) -> (u32, i32, U32, U31, LeEqU32)
-        }
-        fixed_to_int_lossy! {
-            ($SrcU, $SrcI, $SrcBits, $SrcLeEqU) -> (u64, i64, U64, U63, LeEqU64)
-        }
-        fixed_to_int_lossy! {
-            ($SrcU, $SrcI, $SrcBits, $SrcLeEqU) -> (u128, i128, U128, U127, LeEqU128)
-        }
-        fixed_to_int_lossy! {
-            ($SrcU, $SrcI, $SrcBits, $SrcLeEqU) -> (usize, isize, U16, U15, LeEqU16)
-        }
+    ($SrcU:ident, $SrcI:ident, $nbits_src:expr) => {
+        fixed_to_int_lossy! { ($SrcU, $SrcI, $nbits_src) -> (u8, i8, 8) }
+        fixed_to_int_lossy! { ($SrcU, $SrcI, $nbits_src) -> (u16, i16, 16) }
+        fixed_to_int_lossy! { ($SrcU, $SrcI, $nbits_src) -> (u32, i32, 32) }
+        fixed_to_int_lossy! { ($SrcU, $SrcI, $nbits_src) -> (u64, i64, 64) }
+        fixed_to_int_lossy! { ($SrcU, $SrcI, $nbits_src) -> (u128, i128, 128) }
+        fixed_to_int_lossy! { ($SrcU, $SrcI, $nbits_src) -> (usize, isize, 16) }
     };
 }
 
-fixed_to_int_lossy! { FixedU8, FixedI8, U8, LeEqU8 }
-fixed_to_int_lossy! { FixedU16, FixedI16, U16, LeEqU16 }
-fixed_to_int_lossy! { FixedU32, FixedI32, U32, LeEqU32 }
-fixed_to_int_lossy! { FixedU64, FixedI64, U64, LeEqU64 }
-fixed_to_int_lossy! { FixedU128, FixedI128, U128, LeEqU128 }
+fixed_to_int_lossy! { FixedU8, FixedI8, 8 }
+fixed_to_int_lossy! { FixedU16, FixedI16, 16 }
+fixed_to_int_lossy! { FixedU32, FixedI32, 32 }
+fixed_to_int_lossy! { FixedU64, FixedI64, 64 }
+fixed_to_int_lossy! { FixedU128, FixedI128, 128 }
 
 // f16 has minimum subnormal == 2 ^ -(14 + 10) => 24 fractional bits
 // bf16 has minimum subnormal == 2 ^ -(126 + 7) => 133 fractional bits
@@ -676,10 +656,11 @@ fixed_to_int_lossy! { FixedU128, FixedI128, U128, LeEqU128 }
 // The only lossless float to fixed possible is from f16 to
 // fixed-point numbers with 24 or more fractional bits.
 macro_rules! float_to_fixed {
-    ($Src:ident, $Dst:ident, $LeEqU:ident) => {
-        impl<Frac: $LeEqU> LosslessTryFrom<$Src> for $Dst<Frac>
+    ($Src:ident, $Dst:ident, $nbits:expr) => {
+        impl<const FRAC: u32> LosslessTryFrom<$Src> for $Dst<FRAC>
         where
-            U24: IsLessOrEqual<Frac, Output = True>,
+            If<{ FRAC <= $nbits }>: True,
+            If<{ FRAC >= 24 }>: True,
         {
             /// Converts a floating-point number to a fixed-point
             /// number.
@@ -693,90 +674,99 @@ macro_rules! float_to_fixed {
         }
     };
 }
-float_to_fixed! { f16, FixedI32, LeEqU32 }
-float_to_fixed! { f16, FixedI64, LeEqU64 }
-float_to_fixed! { f16, FixedI128, LeEqU128 }
+float_to_fixed! { f16, FixedI32, 32 }
+float_to_fixed! { f16, FixedI64, 64 }
+float_to_fixed! { f16, FixedI128, 128 }
 
 macro_rules! fixed_to_float {
-    ($Fixed:ident($LeEqU:ident) -> $Float:ident) => {
-        impl<Frac: $LeEqU> From<$Fixed<Frac>> for $Float {
+    ($Fixed:ident($nbits:expr) -> $Float:ident) => {
+        impl<const FRAC: u32> From<$Fixed<FRAC>> for $Float
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             /// Converts a fixed-point number to a floating-point number.
             ///
             /// This conversion never fails (infallible) and does not
             /// lose any precision (lossless).
             #[inline]
-            fn from(src: $Fixed<Frac>) -> $Float {
+            fn from(src: $Fixed<FRAC>) -> $Float {
                 $Float::from_fixed(src)
             }
         }
 
-        impl<Frac: $LeEqU> LosslessTryFrom<$Fixed<Frac>> for $Float {
+        impl<const FRAC: u32> LosslessTryFrom<$Fixed<FRAC>> for $Float
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             /// Converts a fixed-point number to a floating-point number.
             ///
             /// This conversion actually never fails (infallible) but
             /// does not lose any precision (lossless).
             #[inline]
-            fn lossless_try_from(src: $Fixed<Frac>) -> Option<$Float> {
+            fn lossless_try_from(src: $Fixed<FRAC>) -> Option<$Float> {
                 Some($Float::from_fixed(src))
             }
         }
     };
 }
 
-fixed_to_float! { FixedI8(LeEqU8) -> f16 }
-fixed_to_float! { FixedU8(LeEqU8) -> f16 }
-fixed_to_float! { FixedI8(LeEqU8) -> f32 }
-fixed_to_float! { FixedI16(LeEqU16) -> f32 }
-fixed_to_float! { FixedU8(LeEqU8) -> f32 }
-fixed_to_float! { FixedU16(LeEqU16) -> f32 }
-fixed_to_float! { FixedI8(LeEqU8) -> f64 }
-fixed_to_float! { FixedI16(LeEqU16) -> f64 }
-fixed_to_float! { FixedI32(LeEqU32) -> f64 }
-fixed_to_float! { FixedU8(LeEqU8) -> f64 }
-fixed_to_float! { FixedU16(LeEqU16) -> f64 }
-fixed_to_float! { FixedU32(LeEqU32) -> f64 }
-fixed_to_float! { FixedI8(LeEqU8) -> F128Bits }
-fixed_to_float! { FixedI16(LeEqU16) -> F128Bits }
-fixed_to_float! { FixedI32(LeEqU32) -> F128Bits }
-fixed_to_float! { FixedI64(LeEqU64) -> F128Bits }
-fixed_to_float! { FixedU8(LeEqU8) -> F128Bits }
-fixed_to_float! { FixedU16(LeEqU16) -> F128Bits }
-fixed_to_float! { FixedU32(LeEqU32) -> F128Bits }
-fixed_to_float! { FixedU64(LeEqU64) -> F128Bits }
+fixed_to_float! { FixedI8(8) -> f16 }
+fixed_to_float! { FixedU8(8) -> f16 }
+fixed_to_float! { FixedI8(8) -> f32 }
+fixed_to_float! { FixedI16(16) -> f32 }
+fixed_to_float! { FixedU8(8) -> f32 }
+fixed_to_float! { FixedU16(16) -> f32 }
+fixed_to_float! { FixedI8(8) -> f64 }
+fixed_to_float! { FixedI16(16) -> f64 }
+fixed_to_float! { FixedI32(32) -> f64 }
+fixed_to_float! { FixedU8(8) -> f64 }
+fixed_to_float! { FixedU16(16) -> f64 }
+fixed_to_float! { FixedU32(32) -> f64 }
+fixed_to_float! { FixedI8(8) -> F128Bits }
+fixed_to_float! { FixedI16(16) -> F128Bits }
+fixed_to_float! { FixedI32(32) -> F128Bits }
+fixed_to_float! { FixedI64(64) -> F128Bits }
+fixed_to_float! { FixedU8(8) -> F128Bits }
+fixed_to_float! { FixedU16(16) -> F128Bits }
+fixed_to_float! { FixedU32(32) -> F128Bits }
+fixed_to_float! { FixedU64(64) -> F128Bits }
 
 macro_rules! fixed_to_float_lossy {
-    ($Fixed:ident($LeEqU:ident) -> $Float:ident) => {
-        impl<Frac: $LeEqU> LossyFrom<$Fixed<Frac>> for $Float {
+    ($Fixed:ident($nbits:expr) -> $Float:ident) => {
+        impl<const FRAC: u32> LossyFrom<$Fixed<FRAC>> for $Float
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             /// Converts a fixed-point number to a floating-point number.
             ///
             /// This conversion never fails (infallible) but may lose
             /// precision (lossy). Rounding is to the nearest, with
             /// ties rounded to even.
             #[inline]
-            fn lossy_from(src: $Fixed<Frac>) -> $Float {
+            fn lossy_from(src: $Fixed<FRAC>) -> $Float {
                 src.to_num()
             }
         }
     };
-    ($Fixed:ident($LeEqU:ident)) => {
-        fixed_to_float_lossy! { $Fixed($LeEqU) -> f16 }
-        fixed_to_float_lossy! { $Fixed($LeEqU) -> bf16 }
-        fixed_to_float_lossy! { $Fixed($LeEqU) -> f32 }
-        fixed_to_float_lossy! { $Fixed($LeEqU) -> f64 }
-        fixed_to_float_lossy! { $Fixed($LeEqU) -> F128Bits }
+    ($Fixed:ident($nbits:expr)) => {
+        fixed_to_float_lossy! { $Fixed($nbits) -> f16 }
+        fixed_to_float_lossy! { $Fixed($nbits) -> bf16 }
+        fixed_to_float_lossy! { $Fixed($nbits) -> f32 }
+        fixed_to_float_lossy! { $Fixed($nbits) -> f64 }
+        fixed_to_float_lossy! { $Fixed($nbits) -> F128Bits }
     };
 }
 
-fixed_to_float_lossy! { FixedI8(LeEqU8) }
-fixed_to_float_lossy! { FixedI16(LeEqU16) }
-fixed_to_float_lossy! { FixedI32(LeEqU32) }
-fixed_to_float_lossy! { FixedI64(LeEqU64) }
-fixed_to_float_lossy! { FixedI128(LeEqU128) }
-fixed_to_float_lossy! { FixedU8(LeEqU8) }
-fixed_to_float_lossy! { FixedU16(LeEqU16) }
-fixed_to_float_lossy! { FixedU32(LeEqU32) }
-fixed_to_float_lossy! { FixedU64(LeEqU64) }
-fixed_to_float_lossy! { FixedU128(LeEqU128) }
+fixed_to_float_lossy! { FixedI8(8) }
+fixed_to_float_lossy! { FixedI16(16) }
+fixed_to_float_lossy! { FixedI32(32) }
+fixed_to_float_lossy! { FixedI64(64) }
+fixed_to_float_lossy! { FixedI128(128) }
+fixed_to_float_lossy! { FixedU8(8) }
+fixed_to_float_lossy! { FixedU16(16) }
+fixed_to_float_lossy! { FixedU32(32) }
+fixed_to_float_lossy! { FixedU64(64) }
+fixed_to_float_lossy! { FixedU128(128) }
 
 macro_rules! int_to_float_lossy_lossless {
     ($Int:ident as $IntAs:ident, $IntFixed:ident -> $($Lossy:ident)*; $($Lossless:ident)*) => {
