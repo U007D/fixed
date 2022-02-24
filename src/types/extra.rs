@@ -16,7 +16,41 @@
 /*!
 Extra types that do not need to be handled directly.
 
-These types are mostly reexports from the [*typenum* crate].
-
-[*typenum* crate]: https://crates.io/crates/typenum
+These types are used for `where` constraints.
 */
+
+/// Used for constraints conditional on a [`bool`].
+///
+/// # Examples
+///
+/// ```rust
+/// use fixed::types::extra::{If, True};
+/// fn foo<const U: u32>()
+/// where
+///     If<{ U > 0 }>: True,
+/// {
+///     assert!(U > 0);
+/// }
+///
+/// foo::<1>();
+/// ```
+///
+/// This would fail to compile because the constraint is not met:
+///
+/// ```rust,compile_fail
+/// use fixed::types::extra::{If, True};
+/// fn foo<const U: u32>()
+/// where
+///     If<{ U > 0 }>: True,
+/// {
+///     assert!(U > 0);
+/// }
+///
+/// foo::<0>();
+/// ```
+pub struct If<const CONDITION: bool>;
+
+/// This is implemented for [`If`] when the condition is [`true`].
+pub trait True {}
+
+impl True for If<true> {}
