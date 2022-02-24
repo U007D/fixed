@@ -111,8 +111,8 @@ macro_rules! impl_traits {
 
         impl<const FRAC: u32> Num for $Fixed<FRAC>
         where
-            If<{FRAC <= $nbits}>: True,
-            If<{FRAC <= $one_max_frac}>: True,
+            If<{ FRAC <= $nbits }>: True,
+            If<{ FRAC <= $one_max_frac }>: True,
         {
             type FromStrRadixErr = RadixParseFixedError;
 
