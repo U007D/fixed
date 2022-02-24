@@ -300,6 +300,7 @@ shall be dual licensed as above, without any additional terms or conditions.
 #![doc(html_root_url = "https://docs.rs/fixed/~1.13")]
 #![doc(test(attr(deny(warnings))))]
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
+#![feature(generic_const_exprs)]
 
 #[cfg(all(not(feature = "std"), test))]
 extern crate std;
