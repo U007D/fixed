@@ -144,16 +144,17 @@ macro_rules! fixed_cmp_int {
             }
         }
 
-        impl<const FRAC: u32> PartialEq<$Fix<FRAC>> for $Int
-        where
-            If<{ FRAC <= $nbits }>: True,
-        {
-            #[inline]
-            fn eq(&self, rhs: &$Fix<FRAC>) -> bool {
-                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-                slf.eq(rhs)
-            }
-        }
+        // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
+        // impl<const FRAC: u32> PartialEq<$Fix<FRAC>> for $Int
+        // where
+        //     If<{ FRAC <= $nbits }>: True,
+        // {
+        //     #[inline]
+        //     fn eq(&self, rhs: &$Fix<FRAC>) -> bool {
+        //         let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
+        //         slf.eq(rhs)
+        //     }
+        // }
 
         impl<const FRAC: u32> PartialOrd<$Int> for $Fix<FRAC>
         where
@@ -190,40 +191,41 @@ macro_rules! fixed_cmp_int {
             }
         }
 
-        impl<const FRAC: u32> PartialOrd<$Fix<FRAC>> for $Int
-        where
-            If<{ FRAC <= $nbits }>: True,
-        {
-            #[inline]
-            fn partial_cmp(&self, rhs: &$Fix<FRAC>) -> Option<Ordering> {
-                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-                slf.partial_cmp(rhs)
-            }
+        // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
+        // impl<const FRAC: u32> PartialOrd<$Fix<FRAC>> for $Int
+        // where
+        //     If<{ FRAC <= $nbits }>: True,
+        // {
+        //     #[inline]
+        //     fn partial_cmp(&self, rhs: &$Fix<FRAC>) -> Option<Ordering> {
+        //         let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
+        //         slf.partial_cmp(rhs)
+        //     }
 
-            #[inline]
-            fn lt(&self, rhs: &$Fix<FRAC>) -> bool {
-                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-                slf.lt(rhs)
-            }
+        //     #[inline]
+        //     fn lt(&self, rhs: &$Fix<FRAC>) -> bool {
+        //         let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
+        //         slf.lt(rhs)
+        //     }
 
-            #[inline]
-            fn le(&self, rhs: &$Fix<FRAC>) -> bool {
-                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-                slf.le(rhs)
-            }
+        //     #[inline]
+        //     fn le(&self, rhs: &$Fix<FRAC>) -> bool {
+        //         let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
+        //         slf.le(rhs)
+        //     }
 
-            #[inline]
-            fn gt(&self, rhs: &$Fix<FRAC>) -> bool {
-                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-                slf.gt(rhs)
-            }
+        //     #[inline]
+        //     fn gt(&self, rhs: &$Fix<FRAC>) -> bool {
+        //         let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
+        //         slf.gt(rhs)
+        //     }
 
-            #[inline]
-            fn ge(&self, rhs: &$Fix<FRAC>) -> bool {
-                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-                slf.ge(rhs)
-            }
-        }
+        //     #[inline]
+        //     fn ge(&self, rhs: &$Fix<FRAC>) -> bool {
+        //         let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
+        //         slf.ge(rhs)
+        //     }
+        // }
     };
 }
 
