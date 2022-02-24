@@ -13,11 +13,6 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
-use crate::{
-    FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16,
-    FixedU32, FixedU64, FixedU8,
-};
-
 macro_rules! make_helper_common {
     ($t:ident) => {
         use crate::helpers::{ToFixedHelper, Widest};

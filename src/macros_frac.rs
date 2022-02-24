@@ -489,7 +489,7 @@ assert_eq!(Fix::from_num(2.0).lerp(start, end), 5);
 [`wrapping_lerp`]: Self::wrapping_lerp
 ";
                 #[inline]
-                pub fn lerp<RangeFrac>(
+                pub fn lerp<const RANGE_FRAC: u32>(
                     self,
                     start: $Fixed<RANGE_FRAC>,
                     end: $Fixed<RANGE_FRAC>,
@@ -1479,7 +1479,7 @@ assert_eq!(Fix::MIN.wrapping_div_euclid_int(-1), wrapped);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn wrapping_div_euclid_int(self, rhs: $Inner) -> $Fixed<Frac> {
+                pub fn wrapping_div_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
                     self.overflowing_div_euclid_int(rhs).0
                 }
             }
