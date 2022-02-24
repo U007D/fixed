@@ -882,17 +882,17 @@ impl OverflowingMulDiv for i128 {
 
 #[cfg(test)]
 mod tests {
-    use crate::{arith, types::extra::Unsigned, *};
+    use crate::{arith, *};
 
     #[test]
     fn fixed_u16() {
-        use crate::types::extra::U7 as Frac;
-        let frac = Frac::U32;
+        const FRAC: u32 = 7;
+        let frac = FRAC;
         let a = 12;
         let b = 5;
         for &(a, b) in &[(a, b), (b, a)] {
-            let af = FixedU16::<Frac>::from_num(a);
-            let bf = FixedU16::<Frac>::from_num(b);
+            let af = FixedU16::<FRAC>::from_num(a);
+            let bf = FixedU16::<FRAC>::from_num(b);
             assert_eq!((af + bf).to_bits(), (a << frac) + (b << frac));
             if a > b {
                 assert_eq!((af - bf).to_bits(), (a << frac) - (b << frac));
@@ -915,8 +915,8 @@ mod tests {
 
     #[test]
     fn fixed_i16() {
-        use crate::types::extra::U7 as Frac;
-        let frac = Frac::U32;
+        const FRAC: u32 = 7;
+        let frac = FRAC;
         let a = 12;
         let b = 5;
         for &(a, b) in &[
@@ -929,8 +929,8 @@ mod tests {
             (-b, a),
             (-b, -a),
         ] {
-            let af = FixedI16::<Frac>::from_num(a);
-            let bf = FixedI16::<Frac>::from_num(b);
+            let af = FixedI16::<FRAC>::from_num(a);
+            let bf = FixedI16::<FRAC>::from_num(b);
             assert_eq!((af + bf).to_bits(), (a << frac) + (b << frac));
             assert_eq!((af - bf).to_bits(), (a << frac) - (b << frac));
             assert_eq!((af * bf).to_bits(), (a << frac) * b);
@@ -1558,14 +1558,11 @@ mod tests {
 
     #[test]
     fn issue_26() {
-        use crate::{
-            types::extra::{U120, U121, U122, U123, U124},
-            FixedI128, FixedU128,
-        };
+        use crate::{FixedI128, FixedU128};
 
-        // issue 26 is about FixedI128<U123>, the others are just some extra tests
+        // issue 26 is about FixedI128<123>, the others are just some extra tests
 
-        let x: FixedI128<U120> = "-9.079999999999999999999".parse().unwrap();
+        let x: FixedI128<120> = "-9.079999999999999999999".parse().unwrap();
         let squared = x.checked_mul(x).unwrap();
         assert!(82.44639 < squared && squared < 82.44641);
         let msquared = (-x).checked_mul(x).unwrap();
@@ -1574,40 +1571,40 @@ mod tests {
         assert_eq!((-x).checked_mul(-x), Some(squared));
 
         // 82 requires 8 signed integer bits
-        let x: FixedI128<U121> = "-9.079999999999999999999".parse().unwrap();
+        let x: FixedI128<121> = "-9.079999999999999999999".parse().unwrap();
         assert!(x.checked_mul(x).is_none());
         assert!((-x).checked_mul(x).is_none());
         assert!(x.checked_mul(-x).is_none());
         assert!((-x).checked_mul(-x).is_none());
-        let x: FixedI128<U122> = "-9.079999999999999999999".parse().unwrap();
+        let x: FixedI128<122> = "-9.079999999999999999999".parse().unwrap();
         assert!(x.checked_mul(x).is_none());
         assert!((-x).checked_mul(x).is_none());
         assert!(x.checked_mul(-x).is_none());
         assert!((-x).checked_mul(-x).is_none());
-        let x: FixedI128<U123> = "-9.079999999999999999999".parse().unwrap();
+        let x: FixedI128<123> = "-9.079999999999999999999".parse().unwrap();
         assert!(x.checked_mul(x).is_none());
         assert!((-x).checked_mul(x).is_none());
         assert!(x.checked_mul(-x).is_none());
         assert!((-x).checked_mul(-x).is_none());
 
-        let x: Result<FixedI128<U124>, _> = "-9.079999999999999999999".parse();
+        let x: Result<FixedI128<124>, _> = "-9.079999999999999999999".parse();
         assert!(x.is_err());
 
         // Test unsigned
 
-        let x: FixedU128<U120> = "9.079999999999999999999".parse().unwrap();
+        let x: FixedU128<120> = "9.079999999999999999999".parse().unwrap();
         let squared = x.checked_mul(x).unwrap();
         assert!(82.44639 < squared && squared < 82.44641);
 
         // 82 requires 8 signed integer bits
-        let x: FixedU128<U122> = "9.079999999999999999999".parse().unwrap();
+        let x: FixedU128<122> = "9.079999999999999999999".parse().unwrap();
         assert!(x.checked_mul(x).is_none());
-        let x: FixedU128<U123> = "9.079999999999999999999".parse().unwrap();
+        let x: FixedU128<123> = "9.079999999999999999999".parse().unwrap();
         assert!(x.checked_mul(x).is_none());
-        let x: FixedU128<U124> = "9.079999999999999999999".parse().unwrap();
+        let x: FixedU128<124> = "9.079999999999999999999".parse().unwrap();
         assert!(x.checked_mul(x).is_none());
 
-        let x: Result<FixedI128<U125>, _> = "9.079999999999999999999".parse();
+        let x: Result<FixedI128<125>, _> = "9.079999999999999999999".parse();
         assert!(x.is_err());
     }
 }

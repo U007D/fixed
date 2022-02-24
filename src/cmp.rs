@@ -475,8 +475,8 @@ mod tests {
     #[test]
     fn cmp_signed() {
         use core::cmp::Ordering::*;
-        let neg1_16 = FixedI32::<types::extra::U16>::from_num(-1);
-        let neg1_20 = FixedI32::<types::extra::U20>::from_num(-1);
+        let neg1_16 = FixedI32::<16>::from_num(-1);
+        let neg1_20 = FixedI32::<20>::from_num(-1);
         let mut a = neg1_16;
         let mut b = neg1_20;
         // a = ffff.0000 = -1, b = fff.00000 = -1
@@ -533,8 +533,8 @@ mod tests {
     #[test]
     fn cmp_unsigned() {
         use core::cmp::Ordering::*;
-        let one_16 = FixedU32::<types::extra::U16>::ONE;
-        let one_20 = FixedU32::<types::extra::U20>::ONE;
+        let one_16 = FixedU32::<16>::ONE;
+        let one_20 = FixedU32::<20>::ONE;
         let mut a = one_16;
         let mut b = one_20;
         // a = 0001.0000 = 1, b = 001.00000 = 1
