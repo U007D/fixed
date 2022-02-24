@@ -5,6 +5,12 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
+Version 2.0.0 (unreleased)
+==========================
+
+  * The crate now uses generic constant expressions to specify the number of
+    fractional bits.
+
 Version 1.13.0 (2022-02-22)
 ===========================
 

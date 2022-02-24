@@ -94,6 +94,11 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
+### Version 2.0.0 news (unreleased)
+
+  * The crate now uses generic constant expressions to specify the number of
+    fractional bits.
+
 ### Version 1.13.0 news (2022-02-22)
 
   * The [`AddAssign`], [`SubAssign`], [`MulAssign`], [`DivAssign`],
