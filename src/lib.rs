@@ -343,11 +343,6 @@ pub use crate::impl_num_traits::RadixParseFixedError;
 use crate::{
     from_str::FromStrRadix,
     traits::{FromFixed, ToFixed},
-    types::extra::{
-        Diff, IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, Sum, True, Unsigned, U12,
-        U124, U125, U126, U127, U128, U13, U14, U15, U16, U28, U29, U30, U31, U32, U4, U5, U6, U60,
-        U61, U62, U63, U64, U7, U8,
-    },
 };
 pub use crate::{from_str::ParseFixedError, unwrapped::Unwrapped, wrapping::Wrapping};
 use core::{

@@ -16,10 +16,6 @@
 use crate::{
     int_helper::IntFixed,
     traits::{FromFixed, LosslessTryFrom, LossyFrom, ToFixed},
-    types::extra::{
-        Diff, IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, True, U0, U1, U127, U128,
-        U15, U16, U24, U31, U32, U63, U64, U7, U8,
-    },
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8,
 };

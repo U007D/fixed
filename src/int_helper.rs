@@ -14,7 +14,7 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
-    types::extra::U0, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16,
+    FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16,
     FixedU32, FixedU64, FixedU8,
 };
 

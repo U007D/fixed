@@ -14,13 +14,8 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
-    consts,
-    types::extra::{
-        IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, True, U126, U127, U14, U15,
-        U30, U31, U6, U62, U63, U7,
-    },
-    FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
-    FixedU8, ParseFixedError,
+    consts, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
+    FixedU64, FixedU8, ParseFixedError,
 };
 use core::fmt::{Display, Formatter, Result as FmtResult};
 use num_traits::{
