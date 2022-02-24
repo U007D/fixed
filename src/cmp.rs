@@ -187,7 +187,7 @@ macro_rules! fixed_cmp_int {
             #[inline]
             fn ge(&self, rhs: &$Int) -> bool {
                 let rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
-                self.lt(&rhs)
+                self.ge(&rhs)
             }
         }
 
