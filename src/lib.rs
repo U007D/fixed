@@ -348,7 +348,6 @@ pub use crate::{from_str::ParseFixedError, unwrapped::Unwrapped, wrapping::Wrapp
 use core::{
     cmp::Ordering,
     hash::{Hash, Hasher},
-    marker::PhantomData,
     mem,
     ops::{Add, Sub},
 };
@@ -500,35 +499,30 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
 [const generics]: https://github.com/rust-lang/rust/issues/44580
 ";
             #[repr(transparent)]
-            pub struct $Fixed<Frac> {
+            pub struct $Fixed<const FRAC: u32> {
                 pub(crate) bits: $Inner,
-                phantom: PhantomData<Frac>,
             }
         }
 
-        impl<Frac> Clone for $Fixed<Frac> {
+        impl<const FRAC: u32> Clone for $Fixed<FRAC> {
             #[inline]
-            fn clone(&self) -> $Fixed<Frac> {
-                $Fixed {
-                    bits: self.bits,
-                    phantom: PhantomData,
-                }
+            fn clone(&self) -> $Fixed<FRAC> {
+                $Fixed { bits: self.bits }
             }
         }
 
-        impl<Frac> Copy for $Fixed<Frac> {}
+        impl<const FRAC: u32> Copy for $Fixed<FRAC> {}
 
-        impl<Frac> Default for $Fixed<Frac> {
+        impl<const FRAC: u32> Default for $Fixed<FRAC> {
             #[inline]
             fn default() -> Self {
                 $Fixed {
                     bits: Default::default(),
-                    phantom: PhantomData,
                 }
             }
         }
 
-        impl<Frac> Hash for $Fixed<Frac> {
+        impl<const FRAC: u32> Hash for $Fixed<FRAC> {
             #[inline]
             fn hash<H: Hasher>(&self, state: &mut H) {
                 self.bits.hash(state);
