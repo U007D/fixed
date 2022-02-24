@@ -17,6 +17,7 @@ use crate::{
     float_helper,
     helpers::{FloatKind, Widest},
     int_helper,
+    types::extra::{If, True},
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8,
 };
@@ -25,15 +26,19 @@ use half::{bf16, f16};
 
 macro_rules! fixed_cmp_fixed {
     (
-        $Lhs:ident($LhsLeEqU:ident, $LhsInner:ident),
-        $Rhs:ident($RhsLeEqU:ident, $RhsInner:ident)
+        $Lhs:ident($nbits_lhs:expr, $LhsInner:ident),
+        $Rhs:ident($nbits_rhs:expr, $RhsInner:ident)
     ) => {
-        impl<FracLhs: $LhsLeEqU, FracRhs: $RhsLeEqU> PartialEq<$Rhs<FracRhs>> for $Lhs<FracLhs> {
+        impl<const FRAC_LHS: u32, const FRAC_RHS: u32> PartialEq<$Rhs<FRAC_RHS>> for $Lhs<FRAC_LHS>
+        where
+            If<{ FRAC_LHS <= $nbits_lhs }>: True,
+            If<{ FRAC_RHS <= $nbits_rhs }>: True,
+        {
             #[inline]
-            fn eq(&self, rhs: &$Rhs<FracRhs>) -> bool {
+            fn eq(&self, rhs: &$Rhs<FRAC_RHS>) -> bool {
                 let conv = int_helper::$RhsInner::to_fixed_helper(
                     rhs.to_bits(),
-                    <$Rhs<FracRhs>>::FRAC_NBITS as i32,
+                    <$Rhs<FRAC_RHS>>::FRAC_NBITS as i32,
                     Self::FRAC_NBITS,
                     Self::INT_NBITS,
                 );
@@ -48,9 +53,13 @@ macro_rules! fixed_cmp_fixed {
             }
         }
 
-        impl<FracLhs: $LhsLeEqU, FracRhs: $RhsLeEqU> PartialOrd<$Rhs<FracRhs>> for $Lhs<FracLhs> {
+        impl<const FRAC_LHS: u32, const FRAC_RHS: u32> PartialOrd<$Rhs<FRAC_RHS>> for $Lhs<FRAC_LHS>
+        where
+            If<{ FRAC_LHS <= $nbits_lhs }>: True,
+            If<{ FRAC_RHS <= $nbits_rhs }>: True,
+        {
             #[inline]
-            fn partial_cmp(&self, rhs: &$Rhs<FracRhs>) -> Option<Ordering> {
+            fn partial_cmp(&self, rhs: &$Rhs<FRAC_RHS>) -> Option<Ordering> {
                 let lhs_is_neg = int_helper::$LhsInner::is_negative(self.to_bits());
                 let rhs_is_neg = int_helper::$RhsInner::is_negative(rhs.to_bits());
                 match (lhs_is_neg, rhs_is_neg) {
@@ -60,7 +69,7 @@ macro_rules! fixed_cmp_fixed {
                 }
                 let conv = int_helper::$RhsInner::to_fixed_helper(
                     rhs.to_bits(),
-                    <$Rhs<FracRhs>>::FRAC_NBITS as i32,
+                    <$Rhs<FRAC_RHS>>::FRAC_NBITS as i32,
                     Self::FRAC_NBITS,
                     Self::INT_NBITS,
                 );
@@ -79,7 +88,7 @@ macro_rules! fixed_cmp_fixed {
             }
 
             #[inline]
-            fn lt(&self, rhs: &$Rhs<FracRhs>) -> bool {
+            fn lt(&self, rhs: &$Rhs<FRAC_RHS>) -> bool {
                 let lhs_is_neg = int_helper::$LhsInner::is_negative(self.to_bits());
                 let rhs_is_neg = int_helper::$RhsInner::is_negative(rhs.to_bits());
                 match (lhs_is_neg, rhs_is_neg) {
@@ -89,7 +98,7 @@ macro_rules! fixed_cmp_fixed {
                 }
                 let conv = int_helper::$RhsInner::to_fixed_helper(
                     rhs.to_bits(),
-                    <$Rhs<FracRhs>>::FRAC_NBITS as i32,
+                    <$Rhs<FRAC_RHS>>::FRAC_NBITS as i32,
                     Self::FRAC_NBITS,
                     Self::INT_NBITS,
                 );
@@ -105,17 +114,17 @@ macro_rules! fixed_cmp_fixed {
             }
 
             #[inline]
-            fn le(&self, rhs: &$Rhs<FracRhs>) -> bool {
+            fn le(&self, rhs: &$Rhs<FRAC_RHS>) -> bool {
                 !rhs.lt(self)
             }
 
             #[inline]
-            fn gt(&self, rhs: &$Rhs<FracRhs>) -> bool {
+            fn gt(&self, rhs: &$Rhs<FRAC_RHS>) -> bool {
                 rhs.lt(self)
             }
 
             #[inline]
-            fn ge(&self, rhs: &$Rhs<FracRhs>) -> bool {
+            fn ge(&self, rhs: &$Rhs<FRAC_RHS>) -> bool {
                 !self.lt(rhs)
             }
         }
@@ -123,8 +132,11 @@ macro_rules! fixed_cmp_fixed {
 }
 
 macro_rules! fixed_cmp_int {
-    ($Fix:ident($LeEqU:ident), $Int:ident, $IntAs:ident, $IntFixed:ident) => {
-        impl<Frac: $LeEqU> PartialEq<$Int> for $Fix<Frac> {
+    ($Fix:ident($nbits:expr), $Int:ident, $IntAs:ident, $IntFixed:ident) => {
+        impl<const FRAC: u32> PartialEq<$Int> for $Fix<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             fn eq(&self, rhs: &$Int) -> bool {
                 let rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
@@ -132,15 +144,21 @@ macro_rules! fixed_cmp_int {
             }
         }
 
-        impl<Frac: $LeEqU> PartialEq<$Fix<Frac>> for $Int {
+        impl<const FRAC: u32> PartialEq<$Fix<FRAC>> for $Int
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
-            fn eq(&self, rhs: &$Fix<Frac>) -> bool {
+            fn eq(&self, rhs: &$Fix<FRAC>) -> bool {
                 let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
                 slf.eq(rhs)
             }
         }
 
-        impl<Frac: $LeEqU> PartialOrd<$Int> for $Fix<Frac> {
+        impl<const FRAC: u32> PartialOrd<$Int> for $Fix<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             fn partial_cmp(&self, rhs: &$Int) -> Option<Ordering> {
                 let rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
@@ -172,33 +190,36 @@ macro_rules! fixed_cmp_int {
             }
         }
 
-        impl<Frac: $LeEqU> PartialOrd<$Fix<Frac>> for $Int {
+        impl<const FRAC: u32> PartialOrd<$Fix<FRAC>> for $Int
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
-            fn partial_cmp(&self, rhs: &$Fix<Frac>) -> Option<Ordering> {
+            fn partial_cmp(&self, rhs: &$Fix<FRAC>) -> Option<Ordering> {
                 let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
                 slf.partial_cmp(rhs)
             }
 
             #[inline]
-            fn lt(&self, rhs: &$Fix<Frac>) -> bool {
+            fn lt(&self, rhs: &$Fix<FRAC>) -> bool {
                 let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
                 slf.lt(rhs)
             }
 
             #[inline]
-            fn le(&self, rhs: &$Fix<Frac>) -> bool {
+            fn le(&self, rhs: &$Fix<FRAC>) -> bool {
                 let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
                 slf.le(rhs)
             }
 
             #[inline]
-            fn gt(&self, rhs: &$Fix<Frac>) -> bool {
+            fn gt(&self, rhs: &$Fix<FRAC>) -> bool {
                 let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
                 slf.gt(rhs)
             }
 
             #[inline]
-            fn ge(&self, rhs: &$Fix<Frac>) -> bool {
+            fn ge(&self, rhs: &$Fix<FRAC>) -> bool {
                 let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
                 slf.ge(rhs)
             }
@@ -207,8 +228,11 @@ macro_rules! fixed_cmp_int {
 }
 
 macro_rules! fixed_cmp_float {
-    ($Fix:ident($LeEqU:ident, $Inner:ident), $Float:ident) => {
-        impl<Frac: $LeEqU> PartialEq<$Float> for $Fix<Frac> {
+    ($Fix:ident($nbits:expr, $Inner:ident), $Float:ident) => {
+        impl<const FRAC: u32> PartialEq<$Float> for $Fix<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             fn eq(&self, rhs: &$Float) -> bool {
                 let kind =
@@ -228,14 +252,20 @@ macro_rules! fixed_cmp_float {
             }
         }
 
-        impl<Frac: $LeEqU> PartialEq<$Fix<Frac>> for $Float {
+        impl<const FRAC: u32> PartialEq<$Fix<FRAC>> for $Float
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
-            fn eq(&self, rhs: &$Fix<Frac>) -> bool {
+            fn eq(&self, rhs: &$Fix<FRAC>) -> bool {
                 rhs.eq(self)
             }
         }
 
-        impl<Frac: $LeEqU> PartialOrd<$Float> for $Fix<Frac> {
+        impl<const FRAC: u32> PartialOrd<$Float> for $Fix<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             fn partial_cmp(&self, rhs: &$Float) -> Option<Ordering> {
                 let lhs_is_neg = int_helper::$Inner::is_negative(self.to_bits());
@@ -314,18 +344,21 @@ macro_rules! fixed_cmp_float {
             }
         }
 
-        impl<Frac: $LeEqU> PartialOrd<$Fix<Frac>> for $Float {
+        impl<const FRAC: u32> PartialOrd<$Fix<FRAC>> for $Float
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
-            fn partial_cmp(&self, rhs: &$Fix<Frac>) -> Option<Ordering> {
+            fn partial_cmp(&self, rhs: &$Fix<FRAC>) -> Option<Ordering> {
                 rhs.partial_cmp(self).map(Ordering::reverse)
             }
 
             #[inline]
-            fn lt(&self, rhs: &$Fix<Frac>) -> bool {
+            fn lt(&self, rhs: &$Fix<FRAC>) -> bool {
                 let kind = float_helper::$Float::to_float_kind(
                     *self,
-                    <$Fix<Frac>>::FRAC_NBITS,
-                    <$Fix<Frac>>::INT_NBITS,
+                    <$Fix<FRAC>>::FRAC_NBITS,
+                    <$Fix<FRAC>>::INT_NBITS,
                 );
                 let (lhs_is_neg, conv) = match kind {
                     FloatKind::NaN => return false,
@@ -350,17 +383,17 @@ macro_rules! fixed_cmp_float {
             }
 
             #[inline]
-            fn le(&self, rhs: &$Fix<Frac>) -> bool {
+            fn le(&self, rhs: &$Fix<FRAC>) -> bool {
                 !self.is_nan() && !rhs.lt(self)
             }
 
             #[inline]
-            fn gt(&self, rhs: &$Fix<Frac>) -> bool {
+            fn gt(&self, rhs: &$Fix<FRAC>) -> bool {
                 rhs.lt(self)
             }
 
             #[inline]
-            fn ge(&self, rhs: &$Fix<Frac>) -> bool {
+            fn ge(&self, rhs: &$Fix<FRAC>) -> bool {
                 !self.is_nan() && !self.lt(rhs)
             }
         }
@@ -368,81 +401,69 @@ macro_rules! fixed_cmp_float {
 }
 
 macro_rules! fixed_cmp_all {
-    ($Fix:ident($LeEqU:ident, $Inner:ident)) => {
-        impl<Frac: $LeEqU> Eq for $Fix<Frac> {}
+    ($Fix:ident($nbits:expr, $Inner:ident)) => {
+        impl<const FRAC: u32> Eq for $Fix<FRAC> where If<{ FRAC <= $nbits }>: True {}
 
-        impl<Frac: $LeEqU> Ord for $Fix<Frac> {
+        impl<const FRAC: u32> Ord for $Fix<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
-            fn cmp(&self, rhs: &$Fix<Frac>) -> Ordering {
+            fn cmp(&self, rhs: &$Fix<FRAC>) -> Ordering {
                 self.to_bits().cmp(&rhs.to_bits())
             }
         }
 
-        fixed_cmp_fixed! { $Fix($LeEqU, $Inner), FixedI8(LeEqU8, i8) }
-        fixed_cmp_fixed! { $Fix($LeEqU, $Inner), FixedI16(LeEqU16, i16) }
-        fixed_cmp_fixed! { $Fix($LeEqU, $Inner), FixedI32(LeEqU32, i32) }
-        fixed_cmp_fixed! { $Fix($LeEqU, $Inner), FixedI64(LeEqU64, i64) }
-        fixed_cmp_fixed! { $Fix($LeEqU, $Inner), FixedI128(LeEqU128, i128) }
-        fixed_cmp_fixed! { $Fix($LeEqU, $Inner), FixedU8(LeEqU8, u8) }
-        fixed_cmp_fixed! { $Fix($LeEqU, $Inner), FixedU16(LeEqU16, u16) }
-        fixed_cmp_fixed! { $Fix($LeEqU, $Inner), FixedU32(LeEqU32, u32) }
-        fixed_cmp_fixed! { $Fix($LeEqU, $Inner), FixedU64(LeEqU64, u64) }
-        fixed_cmp_fixed! { $Fix($LeEqU, $Inner), FixedU128(LeEqU128, u128) }
-        fixed_cmp_int! { $Fix($LeEqU), i8, i8, FixedI8 }
-        fixed_cmp_int! { $Fix($LeEqU), i16, i16, FixedI16 }
-        fixed_cmp_int! { $Fix($LeEqU), i32, i32, FixedI32 }
-        fixed_cmp_int! { $Fix($LeEqU), i64, i64, FixedI64 }
-        fixed_cmp_int! { $Fix($LeEqU), i128, i128, FixedI128 }
+        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedI8(8, i8) }
+        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedI16(16, i16) }
+        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedI32(32, i32) }
+        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedI64(64, i64) }
+        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedI128(128, i128) }
+        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedU8(8, u8) }
+        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedU16(16, u16) }
+        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedU32(32, u32) }
+        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedU64(64, u64) }
+        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedU128(128, u128) }
+        fixed_cmp_int! { $Fix($nbits), i8, i8, FixedI8 }
+        fixed_cmp_int! { $Fix($nbits), i16, i16, FixedI16 }
+        fixed_cmp_int! { $Fix($nbits), i32, i32, FixedI32 }
+        fixed_cmp_int! { $Fix($nbits), i64, i64, FixedI64 }
+        fixed_cmp_int! { $Fix($nbits), i128, i128, FixedI128 }
         #[cfg(target_pointer_width = "16")]
-        fixed_cmp_int! { $Fix($LeEqU), isize, i16, FixedI16 }
+        fixed_cmp_int! { $Fix($nbits), isize, i16, FixedI16 }
         #[cfg(target_pointer_width = "32")]
-        fixed_cmp_int! { $Fix($LeEqU), isize, i32, FixedI32 }
+        fixed_cmp_int! { $Fix($nbits), isize, i32, FixedI32 }
         #[cfg(target_pointer_width = "64")]
-        fixed_cmp_int! { $Fix($LeEqU), isize, i64, FixedI64 }
-        fixed_cmp_int! { $Fix($LeEqU), u8, u8, FixedU8 }
-        fixed_cmp_int! { $Fix($LeEqU), u16, u16, FixedU16 }
-        fixed_cmp_int! { $Fix($LeEqU), u32, u32, FixedU32 }
-        fixed_cmp_int! { $Fix($LeEqU), u64, u64, FixedU64 }
-        fixed_cmp_int! { $Fix($LeEqU), u128, u128, FixedU128 }
+        fixed_cmp_int! { $Fix($nbits), isize, i64, FixedI64 }
+        fixed_cmp_int! { $Fix($nbits), u8, u8, FixedU8 }
+        fixed_cmp_int! { $Fix($nbits), u16, u16, FixedU16 }
+        fixed_cmp_int! { $Fix($nbits), u32, u32, FixedU32 }
+        fixed_cmp_int! { $Fix($nbits), u64, u64, FixedU64 }
+        fixed_cmp_int! { $Fix($nbits), u128, u128, FixedU128 }
         #[cfg(target_pointer_width = "16")]
-        fixed_cmp_int! { $Fix($LeEqU), usize, u16, FixedU16 }
+        fixed_cmp_int! { $Fix($nbits), usize, u16, FixedU16 }
         #[cfg(target_pointer_width = "32")]
-        fixed_cmp_int! { $Fix($LeEqU), usize, u32, FixedU32 }
+        fixed_cmp_int! { $Fix($nbits), usize, u32, FixedU32 }
         #[cfg(target_pointer_width = "64")]
-        fixed_cmp_int! { $Fix($LeEqU), usize, u64, FixedU64 }
-        fixed_cmp_float! { $Fix($LeEqU, $Inner), f16 }
-        fixed_cmp_float! { $Fix($LeEqU, $Inner), bf16 }
-        fixed_cmp_float! { $Fix($LeEqU, $Inner), f32 }
-        fixed_cmp_float! { $Fix($LeEqU, $Inner), f64 }
-        fixed_cmp_float! { $Fix($LeEqU, $Inner), F128Bits }
+        fixed_cmp_int! { $Fix($nbits), usize, u64, FixedU64 }
+        fixed_cmp_float! { $Fix($nbits, $Inner), f16 }
+        fixed_cmp_float! { $Fix($nbits, $Inner), bf16 }
+        fixed_cmp_float! { $Fix($nbits, $Inner), f32 }
+        fixed_cmp_float! { $Fix($nbits, $Inner), f64 }
+        fixed_cmp_float! { $Fix($nbits, $Inner), F128Bits }
     };
 }
 
-fixed_cmp_all! { FixedI8(LeEqU8, i8) }
-fixed_cmp_all! { FixedI16(LeEqU16, i16) }
-fixed_cmp_all! { FixedI32(LeEqU32, i32) }
-fixed_cmp_all! { FixedI64(LeEqU64, i64) }
-fixed_cmp_all! { FixedI128(LeEqU128, i128) }
-fixed_cmp_all! { FixedU8(LeEqU8, u8) }
-fixed_cmp_all! { FixedU16(LeEqU16, u16) }
-fixed_cmp_all! { FixedU32(LeEqU32, u32) }
-fixed_cmp_all! { FixedU64(LeEqU64, u64) }
-fixed_cmp_all! { FixedU128(LeEqU128, u128) }
-
-macro_rules! fixed_cmp {
-    ($Fixed:ident($Inner:ty, $Len:ty, $bits_count:expr)) => {};
-}
-
-fixed_cmp! { FixedU8(u8, LeEqU8, 8) }
-fixed_cmp! { FixedU16(u16, LeEqU16, 16) }
-fixed_cmp! { FixedU32(u32, LeEqU32, 32) }
-fixed_cmp! { FixedU64(u64, LeEqU64, 64) }
-fixed_cmp! { FixedU128(u128, LeEqU128, 128) }
-fixed_cmp! { FixedI8(i8, LeEqU8, 8) }
-fixed_cmp! { FixedI16(i16, LeEqU16, 16) }
-fixed_cmp! { FixedI32(i32, LeEqU32, 32) }
-fixed_cmp! { FixedI64(i64, LeEqU64, 64) }
-fixed_cmp! { FixedI128(i128, LeEqU128, 128) }
+fixed_cmp_all! { FixedI8(8, i8) }
+fixed_cmp_all! { FixedI16(16, i16) }
+fixed_cmp_all! { FixedI32(32, i32) }
+fixed_cmp_all! { FixedI64(64, i64) }
+fixed_cmp_all! { FixedI128(128, i128) }
+fixed_cmp_all! { FixedU8(8, u8) }
+fixed_cmp_all! { FixedU16(16, u16) }
+fixed_cmp_all! { FixedU32(32, u32) }
+fixed_cmp_all! { FixedU64(64, u64) }
+fixed_cmp_all! { FixedU128(128, u128) }
 
 #[cfg(test)]
 mod tests {
