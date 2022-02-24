@@ -16,6 +16,7 @@
 use crate::{
     from_str::ParseFixedError,
     traits::{Fixed, FixedSigned, FixedUnsigned, FromFixed, ToFixed},
+    types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
 };
@@ -1991,50 +1992,62 @@ impl<'a, F: 'a + Fixed> Product<&'a Unwrapped<F>> for Unwrapped<F> {
 
 macro_rules! op_bits {
     (
-        $Fixed:ident($Bits:ident $(, $LeEqU:ident)*)::$unwrapped:ident,
+        $Fixed:ident($Bits:ident $(, $nbits:expr)?)::$unwrapped:ident,
         $Op:ident $op:ident,
         $OpAssign:ident $op_assign:ident
     ) => {
-        impl<Frac $(: $LeEqU)*> $Op<$Bits> for Unwrapped<$Fixed<Frac>> {
-            type Output = Unwrapped<$Fixed<Frac>>;
+        impl<const FRAC: u32> $Op<$Bits> for Unwrapped<$Fixed<FRAC>>
+            $(where If<{ FRAC <= $nbits }>: True)?
+        {
+            type Output = Unwrapped<$Fixed<FRAC>>;
             #[inline]
             #[track_caller]
-            fn $op(self, other: $Bits) -> Unwrapped<$Fixed<Frac>> {
+            fn $op(self, other: $Bits) -> Unwrapped<$Fixed<FRAC>> {
                 Unwrapped((self.0).$unwrapped(other))
             }
         }
-        impl<Frac $(: $LeEqU)*> $Op<$Bits> for &Unwrapped<$Fixed<Frac>> {
-            type Output = Unwrapped<$Fixed<Frac>>;
+        impl<const FRAC: u32> $Op<$Bits> for &Unwrapped<$Fixed<FRAC>>
+            $(where If<{ FRAC <= $nbits }>: True)?
+        {
+            type Output = Unwrapped<$Fixed<FRAC>>;
             #[inline]
             #[track_caller]
-            fn $op(self, other: $Bits) -> Unwrapped<$Fixed<Frac>> {
+            fn $op(self, other: $Bits) -> Unwrapped<$Fixed<FRAC>> {
                 Unwrapped((self.0).$unwrapped(other))
             }
         }
-        impl<Frac $(: $LeEqU)*> $Op<&$Bits> for Unwrapped<$Fixed<Frac>> {
-            type Output = Unwrapped<$Fixed<Frac>>;
+        impl<const FRAC: u32> $Op<&$Bits> for Unwrapped<$Fixed<FRAC>>
+            $(where If<{ FRAC <= $nbits }>: True)?
+        {
+            type Output = Unwrapped<$Fixed<FRAC>>;
             #[inline]
             #[track_caller]
-            fn $op(self, other: &$Bits) -> Unwrapped<$Fixed<Frac>> {
+            fn $op(self, other: &$Bits) -> Unwrapped<$Fixed<FRAC>> {
                 Unwrapped((self.0).$unwrapped(*other))
             }
         }
-        impl<Frac $(: $LeEqU)*> $Op<&$Bits> for &Unwrapped<$Fixed<Frac>> {
-            type Output = Unwrapped<$Fixed<Frac>>;
+        impl<const FRAC: u32> $Op<&$Bits> for &Unwrapped<$Fixed<FRAC>>
+            $(where If<{ FRAC <= $nbits }>: True)?
+        {
+            type Output = Unwrapped<$Fixed<FRAC>>;
             #[inline]
             #[track_caller]
-            fn $op(self, other: &$Bits) -> Unwrapped<$Fixed<Frac>> {
+            fn $op(self, other: &$Bits) -> Unwrapped<$Fixed<FRAC>> {
                 Unwrapped((self.0).$unwrapped(*other))
             }
         }
-        impl<Frac $(: $LeEqU)*> $OpAssign<$Bits> for Unwrapped<$Fixed<Frac>> {
+        impl<const FRAC: u32> $OpAssign<$Bits> for Unwrapped<$Fixed<FRAC>>
+            $(where If<{ FRAC <= $nbits }>: True)?
+        {
             #[inline]
             #[track_caller]
             fn $op_assign(&mut self, other: $Bits) {
                 self.0 = (self.0).$unwrapped(other);
             }
         }
-        impl<Frac $(: $LeEqU)*> $OpAssign<&$Bits> for Unwrapped<$Fixed<Frac>> {
+        impl<const FRAC: u32> $OpAssign<&$Bits> for Unwrapped<$Fixed<FRAC>>
+            $(where If<{ FRAC <= $nbits }>: True)?
+        {
             #[inline]
             #[track_caller]
             fn $op_assign(&mut self, other: &$Bits) {
@@ -2045,19 +2058,19 @@ macro_rules! op_bits {
 }
 
 macro_rules! ops {
-    ($Fixed:ident($Bits:ident, $LeEqU:ident)) => {
+    ($Fixed:ident($Bits:ident, $nbits:expr)) => {
         op_bits! { $Fixed($Bits)::unwrapped_mul_int, Mul mul, MulAssign mul_assign }
         op_bits! { $Fixed($Bits)::unwrapped_div_int, Div div, DivAssign div_assign }
-        op_bits! { $Fixed($Bits, $LeEqU)::unwrapped_rem_int, Rem rem, RemAssign rem_assign }
+        op_bits! { $Fixed($Bits, $nbits)::unwrapped_rem_int, Rem rem, RemAssign rem_assign }
     };
 }
-ops! { FixedI8(i8, LeEqU8) }
-ops! { FixedI16(i16, LeEqU16) }
-ops! { FixedI32(i32, LeEqU32) }
-ops! { FixedI64(i64, LeEqU64) }
-ops! { FixedI128(i128, LeEqU128) }
-ops! { FixedU8(u8, LeEqU8) }
-ops! { FixedU16(u16, LeEqU16) }
-ops! { FixedU32(u32, LeEqU32) }
-ops! { FixedU64(u64, LeEqU64) }
-ops! { FixedU128(u128, LeEqU128) }
+ops! { FixedI8(i8, 8) }
+ops! { FixedI16(i16, 16) }
+ops! { FixedI32(i32, 32) }
+ops! { FixedI64(i64, 64) }
+ops! { FixedI128(i128, 128) }
+ops! { FixedU8(u8, 8) }
+ops! { FixedU16(u16, 16) }
+ops! { FixedU32(u32, 32) }
+ops! { FixedU64(u64, 64) }
+ops! { FixedU128(u128, 128) }
