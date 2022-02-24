@@ -222,16 +222,6 @@ updated to an incompatible newer version.
     [*num-traits* crate]. (The plan is to promote this to an optional feature
     once the [*num-traits* crate] reaches version 1.0.0.)
 
-## Deprecated optional features
-
-The following optional features are deprecated and may be removed in the next
-major version of the crate.
-
- 1. `az`, has no effect. Previously required for the [`az`] cast traits. Now
-    these cast traits are always provided.
- 2. `f16`, has no effect. Previously required for conversion to/from [`f16`] and
-    [`bf16`]. Now these conversions are always provided.
-
 ## License
 
 This crate is free software: you can redistribute it and/or modify it under the
@@ -276,7 +266,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [`Octal`]: core::fmt::Octal
 [`U20F12`]: types::U20F12
 [`UpperHex`]: core::fmt::UpperHex
-[`az`]: az_crate
 [`bf16`]: half::bf16
 [`checked_from_num`]: FixedI32::checked_from_num
 [`f16`]: half::f16

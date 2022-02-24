@@ -14,7 +14,7 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::int256::{self, U256};
-use az_crate::{OverflowingAs, WrappingAs};
+use az::{OverflowingAs, WrappingAs};
 use core::cmp::Ordering;
 
 macro_rules! make_inv_lerp {

@@ -98,6 +98,8 @@ The conversions supported cover the following cases.
 
   * The crate now uses generic constant expressions to specify the number of
     fractional bits.
+  * The deprecated optional features `az` and `f16` were removed. These features
+    had no effect, as the functionality they enabled is now always enabled.
 
 ### Version 1.13.0 news (2022-02-22)
 
@@ -272,16 +274,6 @@ updated to an incompatible newer version.
  2. `num-traits`, disabled by default. This implements some traits from the
     [*num-traits* crate]. (The plan is to promote this to an optional feature
     once the [*num-traits* crate] reaches version 1.0.0.)
-
-## Deprecated optional features
-
-The following optional features are deprecated and may be removed in the next
-major version of the crate.
-
- 1. `az`, has no effect. Previously required for the [`az`] cast traits. Now
-    these cast traits are always provided.
- 2. `f16`, has no effect. Previously required for conversion to/from [`f16`] and
-    [`bf16`]. Now these conversions are always provided.
 
 ## License
 

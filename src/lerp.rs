@@ -14,7 +14,7 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::int256;
-use az_crate::{OverflowingAs, WrappingAs};
+use az::{OverflowingAs, WrappingAs};
 
 macro_rules! make_lerp {
     ($i:ident, $u:ident, $ii:ident, $uu:ident, $uu1:expr) => {

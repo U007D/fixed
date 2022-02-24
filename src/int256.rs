@@ -13,7 +13,7 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
-use az_crate::WrappingAs;
+use az::WrappingAs;
 
 #[derive(Clone, Copy, Debug)]
 pub struct U256 {

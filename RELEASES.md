@@ -10,6 +10,8 @@ Version 2.0.0 (unreleased)
 
   * The crate now uses generic constant expressions to specify the number of
     fractional bits.
+  * The deprecated optional features `az` and `f16` were removed. These features
+    had no effect, as the functionality they enabled is now always enabled.
 
 Version 1.13.0 (2022-02-22)
 ===========================
