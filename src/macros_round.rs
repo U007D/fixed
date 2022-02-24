@@ -60,7 +60,7 @@ assert_eq!((-two_and_quarter).int(), -three);
             };
             #[inline]
             #[must_use]
-            pub fn int(self) -> $Fixed<Frac> {
+            pub fn int(self) -> $Fixed<FRAC> {
                 Self::from_bits(self.to_bits() & Self::INT_MASK)
             }
         }
@@ -102,7 +102,7 @@ assert_eq!((-two_and_quarter).frac(), three_quarters);
 ";
             #[inline]
             #[must_use]
-            pub fn frac(self) -> $Fixed<Frac> {
+            pub fn frac(self) -> $Fixed<FRAC> {
                 Self::from_bits(self.to_bits() & Self::FRAC_MASK)
             }
         }
@@ -146,7 +146,7 @@ assert_eq!(Fix::from_num(-2.9).round_to_zero(), Fix::from_num(-2));
             };
             #[inline]
             #[must_use]
-            pub fn round_to_zero(self) -> $Fixed<Frac> {
+            pub fn round_to_zero(self) -> $Fixed<FRAC> {
                 if_signed! {
                     $Signedness;
                     if self.is_negative() && self.frac() != 0 {
@@ -191,7 +191,7 @@ assert_eq!(Fix::from_num(2.5).ceil(), Fix::from_num(3));
 ";
             #[inline]
             #[must_use]
-            pub fn ceil(self) -> $Fixed<Frac> {
+            pub fn ceil(self) -> $Fixed<FRAC> {
                 let (ceil, overflow) = self.overflowing_ceil();
                 debug_assert!(!overflow, "overflow");
                 let _ = overflow;
@@ -234,7 +234,7 @@ assert_eq!(Fix::from_num(2.5).floor(), Fix::from_num(2));
 ";
             #[inline]
             #[must_use]
-            pub fn floor(self) -> $Fixed<Frac> {
+            pub fn floor(self) -> $Fixed<FRAC> {
                 let (floor, overflow) = self.overflowing_floor();
                 debug_assert!(!overflow, "overflow");
                 let _ = overflow;
@@ -271,7 +271,7 @@ assert_eq!(Fix::from_num(2.5).round(), Fix::from_num(3));
 ";
             #[inline]
             #[must_use]
-            pub fn round(self) -> $Fixed<Frac> {
+            pub fn round(self) -> $Fixed<FRAC> {
                 let (round, overflow) = self.overflowing_round();
                 debug_assert!(!overflow, "overflow");
                 let _ = overflow;
@@ -303,7 +303,7 @@ assert_eq!(Fix::from_num(3.5).round_ties_to_even(), Fix::from_num(4));
 ";
             #[inline]
             #[must_use]
-            pub fn round_ties_to_even(self) -> $Fixed<Frac> {
+            pub fn round_ties_to_even(self) -> $Fixed<FRAC> {
                 let (round, overflow) = self.overflowing_round_ties_to_even();
                 debug_assert!(!overflow, "overflow");
                 let _ = overflow;
@@ -331,7 +331,7 @@ assert_eq!(Fix::from_num(2.5).checked_ceil(), Some(Fix::from_num(3)));
 ```
 ";
             #[inline]
-            pub fn checked_ceil(self) -> Option<$Fixed<Frac>> {
+            pub fn checked_ceil(self) -> Option<$Fixed<FRAC>> {
                 let (ceil, overflow) = self.overflowing_ceil();
                 if overflow { None } else { Some(ceil) }
             }
@@ -376,7 +376,7 @@ assert!(AllFrac::MIN.checked_floor().is_none());
             "```
 ";
             #[inline]
-            pub fn checked_floor(self) -> Option<$Fixed<Frac>> {
+            pub fn checked_floor(self) -> Option<$Fixed<FRAC>> {
                 let (floor, overflow) = self.overflowing_floor();
                 if overflow { None } else { Some(floor) }
             }
@@ -402,7 +402,7 @@ assert_eq!(Fix::from_num(2.5).checked_round(), Some(Fix::from_num(3)));
 ```
 ";
             #[inline]
-            pub fn checked_round(self) -> Option<$Fixed<Frac>> {
+            pub fn checked_round(self) -> Option<$Fixed<FRAC>> {
                 let (round, overflow) = self.overflowing_round();
                 if overflow { None } else { Some(round) }
             }
@@ -423,7 +423,7 @@ assert!(Fix::MAX.checked_round_ties_to_even().is_none());
 ```
 ";
             #[inline]
-            pub fn checked_round_ties_to_even(self) -> Option<$Fixed<Frac>> {
+            pub fn checked_round_ties_to_even(self) -> Option<$Fixed<FRAC>> {
                 let (round, overflow) = self.overflowing_round_ties_to_even();
                 if overflow { None } else { Some(round) }
             }
@@ -450,7 +450,7 @@ assert_eq!(Fix::from_num(2.5).saturating_ceil(), Fix::from_num(3));
 ";
             #[inline]
             #[must_use]
-            pub fn saturating_ceil(self) -> $Fixed<Frac> {
+            pub fn saturating_ceil(self) -> $Fixed<FRAC> {
                 let (ceil, overflow) = self.overflowing_ceil();
                 if overflow { Self::MAX } else { ceil }
             }
@@ -496,7 +496,7 @@ assert_eq!(AllFrac::MIN.saturating_floor(), AllFrac::MIN);
 ";
             #[inline]
             #[must_use]
-            pub fn saturating_floor(self) -> $Fixed<Frac> {
+            pub fn saturating_floor(self) -> $Fixed<FRAC> {
                 let (floor, overflow) = self.overflowing_floor();
                 if overflow { Self::MIN } else { floor }
             }
@@ -523,7 +523,7 @@ assert_eq!(Fix::from_num(2.5).saturating_round(), Fix::from_num(3));
 ";
             #[inline]
             #[must_use]
-            pub fn saturating_round(self) -> $Fixed<Frac> {
+            pub fn saturating_round(self) -> $Fixed<FRAC> {
                 let saturated = if self.to_bits() > 0 {
                     $Fixed::MAX
                 } else {
@@ -550,7 +550,7 @@ assert_eq!(Fix::MAX.saturating_round_ties_to_even(), Fix::MAX);
 ";
             #[inline]
             #[must_use]
-            pub fn saturating_round_ties_to_even(self) -> $Fixed<Frac> {
+            pub fn saturating_round_ties_to_even(self) -> $Fixed<FRAC> {
                 let saturated = if self.to_bits() > 0 {
                     $Fixed::MAX
                 } else {
@@ -582,7 +582,7 @@ assert_eq!(Fix::from_num(2.5).wrapping_ceil(), Fix::from_num(3));
 ";
             #[inline]
             #[must_use]
-            pub fn wrapping_ceil(self) -> $Fixed<Frac> {
+            pub fn wrapping_ceil(self) -> $Fixed<FRAC> {
                 self.overflowing_ceil().0
             }
         }
@@ -627,7 +627,7 @@ assert_eq!(AllFrac::MIN.wrapping_floor(), AllFrac::ZERO);
 ";
             #[inline]
             #[must_use]
-            pub fn wrapping_floor(self) -> $Fixed<Frac> {
+            pub fn wrapping_floor(self) -> $Fixed<FRAC> {
                 self.overflowing_floor().0
             }
         }
@@ -653,7 +653,7 @@ assert_eq!(Fix::from_num(2.5).wrapping_round(), Fix::from_num(3));
 ";
             #[inline]
             #[must_use]
-            pub fn wrapping_round(self) -> $Fixed<Frac> {
+            pub fn wrapping_round(self) -> $Fixed<FRAC> {
                 self.overflowing_round().0
             }
         }
@@ -674,7 +674,7 @@ assert_eq!(Fix::MAX.wrapping_round_ties_to_even(), Fix::MIN);
 ";
             #[inline]
             #[must_use]
-            pub fn wrapping_round_ties_to_even(self) -> $Fixed<Frac> {
+            pub fn wrapping_round_ties_to_even(self) -> $Fixed<FRAC> {
                 self.overflowing_round_ties_to_even().0
             }
         }
@@ -712,7 +712,7 @@ let _overflow = Fix::MAX.unwrapped_ceil();
             #[inline]
             #[track_caller]
             #[must_use]
-            pub fn unwrapped_ceil(self) -> $Fixed<Frac> {
+            pub fn unwrapped_ceil(self) -> $Fixed<FRAC> {
                 self.checked_ceil().expect("overflow")
             }
         }
@@ -757,7 +757,7 @@ let _overflow = AllFrac::MIN.unwrapped_floor();
             #[inline]
             #[track_caller]
             #[must_use]
-            pub fn unwrapped_floor(self) -> $Fixed<Frac> {
+            pub fn unwrapped_floor(self) -> $Fixed<FRAC> {
                 self.checked_floor().expect("overflow")
             }
         }
@@ -795,7 +795,7 @@ let _overflow = Fix::MAX.unwrapped_round();
             #[inline]
             #[track_caller]
             #[must_use]
-            pub fn unwrapped_round(self) -> $Fixed<Frac> {
+            pub fn unwrapped_round(self) -> $Fixed<FRAC> {
                 self.checked_round().expect("overflow")
             }
         }
@@ -828,7 +828,7 @@ let _overflow = Fix::MAX.unwrapped_round_ties_to_even();
             #[inline]
             #[track_caller]
             #[must_use]
-            pub fn unwrapped_round_ties_to_even(self) -> $Fixed<Frac> {
+            pub fn unwrapped_round_ties_to_even(self) -> $Fixed<FRAC> {
                 self.checked_round_ties_to_even().expect("overflow")
             }
         }
@@ -856,7 +856,7 @@ assert_eq!(Fix::from_num(2.5).overflowing_ceil(), (Fix::from_num(3), false));
 ```
 ";
             #[inline]
-            pub fn overflowing_ceil(self) -> ($Fixed<Frac>, bool) {
+            pub fn overflowing_ceil(self) -> ($Fixed<FRAC>, bool) {
                 let int = self.int();
                 if self.frac() == 0 {
                     return (int, false);
@@ -918,7 +918,7 @@ assert_eq!(AllFrac::MIN.overflowing_floor(), (AllFrac::ZERO, true));
             "```
 ";
             #[inline]
-            pub fn overflowing_floor(self) -> ($Fixed<Frac>, bool) {
+            pub fn overflowing_floor(self) -> ($Fixed<FRAC>, bool) {
                 let int = self.int();
                 if_signed! {
                     $Signedness;
@@ -954,7 +954,7 @@ assert_eq!(Fix::from_num(2.5).overflowing_round(), (Fix::from_num(3), false));
 ```
 ";
             #[inline]
-            pub fn overflowing_round(self) -> ($Fixed<Frac>, bool) {
+            pub fn overflowing_round(self) -> ($Fixed<FRAC>, bool) {
                 let int = self.int();
                 if (self.to_bits() & Self::FRAC_MSB) == 0 {
                     return (int, false);
@@ -1010,7 +1010,7 @@ assert_eq!(Fix::MAX.overflowing_round_ties_to_even(), (Fix::MIN, true));
 ```
 ";
             #[inline]
-            pub fn overflowing_round_ties_to_even(self) -> ($Fixed<Frac>, bool) {
+            pub fn overflowing_round_ties_to_even(self) -> ($Fixed<FRAC>, bool) {
                 let int = self.int();
                 if (self.to_bits() & Self::FRAC_MSB) == 0 {
                     return (int, false);

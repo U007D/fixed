@@ -76,7 +76,7 @@ assert_eq!(Fix::from_num(",
 [finite]: f64::is_finite
 ";
             #[inline]
-            pub fn from_num<Src: ToFixed>(src: Src) -> $Fixed<Frac> {
+            pub fn from_num<Src: ToFixed>(src: Src) -> $Fixed<FRAC> {
                 src.to_fixed()
             }
         }
@@ -215,7 +215,7 @@ assert!(Fix::checked_from_num(std::f64::NAN).is_none());
 [`f16`]: half::f16
 ";
             #[inline]
-            pub fn checked_from_num<Src: ToFixed>(src: Src) -> Option<$Fixed<Frac>> {
+            pub fn checked_from_num<Src: ToFixed>(src: Src) -> Option<$Fixed<FRAC>> {
                 src.checked_to_fixed()
             }
         }
@@ -356,7 +356,7 @@ assert_eq!(Fix::saturating_from_num(std::f64::NEG_INFINITY), Fix::MIN);
 [`f16`]: half::f16
 ";
             #[inline]
-            pub fn saturating_from_num<Src: ToFixed>(src: Src) -> $Fixed<Frac> {
+            pub fn saturating_from_num<Src: ToFixed>(src: Src) -> $Fixed<FRAC> {
                 src.saturating_to_fixed()
             }
         }
@@ -486,7 +486,7 @@ assert_eq!(Fix::wrapping_from_num(large), wrapped);
 [finite]: f64::is_finite
 ";
             #[inline]
-            pub fn wrapping_from_num<Src: ToFixed>(src: Src) -> $Fixed<Frac> {
+            pub fn wrapping_from_num<Src: ToFixed>(src: Src) -> $Fixed<FRAC> {
                 src.wrapping_to_fixed()
             }
         }
@@ -613,7 +613,7 @@ let _overflow = Fix::unwrapped_from_num(too_large);
 ";
             #[inline]
             #[track_caller]
-            pub fn unwrapped_from_num<Src: ToFixed>(src: Src) -> $Fixed<Frac> {
+            pub fn unwrapped_from_num<Src: ToFixed>(src: Src) -> $Fixed<FRAC> {
                 match src.overflowing_to_fixed() {
                     (_, true) => panic!("overflow"),
                     (ans, false) => ans,
@@ -748,7 +748,7 @@ assert_eq!(Fix::overflowing_from_num(large), (wrapped, true));
 [finite]: f64::is_finite
 ";
             #[inline]
-            pub fn overflowing_from_num<Src: ToFixed>(src: Src) -> ($Fixed<Frac>, bool) {
+            pub fn overflowing_from_num<Src: ToFixed>(src: Src) -> ($Fixed<FRAC>, bool) {
                 src.overflowing_to_fixed()
             }
         }
@@ -847,7 +847,7 @@ assert_eq!(neg, Ok(-check));
             "```
 ";
             #[inline]
-            pub fn from_str_binary(src: &str) -> Result<$Fixed<Frac>, ParseFixedError> {
+            pub fn from_str_binary(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                 FromStrRadix::from_str_radix(src, 2)
             }
         }
@@ -876,7 +876,7 @@ assert_eq!(neg, Ok(-check));
             "```
 ";
             #[inline]
-            pub fn from_str_octal(src: &str) -> Result<$Fixed<Frac>, ParseFixedError> {
+            pub fn from_str_octal(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                 FromStrRadix::from_str_radix(src, 8)
             }
         }
@@ -905,7 +905,7 @@ assert_eq!(neg, Ok(-check));
             "```
 ";
             #[inline]
-            pub fn from_str_hex(src: &str) -> Result<$Fixed<Frac>, ParseFixedError> {
+            pub fn from_str_hex(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                 FromStrRadix::from_str_radix(src, 16)
             }
         }
@@ -934,7 +934,7 @@ assert_eq!(U8F8::saturating_from_str("-1"), Ok(U8F8::ZERO));
             "```
 ";
             #[inline]
-            pub fn saturating_from_str(src: &str) -> Result<$Fixed<Frac>, ParseFixedError> {
+            pub fn saturating_from_str(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                 FromStrRadix::saturating_from_str_radix(src, 10)
             }
         }
@@ -963,7 +963,7 @@ assert_eq!(U8F8::saturating_from_str_binary("-1"), Ok(U8F8::ZERO));
             "```
 ";
             #[inline]
-            pub fn saturating_from_str_binary(src: &str) -> Result<$Fixed<Frac>, ParseFixedError> {
+            pub fn saturating_from_str_binary(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                 FromStrRadix::saturating_from_str_radix(src, 2)
             }
         }
@@ -992,7 +992,7 @@ assert_eq!(U8F8::saturating_from_str_octal("-1"), Ok(U8F8::ZERO));
             "```
 ";
             #[inline]
-            pub fn saturating_from_str_octal(src: &str) -> Result<$Fixed<Frac>, ParseFixedError> {
+            pub fn saturating_from_str_octal(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                 FromStrRadix::saturating_from_str_radix(src, 8)
             }
         }
@@ -1021,7 +1021,7 @@ assert_eq!(U8F8::saturating_from_str_hex("-1"), Ok(U8F8::ZERO));
             "```
 ";
             #[inline]
-            pub fn saturating_from_str_hex(src: &str) -> Result<$Fixed<Frac>, ParseFixedError> {
+            pub fn saturating_from_str_hex(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                 FromStrRadix::saturating_from_str_radix(src, 16)
             }
         }
@@ -1052,7 +1052,7 @@ assert_eq!(U8F8::wrapping_from_str("-9999.5"), Ok(U8F8::from_num(240.5)));
             "```
 ";
             #[inline]
-            pub fn wrapping_from_str(src: &str) -> Result<$Fixed<Frac>, ParseFixedError> {
+            pub fn wrapping_from_str(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                 FromStrRadix::wrapping_from_str_radix(src, 10)
             }
         }
@@ -1083,7 +1083,7 @@ assert_eq!(U8F8::wrapping_from_str_binary("-101100111000.1"), Ok(check.wrapping_
             "```
 ";
             #[inline]
-            pub fn wrapping_from_str_binary(src: &str) -> Result<$Fixed<Frac>, ParseFixedError> {
+            pub fn wrapping_from_str_binary(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                 FromStrRadix::wrapping_from_str_radix(src, 2)
             }
         }
@@ -1114,7 +1114,7 @@ assert_eq!(U8F8::wrapping_from_str_octal("-7165.4"), Ok(check.wrapping_neg()));
             "```
 ";
             #[inline]
-            pub fn wrapping_from_str_octal(src: &str) -> Result<$Fixed<Frac>, ParseFixedError> {
+            pub fn wrapping_from_str_octal(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                 FromStrRadix::wrapping_from_str_radix(src, 8)
             }
         }
@@ -1145,7 +1145,7 @@ assert_eq!(U8F8::wrapping_from_str_hex("-C0F.FE"), Ok(check.wrapping_neg()));
             "```
 ";
             #[inline]
-            pub fn wrapping_from_str_hex(src: &str) -> Result<$Fixed<Frac>, ParseFixedError> {
+            pub fn wrapping_from_str_hex(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                 FromStrRadix::wrapping_from_str_radix(src, 16)
             }
         }
@@ -1181,7 +1181,7 @@ assert_eq!(U8F8::overflowing_from_str("9999.5"), Ok((U8F8::from_num(15.5), true)
             #[inline]
             pub fn overflowing_from_str(
                 src: &str,
-            ) -> Result<($Fixed<Frac>, bool), ParseFixedError> {
+            ) -> Result<($Fixed<FRAC>, bool), ParseFixedError> {
                 FromStrRadix::overflowing_from_str_radix(src, 10)
             }
         }
@@ -1217,7 +1217,7 @@ assert_eq!(U8F8::overflowing_from_str_binary("101100111000.1"), Ok((check, true)
             #[inline]
             pub fn overflowing_from_str_binary(
                 src: &str,
-            ) -> Result<($Fixed<Frac>, bool), ParseFixedError> {
+            ) -> Result<($Fixed<FRAC>, bool), ParseFixedError> {
                 FromStrRadix::overflowing_from_str_radix(src, 2)
             }
         }
@@ -1253,7 +1253,7 @@ assert_eq!(U8F8::overflowing_from_str_octal("7165.4"), Ok((check, true)));
             #[inline]
             pub fn overflowing_from_str_octal(
                 src: &str,
-            ) -> Result<($Fixed<Frac>, bool), ParseFixedError> {
+            ) -> Result<($Fixed<FRAC>, bool), ParseFixedError> {
                 FromStrRadix::overflowing_from_str_radix(src, 8)
             }
         }
@@ -1289,7 +1289,7 @@ assert_eq!(U8F8::overflowing_from_str_hex("C0F.FE"), Ok((check, true)));
             #[inline]
             pub fn overflowing_from_str_hex(
                 src: &str,
-            ) -> Result<($Fixed<Frac>, bool), ParseFixedError> {
+            ) -> Result<($Fixed<FRAC>, bool), ParseFixedError> {
                 FromStrRadix::overflowing_from_str_radix(src, 16)
             }
         }
