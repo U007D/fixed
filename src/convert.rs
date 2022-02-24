@@ -14,7 +14,6 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
-    int_helper::IntFixed,
     traits::{FromFixed, LosslessTryFrom, LossyFrom, ToFixed},
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8,
@@ -780,7 +779,7 @@ fixed_to_float_lossy! { FixedU64(LeEqU64) }
 fixed_to_float_lossy! { FixedU128(LeEqU128) }
 
 macro_rules! int_to_float_lossy_lossless {
-    ($Int:ident -> $($Lossy:ident)*; $($Lossless:ident)*) => {
+    ($Int:ident as $IntAs:ident, $IntFixed:ident -> $($Lossy:ident)*; $($Lossless:ident)*) => {
         $(
             impl LossyFrom<$Int> for $Lossy {
                 /// Converts an integer to a floating-point number.
@@ -790,7 +789,7 @@ macro_rules! int_to_float_lossy_lossless {
                 /// nearest, with ties rounded to even.
                 #[inline]
                 fn lossy_from(src: $Int) -> $Lossy {
-                    Self::from_fixed(IntFixed(src).fixed())
+                    Self::from_fixed($IntFixed::<0>::from_bits(src as $IntAs))
                 }
             }
         )*
@@ -802,7 +801,7 @@ macro_rules! int_to_float_lossy_lossless {
                 /// and does not lose precision (lossless).
                 #[inline]
                 fn lossless_try_from(src: $Int) -> Option<$Lossless> {
-                    Some(Self::from_fixed(IntFixed(src).fixed()))
+                    Some(Self::from_fixed($IntFixed::<0>::from_bits(src as $IntAs)))
                 }
             }
 
@@ -813,26 +812,36 @@ macro_rules! int_to_float_lossy_lossless {
                 /// actually does not lose precision (lossless).
                 #[inline]
                 fn lossy_from(src: $Int) -> $Lossless {
-                    Self::from_fixed(IntFixed(src).fixed())
+                    Self::from_fixed($IntFixed::<0>::from_bits(src as $IntAs))
                 }
             }
         )*
     };
 }
 
-int_to_float_lossy_lossless! { i8 -> bf16; f16 f32 f64 F128Bits }
-int_to_float_lossy_lossless! { i16 -> bf16 f16; f32 f64 F128Bits }
-int_to_float_lossy_lossless! { i32 -> bf16 f16 f32; f64 F128Bits }
-int_to_float_lossy_lossless! { i64 -> bf16 f16 f32 f64; F128Bits }
-int_to_float_lossy_lossless! { i128 -> bf16 f16 f32 f64 F128Bits; }
-int_to_float_lossy_lossless! { isize -> bf16 f16 f32 f64 F128Bits; }
+int_to_float_lossy_lossless! { i8 as i8, FixedI8 -> bf16; f16 f32 f64 F128Bits }
+int_to_float_lossy_lossless! { i16 as i16, FixedI16 -> bf16 f16; f32 f64 F128Bits }
+int_to_float_lossy_lossless! { i32 as i32, FixedI32 -> bf16 f16 f32; f64 F128Bits }
+int_to_float_lossy_lossless! { i64 as i64, FixedI64 -> bf16 f16 f32 f64; F128Bits }
+int_to_float_lossy_lossless! { i128 as i128, FixedI128 -> bf16 f16 f32 f64 F128Bits; }
+#[cfg(target_pointer_width = "16")]
+int_to_float_lossy_lossless! { isize as i16, FixedI16 -> bf16 f16 f32 f64 F128Bits; }
+#[cfg(target_pointer_width = "32")]
+int_to_float_lossy_lossless! { isize as i32, FixedI32 -> bf16 f16 f32 f64 F128Bits; }
+#[cfg(target_pointer_width = "64")]
+int_to_float_lossy_lossless! { isize as i64, FixedI64 -> bf16 f16 f32 f64 F128Bits; }
 
-int_to_float_lossy_lossless! { u8 -> bf16; f16 f32 f64 F128Bits }
-int_to_float_lossy_lossless! { u16 -> bf16 f16; f32 f64 F128Bits }
-int_to_float_lossy_lossless! { u32 -> bf16 f16 f32; f64 F128Bits }
-int_to_float_lossy_lossless! { u64 -> bf16 f16 f32 f64; F128Bits }
-int_to_float_lossy_lossless! { u128 -> bf16 f16 f32 f64 F128Bits; }
-int_to_float_lossy_lossless! { usize -> bf16 f16 f32 f64 F128Bits; }
+int_to_float_lossy_lossless! { u8 as u8, FixedU8 -> bf16; f16 f32 f64 F128Bits }
+int_to_float_lossy_lossless! { u16 as u16, FixedU16 -> bf16 f16; f32 f64 F128Bits }
+int_to_float_lossy_lossless! { u32 as u32, FixedU32 -> bf16 f16 f32; f64 F128Bits }
+int_to_float_lossy_lossless! { u64 as u64, FixedU64 -> bf16 f16 f32 f64; F128Bits }
+int_to_float_lossy_lossless! { u128 as u128, FixedU128 -> bf16 f16 f32 f64 F128Bits; }
+#[cfg(target_pointer_width = "16")]
+int_to_float_lossy_lossless! { usize as u16, FixedU16 -> bf16 f16 f32 f64 F128Bits; }
+#[cfg(target_pointer_width = "32")]
+int_to_float_lossy_lossless! { usize as u32, FixedU32 -> bf16 f16 f32 f64 F128Bits; }
+#[cfg(target_pointer_width = "64")]
+int_to_float_lossy_lossless! { usize as u64, FixedU64 -> bf16 f16 f32 f64 F128Bits; }
 
 macro_rules! into {
     ($Src:ty: $($Dst:ty),*) => { $(

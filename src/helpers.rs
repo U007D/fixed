@@ -15,6 +15,7 @@
 
 use crate::{
     int_helper,
+    types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
 };
@@ -54,8 +55,11 @@ pub trait Sealed: Copy {
     fn private_overflowing_from_float_helper(src: FromFloatHelper) -> (Self, bool);
 }
 macro_rules! impl_sealed {
-    ($Fixed:ident($LeEqU:ident, $Signedness:tt, $Inner:ident)) => {
-        impl<Frac: $LeEqU> Sealed for $Fixed<Frac> {
+    ($Fixed:ident($nbits:expr, $Signedness:tt, $Inner:ident)) => {
+        impl<const FRAC: u32> Sealed for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             fn private_to_fixed_helper(
                 self,
@@ -64,7 +68,7 @@ macro_rules! impl_sealed {
             ) -> ToFixedHelper {
                 int_helper::$Inner::to_fixed_helper(
                     self.to_bits(),
-                    Self::FRAC_NBITS as i32,
+                    FRAC as i32,
                     dst_frac_nbits,
                     dst_int_nbits,
                 )
@@ -144,13 +148,13 @@ macro_rules! impl_sealed {
     };
 }
 
-impl_sealed! { FixedI8(LeEqU8, Signed, i8) }
-impl_sealed! { FixedI16(LeEqU16, Signed, i16) }
-impl_sealed! { FixedI32(LeEqU32, Signed, i32) }
-impl_sealed! { FixedI64(LeEqU64, Signed, i64) }
-impl_sealed! { FixedI128(LeEqU128, Signed, i128) }
-impl_sealed! { FixedU8(LeEqU8, Unsigned, u8) }
-impl_sealed! { FixedU16(LeEqU16, Unsigned, u16) }
-impl_sealed! { FixedU32(LeEqU32, Unsigned, u32) }
-impl_sealed! { FixedU64(LeEqU64, Unsigned, u64) }
-impl_sealed! { FixedU128(LeEqU128, Unsigned, u128) }
+impl_sealed! { FixedI8(8, Signed, i8) }
+impl_sealed! { FixedI16(16, Signed, i16) }
+impl_sealed! { FixedI32(32, Signed, i32) }
+impl_sealed! { FixedI64(64, Signed, i64) }
+impl_sealed! { FixedI128(128, Signed, i128) }
+impl_sealed! { FixedU8(8, Unsigned, u8) }
+impl_sealed! { FixedU16(16, Unsigned, u16) }
+impl_sealed! { FixedU32(32, Unsigned, u32) }
+impl_sealed! { FixedU64(64, Unsigned, u64) }
+impl_sealed! { FixedU128(128, Unsigned, u128) }

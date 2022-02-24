@@ -16,7 +16,6 @@
 use crate::{
     float_helper,
     helpers::{FloatKind, FromFloatHelper},
-    int_helper::IntFixed,
     traits::{Fixed, FixedEquiv, FromFixed, ToFixed},
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8,
@@ -84,7 +83,7 @@ impl ToFixed for bool {
 }
 
 macro_rules! impl_int {
-    ($Int:ident $(, $Equiv:ident)?) => {
+    ($Int:ident as $IntAs:ident, $AsEquiv:ident) => {
         impl FromFixed for $Int {
             /// Converts a fixed-point number to an integer.
             ///
@@ -102,7 +101,7 @@ macro_rules! impl_int {
             /// [`wrapping_from_fixed`]: FromFixed::wrapping_from_fixed
             #[inline]
             fn from_fixed<F: Fixed>(src: F) -> Self {
-                IntFixed::<$Int>::int(FromFixed::from_fixed(src))
+                $AsEquiv::<0>::from_fixed(src).to_bits() as $Int
             }
 
             /// Converts a fixed-point number to an integer if it fits, otherwise returns [`None`].
@@ -110,7 +109,7 @@ macro_rules! impl_int {
             /// Any fractional bits are discarded, which rounds towards &minus;∞.
             #[inline]
             fn checked_from_fixed<F: Fixed>(src: F) -> Option<Self> {
-                FromFixed::checked_from_fixed(src).map(IntFixed::<$Int>::int)
+                $AsEquiv::<0>::checked_from_fixed(src).map(|x| x.to_bits() as $Int)
             }
 
             /// Converts a fixed-point number to an integer, saturating if it does not fit.
@@ -118,7 +117,7 @@ macro_rules! impl_int {
             /// Any fractional bits are discarded, which rounds towards &minus;∞.
             #[inline]
             fn saturating_from_fixed<F: Fixed>(src: F) -> Self {
-                IntFixed::<$Int>::int(FromFixed::saturating_from_fixed(src))
+                $AsEquiv::<0>::saturating_from_fixed(src).to_bits() as $Int
             }
 
             /// Converts a fixed-point number to an integer, wrapping if it does not fit.
@@ -126,7 +125,7 @@ macro_rules! impl_int {
             /// Any fractional bits are discarded, which rounds towards &minus;∞.
             #[inline]
             fn wrapping_from_fixed<F: Fixed>(src: F) -> Self {
-                IntFixed::<$Int>::int(FromFixed::wrapping_from_fixed(src))
+                $AsEquiv::<0>::wrapping_from_fixed(src).to_bits() as $Int
             }
 
             /// Converts a fixed-point number to an integer.
@@ -138,8 +137,8 @@ macro_rules! impl_int {
             /// Any fractional bits are discarded, which rounds towards &minus;∞.
             #[inline]
             fn overflowing_from_fixed<F: Fixed>(src: F) -> (Self, bool) {
-                let (fixed, overflow) = FromFixed::overflowing_from_fixed(src);
-                (IntFixed::<$Int>::int(fixed), overflow)
+                let (fixed, overflow) = $AsEquiv::<0>::overflowing_from_fixed(src);
+                (fixed.to_bits() as $Int, overflow)
             }
 
             /// Converts a fixed-point number to an integer, panicking if it does not fit.
@@ -152,7 +151,7 @@ macro_rules! impl_int {
             /// does not fit, even when debug assertions are not enabled.
             #[inline]
             fn unwrapped_from_fixed<F: Fixed>(src: F) -> Self {
-                IntFixed::<$Int>::int(FromFixed::unwrapped_from_fixed(src))
+                $AsEquiv::<0>::unwrapped_from_fixed(src).to_bits() as $Int
             }
         }
 
@@ -171,25 +170,25 @@ macro_rules! impl_int {
             /// [`wrapping_to_fixed`]: ToFixed::wrapping_to_fixed
             #[inline]
             fn to_fixed<F: Fixed>(self) -> F {
-                ToFixed::to_fixed(IntFixed(self).fixed())
+                $AsEquiv::<0>::from_bits(self as $IntAs).to_fixed()
             }
 
             /// Converts an integer to a fixed-point number if it fits, otherwise returns [`None`].
             #[inline]
             fn checked_to_fixed<F: Fixed>(self) -> Option<F> {
-                ToFixed::checked_to_fixed(IntFixed(self).fixed())
+                $AsEquiv::<0>::from_bits(self as $IntAs).checked_to_fixed()
             }
 
             /// Converts an integer to a fixed-point number, saturating if it does not fit.
             #[inline]
             fn saturating_to_fixed<F: Fixed>(self) -> F {
-                ToFixed::saturating_to_fixed(IntFixed(self).fixed())
+                $AsEquiv::<0>::from_bits(self as $IntAs).saturating_to_fixed()
             }
 
             /// Converts an integer to a fixed-point number, wrapping if it does not fit.
             #[inline]
             fn wrapping_to_fixed<F: Fixed>(self) -> F {
-                ToFixed::wrapping_to_fixed(IntFixed(self).fixed())
+                $AsEquiv::<0>::from_bits(self as $IntAs).wrapping_to_fixed()
             }
 
             /// Converts an integer to a fixed-point number.
@@ -199,7 +198,7 @@ macro_rules! impl_int {
             /// wrapped value is returned.
             #[inline]
             fn overflowing_to_fixed<F: Fixed>(self) -> (F, bool) {
-                ToFixed::overflowing_to_fixed(IntFixed(self).fixed())
+                $AsEquiv::<0>::from_bits(self as $IntAs).overflowing_to_fixed()
             }
 
             /// Converts an integer to a fixed-point number, panicking if it does not fit.
@@ -210,60 +209,83 @@ macro_rules! impl_int {
             /// assertions are not enabled.
             #[inline]
             fn unwrapped_to_fixed<F: Fixed>(self) -> F {
-                ToFixed::unwrapped_to_fixed(IntFixed(self).fixed())
+                $AsEquiv::<0>::from_bits(self as $IntAs).unwrapped_to_fixed()
             }
         }
-
-        $(
-            impl FixedEquiv for $Int {
-                type Equiv = $Equiv<U0>;
-
-                #[inline]
-                fn to_fixed_equiv(self) -> $Equiv<U0> {
-                    $Equiv::from_bits(self)
-                }
-
-                #[inline]
-                fn as_fixed_equiv(&self) -> &$Equiv<U0> {
-                    $Equiv::wrap_ref(self)
-                }
-
-                #[inline]
-                fn as_fixed_equiv_mut(&mut self) -> &mut $Equiv<U0> {
-                    $Equiv::wrap_mut(self)
-                }
-
-                #[inline]
-                fn from_fixed_equiv(f: $Equiv<U0>) -> $Int {
-                    f.to_bits()
-                }
-
-                #[inline]
-                fn ref_from_fixed_equiv(f: &$Equiv<U0>) -> &$Int {
-                    &f.bits
-                }
-
-                #[inline]
-                fn mut_from_fixed_equiv(f: &mut $Equiv<U0>) -> &mut $Int {
-                    &mut f.bits
-                }
-            }
-        )*
     };
 }
 
-impl_int! { i8, FixedI8 }
-impl_int! { i16, FixedI16 }
-impl_int! { i32, FixedI32 }
-impl_int! { i64, FixedI64 }
-impl_int! { i128, FixedI128 }
-impl_int! { isize }
-impl_int! { u8, FixedU8 }
-impl_int! { u16, FixedU16 }
-impl_int! { u32, FixedU32 }
-impl_int! { u64, FixedU64 }
-impl_int! { u128, FixedU128 }
-impl_int! { usize }
+impl_int! { i8 as i8, FixedI8 }
+impl_int! { i16 as i16, FixedI16 }
+impl_int! { i32 as i32, FixedI32 }
+impl_int! { i64 as i64, FixedI64 }
+impl_int! { i128 as i128, FixedI128 }
+#[cfg(target_pointer_width = "16")]
+impl_int! { isize as i16, FixedI16 }
+#[cfg(target_pointer_width = "32")]
+impl_int! { isize as i32, FixedI32 }
+#[cfg(target_pointer_width = "64")]
+impl_int! { isize as i64, FixedI64 }
+impl_int! { u8 as u8, FixedU8 }
+impl_int! { u16 as u16, FixedU16 }
+impl_int! { u32 as u32, FixedU32 }
+impl_int! { u64 as u64, FixedU64 }
+impl_int! { u128 as u128, FixedU128 }
+#[cfg(target_pointer_width = "16")]
+impl_int! { usize as u16, FixedU16 }
+#[cfg(target_pointer_width = "32")]
+impl_int! { usize as u32, FixedU32 }
+#[cfg(target_pointer_width = "64")]
+impl_int! { usize as u64, FixedU64 }
+
+macro_rules! impl_int_equiv {
+    ($Int:ident, $Equiv:ident) => {
+        impl FixedEquiv for $Int {
+            type Equiv = $Equiv<0>;
+
+            #[inline]
+            fn to_fixed_equiv(self) -> $Equiv<0> {
+                $Equiv::from_bits(self)
+            }
+
+            #[inline]
+            fn as_fixed_equiv(&self) -> &$Equiv<0> {
+                $Equiv::wrap_ref(self)
+            }
+
+            #[inline]
+            fn as_fixed_equiv_mut(&mut self) -> &mut $Equiv<0> {
+                $Equiv::wrap_mut(self)
+            }
+
+            #[inline]
+            fn from_fixed_equiv(f: $Equiv<0>) -> $Int {
+                f.to_bits()
+            }
+
+            #[inline]
+            fn ref_from_fixed_equiv(f: &$Equiv<0>) -> &$Int {
+                &f.bits
+            }
+
+            #[inline]
+            fn mut_from_fixed_equiv(f: &mut $Equiv<0>) -> &mut $Int {
+                &mut f.bits
+            }
+        }
+    };
+}
+
+impl_int_equiv! { i8, FixedI8 }
+impl_int_equiv! { i16, FixedI16 }
+impl_int_equiv! { i32, FixedI32 }
+impl_int_equiv! { i64, FixedI64 }
+impl_int_equiv! { i128, FixedI128 }
+impl_int_equiv! { u8, FixedU8 }
+impl_int_equiv! { u16, FixedU16 }
+impl_int_equiv! { u32, FixedU32 }
+impl_int_equiv! { u64, FixedU64 }
+impl_int_equiv! { u128, FixedU128 }
 
 macro_rules! impl_float {
     ($Float:ident, $link:expr, $overflows_fmt:expr, $overflows_filt:expr) => {
