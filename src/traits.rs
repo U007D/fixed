@@ -19,6 +19,7 @@ Traits for conversions and for generic use of fixed-point numbers.
 
 use crate::{
     helpers::{Sealed, Widest},
+    types::extra::{If, True},
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8, ParseFixedError,
 };
@@ -609,31 +610,6 @@ where
     /// assert_eq!(DELTA_LE_BYTES, 1i32.to_le_bytes());
     /// ```
     type Bytes;
-
-    /// The number of fractional bits as a compile-time [`Unsigned`] as provided
-    /// by the [*typenum* crate].
-    ///
-    /// <code>\<F as [Fixed]>::Frac::[U32]</code> is equivalent to
-    /// <code>\<F as [Fixed]>::[FRAC\_NBITS]</code>.
-    ///
-    /// `Frac` can be used as the generic parameter of fixed-point number types.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use fixed::{traits::Fixed, types::extra::U16, FixedI32, FixedI64};
-    /// type Fix1 = FixedI32::<U16>;
-    /// assert_eq!(Fix1::FRAC_NBITS, 16);
-    /// assert_eq!(Fix1::INT_NBITS, 32 - 16);
-    /// type Fix2 = FixedI64::<<Fix1 as Fixed>::Frac>;
-    /// assert_eq!(Fix2::FRAC_NBITS, 16);
-    /// assert_eq!(Fix2::INT_NBITS, 64 - 16);
-    /// ```
-    ///
-    /// [*typenum* crate]: https://crates.io/crates/typenum
-    /// [U32]: crate::types::extra::Unsigned::U32
-    /// [FRAC\_NBITS]: Fixed::FRAC_NBITS
-    type Frac: Unsigned;
 
     /// An unsigned fixed-point number type with the same number of integer and
     /// fractional bits as `Self`.
@@ -3464,18 +3440,23 @@ macro_rules! trait_delegate {
 
 macro_rules! impl_fixed {
     (
-        $Fixed:ident, $IFixed:ident, $UFixed:ident, $LeEqU:ident, $Bits:ident, $NonZeroBits:ident,
+        $Fixed:ident, $IFixed:ident, $UFixed:ident, $nbits:expr, $Bits:ident, $NonZeroBits:ident,
         $Signedness:tt
     ) => {
-        impl<Frac: $LeEqU> FixedOptionalFeatures for $Fixed<Frac> {}
+        impl<const FRAC: u32> FixedOptionalFeatures for $Fixed<FRAC> where
+            If<{ FRAC <= $nbits }>: True
+        {
+        }
 
-        impl<Frac: $LeEqU> Fixed for $Fixed<Frac> {
+        impl<const FRAC: u32> Fixed for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             type Bits = $Bits;
             type NonZeroBits = $NonZeroBits;
             type Bytes = [u8; mem::size_of::<$Bits>()];
-            type Frac = Frac;
-            type Signed = $IFixed<Frac>;
-            type Unsigned = $UFixed<Frac>;
+            type Signed = $IFixed<FRAC>;
+            type Unsigned = $UFixed<FRAC>;
             const ZERO: Self = Self::ZERO;
             const DELTA: Self = Self::DELTA;
             const MIN: Self = Self::MIN;
@@ -3696,7 +3677,10 @@ macro_rules! impl_fixed {
             }
         }
 
-        impl<Frac: $LeEqU> FromFixed for $Fixed<Frac> {
+        impl<const FRAC: u32> FromFixed for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             /// Converts a fixed-point number.
             ///
             /// Any extra fractional bits are discarded, which rounds towards &minus;∞.
@@ -3819,7 +3803,10 @@ macro_rules! impl_fixed {
             }
         }
 
-        impl<Frac: $LeEqU> ToFixed for $Fixed<Frac> {
+        impl<const FRAC: u32> ToFixed for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             /// Converts a fixed-point number.
             ///
             /// Any extra fractional bits are discarded, which rounds towards &minus;∞.
@@ -3890,7 +3877,10 @@ macro_rules! impl_fixed {
 
         if_signed! {
             $Signedness;
-            impl<Frac: $LeEqU> FixedSigned for $Fixed<Frac> {
+            impl<const FRAC: u32> FixedSigned for $Fixed<FRAC>
+            where
+                If<{FRAC <= $nbits}>: True,
+            {
                 trait_delegate! { fn signed_bits(self) -> u32 }
                 trait_delegate! { fn abs(self) -> Self }
                 trait_delegate! { fn unsigned_abs(self) -> Self::Unsigned }
@@ -3913,7 +3903,10 @@ macro_rules! impl_fixed {
 
         if_unsigned! {
             $Signedness;
-            impl<Frac: $LeEqU> FixedUnsigned for $Fixed<Frac> {
+            impl<const FRAC: u32> FixedUnsigned for $Fixed<FRAC>
+            where
+                If<{FRAC <= $nbits}>: True,
+            {
                 trait_delegate! { fn significant_bits(self) -> u32 }
                 trait_delegate! { fn is_power_of_two(self) -> bool }
                 trait_delegate! { fn highest_one(self) -> Self }
@@ -3926,13 +3919,13 @@ macro_rules! impl_fixed {
     };
 }
 
-impl_fixed! { FixedI8, FixedI8, FixedU8, LeEqU8, i8, NonZeroI8, Signed }
-impl_fixed! { FixedI16, FixedI16, FixedU16, LeEqU16, i16, NonZeroI16, Signed }
-impl_fixed! { FixedI32, FixedI32, FixedU32, LeEqU32, i32, NonZeroI32, Signed }
-impl_fixed! { FixedI64, FixedI64, FixedU64, LeEqU64, i64, NonZeroI64, Signed }
-impl_fixed! { FixedI128, FixedI128, FixedU128, LeEqU128, i128, NonZeroI128, Signed }
-impl_fixed! { FixedU8, FixedI8, FixedU8, LeEqU8, u8, NonZeroU8, Unsigned }
-impl_fixed! { FixedU16, FixedI16, FixedU16, LeEqU16, u16, NonZeroU16, Unsigned }
-impl_fixed! { FixedU32, FixedI32, FixedU32, LeEqU32, u32, NonZeroU32, Unsigned }
-impl_fixed! { FixedU64, FixedI64, FixedU64, LeEqU64, u64, NonZeroU64, Unsigned }
-impl_fixed! { FixedU128, FixedI128, FixedU128, LeEqU128, u128, NonZeroU128, Unsigned }
+impl_fixed! { FixedI8, FixedI8, FixedU8, 8, i8, NonZeroI8, Signed }
+impl_fixed! { FixedI16, FixedI16, FixedU16, 16, i16, NonZeroI16, Signed }
+impl_fixed! { FixedI32, FixedI32, FixedU32, 32, i32, NonZeroI32, Signed }
+impl_fixed! { FixedI64, FixedI64, FixedU64, 64, i64, NonZeroI64, Signed }
+impl_fixed! { FixedI128, FixedI128, FixedU128, 128, i128, NonZeroI128, Signed }
+impl_fixed! { FixedU8, FixedI8, FixedU8, 8, u8, NonZeroU8, Unsigned }
+impl_fixed! { FixedU16, FixedI16, FixedU16, 16, u16, NonZeroU16, Unsigned }
+impl_fixed! { FixedU32, FixedI32, FixedU32, 32, u32, NonZeroU32, Unsigned }
+impl_fixed! { FixedU64, FixedI64, FixedU64, 64, u64, NonZeroU64, Unsigned }
+impl_fixed! { FixedU128, FixedI128, FixedU128, 128, u128, NonZeroU128, Unsigned }
