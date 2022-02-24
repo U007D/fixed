@@ -14,37 +14,56 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
+    types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8, Unwrapped, Wrapping,
 };
 use bytemuck::{Pod, TransparentWrapper, Zeroable};
 
 macro_rules! unsafe_impl_traits {
-    ($Fixed:ident, $LeEqU:ident, $Inner:ident) => {
-        unsafe impl<Frac> Zeroable for $Fixed<Frac> {}
-        unsafe impl<Frac: 'static> Pod for $Fixed<Frac> {}
-        unsafe impl<Frac> TransparentWrapper<$Inner> for $Fixed<Frac> {}
+    ($Fixed:ident, $nbits:expr, $Inner:ident) => {
+        unsafe impl<const FRAC: u32> Zeroable for $Fixed<FRAC> {}
+        unsafe impl<const FRAC: u32> Pod for $Fixed<FRAC> {}
+        unsafe impl<const FRAC: u32> TransparentWrapper<$Inner> for $Fixed<FRAC> {}
 
-        unsafe impl<Frac: $LeEqU> Zeroable for Wrapping<$Fixed<Frac>> {}
-        unsafe impl<Frac: $LeEqU> Pod for Wrapping<$Fixed<Frac>> {}
-        unsafe impl<Frac: $LeEqU> TransparentWrapper<$Fixed<Frac>> for Wrapping<$Fixed<Frac>> {}
+        unsafe impl<const FRAC: u32> Zeroable for Wrapping<$Fixed<FRAC>>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {}
+        unsafe impl<const FRAC: u32> Pod for Wrapping<$Fixed<FRAC>>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {}
+        unsafe impl<const FRAC: u32> TransparentWrapper<$Fixed<FRAC>> for Wrapping<$Fixed<FRAC>>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {}
 
-        unsafe impl<Frac: $LeEqU> Zeroable for Unwrapped<$Fixed<Frac>> {}
-        unsafe impl<Frac: $LeEqU> Pod for Unwrapped<$Fixed<Frac>> {}
-        unsafe impl<Frac: $LeEqU> TransparentWrapper<$Fixed<Frac>> for Unwrapped<$Fixed<Frac>> {}
+        unsafe impl<const FRAC: u32> Zeroable for Unwrapped<$Fixed<FRAC>>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {}
+        unsafe impl<const FRAC: u32> Pod for Unwrapped<$Fixed<FRAC>>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {}
+        unsafe impl<const FRAC: u32> TransparentWrapper<$Fixed<FRAC>> for Unwrapped<$Fixed<FRAC>>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {}
     };
 }
 
 // SAFETY: all fixed-point numbers are repr(transparent) over primitive integer
 // types which are both Pod and Zeroable, and Wrapping and Unwrapped are both
 // repr(transparent) over fixed-point numbers.
-unsafe_impl_traits! { FixedI8, LeEqU8, i8 }
-unsafe_impl_traits! { FixedI16, LeEqU16, i16 }
-unsafe_impl_traits! { FixedI32, LeEqU32, i32 }
-unsafe_impl_traits! { FixedI64, LeEqU64, i64 }
-unsafe_impl_traits! { FixedI128, LeEqU128, i128 }
-unsafe_impl_traits! { FixedU8, LeEqU8, u8 }
-unsafe_impl_traits! { FixedU16, LeEqU16, u16 }
-unsafe_impl_traits! { FixedU32, LeEqU32, u32 }
-unsafe_impl_traits! { FixedU64, LeEqU64, u64 }
-unsafe_impl_traits! { FixedU128, LeEqU128, u128 }
+unsafe_impl_traits! { FixedI8, 8, i8 }
+unsafe_impl_traits! { FixedI16, 16, i16 }
+unsafe_impl_traits! { FixedI32, 32, i32 }
+unsafe_impl_traits! { FixedI64, 64, i64 }
+unsafe_impl_traits! { FixedI128, 128, i128 }
+unsafe_impl_traits! { FixedU8, 8, u8 }
+unsafe_impl_traits! { FixedU16, 16, u16 }
+unsafe_impl_traits! { FixedU32, 32, u32 }
+unsafe_impl_traits! { FixedU64, 64, u64 }
+unsafe_impl_traits! { FixedU128, 128, u128 }

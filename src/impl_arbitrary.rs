@@ -14,14 +14,15 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
+    types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8, Unwrapped, Wrapping,
 };
 use arbitrary::{Arbitrary, Result as ArbitraryResult, Unstructured};
 
 macro_rules! impl_trait {
-    ($Fixed:ident, $LeEqU:ident, $Inner:ident) => {
-        impl<'a, Frac> Arbitrary<'a> for $Fixed<Frac> {
+    ($Fixed:ident, $nbits:expr, $Inner:ident) => {
+        impl<'a, const FRAC: u32> Arbitrary<'a> for $Fixed<FRAC> {
             #[inline]
             fn arbitrary(u: &mut Unstructured<'a>) -> ArbitraryResult<Self> {
                 Ok(Self::from_bits(<$Inner as Arbitrary<'a>>::arbitrary(u)?))
@@ -33,7 +34,10 @@ macro_rules! impl_trait {
             }
         }
 
-        impl<'a, Frac: $LeEqU> Arbitrary<'a> for Wrapping<$Fixed<Frac>> {
+        impl<'a, const FRAC: u32> Arbitrary<'a> for Wrapping<$Fixed<FRAC>>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             fn arbitrary(u: &mut Unstructured<'a>) -> ArbitraryResult<Self> {
                 Ok(Self::from_bits(<$Inner as Arbitrary<'a>>::arbitrary(u)?))
@@ -45,7 +49,10 @@ macro_rules! impl_trait {
             }
         }
 
-        impl<'a, Frac: $LeEqU> Arbitrary<'a> for Unwrapped<$Fixed<Frac>> {
+        impl<'a, const FRAC: u32> Arbitrary<'a> for Unwrapped<$Fixed<FRAC>>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             fn arbitrary(u: &mut Unstructured<'a>) -> ArbitraryResult<Self> {
                 Ok(Self::from_bits(<$Inner as Arbitrary<'a>>::arbitrary(u)?))
@@ -59,13 +66,13 @@ macro_rules! impl_trait {
     };
 }
 
-impl_trait! { FixedI8, LeEqU8, i8 }
-impl_trait! { FixedI16, LeEqU16, i16 }
-impl_trait! { FixedI32, LeEqU32, i32 }
-impl_trait! { FixedI64, LeEqU64, i64 }
-impl_trait! { FixedI128, LeEqU128, i128 }
-impl_trait! { FixedU8, LeEqU8, u8 }
-impl_trait! { FixedU16, LeEqU16, u16 }
-impl_trait! { FixedU32, LeEqU32, u32 }
-impl_trait! { FixedU64, LeEqU64, u64 }
-impl_trait! { FixedU128, LeEqU128, u128 }
+impl_trait! { FixedI8, 8, i8 }
+impl_trait! { FixedI16, 16, i16 }
+impl_trait! { FixedI32, 32, i32 }
+impl_trait! { FixedI64, 64, i64 }
+impl_trait! { FixedI128, 128, i128 }
+impl_trait! { FixedU8, 8, u8 }
+impl_trait! { FixedU16, 16, u16 }
+impl_trait! { FixedU32, 32, u32 }
+impl_trait! { FixedU64, 64, u64 }
+impl_trait! { FixedU128, 128, u128 }

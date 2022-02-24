@@ -14,6 +14,7 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
+    types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8, Unwrapped, Wrapping,
 };
@@ -31,8 +32,11 @@ use {
 };
 
 macro_rules! serde_fixed {
-    ($Fixed:ident($LeEqU:ident) is $TBits:ident name $Name:expr) => {
-        impl<Frac: $LeEqU> Serialize for $Fixed<Frac> {
+    ($Fixed:ident($nbits:expr) is $TBits:ident name $Name:expr) => {
+        impl<const FRAC: u32> Serialize for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[cfg(not(feature = "serde-str"))]
             fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
                 let bits = self.to_bits();
@@ -51,19 +55,28 @@ macro_rules! serde_fixed {
             }
         }
 
-        impl<Frac: $LeEqU> Serialize for Wrapping<$Fixed<Frac>> {
+        impl<const FRAC: u32> Serialize for Wrapping<$Fixed<FRAC>>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
                 self.0.serialize(serializer)
             }
         }
 
-        impl<Frac: $LeEqU> Serialize for Unwrapped<$Fixed<Frac>> {
+        impl<const FRAC: u32> Serialize for Unwrapped<$Fixed<FRAC>>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
                 self.0.serialize(serializer)
             }
         }
 
-        impl<'de, Frac: $LeEqU> Deserialize<'de> for $Fixed<Frac> {
+        impl<'de, const FRAC: u32> Deserialize<'de> for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[cfg(not(feature = "serde-str"))]
             fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
                 struct FixedVisitor;
@@ -116,13 +129,19 @@ macro_rules! serde_fixed {
             }
         }
 
-        impl<'de, Frac: $LeEqU> Deserialize<'de> for Wrapping<$Fixed<Frac>> {
+        impl<'de, const FRAC: u32> Deserialize<'de> for Wrapping<$Fixed<FRAC>>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
                 $Fixed::deserialize(deserializer).map(Wrapping)
             }
         }
 
-        impl<'de, Frac: $LeEqU> Deserialize<'de> for Unwrapped<$Fixed<Frac>> {
+        impl<'de, const FRAC: u32> Deserialize<'de> for Unwrapped<$Fixed<FRAC>>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
                 $Fixed::deserialize(deserializer).map(Unwrapped)
             }
@@ -130,16 +149,16 @@ macro_rules! serde_fixed {
     };
 }
 
-serde_fixed! { FixedI8(LeEqU8) is i8 name "FixedI8" }
-serde_fixed! { FixedI16(LeEqU16) is i16 name "FixedI16" }
-serde_fixed! { FixedI32(LeEqU32) is i32 name "FixedI32" }
-serde_fixed! { FixedI64(LeEqU64) is i64 name "FixedI64" }
-serde_fixed! { FixedI128(LeEqU128) is i128 name "FixedI128" }
-serde_fixed! { FixedU8(LeEqU8) is u8 name "FixedU8" }
-serde_fixed! { FixedU16(LeEqU16) is u16 name "FixedU16" }
-serde_fixed! { FixedU32(LeEqU32) is u32 name "FixedU32" }
-serde_fixed! { FixedU64(LeEqU64) is u64 name "FixedU64" }
-serde_fixed! { FixedU128(LeEqU128) is u128 name "FixedU128" }
+serde_fixed! { FixedI8(8) is i8 name "FixedI8" }
+serde_fixed! { FixedI16(16) is i16 name "FixedI16" }
+serde_fixed! { FixedI32(32) is i32 name "FixedI32" }
+serde_fixed! { FixedI64(64) is i64 name "FixedI64" }
+serde_fixed! { FixedI128(128) is i128 name "FixedI128" }
+serde_fixed! { FixedU8(8) is u8 name "FixedU8" }
+serde_fixed! { FixedU16(16) is u16 name "FixedU16" }
+serde_fixed! { FixedU32(32) is u32 name "FixedU32" }
+serde_fixed! { FixedU64(64) is u64 name "FixedU64" }
+serde_fixed! { FixedU128(128) is u128 name "FixedU128" }
 
 #[cfg(not(feature = "serde-str"))]
 const FIELDS: &[&str] = &["bits"];
