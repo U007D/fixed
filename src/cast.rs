@@ -14,6 +14,7 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
+    types::extra::{If, True},
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8,
 };
@@ -21,94 +22,135 @@ use az_crate::{Cast, CheckedCast, OverflowingCast, SaturatingCast, UnwrappedCast
 use half::{bf16, f16};
 
 macro_rules! cast {
-    ($Src:ident($LeEqUSrc:ident); $Dst:ident($LeEqUDst:ident)) => {
-        impl<FracSrc: $LeEqUSrc, FracDst: $LeEqUDst> Cast<$Dst<FracDst>> for $Src<FracSrc> {
+    ($Src:ident($nbits_src:expr); $Dst:ident($nbits_dst:expr)) => {
+        impl<const FRAC_SRC: u32, const FRAC_DST: u32> Cast<$Dst<FRAC_DST>> for $Src<FRAC_SRC>
+        where
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+        {
             #[inline]
-            fn cast(self) -> $Dst<FracDst> {
+            fn cast(self) -> $Dst<FRAC_DST> {
                 self.to_num()
             }
         }
 
-        impl<FracSrc: $LeEqUSrc, FracDst: $LeEqUDst> CheckedCast<$Dst<FracDst>> for $Src<FracSrc> {
+        impl<const FRAC_SRC: u32, const FRAC_DST: u32> CheckedCast<$Dst<FRAC_DST>>
+            for $Src<FRAC_SRC>
+        where
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+        {
             #[inline]
-            fn checked_cast(self) -> Option<$Dst<FracDst>> {
+            fn checked_cast(self) -> Option<$Dst<FRAC_DST>> {
                 self.checked_to_num()
             }
         }
 
-        impl<FracSrc: $LeEqUSrc, FracDst: $LeEqUDst> SaturatingCast<$Dst<FracDst>>
-            for $Src<FracSrc>
+        impl<const FRAC_SRC: u32, const FRAC_DST: u32> SaturatingCast<$Dst<FRAC_DST>>
+            for $Src<FRAC_SRC>
+        where
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
         {
             #[inline]
-            fn saturating_cast(self) -> $Dst<FracDst> {
+            fn saturating_cast(self) -> $Dst<FRAC_DST> {
                 self.saturating_to_num()
             }
         }
 
-        impl<FracSrc: $LeEqUSrc, FracDst: $LeEqUDst> WrappingCast<$Dst<FracDst>> for $Src<FracSrc> {
+        impl<const FRAC_SRC: u32, const FRAC_DST: u32> WrappingCast<$Dst<FRAC_DST>>
+            for $Src<FRAC_SRC>
+        where
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
+        {
             #[inline]
-            fn wrapping_cast(self) -> $Dst<FracDst> {
+            fn wrapping_cast(self) -> $Dst<FRAC_DST> {
                 self.wrapping_to_num()
             }
         }
 
-        impl<FracSrc: $LeEqUSrc, FracDst: $LeEqUDst> OverflowingCast<$Dst<FracDst>>
-            for $Src<FracSrc>
+        impl<const FRAC_SRC: u32, const FRAC_DST: u32> OverflowingCast<$Dst<FRAC_DST>>
+            for $Src<FRAC_SRC>
+        where
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
         {
             #[inline]
-            fn overflowing_cast(self) -> ($Dst<FracDst>, bool) {
+            fn overflowing_cast(self) -> ($Dst<FRAC_DST>, bool) {
                 self.overflowing_to_num()
             }
         }
 
-        impl<FracSrc: $LeEqUSrc, FracDst: $LeEqUDst> UnwrappedCast<$Dst<FracDst>>
-            for $Src<FracSrc>
+        impl<const FRAC_SRC: u32, const FRAC_DST: u32> UnwrappedCast<$Dst<FRAC_DST>>
+            for $Src<FRAC_SRC>
+        where
+            If<{ FRAC_SRC <= $nbits_src }>: True,
+            If<{ FRAC_DST <= $nbits_dst }>: True,
         {
             #[inline]
             #[track_caller]
-            fn unwrapped_cast(self) -> $Dst<FracDst> {
+            fn unwrapped_cast(self) -> $Dst<FRAC_DST> {
                 self.unwrapped_to_num()
             }
         }
     };
 
-    ($Fixed:ident($LeEqU:ident); $Dst:ident) => {
-        impl<Frac: $LeEqU> Cast<$Dst> for $Fixed<Frac> {
+    ($Fixed:ident($nbits:expr); $Dst:ident) => {
+        impl<const FRAC: u32> Cast<$Dst> for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             fn cast(self) -> $Dst {
                 self.to_num()
             }
         }
 
-        impl<Frac: $LeEqU> CheckedCast<$Dst> for $Fixed<Frac> {
+        impl<const FRAC: u32> CheckedCast<$Dst> for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             fn checked_cast(self) -> Option<$Dst> {
                 self.checked_to_num()
             }
         }
 
-        impl<Frac: $LeEqU> SaturatingCast<$Dst> for $Fixed<Frac> {
+        impl<const FRAC: u32> SaturatingCast<$Dst> for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             fn saturating_cast(self) -> $Dst {
                 self.saturating_to_num()
             }
         }
 
-        impl<Frac: $LeEqU> WrappingCast<$Dst> for $Fixed<Frac> {
+        impl<const FRAC: u32> WrappingCast<$Dst> for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             fn wrapping_cast(self) -> $Dst {
                 self.wrapping_to_num()
             }
         }
 
-        impl<Frac: $LeEqU> OverflowingCast<$Dst> for $Fixed<Frac> {
+        impl<const FRAC: u32> OverflowingCast<$Dst> for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             fn overflowing_cast(self) -> ($Dst, bool) {
                 self.overflowing_to_num()
             }
         }
 
-        impl<Frac: $LeEqU> UnwrappedCast<$Dst> for $Fixed<Frac> {
+        impl<const FRAC: u32> UnwrappedCast<$Dst> for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             #[track_caller]
             fn unwrapped_cast(self) -> $Dst {
@@ -117,71 +159,87 @@ macro_rules! cast {
         }
     };
 
-    ($Src:ident; $Fixed:ident($LeEqU:ident)) => {
-        impl<Frac: $LeEqU> Cast<$Fixed<Frac>> for $Src {
+    ($Src:ident; $Fixed:ident($nbits:expr)) => {
+        impl<const FRAC: u32> Cast<$Fixed<FRAC>> for $Src
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
-            fn cast(self) -> $Fixed<Frac> {
-                <$Fixed<Frac>>::from_num(self)
+            fn cast(self) -> $Fixed<FRAC> {
+                <$Fixed<FRAC>>::from_num(self)
             }
         }
 
-        impl<Frac: $LeEqU> CheckedCast<$Fixed<Frac>> for $Src {
+        impl<const FRAC: u32> CheckedCast<$Fixed<FRAC>> for $Src
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
-            fn checked_cast(self) -> Option<$Fixed<Frac>> {
-                <$Fixed<Frac>>::checked_from_num(self)
+            fn checked_cast(self) -> Option<$Fixed<FRAC>> {
+                <$Fixed<FRAC>>::checked_from_num(self)
             }
         }
 
-        impl<Frac: $LeEqU> SaturatingCast<$Fixed<Frac>> for $Src {
+        impl<const FRAC: u32> SaturatingCast<$Fixed<FRAC>> for $Src
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
-            fn saturating_cast(self) -> $Fixed<Frac> {
-                <$Fixed<Frac>>::saturating_from_num(self)
+            fn saturating_cast(self) -> $Fixed<FRAC> {
+                <$Fixed<FRAC>>::saturating_from_num(self)
             }
         }
 
-        impl<Frac: $LeEqU> WrappingCast<$Fixed<Frac>> for $Src {
+        impl<const FRAC: u32> WrappingCast<$Fixed<FRAC>> for $Src
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
-            fn wrapping_cast(self) -> $Fixed<Frac> {
-                <$Fixed<Frac>>::wrapping_from_num(self)
+            fn wrapping_cast(self) -> $Fixed<FRAC> {
+                <$Fixed<FRAC>>::wrapping_from_num(self)
             }
         }
 
-        impl<Frac: $LeEqU> OverflowingCast<$Fixed<Frac>> for $Src {
+        impl<const FRAC: u32> OverflowingCast<$Fixed<FRAC>> for $Src
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
-            fn overflowing_cast(self) -> ($Fixed<Frac>, bool) {
-                <$Fixed<Frac>>::overflowing_from_num(self)
+            fn overflowing_cast(self) -> ($Fixed<FRAC>, bool) {
+                <$Fixed<FRAC>>::overflowing_from_num(self)
             }
         }
 
-        impl<Frac: $LeEqU> UnwrappedCast<$Fixed<Frac>> for $Src {
+        impl<const FRAC: u32> UnwrappedCast<$Fixed<FRAC>> for $Src
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             #[inline]
             #[track_caller]
-            fn unwrapped_cast(self) -> $Fixed<Frac> {
-                <$Fixed<Frac>>::unwrapped_from_num(self)
+            fn unwrapped_cast(self) -> $Fixed<FRAC> {
+                <$Fixed<FRAC>>::unwrapped_from_num(self)
             }
         }
     };
 }
 
 macro_rules! cast_num {
-    ($Src:ident($LeEqUSrc:ident); $($Dst:ident($LeEqUDst:ident),)*) => { $(
-        cast! { $Src($LeEqUSrc); $Dst($LeEqUDst) }
+    ($Src:ident($nbits_src:expr); $($Dst:ident($nbits_dst:expr),)*) => { $(
+        cast! { $Src($nbits_src); $Dst($nbits_dst) }
     )* };
-    ($Fixed:ident($LeEqU:ident); $($Num:ident,)*) => { $(
-        cast! { $Fixed($LeEqU); $Num }
-        cast! { $Num; $Fixed($LeEqU) }
+    ($Fixed:ident($nbits:expr); $($Num:ident,)*) => { $(
+        cast! { $Fixed($nbits); $Num }
+        cast! { $Num; $Fixed($nbits) }
     )* };
-    ($($Fixed:ident($LeEqU:ident),)*) => { $(
+    ($($Fixed:ident($nbits:expr),)*) => { $(
         cast_num! {
-            $Fixed($LeEqU);
-            FixedI8(LeEqU8), FixedI16(LeEqU16), FixedI32(LeEqU32), FixedI64(LeEqU64),
-            FixedI128(LeEqU128),
-            FixedU8(LeEqU8), FixedU16(LeEqU16), FixedU32(LeEqU32), FixedU64(LeEqU64),
-            FixedU128(LeEqU128),
+            $Fixed($nbits);
+            FixedI8(8), FixedI16(16), FixedI32(32), FixedI64(64), FixedI128(128),
+            FixedU8(8), FixedU16(16), FixedU32(32), FixedU64(64), FixedU128(128),
         }
-        cast! { bool; $Fixed($LeEqU) }
+        cast! { bool; $Fixed($nbits) }
         cast_num! {
-            $Fixed($LeEqU);
+            $Fixed($nbits);
             i8, i16, i32, i64, i128, isize,
             u8, u16, u32, u64, u128, usize,
             f16, bf16, f32, f64, F128Bits,
@@ -190,6 +248,6 @@ macro_rules! cast_num {
 }
 
 cast_num! {
-    FixedI8(LeEqU8), FixedI16(LeEqU16), FixedI32(LeEqU32), FixedI64(LeEqU64), FixedI128(LeEqU128),
-    FixedU8(LeEqU8), FixedU16(LeEqU16), FixedU32(LeEqU32), FixedU64(LeEqU64), FixedU128(LeEqU128),
+    FixedI8(8), FixedI16(16), FixedI32(32), FixedI64(64), FixedI128(128),
+    FixedU8(8), FixedU16(16), FixedU32(32), FixedU64(64), FixedU128(128),
 }
