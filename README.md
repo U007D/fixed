@@ -18,22 +18,22 @@ The [*fixed* crate] provides fixed-point numbers.
 An <i>n</i>-bit fixed-point number has <i>f</i>&nbsp;=&nbsp;`Frac` fractional
 bits where 0&nbsp;≤&nbsp;<i>f</i>&nbsp;≤&nbsp;<i>n</i>, and
 <i>n</i>&nbsp;&minus;&nbsp;<i>f</i> integer bits. For example,
-<code>[FixedI32]\<[U24]></code> is a 32-bit signed fixed-point number with
+<code>[FixedI32]\<24></code> is a 32-bit signed fixed-point number with
 <i>n</i>&nbsp;=&nbsp;32 total bits, <i>f</i>&nbsp;=&nbsp;24 fractional bits, and
 <i>n</i>&nbsp;&minus;&nbsp;<i>f</i>&nbsp;=&nbsp;8 integer bits.
-<code>[FixedI32]\<[U0]></code> behaves like [`i32`], and
-<code>[FixedU32]\<[U0]></code> behaves like [`u32`].
+<code>[FixedI32]\<0></code> behaves like [`i32`], and
+<code>[FixedU32]\<0></code> behaves like [`u32`].
 
 The difference between any two successive representable numbers is constant
 throughout the possible range for a fixed-point number:
 <i>Δ</i>&nbsp;=&nbsp;1/2<sup><i>f</i></sup>. When <i>f</i>&nbsp;=&nbsp;0, like
-in <code>[FixedI32]\<[U0]></code>, <i>Δ</i>&nbsp;=&nbsp;1 because representable
+in <code>[FixedI32]\<0></code>, <i>Δ</i>&nbsp;=&nbsp;1 because representable
 numbers are integers, and the difference between two successive integers is 1.
 When <i>f</i>&nbsp;=&nbsp;<i>n</i>, <i>Δ</i>&nbsp;=&nbsp;1/2<sup><i>n</i></sup>
 and the value lies in the range &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;0.5
-for signed numbers like <code>[FixedI32]\<[U32]></code>, and in the range
+for signed numbers like <code>[FixedI32]\<32></code>, and in the range
 0&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;1 for unsigned numbers like
-<code>[FixedU32]\<[U32]></code>.
+<code>[FixedU32]\<32></code>.
 
 In version 1 the [*typenum* crate] is used for the fractional bit count `Frac`;
 the plan is to to have a major version 2 with [const generics] instead when the
@@ -169,7 +169,7 @@ assert_eq!(six_and_third.ceil(), 7);
 ```
 
 The type [`I20F12`] is a 32-bit fixed-point signed number with 20 integer bits
-and 12 fractional bits. It is an alias to <code>[FixedI32]\<[U12]></code>. The
+and 12 fractional bits. It is an alias to <code>[FixedI32]\<12></code>. The
 unsigned counterpart would be [`U20F12`]. Aliases are provided for all
 combinations of integer and fractional bits adding up to a total of eight, 16,
 32, 64 or 128 bits.
@@ -314,10 +314,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [FixedU32]: https://docs.rs/fixed/~1.13/fixed/struct.FixedU32.html
 [LICENSE-APACHE]: https://www.apache.org/licenses/LICENSE-2.0
 [LICENSE-MIT]: https://opensource.org/licenses/MIT
-[U0]: https://docs.rs/fixed/~1.13/fixed/types/extra/type.U0.html
-[U12]: https://docs.rs/fixed/~1.13/fixed/types/extra/type.U12.html
-[U24]: https://docs.rs/fixed/~1.13/fixed/types/extra/type.U24.html
-[U32]: https://docs.rs/fixed/~1.13/fixed/types/extra/type.U32.html
 [`Binary`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Binary.html
 [`Display`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Display.html
 [`Error`]: https://doc.rust-lang.org/nightly/std/error/trait.Error.html

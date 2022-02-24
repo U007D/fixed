@@ -44,8 +44,8 @@ it panics; if wrapping is required use [`wrapping_from_num`] instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, types::I16F16, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::I16F16, "#, $s_fixed, "};
+type Fix = ", $s_fixed, "<4>;
 
 // 1.75 is 1.11 in binary
 let src = I16F16::from_bits(0b111 << (16 - 2));
@@ -109,8 +109,8 @@ it panics; if wrapping is required use [`wrapping_to_num`] instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, types::I30F2, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::I30F2, "#, $s_fixed, "};
+type Fix = ", $s_fixed, "<4>;
 
 // 1.75 is 1.11 in binary
 let src = Fix::from_bits(0b111 << (4 - 2));
@@ -172,17 +172,13 @@ The other number can be:
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U2, U4},
-    types::I16F16,
-    "#, $s_fixed, ",
-};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::I16F16, "#, $s_fixed, "};
+type Fix = ", $s_fixed, "<4>;
 
 // 1.75 is 1.11 in binary
 let src = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(Fix::checked_from_num(src), Some(Fix::from_bits(0b111 << (4 - 2))));
-let too_large = ", $s_fixed, "::<U2>::MAX;
+let too_large = ", $s_fixed, "::<2>::MAX;
 assert!(Fix::checked_from_num(too_large).is_none());
 
 assert_eq!(Fix::checked_from_num(3), Some(Fix::from_bits(3 << 4)));
@@ -242,18 +238,14 @@ The other number can be:
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U0, U4, U6},
-    types::I16F16,
-    "#, $s_fixed, ",
-};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::I16F16, "#, $s_fixed, "};
+type Fix = ", $s_fixed, "<4>;
 
 // 1.75 is 1.11 in binary
 let src = Fix::from_bits(0b111 << (4 - 2));
 let expected = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(src.checked_to_num::<I16F16>(), Some(expected));
-type TooFewIntBits = ", $s_fixed, "<U6>;
+type TooFewIntBits = ", $s_fixed, "<6>;
 assert!(Fix::MAX.checked_to_num::<TooFewIntBits>().is_none());
 
 // 2.5 is 10.1 in binary
@@ -266,7 +258,7 @@ assert_eq!(",
                 "two_point_5.checked_to_num::<i64>(), Some(2",
             ),
             "));
-type AllInt = ", $s_fixed, "<U0>;
+type AllInt = ", $s_fixed, "<0>;
 assert!(AllInt::",
             if_signed_unsigned!(
                 $Signedness,
@@ -314,17 +306,13 @@ This method panics if the value is a floating-point [NaN].
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U2, U4},
-    types::I16F16,
-    "#, $s_fixed, ",
-};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::I16F16, "#, $s_fixed, "};
+type Fix = ", $s_fixed, "<4>;
 
 // 1.75 is 1.11 in binary
 let src = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(Fix::saturating_from_num(src), Fix::from_bits(0b111 << (4 - 2)));
-let too_large = ", $s_fixed, "::<U2>::MAX;
+let too_large = ", $s_fixed, "::<2>::MAX;
 assert_eq!(Fix::saturating_from_num(too_large), Fix::MAX);
 
 assert_eq!(Fix::saturating_from_num(3), Fix::from_bits(3 << 4));
@@ -383,25 +371,21 @@ The other number can be:
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U0, U4, U6},
-    types::I16F16,
-    "#, $s_fixed, ",
-};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::I16F16, "#, $s_fixed, "};
+type Fix = ", $s_fixed, "<4>;
 
 // 1.75 is 1.11 in binary
 let src = Fix::from_bits(0b111 << (4 - 2));
 let expected = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(src.saturating_to_num::<I16F16>(), expected);
-type TooFewIntBits = ", $s_fixed, "<U6>;
+type TooFewIntBits = ", $s_fixed, "<6>;
 let saturated = Fix::MAX.saturating_to_num::<TooFewIntBits>();
 assert_eq!(saturated, TooFewIntBits::MAX);
 
 // 2.5 is 10.1 in binary
 let two_point_5 = Fix::from_bits(0b101 << (4 - 1));
 assert_eq!(two_point_5.saturating_to_num::<i32>(), 2);
-type AllInt = ", $s_fixed, "<U0>;
+type AllInt = ", $s_fixed, "<0>;
 assert_eq!(",
             if_signed_unsigned!(
                 $Signedness,
@@ -452,18 +436,14 @@ For floating-point numbers, panics if the value is not [finite].
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U0, U4},
-    types::I16F16,
-    "#, $s_fixed, ",
-};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::I16F16, "#, $s_fixed, "};
+type Fix = ", $s_fixed, "<4>;
 
 // 1.75 is 1.11 in binary
 let src = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(Fix::wrapping_from_num(src), Fix::from_bits(0b111 << (4 - 2)));
 // integer 0b1101 << (", $s_nbits, " - 7) will wrap to fixed-point 1010...
-let too_large = ", $s_fixed, "::<U0>::from_bits(0b1101 << (", $s_nbits, " - 7));
+let too_large = ", $s_fixed, "::<0>::from_bits(0b1101 << (", $s_nbits, " - 7));
 let wrapped = Fix::from_bits(0b1010 << (", $s_nbits, " - 4));
 assert_eq!(Fix::wrapping_from_num(too_large), wrapped);
 
@@ -513,25 +493,21 @@ The other number can be:
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U0, U4, U6},
-    types::I16F16,
-    "#, $s_fixed, ",
-};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::I16F16, "#, $s_fixed, "};
+type Fix = ", $s_fixed, "<4>;
 
 // 1.75 is 1.11 in binary
 let src = Fix::from_bits(0b111 << (4 - 2));
 let expected = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(src.wrapping_to_num::<I16F16>(), expected);
-type TooFewIntBits = ", $s_fixed, "<U6>;
+type TooFewIntBits = ", $s_fixed, "<6>;
 let wrapped = TooFewIntBits::from_bits(Fix::MAX.to_bits() << 2);
 assert_eq!(Fix::MAX.wrapping_to_num::<TooFewIntBits>(), wrapped);
 
 // 2.5 is 10.1 in binary
 let two_point_5 = Fix::from_bits(0b101 << (4 - 1));
 assert_eq!(two_point_5.wrapping_to_num::<i32>(), 2);
-type AllInt = ", $s_fixed, "<U0>;
+type AllInt = ", $s_fixed, "<0>;
 assert_eq!(",
             if_signed_unsigned!(
                 $Signedness,
@@ -584,11 +560,8 @@ For floating-point numbers, also panics if the value is not [finite].
 # Examples
 
 ```rust
-use fixed::{
-    types::{extra::U4, I16F16},
-    "#, $s_fixed, ",
-};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::I16F16, "#, $s_fixed, "};
+type Fix = ", $s_fixed, "<4>;
 
 // 1.75 is 1.11 in binary
 let src = I16F16::from_bits(0b111 << (16 - 2));
@@ -598,12 +571,9 @@ assert_eq!(Fix::unwrapped_from_num(src), Fix::from_bits(0b111 << (4 - 2)));
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{
-    types::extra::{U0, U4},
-    ", $s_fixed, ",
-};
-type Fix = ", $s_fixed, "<U4>;
-let too_large = ", $s_fixed, "::<U0>::from_bits(0b1101 << (", $s_nbits, " - 7));
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+let too_large = ", $s_fixed, "::<0>::from_bits(0b1101 << (", $s_nbits, " - 7));
 let _overflow = Fix::unwrapped_from_num(too_large);
 ```
 
@@ -647,11 +617,8 @@ Panics if the value does not fit.
 # Examples
 
 ```rust
-use fixed::{
-    types::{extra::U4, I16F16},
-    "#, $s_fixed, ",
-};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::I16F16, "#, $s_fixed, "};
+type Fix = ", $s_fixed, "<4>;
 
 // 1.75 is 1.11 in binary
 let src = Fix::from_bits(0b111 << (4 - 2));
@@ -662,12 +629,9 @@ assert_eq!(src.unwrapped_to_num::<I16F16>(), expected);
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{
-    types::extra::{U4, U6},
-    ", $s_fixed, ",
-};
-type Fix = ", $s_fixed, "<U4>;
-type TooFewIntBits = ", $s_fixed, "<U6>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+type TooFewIntBits = ", $s_fixed, "<6>;
 let _overflow = Fix::MAX.unwrapped_to_num::<TooFewIntBits>();
 ```
 
@@ -712,19 +676,15 @@ For floating-point numbers, panics if the value is not [finite].
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U0, U4},
-    types::I16F16,
-    "#, $s_fixed, ",
-};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::I16F16, "#, $s_fixed, "};
+type Fix = ", $s_fixed, "<4>;
 
 // 1.75 is 1.11 in binary
 let src = I16F16::from_bits(0b111 << (16 - 2));
 let expected = Fix::from_bits(0b111 << (4 - 2));
 assert_eq!(Fix::overflowing_from_num(src), (expected, false));
 // integer 0b1101 << (", $s_nbits, " - 7) will wrap to fixed-point 1010...
-let too_large = ", $s_fixed, "::<U0>::from_bits(0b1101 << (", $s_nbits, " - 7));
+let too_large = ", $s_fixed, "::<0>::from_bits(0b1101 << (", $s_nbits, " - 7));
 let wrapped = Fix::from_bits(0b1010 << (", $s_nbits, " - 4));
 assert_eq!(Fix::overflowing_from_num(too_large), (wrapped, true));
 
@@ -777,25 +737,21 @@ The other number can be:
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U0, U4, U6},
-    types::I16F16,
-    "#, $s_fixed, ",
-};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::I16F16, "#, $s_fixed, "};
+type Fix = ", $s_fixed, "<4>;
 
 // 1.75 is 1.11 in binary
 let src = Fix::from_bits(0b111 << (4 - 2));
 let expected = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(src.overflowing_to_num::<I16F16>(), (expected, false));
-type TooFewIntBits = ", $s_fixed, "<U6>;
+type TooFewIntBits = ", $s_fixed, "<6>;
 let wrapped = TooFewIntBits::from_bits(Fix::MAX.to_bits() << 2);
 assert_eq!(Fix::MAX.overflowing_to_num::<TooFewIntBits>(), (wrapped, true));
 
 // 2.5 is 10.1 in binary
 let two_point_5 = Fix::from_bits(0b101 << (4 - 1));
 assert_eq!(two_point_5.overflowing_to_num::<i32>(), (2, false));
-let does_not_fit = ", $s_fixed, "::<U0>::",
+let does_not_fit = ", $s_fixed, "::<0>::",
             if_signed_unsigned!($Signedness, "from_bits(-1)", "MAX"),
             ";
 let wrapped = ",
@@ -831,8 +787,8 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, r#"<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
 // 1.75 is 1.11 in binary
 let f = Fix::from_str_binary("1.11");
 let check = Fix::from_bits(0b111 << (4 - 2));
@@ -860,8 +816,8 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, r#"<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
 // 1.75 is 1.11 in binary, 1.6 in octal
 let f = Fix::from_str_octal("1.6");
 let check = Fix::from_bits(0b111 << (4 - 2));
@@ -889,8 +845,8 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, r#"<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
 // 1.75 is 1.11 in binary, 1.C in hexadecimal
 let f = Fix::from_str_hex("1.C");
 let check = Fix::from_bits(0b111 << (4 - 2));

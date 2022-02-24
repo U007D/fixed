@@ -27,22 +27,22 @@ The [*fixed* crate] provides fixed-point numbers.
 An <i>n</i>-bit fixed-point number has <i>f</i>&nbsp;=&nbsp;`Frac` fractional
 bits where 0&nbsp;≤&nbsp;<i>f</i>&nbsp;≤&nbsp;<i>n</i>, and
 <i>n</i>&nbsp;&minus;&nbsp;<i>f</i> integer bits. For example,
-<code>[FixedI32]\<[U24]></code> is a 32-bit signed fixed-point number with
+<code>[FixedI32]\<24></code> is a 32-bit signed fixed-point number with
 <i>n</i>&nbsp;=&nbsp;32 total bits, <i>f</i>&nbsp;=&nbsp;24 fractional bits, and
 <i>n</i>&nbsp;&minus;&nbsp;<i>f</i>&nbsp;=&nbsp;8 integer bits.
-<code>[FixedI32]\<[U0]></code> behaves like [`i32`], and
-<code>[FixedU32]\<[U0]></code> behaves like [`u32`].
+<code>[FixedI32]\<0></code> behaves like [`i32`], and
+<code>[FixedU32]\<0></code> behaves like [`u32`].
 
 The difference between any two successive representable numbers is constant
 throughout the possible range for a fixed-point number:
 <i>Δ</i>&nbsp;=&nbsp;1/2<sup><i>f</i></sup>. When <i>f</i>&nbsp;=&nbsp;0, like
-in <code>[FixedI32]\<[U0]></code>, <i>Δ</i>&nbsp;=&nbsp;1 because representable
+in <code>[FixedI32]\<0></code>, <i>Δ</i>&nbsp;=&nbsp;1 because representable
 numbers are integers, and the difference between two successive integers is 1.
 When <i>f</i>&nbsp;=&nbsp;<i>n</i>, <i>Δ</i>&nbsp;=&nbsp;1/2<sup><i>n</i></sup>
 and the value lies in the range &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;0.5
-for signed numbers like <code>[FixedI32]\<[U32]></code>, and in the range
+for signed numbers like <code>[FixedI32]\<32></code>, and in the range
 0&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;1 for unsigned numbers like
-<code>[FixedU32]\<[U32]></code>.
+<code>[FixedU32]\<32></code>.
 
 In version 1 the [*typenum* crate] is used for the fractional bit count `Frac`;
 the plan is to to have a major version 2 with [const generics] instead when the
@@ -121,7 +121,7 @@ assert_eq!(six_and_third.ceil(), 7);
 ```
 
 The type [`I20F12`] is a 32-bit fixed-point signed number with 20 integer bits
-and 12 fractional bits. It is an alias to <code>[FixedI32]\<[U12]></code>. The
+and 12 fractional bits. It is an alias to <code>[FixedI32]\<12></code>. The
 unsigned counterpart would be [`U20F12`]. Aliases are provided for all
 combinations of integer and fractional bits adding up to a total of eight, 16,
 32, 64 or 128 bits.
@@ -266,8 +266,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [CORDIC]: https://en.wikipedia.org/wiki/CORDIC
 [LICENSE-APACHE]: https://www.apache.org/licenses/LICENSE-2.0
 [LICENSE-MIT]: https://opensource.org/licenses/MIT
-[U0]: crate::types::extra::U0
-[U24]: crate::types::extra::U24
 [`Binary`]: core::fmt::Binary
 [`Display`]: core::fmt::Display
 [`Error`]: std::error::Error
@@ -453,7 +451,7 @@ The value <i>x</i> can lie in the range ",
             "</sup>/2<sup><i>f</i></sup>. The difference between successive
 numbers is constant throughout the range: <i>Δ</i>&nbsp;=&nbsp;1/2<sup><i>f</i></sup>.
 
-For <code>", $s_fixed, "\\<[U0]></code>, <i>f</i>&nbsp;=&nbsp;0 and
+For <code>", $s_fixed, "\\<0></code>, <i>f</i>&nbsp;=&nbsp;0 and
 <i>Δ</i>&nbsp;=&nbsp;1, and the fixed-point number behaves like ",
             if_signed_unsigned!($Signedness, "an", "a"),
             " [`", $s_inner, "`] with the value lying in the range ",
@@ -464,7 +462,7 @@ For <code>", $s_fixed, "\\<[U0]></code>, <i>f</i>&nbsp;=&nbsp;0 and
             ),
             "&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;2<sup>",
             if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
-            "</sup>. For <code>", $s_fixed, "\\<[U", $s_nbits, "]></code>,
+            "</sup>. For <code>", $s_fixed, "\\<", $s_nbits, "></code>,
 <i>f</i>&nbsp;=&nbsp;", $s_nbits, " and
 <i>Δ</i>&nbsp;=&nbsp;1/2<sup>", $s_nbits, "</sup>, and the value lies in the
 range ",
@@ -485,20 +483,18 @@ it is `#[repr(transparent)]` with [`", $s_inner, "`] as the only non-zero-sized 
 # Examples
 
 ```rust
-use fixed::{types::extra::U3, ", $s_fixed, "};
-let eleven = ", $s_fixed, "::<U3>::from_num(11);
-assert_eq!(eleven, ", $s_fixed, "::<U3>::from_bits(11 << 3));
+use fixed::", $s_fixed, ";
+let eleven = ", $s_fixed, "::<3>::from_num(11);
+assert_eq!(eleven, ", $s_fixed, "::<3>::from_bits(11 << 3));
 assert_eq!(eleven, 11);
 assert_eq!(eleven.to_string(), \"11\");
 let two_point_75 = eleven / 4;
-assert_eq!(two_point_75, ", $s_fixed, "::<U3>::from_bits(11 << 1));
+assert_eq!(two_point_75, ", $s_fixed, "::<3>::from_bits(11 << 1));
 assert_eq!(two_point_75, 2.75);
 assert_eq!(two_point_75.to_string(), \"2.8\");
 ```
 
 [*typenum* crate]: https://crates.io/crates/typenum
-[U0]: crate::types::extra::U0
-[U", $s_nbits, "]: crate::types::extra::U", $s_nbits, "
 [const generics]: https://github.com/rust-lang/rust/issues/44580
 ";
             #[repr(transparent)]
@@ -732,7 +728,7 @@ impl F128Bits {
 /// ```
 ///
 /// The following would fail to compile because [`I16F16`] is an alias for
-/// <code>[FixedI32]\<[U32]></code>, and this macro can define [`FixedI32`]
+/// <code>[FixedI32]\<32></code>, and this macro can define [`FixedI32`]
 /// constants using [`i32`] expressions, not [`i16`] expressions.
 ///
 /// ```rust,compile_fail

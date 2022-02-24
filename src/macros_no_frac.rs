@@ -33,8 +33,8 @@ macro_rules! fixed_no_frac {
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ZERO, Fix::from_bits(0));
 ```
 ";
@@ -50,8 +50,8 @@ If the number has <i>f</i>&nbsp;=&nbsp;`Frac` fractional bits, then
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::DELTA, Fix::from_bits(1));
 // binary 0.0001 is decimal 0.0625
 assert_eq!(Fix::DELTA, 0.0625);
@@ -77,8 +77,8 @@ then the minimum is &minus;2<sup>", $s_nbits_m1, "</sup>/2<sup><i>f</i></sup>."
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::MIN, Fix::from_bits(", $s_inner, "::MIN));
 ```
 ";
@@ -96,8 +96,8 @@ If the number has <i>f</i>&nbsp;=&nbsp;`Frac` fractional bits, then the maximum 
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::MAX, Fix::from_bits(", $s_inner, "::MAX));
 ```
 ";
@@ -113,8 +113,8 @@ assert_eq!(Fix::MAX, Fix::from_bits(", $s_inner, "::MAX));
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert!(", if_signed_unsigned!($Signedness, "", "!"), "Fix::IS_SIGNED);
 ```
 ";
@@ -128,8 +128,8 @@ representation identical to the given integer.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 // 0010.0000 == 2
 assert_eq!(Fix::from_bits(0b10_0000), 2);
 ```
@@ -147,8 +147,8 @@ identical to the given fixed-point number.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 // 2 is 0010.0000
 assert_eq!(Fix::from_num(2).to_bits(), 0b10_0000);
 ```
@@ -165,8 +165,8 @@ assert_eq!(Fix::from_num(2).to_bits(), 0b10_0000);
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(", $bytes_val, ");
 if cfg!(target_endian = \"big\") {
     assert_eq!(Fix::from_be(f), f);
@@ -187,8 +187,8 @@ if cfg!(target_endian = \"big\") {
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(", $bytes_val, ");
 if cfg!(target_endian = \"little\") {
     assert_eq!(Fix::from_le(f), f);
@@ -209,8 +209,8 @@ if cfg!(target_endian = \"little\") {
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(", $bytes_val, ");
 if cfg!(target_endian = \"big\") {
     assert_eq!(f.to_be(), f);
@@ -232,8 +232,8 @@ if cfg!(target_endian = \"big\") {
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(", $bytes_val, ");
 if cfg!(target_endian = \"little\") {
     assert_eq!(f.to_le(), f);
@@ -255,8 +255,8 @@ if cfg!(target_endian = \"little\") {
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(", $bytes_val, ");
 let swapped = Fix::from_bits(", $rev_bytes_val, ");
 assert_eq!(f.swap_bytes(), swapped);
@@ -276,8 +276,8 @@ as a byte array in big endian.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(
     Fix::from_be_bytes(", $be_bytes, "),
     Fix::from_bits(", $bytes_val, ")
@@ -297,8 +297,8 @@ as a byte array in little endian.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(
     Fix::from_le_bytes(", $le_bytes, "),
     Fix::from_bits(", $bytes_val, ")
@@ -318,8 +318,8 @@ as a byte array in native endian.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(
     if cfg!(target_endian = \"big\") {
         Fix::from_ne_bytes(", $be_bytes, ")
@@ -343,8 +343,8 @@ number as a byte array in big-endian byte order.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let val = Fix::from_bits(", $bytes_val, ");
 assert_eq!(
     val.to_be_bytes(),
@@ -365,8 +365,8 @@ number as a byte array in little-endian byte order.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let val = Fix::from_bits(", $bytes_val, ");
 assert_eq!(
     val.to_le_bytes(),
@@ -387,8 +387,8 @@ number as a byte array in native byte order.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let val = Fix::from_bits(", $bytes_val, ");
 assert_eq!(
     val.to_ne_bytes(),
@@ -413,8 +413,8 @@ representation.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(0b11_0010);
 assert_eq!(f.count_ones(), 3);
 ```
@@ -433,8 +433,8 @@ representation.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(!0b11_0010);
 assert_eq!(f.count_zeros(), 3);
 ```
@@ -452,8 +452,8 @@ representation.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let all_ones = !Fix::ZERO;
 let f = all_ones - Fix::from_bits(0b10_0000);
 assert_eq!(f.leading_ones(), ", $s_nbits, " - 6);
@@ -472,8 +472,8 @@ representation.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(0b10_0000);
 assert_eq!(f.leading_zeros(), ", $s_nbits, " - 6);
 ```
@@ -491,8 +491,8 @@ representation.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(0b101_1111);
 assert_eq!(f.trailing_ones(), 5);
 ```
@@ -510,8 +510,8 @@ representation.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(0b10_0000);
 assert_eq!(f.trailing_zeros(), 5);
 ```
@@ -530,8 +530,8 @@ assert_eq!(f.trailing_zeros(), 5);
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(0).significant_bits(), 0);      // “____.____”
 assert_eq!(Fix::from_num(0.0625).significant_bits(), 1); // “____.___1”
 assert_eq!(Fix::from_num(1).significant_bits(), 5);      // “___1.0000”
@@ -556,8 +556,8 @@ numbers, and an initial zero for non-negative numbers.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(-3).signed_bits(), 7);      // “_101.0000”
 assert_eq!(Fix::from_num(-1).signed_bits(), 5);      // “___1.0000”
 assert_eq!(Fix::from_num(-0.0625).signed_bits(), 1); // “____.___1”
@@ -585,8 +585,8 @@ assert_eq!(Fix::from_num(3).signed_bits(), 7);       // “_011.0000”
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let bits = ", $bytes_val, "_", $s_inner, ";
 let rev_bits = bits.reverse_bits();
 assert_eq!(Fix::from_bits(bits).reverse_bits(), Fix::from_bits(rev_bits));
@@ -606,8 +606,8 @@ truncated bits to the right end.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let bits: ", $s_inner, " = (0b111 << (", $s_nbits, " - 3)) | 0b1010;
 let rot = 0b1010111;
 assert_eq!(bits.rotate_left(3), rot);
@@ -628,8 +628,8 @@ truncated bits to the left end.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let bits: ", $s_inner, " = 0b1010111;
 let rot = (0b111 << (", $s_nbits, " - 3)) | 0b1010;
 assert_eq!(bits.rotate_right(3), rot);
@@ -649,8 +649,8 @@ assert_eq!(Fix::from_bits(bits).rotate_right(3), Fix::from_bits(rot));
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert!(Fix::ZERO.is_zero());
 assert!(!Fix::from_num(5).is_zero());
 ```
@@ -669,8 +669,8 @@ assert!(!Fix::from_num(5).is_zero());
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert!(Fix::from_num(5).is_positive());
 assert!(!Fix::ZERO.is_positive());
 assert!(!Fix::from_num(-5).is_positive());
@@ -688,8 +688,8 @@ assert!(!Fix::from_num(-5).is_positive());
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert!(!Fix::from_num(5).is_negative());
 assert!(!Fix::ZERO.is_negative());
 assert!(Fix::from_num(-5).is_negative());
@@ -711,8 +711,8 @@ assert!(Fix::from_num(-5).is_negative());
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 // 3/8 is 0.0110
 let three_eights = Fix::from_bits(0b0110);
 // 1/2 is 0.1000
@@ -743,14 +743,11 @@ have <i>f</i>&nbsp;+&nbsp;<i>g</i> fractional bits and ", $s_nbits_2,
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U2, U4},
-    ", $s_fixed, ",
-};
+use fixed::", $s_fixed, ";
 // decimal: 1.25 × 1.0625 = 1.328_125
 // binary: 1.01 × 1.0001 == 1.010101
-let a = ", $s_fixed, "::<U2>::from_num(1.25);
-let b = ", $s_fixed, "::<U4>::from_num(1.0625);
+let a = ", $s_fixed, "::<2>::from_num(1.25);
+let b = ", $s_fixed, "::<4>::from_num(1.0625);
 assert_eq!(a.wide_mul(b), 1.328_125);
 ```
 ";
@@ -801,15 +798,12 @@ Panics if the divisor is zero",
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U3, U5, U", $s_nbits_m2, "},
-    ", $s_fixed, ", ", $s_double, ",
-};
+use fixed::{", $s_fixed, ", ", $s_double, "};
 // decimal: 4.625 / 0.03125 = 148
 // binary: 100.101 / 0.00001 == 10010100
-let a = ", $s_fixed, "::<U3>::from_num(4.625);
-let b = ", $s_fixed, "::<U5>::from_num(0.03125);
-let ans: ", $s_double, "<U", $s_nbits_m2, "> = a.wide_div(b);
+let a = ", $s_fixed, "::<3>::from_num(4.625);
+let b = ", $s_fixed, "::<5>::from_num(0.03125);
+let ans: ", $s_double, "<", $s_nbits_m2, "> = a.wide_div(b);
 assert_eq!(ans, 148);
 ```
 ",
@@ -819,8 +813,8 @@ assert_eq!(ans, 148);
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MIN.wide_div(-Fix::DELTA);
 ```
 ",
@@ -864,8 +858,8 @@ instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(
     Fix::from_num(4).mul_add(Fix::from_num(0.5), Fix::from_num(3)),
     Fix::from_num(5)
@@ -912,8 +906,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(7.5).rem_euclid(Fix::from_num(2)), Fix::from_num(1.5));
 ",
                 if_signed_else_empty_str! {
@@ -945,8 +939,8 @@ assert_eq!(Fix::from_num(7.5).rem_euclid(Fix::from_num(2)), Fix::from_num(1.5));
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let five = Fix::from_num(5);
 let minus_five = Fix::from_num(-5);
 assert_eq!(five.abs(), five);
@@ -967,9 +961,9 @@ without any wrapping or panicking.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, ", ", $s_ufixed, "};
-type Fix = ", $s_fixed, "<U4>;
-type UFix = ", $s_ufixed, "<U4>;
+use fixed::{", $s_fixed, ", ", $s_ufixed, "};
+type Fix = ", $s_fixed, "<4>;
+type UFix = ", $s_ufixed, "<4>;
 assert_eq!(Fix::from_num(-5).unsigned_abs(), UFix::from_num(5));
 // min_as_unsigned has only highest bit set
 let min_as_unsigned = UFix::ONE << (UFix::INT_NBITS - 1);
@@ -1000,8 +994,8 @@ required use [`wrapping_dist`] instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE.dist(Fix::from_num(5)), Fix::from_num(4));
 assert_eq!(Fix::from_num(-1).dist(Fix::from_num(2)), Fix::from_num(3));
 ```
@@ -1028,9 +1022,9 @@ The distance is the absolute value of the difference.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, ", ", $s_ufixed, "};
-type Fix = ", $s_fixed, "<U4>;
-type UFix = ", $s_ufixed, "<U4>;
+use fixed::{", $s_fixed, ", ", $s_ufixed, "};
+type Fix = ", $s_fixed, "<4>;
+type UFix = ", $s_ufixed, "<4>;
 assert_eq!(Fix::from_num(-1).unsigned_dist(Fix::from_num(2)), UFix::from_num(3));
 assert_eq!(Fix::MIN.unsigned_dist(Fix::MAX), UFix::MAX);
 ```
@@ -1061,8 +1055,8 @@ The distance is the absolute value of the difference.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE.dist(Fix::from_num(5)), Fix::from_num(4));
 ```
 ";
@@ -1084,8 +1078,8 @@ assert_eq!(Fix::ONE.dist(Fix::from_num(5)), Fix::from_num(4));
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).mean(Fix::from_num(4)), Fix::from_num(3.5));
 ",
                 if_signed_else_empty_str! {
@@ -1129,20 +1123,20 @@ if wrapping is required use [`wrapping_inv_lerp`] instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let start = Fix::from_num(2);
 let end = Fix::from_num(3.5);
 ",
                 if_signed_else_empty_str! {
                     $Signedness;
-                    "assert_eq!(Fix::from_num(0.5).inv_lerp::<U4>(start, end), -1);
+                    "assert_eq!(Fix::from_num(0.5).inv_lerp::<4>(start, end), -1);
 ",
                 },
-                "assert_eq!(Fix::from_num(2).inv_lerp::<U4>(start, end), 0);
-assert_eq!(Fix::from_num(2.75).inv_lerp::<U4>(start, end), 0.5);
-assert_eq!(Fix::from_num(3.5).inv_lerp::<U4>(start, end), 1);
-assert_eq!(Fix::from_num(5).inv_lerp::<U4>(start, end), 2);
+                "assert_eq!(Fix::from_num(2).inv_lerp::<4>(start, end), 0);
+assert_eq!(Fix::from_num(2.75).inv_lerp::<4>(start, end), 0.5);
+assert_eq!(Fix::from_num(3.5).inv_lerp::<4>(start, end), 1);
+assert_eq!(Fix::from_num(5).inv_lerp::<4>(start, end), 2);
 ```
 
 [`wrapping_inv_lerp`]: Self::wrapping_inv_lerp
@@ -1179,8 +1173,8 @@ that is ≤&nbsp;`self`.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_bits(0b11_0010).highest_one(), Fix::from_bits(0b10_0000));
 assert_eq!(Fix::from_num(0.3).highest_one(), Fix::from_num(0.25));
 assert_eq!(Fix::from_num(4).highest_one(), Fix::from_num(4));
@@ -1215,8 +1209,8 @@ future it panics; if this is not desirable use
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_bits(0b11_0010).next_power_of_two(), Fix::from_bits(0b100_0000));
 assert_eq!(Fix::from_num(0.3).next_power_of_two(), Fix::from_num(0.5));
 assert_eq!(Fix::from_num(4).next_power_of_two(), Fix::from_num(4));
@@ -1249,8 +1243,8 @@ This method will be deprecated when the `!` operator and the
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 const A: Fix = Fix::from_bits(0x3E);
 const NOT_A: Fix = A.const_not();
 assert_eq!(NOT_A, !A);
@@ -1279,8 +1273,8 @@ This method will be deprecated when the `&` operator and the
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 const A: Fix = Fix::from_bits(0x3E);
 const B: Fix = Fix::from_bits(0x55);
 const A_BITAND_B: Fix = A.const_bitand(B);
@@ -1310,8 +1304,8 @@ This method will be deprecated when the `|` operator and the
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 const A: Fix = Fix::from_bits(0x3E);
 const B: Fix = Fix::from_bits(0x55);
 const A_BITOR_B: Fix = A.const_bitor(B);
@@ -1341,8 +1335,8 @@ This method will be deprecated when the `^` operator and the
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 const A: Fix = Fix::from_bits(0x3E);
 const B: Fix = Fix::from_bits(0x55);
 const A_BITXOR_B: Fix = A.const_bitxor(B);
@@ -1370,8 +1364,8 @@ assert_eq!(A_BITXOR_B, A ^ B);
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 ",
                 if_signed_unsigned!(
                     $Signedness,
@@ -1398,8 +1392,8 @@ assert_eq!(Fix::from_num(5).checked_neg(), None);",
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::MAX - Fix::ONE).checked_add(Fix::ONE), Some(Fix::MAX));
 assert_eq!(Fix::MAX.checked_add(Fix::ONE), None);
 ```
@@ -1420,8 +1414,8 @@ assert_eq!(Fix::MAX.checked_add(Fix::ONE), None);
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::MIN + Fix::ONE).checked_sub(Fix::ONE), Some(Fix::MIN));
 assert_eq!(Fix::MIN.checked_sub(Fix::ONE), None);
 ```
@@ -1443,8 +1437,8 @@ the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(1.5).checked_rem(Fix::ONE), Some(Fix::from_num(0.5)));
 assert_eq!(Fix::from_num(1.5).checked_rem(Fix::ZERO), None);
 ```
@@ -1485,8 +1479,8 @@ these cases this method returns the correct result without overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(
     Fix::from_num(4).checked_mul_add(Fix::from_num(0.5), Fix::from_num(3)),
     Some(Fix::from_num(5))
@@ -1531,8 +1525,8 @@ product, or [`None`] on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::MAX.checked_mul_int(1), Some(Fix::MAX));
 assert_eq!(Fix::MAX.checked_mul_int(2), None);
 ```
@@ -1560,8 +1554,8 @@ assert_eq!(Fix::MAX.checked_mul_int(2), None);
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::MAX.checked_div_int(1), Some(Fix::MAX));
 assert_eq!(Fix::ONE.checked_div_int(0), None);
 ",
@@ -1589,8 +1583,8 @@ remainder, or [`None`] if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let num = Fix::from_num(7.5);
 assert_eq!(num.checked_rem_euclid(Fix::from_num(2)), Some(Fix::from_num(1.5)));
 assert_eq!(num.checked_rem_euclid(Fix::ZERO), None);
@@ -1626,8 +1620,8 @@ or [`None`] if `rhs`&nbsp;≥&nbsp;", $s_nbits, ".
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::ONE / 2).checked_shl(3), Some(Fix::from_num(4)));
 assert_eq!((Fix::ONE / 2).checked_shl(", $s_nbits, "), None);
 ```
@@ -1649,8 +1643,8 @@ or [`None`] if `rhs`&nbsp;≥&nbsp;", $s_nbits, ".
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(4).checked_shr(3), Some(Fix::ONE / 2));
 assert_eq!(Fix::from_num(4).checked_shr(", $s_nbits, "), None);
 ```
@@ -1675,8 +1669,8 @@ Overflow can only occur when trying to find the absolute value of the minimum va
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(-5).checked_abs(), Some(Fix::from_num(5)));
 assert_eq!(Fix::MIN.checked_abs(), None);
 ```
@@ -1708,8 +1702,8 @@ The distance is the absolute value of the difference.
                 "# Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE.checked_dist(Fix::from_num(5)), Some(Fix::from_num(4)));
 ",
                 if_signed_unsigned!(
@@ -1752,13 +1746,13 @@ This is 0 when `self`&nbsp;=&nbsp;`start`, and 1 when `self`&nbsp;=&nbsp;`end`.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let two = Fix::from_num(2);
 let four = Fix::from_num(4);
-assert_eq!(Fix::from_num(3).checked_inv_lerp::<U4>(two, four), Some(Fix::from_num(0.5)));
-assert_eq!(Fix::from_num(2).checked_inv_lerp::<U4>(two, two), None);
-assert_eq!(Fix::MAX.checked_inv_lerp::<U4>(Fix::ZERO, Fix::from_num(0.5)), None);
+assert_eq!(Fix::from_num(3).checked_inv_lerp::<4>(two, four), Some(Fix::from_num(0.5)));
+assert_eq!(Fix::from_num(2).checked_inv_lerp::<4>(two, two), None);
+assert_eq!(Fix::MAX.checked_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5)), None);
 ```
 ";
                 #[inline]
@@ -1791,8 +1785,8 @@ assert_eq!(Fix::MAX.checked_inv_lerp::<U4>(Fix::ZERO, Fix::from_num(0.5)), None)
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 // 3/8 is 0.0110
 let three_eights = Fix::from_bits(0b0110);
 // 1/2 is 0.1000
@@ -1825,8 +1819,8 @@ assert!(Fix::MAX.checked_next_power_of_two().is_none());
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 ",
                 if_signed_unsigned!(
                     $Signedness,
@@ -1860,8 +1854,8 @@ assert_eq!(Fix::from_num(5).saturating_neg(), Fix::ZERO);",
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).saturating_add(Fix::from_num(2)), Fix::from_num(5));
 assert_eq!(Fix::MAX.saturating_add(Fix::ONE), Fix::MAX);
 ```
@@ -1886,8 +1880,8 @@ assert_eq!(Fix::MAX.saturating_add(Fix::ONE), Fix::MAX);
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 ",
                 if_signed_unsigned!(
                     $Signedness,
@@ -1936,8 +1930,8 @@ these cases this method returns the correct result without overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(
     Fix::from_num(4).saturating_mul_add(Fix::from_num(0.5), Fix::from_num(3)),
     Fix::from_num(5)
@@ -1993,8 +1987,8 @@ assert_eq!(Fix::MAX.saturating_mul_add(Fix::from_num(1.5), -Fix::MAX), half_max)
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).saturating_mul_int(2), Fix::from_num(6));
 assert_eq!(Fix::MAX.saturating_mul_int(2), Fix::MAX);
 ```
@@ -2027,8 +2021,8 @@ Overflow can only occur when trying to find the absolute value of the minimum va
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(-5).saturating_abs(), Fix::from_num(5));
 assert_eq!(Fix::MIN.saturating_abs(), Fix::MAX);
 ```
@@ -2061,8 +2055,8 @@ The distance is the absolute value of the difference.
                 "# Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE.saturating_dist(Fix::from_num(5)), Fix::from_num(4));
 ",
                 if_signed_unsigned!(
@@ -2108,13 +2102,13 @@ Panics when `start`&nbsp;=&nbsp;`end`.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let two = Fix::from_num(2);
 let four = Fix::from_num(4);
-assert_eq!(Fix::from_num(3).saturating_inv_lerp::<U4>(two, four), 0.5);
-assert_eq!(Fix::MAX.saturating_inv_lerp::<U4>(Fix::ZERO, Fix::from_num(0.5)), Fix::MAX);
-assert_eq!(Fix::MAX.saturating_inv_lerp::<U4>(Fix::from_num(0.5), Fix::ZERO), Fix::MIN);
+assert_eq!(Fix::from_num(3).saturating_inv_lerp::<4>(two, four), 0.5);
+assert_eq!(Fix::MAX.saturating_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5)), Fix::MAX);
+assert_eq!(Fix::MAX.saturating_inv_lerp::<4>(Fix::from_num(0.5), Fix::ZERO), Fix::MIN);
 ```
 ";
                 #[inline]
@@ -2163,8 +2157,8 @@ assert_eq!(Fix::MAX.saturating_inv_lerp::<U4>(Fix::from_num(0.5), Fix::ZERO), Fi
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 ",
                 if_signed_unsigned!(
                     $Signedness,
@@ -2191,8 +2185,8 @@ assert_eq!(Fix::from_num(5).wrapping_neg(), Fix::from_bits(neg_five_bits));",
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let one_minus_delta = Fix::ONE - Fix::DELTA;
 assert_eq!(Fix::from_num(3).wrapping_add(Fix::from_num(2)), Fix::from_num(5));
 assert_eq!(Fix::MAX.wrapping_add(Fix::ONE), ",
@@ -2213,8 +2207,8 @@ assert_eq!(Fix::MAX.wrapping_add(Fix::ONE), ",
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let one_minus_delta = Fix::ONE - Fix::DELTA;
 ",
                 if_signed_unsigned!(
@@ -2244,8 +2238,8 @@ The `mul` parameter can have a fixed-point type like
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(
     Fix::from_num(4).wrapping_mul_add(Fix::from_num(0.5), Fix::from_num(3)),
     Fix::from_num(5)
@@ -2282,8 +2276,8 @@ assert_eq!(Fix::MAX.wrapping_mul_add(Fix::from_num(3), Fix::MAX), wrapped);
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).wrapping_mul_int(2), Fix::from_num(6));
 let wrapped = Fix::from_bits(!0 << 2);
 assert_eq!(Fix::MAX.wrapping_mul_int(4), wrapped);
@@ -2316,8 +2310,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 // 1.5 is binary 1.1
 let one_point_5 = Fix::from_bits(0b11 << (4 - 1));
 assert_eq!(Fix::from_num(3).wrapping_div_int(2), one_point_5);
@@ -2343,8 +2337,8 @@ then shifts and returns the number.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::ONE / 2).wrapping_shl(3), Fix::from_num(4));
 assert_eq!((Fix::ONE / 2).wrapping_shl(3 + ", $s_nbits, "), Fix::from_num(4));
 ```
@@ -2363,8 +2357,8 @@ then shifts and returns the number.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::from_num(4)).wrapping_shr(3), Fix::ONE / 2);
 assert_eq!((Fix::from_num(4)).wrapping_shr(3 + ", $s_nbits, "), Fix::ONE / 2);
 ```
@@ -2386,8 +2380,8 @@ Overflow can only occur when trying to find the absolute value of the minimum va
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(-5).wrapping_abs(), Fix::from_num(5));
 assert_eq!(Fix::MIN.wrapping_abs(), Fix::MIN);
 ```
@@ -2417,8 +2411,8 @@ The distance is the absolute value of the difference.
                 "# Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE.wrapping_dist(Fix::from_num(5)), Fix::from_num(4));
 ",
                 if_signed_unsigned!(
@@ -2458,13 +2452,13 @@ Panics when `start`&nbsp;=&nbsp;`end`.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let two = Fix::from_num(2);
 let four = Fix::from_num(4);
-assert_eq!(Fix::from_num(3).wrapping_inv_lerp::<U4>(two, four), 0.5);
+assert_eq!(Fix::from_num(3).wrapping_inv_lerp::<4>(two, four), 0.5);
 assert_eq!(
-    Fix::MAX.wrapping_inv_lerp::<U4>(Fix::ZERO, Fix::from_num(0.5)),
+    Fix::MAX.wrapping_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5)),
     Fix::MAX.wrapping_mul_int(2)
 );
 ```
@@ -2497,8 +2491,8 @@ wrapping to 0 if the next power of two is too large to represent.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 // 3/8 is 0.0110
 let three_eights = Fix::from_bits(0b0110);
 // 1/2 is 0.1000
@@ -2536,8 +2530,8 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 ",
                 if_signed_unsigned!(
                     $Signedness,
@@ -2548,8 +2542,8 @@ type Fix = ", $s_fixed, "<U4>;
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MIN.unwrapped_neg();",
                     ),
                     concat!(
@@ -2559,8 +2553,8 @@ let _overflow = Fix::MIN.unwrapped_neg();",
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::from_num(5).unwrapped_neg();",
                     ),
                 ),
@@ -2588,16 +2582,16 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).unwrapped_add(Fix::from_num(2)), Fix::from_num(5));
 ```
 
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_add(Fix::DELTA);
 ```
 ";
@@ -2622,8 +2616,8 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 ",
                 if_signed_unsigned!(
                     $Signedness,
@@ -2637,8 +2631,8 @@ type Fix = ", $s_fixed, "<U4>;
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MIN.unwrapped_sub(Fix::DELTA);
 ```
 ";
@@ -2663,16 +2657,16 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(1.5).unwrapped_rem(Fix::ONE), Fix::from_num(0.5));
 ```
 
 The following panics because the divisor is zero.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _divisor_is_zero = Fix::from_num(1.5).unwrapped_rem(Fix::ZERO);
 ```
 ";
@@ -2714,8 +2708,8 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(
     Fix::from_num(4).unwrapped_mul_add(Fix::from_num(0.5), Fix::from_num(3)),
     Fix::from_num(5)
@@ -2732,8 +2726,8 @@ assert_eq!(Fix::MAX.unwrapped_mul_add(Fix::from_num(1.5), -Fix::MAX), Fix::MAX /
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_mul_add(Fix::ONE, Fix::DELTA);
 ```
 ";
@@ -2762,16 +2756,16 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).unwrapped_mul_int(2), Fix::from_num(6));
 ```
 
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_mul_int(4);
 ```
 ";
@@ -2811,8 +2805,8 @@ Panics if the divisor is zero",
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 // 1.5 is binary 1.1
 let one_point_5 = Fix::from_bits(0b11 << (4 - 1));
 assert_eq!(Fix::from_num(3).unwrapped_div_int(2), one_point_5);
@@ -2821,8 +2815,8 @@ assert_eq!(Fix::from_num(3).unwrapped_div_int(2), one_point_5);
 The following panics because the divisor is zero.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _divisor_is_zero = Fix::from_num(3).unwrapped_div_int(0);
 ```
 ",
@@ -2832,8 +2826,8 @@ let _divisor_is_zero = Fix::from_num(3).unwrapped_div_int(0);
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MIN.unwrapped_div_int(-1);
 ```
 ",
@@ -2854,8 +2848,8 @@ remainder, panicking if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let num = Fix::from_num(7.5);
 assert_eq!(num.unwrapped_rem_euclid(Fix::from_num(2)), Fix::from_num(1.5));
 ```
@@ -2863,8 +2857,8 @@ assert_eq!(num.unwrapped_rem_euclid(Fix::from_num(2)), Fix::from_num(1.5));
 The following panics because the divisor is zero.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _divisor_is_zero = Fix::from_num(3).unwrapped_rem_euclid(Fix::ZERO);
 ```
 ";
@@ -2886,16 +2880,16 @@ Panics if `rhs`&nbsp;≥&nbsp;", $s_nbits, ".
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::ONE / 2).unwrapped_shl(3), Fix::from_num(4));
 ```
 
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::ONE.unwrapped_shl(", $s_nbits, ");
 ```
 ";
@@ -2920,16 +2914,16 @@ Panics if `rhs`&nbsp;≥&nbsp;", $s_nbits, ".
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::from_num(4)).unwrapped_shr(3), Fix::ONE / 2);
 ```
 
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::ONE.unwrapped_shr(", $s_nbits, ");
 ```
 ";
@@ -2958,16 +2952,16 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(-5).unwrapped_abs(), Fix::from_num(5));
 ```
 
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MIN.unwrapped_abs();
 ```
 ";
@@ -3003,8 +2997,8 @@ Panics if the result does not fit.",
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE.unwrapped_dist(Fix::from_num(5)), Fix::from_num(4));
 ",
                 if_unsigned_else_empty_str! {
@@ -3020,8 +3014,8 @@ assert_eq!(Fix::ONE.unwrapped_dist(Fix::from_num(5)), Fix::from_num(4));
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MIN.unwrapped_dist(Fix::ZERO);
 ```
 "
@@ -3058,28 +3052,28 @@ Panics when `start`&nbsp;=&nbsp;`end` or when the results overflows.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let two = Fix::from_num(2);
 let four = Fix::from_num(4);
-assert_eq!(Fix::from_num(3).unwrapped_inv_lerp::<U4>(two, four), 0.5);
+assert_eq!(Fix::from_num(3).unwrapped_inv_lerp::<4>(two, four), 0.5);
 ```
 
 The following panics because `start`&nbsp;=&nbsp;`end`.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let two = Fix::from_num(2);
-let _zero_range = two.unwrapped_inv_lerp::<U4>(two, two);
+let _zero_range = two.unwrapped_inv_lerp::<4>(two, two);
 ```
 
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
-let _overflow = Fix::MAX.unwrapped_inv_lerp::<U4>(Fix::ZERO, Fix::from_num(0.5));
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+let _overflow = Fix::MAX.unwrapped_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5));
 ```
 ";
                 #[inline]
@@ -3115,8 +3109,8 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 // 3/8 is 0.0110
 let three_eights = Fix::from_bits(0b0110);
 // 1/2 is 0.1000
@@ -3127,8 +3121,8 @@ assert_eq!(three_eights.unwrapped_next_power_of_two(), half);
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_next_power_of_two();
 ```
 ";
@@ -3161,8 +3155,8 @@ an overflow has occurred. On overflow, the wrapped value is returned.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 ",
                 if_signed_unsigned!(
                     $Signedness,
@@ -3192,8 +3186,8 @@ overflow has occurred. On overflow, the wrapped value is returned.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let one_minus_delta = Fix::ONE - Fix::DELTA;
 assert_eq!(Fix::from_num(3).overflowing_add(Fix::from_num(2)), (Fix::from_num(5), false));
 assert_eq!(Fix::MAX.overflowing_add(Fix::ONE), (",
@@ -3218,8 +3212,8 @@ overflow has occurred. On overflow, the wrapped value is returned.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let one_minus_delta = Fix::ONE - Fix::DELTA;
 ",
                 if_signed_unsigned!(
@@ -3262,8 +3256,8 @@ these cases this method returns the correct result without overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(
     Fix::MAX.overflowing_mul_add(Fix::ONE, Fix::ZERO),
     (Fix::MAX, false)
@@ -3317,8 +3311,8 @@ overflow has occurred. On overflow, the wrapped value is returned.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).overflowing_mul_int(2), (Fix::from_num(6), false));
 let wrapped = Fix::from_bits(!0 << 2);
 assert_eq!(Fix::MAX.overflowing_mul_int(4), (wrapped, true));
@@ -3352,8 +3346,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 // 1.5 is binary 1.1
 let one_point_5 = Fix::from_bits(0b11 << (4 - 1));
 assert_eq!(Fix::from_num(3).overflowing_div_int(2), (one_point_5, false));
@@ -3383,8 +3377,8 @@ On overflow `rhs` is wrapped before the shift operation.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::ONE / 2).overflowing_shl(3), (Fix::from_num(4), false));
 assert_eq!((Fix::ONE / 2).overflowing_shl(3 + ", $s_nbits, "), (Fix::from_num(4), true));
 ```
@@ -3407,8 +3401,8 @@ On overflow `rhs` is wrapped before the shift operation.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::from_num(4)).overflowing_shr(3), (Fix::ONE / 2, false));
 assert_eq!((Fix::from_num(4)).overflowing_shr(3 + ", $s_nbits, "), (Fix::ONE / 2, true));
 ```
@@ -3435,8 +3429,8 @@ Overflow can only occur when trying to find the absolute value of the minimum va
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(-5).overflowing_abs(), (Fix::from_num(5), false));
 assert_eq!(Fix::MIN.overflowing_abs(), (Fix::MIN, true));
 ```
@@ -3466,8 +3460,8 @@ The distance is the absolute value of the difference.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(
     Fix::ONE.overflowing_dist(Fix::from_num(5)),
     (Fix::from_num(4), false)
@@ -3525,16 +3519,16 @@ Panics when `start`&nbsp;=&nbsp;`end`.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let two = Fix::from_num(2);
 let four = Fix::from_num(4);
 assert_eq!(
-    Fix::from_num(3).overflowing_inv_lerp::<U4>(two, four),
+    Fix::from_num(3).overflowing_inv_lerp::<4>(two, four),
     (Fix::from_num(0.5), false)
 );
 assert_eq!(
-    Fix::MAX.overflowing_inv_lerp::<U4>(Fix::ZERO, Fix::from_num(0.5)),
+    Fix::MAX.overflowing_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5)),
     (Fix::MAX.wrapping_mul_int(2), true)
 );
 ```

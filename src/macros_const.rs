@@ -69,6 +69,8 @@ assert_eq!(Fix::LOG10_2, Fix::from_num(consts::LOG10_2));
             }
         }
 
+        // TODO: change Fix::LN_2 >= 0.5 to 0.5 <= Fix::LN_2
+        // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
         comment! {
             "This block contains constants in the range 0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;1.
 
@@ -83,14 +85,12 @@ fixed-point numbers with less than 1 integer bit.
             "# Examples
 
 ```rust
-use fixed::{consts, types::extra::U",
-            if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
-            ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U",
+use fixed::{consts, ", $s_fixed, "};
+type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
             ">;
 assert_eq!(Fix::LN_2, Fix::from_num(consts::LN_2));
-assert!(0.5 <= Fix::LN_2 && Fix::LN_2 < 1);
+assert!(Fix::LN_2 >= 0.5 && Fix::LN_2 < 1);
 ```
 ",
             if_signed_else_empty_str! {
@@ -101,8 +101,8 @@ representable value with ", $s_nbits, " fractional bits and 0 integer
 bits is <&nbsp;0.5.
 
 ```rust,compile_fail
-use fixed::{consts, types::extra::U", $s_nbits, ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U", $s_nbits, ">;
+use fixed::{consts, ", $s_fixed, "};
+type Fix = ", $s_fixed, "<", $s_nbits, ">;
 let _ = Fix::LN_2;
 ```
 "
@@ -152,6 +152,8 @@ let _ = Fix::LN_2;
             }
         }
 
+        // TODO: change Fix::LOG2_E >= 1 to 1 <= Fix::LOG2_E
+        // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
         comment! {
             "This block contains constants in the range 1&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;2.
 
@@ -164,14 +166,12 @@ These constants are not representable in ",
 # Examples
 
 ```rust
-use fixed::{consts, types::extra::U",
-            if_signed_unsigned!($Signedness, $s_nbits_m2, $s_nbits_m1),
-            ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U",
+use fixed::{consts, ", $s_fixed, "};
+type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m2, $s_nbits_m1),
             ">;
 assert_eq!(Fix::LOG2_E, Fix::from_num(consts::LOG2_E));
-assert!(1 <= Fix::LOG2_E && Fix::LOG2_E < 2);
+assert!(Fix::LOG2_E >= 1 && Fix::LOG2_E < 2);
 ```
 
 The following example fails to compile, since the maximum
@@ -182,10 +182,8 @@ representable value with ",
             " is <&nbsp;1.
 
 ```rust,compile_fail
-use fixed::{consts, types::extra::U",
-            if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
-            ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U",
+use fixed::{consts, ", $s_fixed, "};
+type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
             ">;
 let _ = Fix::LOG2_E;
@@ -201,8 +199,8 @@ let _ = Fix::LOG2_E;
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE, Fix::from_num(1));
 ```
 ";
@@ -248,6 +246,8 @@ assert_eq!(Fix::ONE, Fix::from_num(1));
             }
         }
 
+        // TODO: change Fix::E >= 2 to 2 <= Fix::E
+        // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
         comment! {
             "This block contains constants in the range 2&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;4.
 
@@ -260,14 +260,12 @@ These constants are not representable in ",
 # Examples
 
 ```rust
-use fixed::{consts, types::extra::U",
-            if_signed_unsigned!($Signedness, $s_nbits_m3, $s_nbits_m2),
-            ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U",
+use fixed::{consts, ", $s_fixed, "};
+type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m3, $s_nbits_m2),
             ">;
 assert_eq!(Fix::E, Fix::from_num(consts::E));
-assert!(2 <= Fix::E && Fix::E < 4);
+assert!(Fix::E >= 2 && Fix::E < 4);
 ```
 
 The following example fails to compile, since the maximum
@@ -278,10 +276,8 @@ representable value with ",
             " is <&nbsp;2.
 
 ```rust,compile_fail
-use fixed::{consts, types::extra::U",
-            if_signed_unsigned!($Signedness, $s_nbits_m2, $s_nbits_m1),
-            ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U",
+use fixed::{consts, ", $s_fixed, "};
+type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m2, $s_nbits_m1),
             ">;
 let _ = Fix::E;
@@ -311,6 +307,8 @@ let _ = Fix::E;
             }
         }
 
+        // TODO: change Fix::TAU >= 4 to 4 <= Fix::TAU
+        // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
         comment! {
             "This block contains constants in the range 4&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;8.
 
@@ -323,14 +321,12 @@ These constants are not representable in ",
 # Examples
 
 ```rust
-use fixed::{consts, types::extra::U",
-            if_signed_unsigned!($Signedness, $s_nbits_m4, $s_nbits_m3),
-            ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U",
+use fixed::{consts, ", $s_fixed, "};
+type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m4, $s_nbits_m3),
             ">;
 assert_eq!(Fix::TAU, Fix::from_num(consts::TAU));
-assert!(4 <= Fix::TAU && Fix::TAU < 8);
+assert!(Fix::TAU >= 4 && Fix::TAU < 8);
 ```
 
 The following example fails to compile, since the maximum
@@ -341,10 +337,8 @@ representable value with ",
             " integer bits is <&nbsp;4.
 
 ```rust,compile_fail
-use fixed::{consts, types::extra::U",
-            if_signed_unsigned!($Signedness, $s_nbits_m3, $s_nbits_m2),
-            ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U",
+use fixed::{consts, ", $s_fixed, "};
+type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m3, $s_nbits_m2),
             ">;
 let _ = Fix::TAU;

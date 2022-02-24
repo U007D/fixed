@@ -34,8 +34,8 @@ bits, that is `", $s_fixed, "<U", $s_nbits, ">`, where the return value is alway
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 // 0010.0000
 let two = Fix::from_num(2);
 // 0010.0100
@@ -82,8 +82,8 @@ numbers, except in the case where there are no integer bits, that is
             "# Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 // 0000.0100
 let quarter = Fix::ONE / 4;
 // 0010.0100
@@ -125,8 +125,8 @@ round towards &minus;∞ unlike this method which rounds towards zero.",
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.1).round_to_zero(), Fix::from_num(2));
 assert_eq!(Fix::from_num(2.9).round_to_zero(), Fix::from_num(2));
 ",
@@ -176,8 +176,8 @@ it panics; if wrapping is required use [`wrapping_ceil`] instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).ceil(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -219,8 +219,8 @@ Overflow can only occur when there are zero integer bits.
             "# Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).floor(), Fix::from_num(2));
 ",
             if_signed_else_empty_str! {
@@ -256,8 +256,8 @@ it panics; if wrapping is required use [`wrapping_round`] instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).round(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -293,8 +293,8 @@ instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).round_ties_to_even(), Fix::from_num(2));
 assert_eq!(Fix::from_num(3.5).round_ties_to_even(), Fix::from_num(4));
 ```
@@ -318,8 +318,8 @@ returning [`None`] on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).checked_ceil(), Some(Fix::from_num(3)));
 ",
             if_signed_else_empty_str! {
@@ -351,25 +351,14 @@ Overflow can only occur when there are zero integer bits.",
 # Examples
 
 ```rust
-use fixed::{",
-            if_signed_unsigned!(
-                $Signedness,
-                concat!(
-                    "
-    types::extra::{U4, U", $s_nbits, "},
-    ", $s_fixed, ",
-",
-                ),
-                concat!("types::extra::U4, ", $s_fixed),
-            ),
-            "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).checked_floor(), Some(Fix::from_num(2)));
 ",
             if_signed_else_empty_str! {
                 $Signedness;
                 "assert_eq!(Fix::from_num(-2.5).checked_floor(), Some(Fix::from_num(-3)));
-type AllFrac = ", $s_fixed, "<U", $s_nbits, ">;
+type AllFrac = ", $s_fixed, "<", $s_nbits, ">;
 assert!(AllFrac::MIN.checked_floor().is_none());
 ",
             },
@@ -389,8 +378,8 @@ rounded away from zero, returning [`None`] on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).checked_round(), Some(Fix::from_num(3)));
 ",
             if_signed_else_empty_str! {
@@ -415,8 +404,8 @@ rounded to even, returning [`None`] on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).checked_round_ties_to_even(), Some(Fix::from_num(2)));
 assert_eq!(Fix::from_num(3.5).checked_round_ties_to_even(), Some(Fix::from_num(4)));
 assert!(Fix::MAX.checked_round_ties_to_even().is_none());
@@ -436,8 +425,8 @@ saturating on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).saturating_ceil(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -470,25 +459,14 @@ Overflow can only occur when there are zero integer bits.",
 # Examples
 
 ```rust
-use fixed::{",
-            if_signed_unsigned!(
-                $Signedness,
-                concat!(
-                    "
-    types::extra::{U4, U", $s_nbits, "},
-    ", $s_fixed, ",
-",
-                ),
-                concat!("types::extra::U4, ", $s_fixed),
-            ),
-            "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).saturating_floor(), Fix::from_num(2));
 ",
             if_signed_else_empty_str! {
                 $Signedness;
                 "assert_eq!(Fix::from_num(-2.5).saturating_floor(), Fix::from_num(-3));
-type AllFrac = ", $s_fixed, "<U", $s_nbits, ">;
+type AllFrac = ", $s_fixed, "<", $s_nbits, ">;
 assert_eq!(AllFrac::MIN.saturating_floor(), AllFrac::MIN);
 ",
             },
@@ -509,8 +487,8 @@ ties rounded away from zero, and saturating on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).saturating_round(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -541,8 +519,8 @@ ties rounded to even, and saturating on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).saturating_round_ties_to_even(), Fix::from_num(2));
 assert_eq!(Fix::from_num(3.5).saturating_round_ties_to_even(), Fix::from_num(4));
 assert_eq!(Fix::MAX.saturating_round_ties_to_even(), Fix::MAX);
@@ -568,8 +546,8 @@ wrapping on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).wrapping_ceil(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -601,25 +579,14 @@ Overflow can only occur when there are zero integer bits.",
 # Examples
 
 ```rust
-use fixed::{",
-            if_signed_unsigned!(
-                $Signedness,
-                concat!(
-                    "
-    types::extra::{U4, U", $s_nbits, "},
-    ", $s_fixed, ",
-",
-                ),
-                concat!("types::extra::U4, ", $s_fixed),
-            ),
-            "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).wrapping_floor(), Fix::from_num(2));
 ",
             if_signed_else_empty_str! {
                 $Signedness;
                 "assert_eq!(Fix::from_num(-2.5).wrapping_floor(), Fix::from_num(-3));
-type AllFrac = ", $s_fixed, "<U", $s_nbits, ">;
+type AllFrac = ", $s_fixed, "<", $s_nbits, ">;
 assert_eq!(AllFrac::MIN.wrapping_floor(), AllFrac::ZERO);
 ",
             },
@@ -639,8 +606,8 @@ nearest, with ties rounded away from zero, and wrapping on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).wrapping_round(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -665,8 +632,8 @@ nearest, with ties rounded to even, and wrapping on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).wrapping_round_ties_to_even(), Fix::from_num(2));
 assert_eq!(Fix::from_num(3.5).wrapping_round_ties_to_even(), Fix::from_num(4));
 assert_eq!(Fix::MAX.wrapping_round_ties_to_even(), Fix::MIN);
@@ -690,8 +657,8 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).unwrapped_ceil(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -704,8 +671,8 @@ assert_eq!(Fix::from_num(2.5).unwrapped_ceil(), Fix::from_num(3));
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_ceil();
 ```
 ";
@@ -735,8 +702,8 @@ Panics if the result does not fit.",
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).unwrapped_floor(), Fix::from_num(2));
 ",
             if_signed_else_empty_str! {
@@ -747,8 +714,8 @@ assert_eq!(Fix::from_num(2.5).unwrapped_floor(), Fix::from_num(2));
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U", $s_nbits, ", ", $s_fixed, "};
-type AllFrac = ", $s_fixed, "<U", $s_nbits, ">;
+use fixed::", $s_fixed, ";
+type AllFrac = ", $s_fixed, "<", $s_nbits, ">;
 let _overflow = AllFrac::MIN.unwrapped_floor();
 ",
             },
@@ -773,8 +740,8 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).unwrapped_round(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -787,8 +754,8 @@ assert_eq!(Fix::from_num(2.5).unwrapped_round(), Fix::from_num(3));
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_round();
 ```
 ";
@@ -811,8 +778,8 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).unwrapped_round_ties_to_even(), Fix::from_num(2));
 assert_eq!(Fix::from_num(3.5).unwrapped_round_ties_to_even(), Fix::from_num(4));
 ```
@@ -820,8 +787,8 @@ assert_eq!(Fix::from_num(3.5).unwrapped_round_ties_to_even(), Fix::from_num(4));
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_round_ties_to_even();
 ```
 ";
@@ -843,8 +810,8 @@ returned.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).overflowing_ceil(), (Fix::from_num(3), false));
 ",
             if_signed_else_empty_str! {
@@ -893,25 +860,14 @@ occur when there are zero integer bits.",
 # Examples
 
 ```rust
-use fixed::{",
-            if_signed_unsigned!(
-                $Signedness,
-                concat!(
-                    "
-    types::extra::{U4, U", $s_nbits, "},
-    ", $s_fixed, ",
-",
-                ),
-                concat!("types::extra::U4, ", $s_fixed),
-            ),
-            "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).overflowing_floor(), (Fix::from_num(2), false));
 ",
             if_signed_else_empty_str! {
                 $Signedness;
                 "assert_eq!(Fix::from_num(-2.5).overflowing_floor(), (Fix::from_num(-3), false));
-type AllFrac = ", $s_fixed, "<U", $s_nbits, ">;
+type AllFrac = ", $s_fixed, "<", $s_nbits, ">;
 assert_eq!(AllFrac::MIN.overflowing_floor(), (AllFrac::ZERO, true));
 ",
             },
@@ -941,8 +897,8 @@ returned.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).overflowing_round(), (Fix::from_num(3), false));
 ",
             if_signed_else_empty_str! {
@@ -1002,8 +958,8 @@ returned.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(2.5).overflowing_round_ties_to_even(), (Fix::from_num(2), false));
 assert_eq!(Fix::from_num(3.5).overflowing_round_ties_to_even(), (Fix::from_num(4), false));
 assert_eq!(Fix::MAX.overflowing_round_ties_to_even(), (Fix::MIN, true));
