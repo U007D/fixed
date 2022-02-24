@@ -16,6 +16,7 @@
 use crate::{
     display::Mul10,
     int256::{self, U256},
+    types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
 };
@@ -638,8 +639,11 @@ pub(crate) trait FromStrRadix: Sized {
 }
 
 macro_rules! impl_from_str_traits {
-    ($Fixed:ident($Bits:ident), $LeEqU:ident; fn $from:ident) => {
-        impl<Frac: $LeEqU> FromStr for $Fixed<Frac> {
+    ($Fixed:ident($Bits:ident), $nbits:expr; fn $from:ident) => {
+        impl<const FRAC: u32> FromStr for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             type Err = ParseFixedError;
             /// Parses a string slice to return a fixed-point number.
             ///
@@ -649,7 +653,10 @@ macro_rules! impl_from_str_traits {
                 Self::from_str_radix(s, 10)
             }
         }
-        impl<Frac: $LeEqU> FromStrRadix for $Fixed<Frac> {
+        impl<const FRAC: u32> FromStrRadix for $Fixed<FRAC>
+        where
+            If<{ FRAC <= $nbits }>: True,
+        {
             type Err = ParseFixedError;
             #[inline]
             fn from_str_radix(s: &str, radix: u32) -> Result<Self, Self::Err> {
@@ -688,15 +695,15 @@ macro_rules! impl_from_str_traits {
 
 macro_rules! impl_from_str {
     (
-        $FixedI:ident($BitsI:ident), $FixedU:ident($BitsU:ident), $LeEqU:ident;
+        $FixedI:ident($BitsI:ident), $FixedU:ident($BitsU:ident), $nbits:expr;
         fn $from_i:ident;
         fn $from_u:ident;
         fn $get_int_frac:ident;
         fn $get_int:ident, ($get_int_half:ident, $attempt_int_half:expr);
         fn $get_frac:ident, ($get_frac_half:ident, $attempt_frac_half:expr);
     ) => {
-        impl_from_str_traits! { $FixedI($BitsI), $LeEqU; fn $from_i }
-        impl_from_str_traits! { $FixedU($BitsU), $LeEqU; fn $from_u }
+        impl_from_str_traits! { $FixedI($BitsI), $nbits; fn $from_i }
+        impl_from_str_traits! { $FixedU($BitsU), $nbits; fn $from_u }
 
         impl ParseHelper for $BitsU {
             const BITS: u32 = $BitsU::BITS;
@@ -827,7 +834,7 @@ macro_rules! impl_from_str {
 }
 
 impl_from_str! {
-    FixedI8(i8), FixedU8(u8), LeEqU8;
+    FixedI8(i8), FixedU8(u8), 8;
     fn from_str_i8;
     fn from_str_u8;
     fn get_int_frac8;
@@ -835,7 +842,7 @@ impl_from_str! {
     fn get_frac8, (get_frac8, false);
 }
 impl_from_str! {
-    FixedI16(i16), FixedU16(u16), LeEqU16;
+    FixedI16(i16), FixedU16(u16), 16;
     fn from_str_i16;
     fn from_str_u16;
     fn get_int_frac16;
@@ -843,7 +850,7 @@ impl_from_str! {
     fn get_frac16, (get_frac8, true);
 }
 impl_from_str! {
-    FixedI32(i32), FixedU32(u32), LeEqU32;
+    FixedI32(i32), FixedU32(u32), 32;
     fn from_str_i32;
     fn from_str_u32;
     fn get_int_frac32;
@@ -851,7 +858,7 @@ impl_from_str! {
     fn get_frac32, (get_frac16, true);
 }
 impl_from_str! {
-    FixedI64(i64), FixedU64(u64), LeEqU64;
+    FixedI64(i64), FixedU64(u64), 64;
     fn from_str_i64;
     fn from_str_u64;
     fn get_int_frac64;
@@ -859,7 +866,7 @@ impl_from_str! {
     fn get_frac64, (get_frac32, false);
 }
 impl_from_str! {
-    FixedI128(i128), FixedU128(u128), LeEqU128;
+    FixedI128(i128), FixedU128(u128), 128;
     fn from_str_i128;
     fn from_str_u128;
     fn get_int_frac128;
