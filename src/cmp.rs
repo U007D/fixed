@@ -606,12 +606,9 @@ macro_rules! fixed_cmp_float {
 
 macro_rules! fixed_cmp_all {
     ($Fix:ident($nbits:expr, $Inner:ident)) => {
-        impl<const FRAC: i32> Eq for $Fix<FRAC> where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True {}
+        impl<const FRAC: i32> Eq for $Fix<FRAC> {}
 
-        impl<const FRAC: i32> Ord for $Fix<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> Ord for $Fix<FRAC> {
             #[inline]
             fn cmp(&self, rhs: &$Fix<FRAC>) -> Ordering {
                 self.to_bits().cmp(&rhs.to_bits())
