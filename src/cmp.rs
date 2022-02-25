@@ -24,103 +24,192 @@ use crate::{
 use core::cmp::Ordering;
 use half::{bf16, f16};
 
+// nbits_lhs = nbits_rhs
 macro_rules! fixed_cmp_fixed {
-    (
-        $Lhs:ident($nbits_lhs:expr, $LhsInner:ident),
-        $Rhs:ident($nbits_rhs:expr, $RhsInner:ident)
-    ) => {
-        impl<const LHS_FRAC: i32, const RHS_FRAC: i32> PartialEq<$Rhs<RHS_FRAC>> for $Lhs<LHS_FRAC>
-        where
-            If<{ (0 <= LHS_FRAC) & (LHS_FRAC <= $nbits_lhs) }>: True,
-            If<{ (0 <= RHS_FRAC) & (RHS_FRAC <= $nbits_rhs) }>: True,
+    ($FixedI:ident($InnerI:ident), $FixedU:ident($InnerU:ident), $nbits:expr) => {
+        fixed_cmp_fixed! { $FixedI($InnerI), $FixedI($InnerI), $nbits, $InnerU }
+        fixed_cmp_fixed! { $FixedI($InnerI), $FixedU($InnerU), $nbits, $InnerU }
+        fixed_cmp_fixed! { $FixedU($InnerU), $FixedI($InnerI), $nbits, $InnerU }
+        fixed_cmp_fixed! { $FixedU($InnerU), $FixedU($InnerU), $nbits, $InnerU }
+    };
+
+    ($Lhs:ident($LhsInner:ident), $Rhs:ident($RhsInner:ident), $nbits:expr, $InnerU:ident) => {
+        impl<const LHS_FRAC: i32, const RHS_FRAC: i32> PartialEq<$Rhs<RHS_FRAC>>
+            for $Lhs<LHS_FRAC>
         {
             #[inline]
             fn eq(&self, rhs: &$Rhs<RHS_FRAC>) -> bool {
-                let conv = int_helper::$RhsInner::to_fixed_helper(
-                    rhs.to_bits(),
-                    <$Rhs<RHS_FRAC>>::FRAC_BITS,
-                    Self::FRAC_BITS as u32,
-                    Self::INT_BITS as u32,
-                );
-                let (rhs_is_neg, rhs_bits) = match conv.bits {
-                    Widest::Unsigned(bits) => (false, bits as $LhsInner),
-                    Widest::Negative(bits) => (true, bits as $LhsInner),
+                if LHS_FRAC < RHS_FRAC {
+                    return rhs.eq(self);
+                }
+
+                let (lhs_neg, lhs_abs) = int_helper::$LhsInner::neg_abs(self.to_bits());
+                let (rhs_neg, rhs_abs) = int_helper::$RhsInner::neg_abs(rhs.to_bits());
+                if lhs_neg != rhs_neg {
+                    return false;
+                }
+
+                // LHS_FRAC >= RHS_FRAC
+                let rhs_shl = LHS_FRAC.wrapping_sub(RHS_FRAC) as u32;
+                let shifted_rhs_abs = if rhs_abs == 0 {
+                    Some(0)
+                } else if rhs_shl >= $InnerU::BITS {
+                    None
+                } else {
+                    let shifted = rhs_abs << rhs_shl;
+                    if (shifted >> rhs_shl) == rhs_abs {
+                        Some(shifted)
+                    } else {
+                        None
+                    }
                 };
-                conv.dir == Ordering::Equal
-                    && !conv.overflow
-                    && rhs_is_neg == int_helper::$LhsInner::is_negative(rhs_bits)
-                    && rhs_bits == self.to_bits()
+                match shifted_rhs_abs {
+                    None => false,
+                    Some(s) => lhs_abs == s,
+                }
             }
         }
 
-        impl<const LHS_FRAC: i32, const RHS_FRAC: i32> PartialOrd<$Rhs<RHS_FRAC>> for $Lhs<LHS_FRAC>
-        where
-            If<{ (0 <= LHS_FRAC) & (LHS_FRAC <= $nbits_lhs) }>: True,
-            If<{ (0 <= RHS_FRAC) & (RHS_FRAC <= $nbits_rhs) }>: True,
+        impl<const LHS_FRAC: i32, const RHS_FRAC: i32> PartialOrd<$Rhs<RHS_FRAC>>
+            for $Lhs<LHS_FRAC>
         {
             #[inline]
             fn partial_cmp(&self, rhs: &$Rhs<RHS_FRAC>) -> Option<Ordering> {
-                let lhs_is_neg = int_helper::$LhsInner::is_negative(self.to_bits());
-                let rhs_is_neg = int_helper::$RhsInner::is_negative(rhs.to_bits());
-                match (lhs_is_neg, rhs_is_neg) {
-                    (false, true) => return Some(Ordering::Greater),
-                    (true, false) => return Some(Ordering::Less),
-                    _ => {}
+                if LHS_FRAC < RHS_FRAC {
+                    return rhs.partial_cmp(self).map(Ordering::reverse);
                 }
-                let conv = int_helper::$RhsInner::to_fixed_helper(
-                    rhs.to_bits(),
-                    <$Rhs<RHS_FRAC>>::FRAC_BITS,
-                    Self::FRAC_BITS as u32,
-                    Self::INT_BITS as u32,
-                );
-                let rhs_bits = match conv.bits {
-                    Widest::Unsigned(bits) => bits as $LhsInner,
-                    Widest::Negative(bits) => bits as $LhsInner,
-                };
-                if conv.overflow || int_helper::$LhsInner::is_negative(rhs_bits) != rhs_is_neg {
-                    return if rhs_is_neg {
-                        Some(Ordering::Greater)
+
+                let (lhs_neg, lhs_abs) = int_helper::$LhsInner::neg_abs(self.to_bits());
+                let (rhs_neg, rhs_abs) = int_helper::$RhsInner::neg_abs(rhs.to_bits());
+
+                // Leave only case where lhs_neg == rhs_neg
+                if !lhs_neg && rhs_neg {
+                    return Some(Ordering::Greater);
+                }
+                if lhs_neg && !rhs_neg {
+                    return Some(Ordering::Less);
+                }
+
+                // LHS_FRAC >= RHS_FRAC
+                let rhs_shl = LHS_FRAC.wrapping_sub(RHS_FRAC) as u32;
+                let shifted_rhs_abs = if rhs_abs == 0 {
+                    Some(0)
+                } else if rhs_shl >= $InnerU::BITS {
+                    None
+                } else {
+                    let shifted = rhs_abs << rhs_shl;
+                    if (shifted >> rhs_shl) == rhs_abs {
+                        Some(shifted)
                     } else {
-                        Some(Ordering::Less)
-                    };
+                        None
+                    }
+                };
+                match shifted_rhs_abs {
+                    None => {
+                        // rhs is so large it doesn't fit
+                        if lhs_neg {
+                            // both lhs and rhs are negative, and rhs is even more negative
+                            Some(Ordering::Greater)
+                        } else {
+                            Some(Ordering::Less)
+                        }
+                    }
+                    Some(s) => {
+                        if lhs_neg {
+                            // both lhs are negative, so reverse order
+                            s.partial_cmp(&lhs_abs)
+                        } else {
+                            lhs_abs.partial_cmp(&s)
+                        }
+                    }
                 }
-                Some(self.to_bits().cmp(&rhs_bits).then(conv.dir))
             }
 
             #[inline]
             fn lt(&self, rhs: &$Rhs<RHS_FRAC>) -> bool {
-                let lhs_is_neg = int_helper::$LhsInner::is_negative(self.to_bits());
-                let rhs_is_neg = int_helper::$RhsInner::is_negative(rhs.to_bits());
-                match (lhs_is_neg, rhs_is_neg) {
-                    (false, true) => return false,
-                    (true, false) => return true,
-                    _ => {}
+                if LHS_FRAC < RHS_FRAC {
+                    return rhs.gt(self);
                 }
-                let conv = int_helper::$RhsInner::to_fixed_helper(
-                    rhs.to_bits(),
-                    <$Rhs<RHS_FRAC>>::FRAC_BITS,
-                    Self::FRAC_BITS as u32,
-                    Self::INT_BITS as u32,
-                );
-                let rhs_bits = match conv.bits {
-                    Widest::Unsigned(bits) => bits as $LhsInner,
-                    Widest::Negative(bits) => bits as $LhsInner,
+
+                let (lhs_neg, lhs_abs) = int_helper::$LhsInner::neg_abs(self.to_bits());
+                let (rhs_neg, rhs_abs) = int_helper::$RhsInner::neg_abs(rhs.to_bits());
+
+                // Leave only case where lhs_neg == rhs_neg
+                if lhs_neg != rhs_neg {
+                    return lhs_neg;
+                }
+
+                // LHS_FRAC >= RHS_FRAC
+                let rhs_shl = LHS_FRAC.wrapping_sub(RHS_FRAC) as u32;
+                let shifted_rhs_abs = if rhs_abs == 0 {
+                    Some(0)
+                } else if rhs_shl >= $InnerU::BITS {
+                    None
+                } else {
+                    let shifted = rhs_abs << rhs_shl;
+                    if (shifted >> rhs_shl) == rhs_abs {
+                        Some(shifted)
+                    } else {
+                        None
+                    }
                 };
-                if conv.overflow || int_helper::$LhsInner::is_negative(rhs_bits) != rhs_is_neg {
-                    return !rhs_is_neg;
+                match shifted_rhs_abs {
+                    None => !lhs_neg,
+                    Some(s) => {
+                        if lhs_neg {
+                            // both lhs are negative, so reverse order
+                            lhs_abs > s
+                        } else {
+                            lhs_abs < s
+                        }
+                    }
                 }
-                let lhs_bits = self.to_bits();
-                lhs_bits < rhs_bits || (lhs_bits == rhs_bits && conv.dir == Ordering::Less)
             }
 
             #[inline]
             fn le(&self, rhs: &$Rhs<RHS_FRAC>) -> bool {
-                !rhs.lt(self)
+                !self.gt(rhs)
             }
 
             #[inline]
             fn gt(&self, rhs: &$Rhs<RHS_FRAC>) -> bool {
-                rhs.lt(self)
+                if LHS_FRAC < RHS_FRAC {
+                    return rhs.lt(self);
+                }
+
+                let (lhs_neg, lhs_abs) = int_helper::$LhsInner::neg_abs(self.to_bits());
+                let (rhs_neg, rhs_abs) = int_helper::$RhsInner::neg_abs(rhs.to_bits());
+
+                // Leave only case where lhs_neg == rhs_neg
+                if lhs_neg != rhs_neg {
+                    return rhs_neg;
+                }
+
+                // LHS_FRAC >= RHS_FRAC
+                let rhs_shl = LHS_FRAC.wrapping_sub(RHS_FRAC) as u32;
+                let shifted_rhs_abs = if rhs_abs == 0 {
+                    Some(0)
+                } else if rhs_shl >= $InnerU::BITS {
+                    None
+                } else {
+                    let shifted = rhs_abs << rhs_shl;
+                    if (shifted >> rhs_shl) == rhs_abs {
+                        Some(shifted)
+                    } else {
+                        None
+                    }
+                };
+                match shifted_rhs_abs {
+                    None => lhs_neg,
+                    Some(s) => {
+                        if lhs_neg {
+                            // both lhs are negative, so reverse order
+                            lhs_abs < s
+                        } else {
+                            lhs_abs > s
+                        }
+                    }
+                }
             }
 
             #[inline]
@@ -130,6 +219,124 @@ macro_rules! fixed_cmp_fixed {
         }
     };
 }
+
+fixed_cmp_fixed! { FixedI8(i8), FixedU8(u8), 8 }
+fixed_cmp_fixed! { FixedI16(i16), FixedU16(u16), 16 }
+fixed_cmp_fixed! { FixedI32(i32), FixedU32(u32), 32 }
+fixed_cmp_fixed! { FixedI64(i64), FixedU64(u64), 64 }
+fixed_cmp_fixed! { FixedI128(i128), FixedU128(u128), 128 }
+
+macro_rules! fixed_cmp_wider {
+    (
+        $WideI:ident, $WideU:ident; $NarrowI:ident, $NarrowU:ident
+    ) => {
+        fixed_cmp_wider! { $WideI; $NarrowI, $WideI }
+        fixed_cmp_wider! { $WideI; $NarrowU, $WideU }
+        fixed_cmp_wider! { $WideU; $NarrowI, $WideI }
+        fixed_cmp_wider! { $WideU; $NarrowU, $WideU }
+    };
+
+    ($Wide:ident; $Narrow:ident, $Widened:ident) => {
+        impl<const LHS_FRAC: i32, const RHS_FRAC: i32> PartialEq<$Wide<RHS_FRAC>>
+            for $Narrow<LHS_FRAC>
+        {
+            #[inline]
+            fn eq(&self, rhs: &$Wide<RHS_FRAC>) -> bool {
+                let lhs = $Widened::<LHS_FRAC>::from_bits(self.to_bits().into());
+                lhs.eq(rhs)
+            }
+        }
+
+        impl<const LHS_FRAC: i32, const RHS_FRAC: i32> PartialOrd<$Wide<RHS_FRAC>>
+            for $Narrow<LHS_FRAC>
+        {
+            #[inline]
+            fn partial_cmp(&self, rhs: &$Wide<RHS_FRAC>) -> Option<Ordering> {
+                let lhs = $Widened::<LHS_FRAC>::from_bits(self.to_bits().into());
+                lhs.partial_cmp(rhs)
+            }
+
+            #[inline]
+            fn lt(&self, rhs: &$Wide<RHS_FRAC>) -> bool {
+                let lhs = $Widened::<LHS_FRAC>::from_bits(self.to_bits().into());
+                lhs.lt(rhs)
+            }
+
+            #[inline]
+            fn le(&self, rhs: &$Wide<RHS_FRAC>) -> bool {
+                let lhs = $Widened::<LHS_FRAC>::from_bits(self.to_bits().into());
+                lhs.le(rhs)
+            }
+
+            #[inline]
+            fn gt(&self, rhs: &$Wide<RHS_FRAC>) -> bool {
+                let lhs = $Widened::<LHS_FRAC>::from_bits(self.to_bits().into());
+                lhs.gt(rhs)
+            }
+
+            #[inline]
+            fn ge(&self, rhs: &$Wide<RHS_FRAC>) -> bool {
+                let lhs = $Widened::<LHS_FRAC>::from_bits(self.to_bits().into());
+                lhs.ge(rhs)
+            }
+        }
+
+        impl<const LHS_FRAC: i32, const RHS_FRAC: i32> PartialEq<$Narrow<RHS_FRAC>>
+            for $Wide<LHS_FRAC>
+        {
+            #[inline]
+            fn eq(&self, rhs: &$Narrow<RHS_FRAC>) -> bool {
+                let rhs = $Widened::<RHS_FRAC>::from_bits(rhs.to_bits().into());
+                self.eq(&rhs)
+            }
+        }
+
+        impl<const LHS_FRAC: i32, const RHS_FRAC: i32> PartialOrd<$Narrow<RHS_FRAC>>
+            for $Wide<LHS_FRAC>
+        {
+            #[inline]
+            fn partial_cmp(&self, rhs: &$Narrow<RHS_FRAC>) -> Option<Ordering> {
+                let rhs = $Widened::<RHS_FRAC>::from_bits(rhs.to_bits().into());
+                self.partial_cmp(&rhs)
+            }
+
+            #[inline]
+            fn lt(&self, rhs: &$Narrow<RHS_FRAC>) -> bool {
+                let rhs = $Widened::<RHS_FRAC>::from_bits(rhs.to_bits().into());
+                self.lt(&rhs)
+            }
+
+            #[inline]
+            fn le(&self, rhs: &$Narrow<RHS_FRAC>) -> bool {
+                let rhs = $Widened::<RHS_FRAC>::from_bits(rhs.to_bits().into());
+                self.le(&rhs)
+            }
+
+            #[inline]
+            fn gt(&self, rhs: &$Narrow<RHS_FRAC>) -> bool {
+                let rhs = $Widened::<RHS_FRAC>::from_bits(rhs.to_bits().into());
+                self.gt(&rhs)
+            }
+
+            #[inline]
+            fn ge(&self, rhs: &$Narrow<RHS_FRAC>) -> bool {
+                let rhs = $Widened::<RHS_FRAC>::from_bits(rhs.to_bits().into());
+                self.ge(&rhs)
+            }
+        }
+    };
+}
+
+fixed_cmp_wider! { FixedI16, FixedU16; FixedI8, FixedU8 }
+fixed_cmp_wider! { FixedI32, FixedU32; FixedI8, FixedU8 }
+fixed_cmp_wider! { FixedI32, FixedU32; FixedI16, FixedU16 }
+fixed_cmp_wider! { FixedI64, FixedU64; FixedI8, FixedU8 }
+fixed_cmp_wider! { FixedI64, FixedU64; FixedI16, FixedU16 }
+fixed_cmp_wider! { FixedI64, FixedU64; FixedI32, FixedU32 }
+fixed_cmp_wider! { FixedI128, FixedU128; FixedI8, FixedU8 }
+fixed_cmp_wider! { FixedI128, FixedU128; FixedI16, FixedU16 }
+fixed_cmp_wider! { FixedI128, FixedU128; FixedI32, FixedU32 }
+fixed_cmp_wider! { FixedI128, FixedU128; FixedI64, FixedU64 }
 
 macro_rules! fixed_cmp_int {
     ($Fix:ident($nbits:expr), $Int:ident, $IntAs:ident, $IntFixed:ident) => {
@@ -425,16 +632,6 @@ macro_rules! fixed_cmp_all {
             }
         }
 
-        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedI8(8, i8) }
-        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedI16(16, i16) }
-        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedI32(32, i32) }
-        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedI64(64, i64) }
-        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedI128(128, i128) }
-        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedU8(8, u8) }
-        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedU16(16, u16) }
-        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedU32(32, u32) }
-        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedU64(64, u64) }
-        fixed_cmp_fixed! { $Fix($nbits, $Inner), FixedU128(128, u128) }
         fixed_cmp_int! { $Fix($nbits), i8, i8, FixedI8 }
         fixed_cmp_int! { $Fix($nbits), i16, i16, FixedI16 }
         fixed_cmp_int! { $Fix($nbits), i32, i32, FixedI32 }
