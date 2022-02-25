@@ -29,10 +29,10 @@ macro_rules! fixed_cmp_fixed {
         $Lhs:ident($nbits_lhs:expr, $LhsInner:ident),
         $Rhs:ident($nbits_rhs:expr, $RhsInner:ident)
     ) => {
-        impl<const LHS_FRAC: u32, const RHS_FRAC: u32> PartialEq<$Rhs<RHS_FRAC>> for $Lhs<LHS_FRAC>
+        impl<const LHS_FRAC: i32, const RHS_FRAC: i32> PartialEq<$Rhs<RHS_FRAC>> for $Lhs<LHS_FRAC>
         where
-            If<{ LHS_FRAC <= $nbits_lhs }>: True,
-            If<{ RHS_FRAC <= $nbits_rhs }>: True,
+            If<{ (0 <= LHS_FRAC) & (LHS_FRAC <= $nbits_lhs) }>: True,
+            If<{ (0 <= RHS_FRAC) & (RHS_FRAC <= $nbits_rhs) }>: True,
         {
             #[inline]
             fn eq(&self, rhs: &$Rhs<RHS_FRAC>) -> bool {
@@ -53,10 +53,10 @@ macro_rules! fixed_cmp_fixed {
             }
         }
 
-        impl<const LHS_FRAC: u32, const RHS_FRAC: u32> PartialOrd<$Rhs<RHS_FRAC>> for $Lhs<LHS_FRAC>
+        impl<const LHS_FRAC: i32, const RHS_FRAC: i32> PartialOrd<$Rhs<RHS_FRAC>> for $Lhs<LHS_FRAC>
         where
-            If<{ LHS_FRAC <= $nbits_lhs }>: True,
-            If<{ RHS_FRAC <= $nbits_rhs }>: True,
+            If<{ (0 <= LHS_FRAC) & (LHS_FRAC <= $nbits_lhs) }>: True,
+            If<{ (0 <= RHS_FRAC) & (RHS_FRAC <= $nbits_rhs) }>: True,
         {
             #[inline]
             fn partial_cmp(&self, rhs: &$Rhs<RHS_FRAC>) -> Option<Ordering> {
@@ -133,9 +133,9 @@ macro_rules! fixed_cmp_fixed {
 
 macro_rules! fixed_cmp_int {
     ($Fix:ident($nbits:expr), $Int:ident, $IntAs:ident, $IntFixed:ident) => {
-        impl<const FRAC: u32> PartialEq<$Int> for $Fix<FRAC>
+        impl<const FRAC: i32> PartialEq<$Int> for $Fix<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn eq(&self, rhs: &$Int) -> bool {
@@ -145,9 +145,9 @@ macro_rules! fixed_cmp_int {
         }
 
         // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
-        // impl<const FRAC: u32> PartialEq<$Fix<FRAC>> for $Int
+        // impl<const FRAC: i32> PartialEq<$Fix<FRAC>> for $Int
         // where
-        //     If<{ FRAC <= $nbits }>: True,
+        //     If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         // {
         //     #[inline]
         //     fn eq(&self, rhs: &$Fix<FRAC>) -> bool {
@@ -156,9 +156,9 @@ macro_rules! fixed_cmp_int {
         //     }
         // }
 
-        impl<const FRAC: u32> PartialOrd<$Int> for $Fix<FRAC>
+        impl<const FRAC: i32> PartialOrd<$Int> for $Fix<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn partial_cmp(&self, rhs: &$Int) -> Option<Ordering> {
@@ -192,9 +192,9 @@ macro_rules! fixed_cmp_int {
         }
 
         // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
-        // impl<const FRAC: u32> PartialOrd<$Fix<FRAC>> for $Int
+        // impl<const FRAC: i32> PartialOrd<$Fix<FRAC>> for $Int
         // where
-        //     If<{ FRAC <= $nbits }>: True,
+        //     If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         // {
         //     #[inline]
         //     fn partial_cmp(&self, rhs: &$Fix<FRAC>) -> Option<Ordering> {
@@ -231,9 +231,9 @@ macro_rules! fixed_cmp_int {
 
 macro_rules! fixed_cmp_float {
     ($Fix:ident($nbits:expr, $Inner:ident), $Float:ident) => {
-        impl<const FRAC: u32> PartialEq<$Float> for $Fix<FRAC>
+        impl<const FRAC: i32> PartialEq<$Float> for $Fix<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn eq(&self, rhs: &$Float) -> bool {
@@ -254,9 +254,9 @@ macro_rules! fixed_cmp_float {
             }
         }
 
-        impl<const FRAC: u32> PartialEq<$Fix<FRAC>> for $Float
+        impl<const FRAC: i32> PartialEq<$Fix<FRAC>> for $Float
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn eq(&self, rhs: &$Fix<FRAC>) -> bool {
@@ -264,9 +264,9 @@ macro_rules! fixed_cmp_float {
             }
         }
 
-        impl<const FRAC: u32> PartialOrd<$Float> for $Fix<FRAC>
+        impl<const FRAC: i32> PartialOrd<$Float> for $Fix<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn partial_cmp(&self, rhs: &$Float) -> Option<Ordering> {
@@ -346,9 +346,9 @@ macro_rules! fixed_cmp_float {
             }
         }
 
-        impl<const FRAC: u32> PartialOrd<$Fix<FRAC>> for $Float
+        impl<const FRAC: i32> PartialOrd<$Fix<FRAC>> for $Float
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn partial_cmp(&self, rhs: &$Fix<FRAC>) -> Option<Ordering> {
@@ -404,11 +404,11 @@ macro_rules! fixed_cmp_float {
 
 macro_rules! fixed_cmp_all {
     ($Fix:ident($nbits:expr, $Inner:ident)) => {
-        impl<const FRAC: u32> Eq for $Fix<FRAC> where If<{ FRAC <= $nbits }>: True {}
+        impl<const FRAC: i32> Eq for $Fix<FRAC> where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True {}
 
-        impl<const FRAC: u32> Ord for $Fix<FRAC>
+        impl<const FRAC: i32> Ord for $Fix<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn cmp(&self, rhs: &$Fix<FRAC>) -> Ordering {

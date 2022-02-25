@@ -22,34 +22,34 @@ use bytemuck::{Pod, TransparentWrapper, Zeroable};
 
 macro_rules! unsafe_impl_traits {
     ($Fixed:ident, $nbits:expr, $Inner:ident) => {
-        unsafe impl<const FRAC: u32> Zeroable for $Fixed<FRAC> {}
-        unsafe impl<const FRAC: u32> Pod for $Fixed<FRAC> {}
-        unsafe impl<const FRAC: u32> TransparentWrapper<$Inner> for $Fixed<FRAC> {}
+        unsafe impl<const FRAC: i32> Zeroable for $Fixed<FRAC> {}
+        unsafe impl<const FRAC: i32> Pod for $Fixed<FRAC> {}
+        unsafe impl<const FRAC: i32> TransparentWrapper<$Inner> for $Fixed<FRAC> {}
 
-        unsafe impl<const FRAC: u32> Zeroable for Wrapping<$Fixed<FRAC>>
+        unsafe impl<const FRAC: i32> Zeroable for Wrapping<$Fixed<FRAC>>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {}
-        unsafe impl<const FRAC: u32> Pod for Wrapping<$Fixed<FRAC>>
+        unsafe impl<const FRAC: i32> Pod for Wrapping<$Fixed<FRAC>>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {}
-        unsafe impl<const FRAC: u32> TransparentWrapper<$Fixed<FRAC>> for Wrapping<$Fixed<FRAC>>
+        unsafe impl<const FRAC: i32> TransparentWrapper<$Fixed<FRAC>> for Wrapping<$Fixed<FRAC>>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {}
 
-        unsafe impl<const FRAC: u32> Zeroable for Unwrapped<$Fixed<FRAC>>
+        unsafe impl<const FRAC: i32> Zeroable for Unwrapped<$Fixed<FRAC>>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {}
-        unsafe impl<const FRAC: u32> Pod for Unwrapped<$Fixed<FRAC>>
+        unsafe impl<const FRAC: i32> Pod for Unwrapped<$Fixed<FRAC>>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {}
-        unsafe impl<const FRAC: u32> TransparentWrapper<$Fixed<FRAC>> for Unwrapped<$Fixed<FRAC>>
+        unsafe impl<const FRAC: i32> TransparentWrapper<$Fixed<FRAC>> for Unwrapped<$Fixed<FRAC>>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {}
     };
 }

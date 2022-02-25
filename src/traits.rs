@@ -3443,14 +3443,14 @@ macro_rules! impl_fixed {
         $Fixed:ident, $IFixed:ident, $UFixed:ident, $nbits:expr, $Bits:ident, $NonZeroBits:ident,
         $Signedness:tt
     ) => {
-        impl<const FRAC: u32> FixedOptionalFeatures for $Fixed<FRAC> where
-            If<{ FRAC <= $nbits }>: True
+        impl<const FRAC: i32> FixedOptionalFeatures for $Fixed<FRAC> where
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True
         {
         }
 
-        impl<const FRAC: u32> Fixed for $Fixed<FRAC>
+        impl<const FRAC: i32> Fixed for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             type Bits = $Bits;
             type NonZeroBits = $NonZeroBits;
@@ -3677,9 +3677,9 @@ macro_rules! impl_fixed {
             }
         }
 
-        impl<const FRAC: u32> FromFixed for $Fixed<FRAC>
+        impl<const FRAC: i32> FromFixed for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             /// Converts a fixed-point number.
             ///
@@ -3803,9 +3803,9 @@ macro_rules! impl_fixed {
             }
         }
 
-        impl<const FRAC: u32> ToFixed for $Fixed<FRAC>
+        impl<const FRAC: i32> ToFixed for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             /// Converts a fixed-point number.
             ///
@@ -3877,9 +3877,9 @@ macro_rules! impl_fixed {
 
         if_signed! {
             $Signedness;
-            impl<const FRAC: u32> FixedSigned for $Fixed<FRAC>
+            impl<const FRAC: i32> FixedSigned for $Fixed<FRAC>
             where
-                If<{ FRAC <= $nbits }>: True,
+                If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
             {
                 trait_delegate! { fn signed_bits(self) -> u32 }
                 trait_delegate! { fn abs(self) -> Self }
@@ -3903,9 +3903,9 @@ macro_rules! impl_fixed {
 
         if_unsigned! {
             $Signedness;
-            impl<const FRAC: u32> FixedUnsigned for $Fixed<FRAC>
+            impl<const FRAC: i32> FixedUnsigned for $Fixed<FRAC>
             where
-                If<{ FRAC <= $nbits }>: True,
+                If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
             {
                 trait_delegate! { fn significant_bits(self) -> u32 }
                 trait_delegate! { fn is_power_of_two(self) -> bool }

@@ -1984,10 +1984,10 @@ impl<'a, F: 'a + Fixed> Product<&'a Unwrapped<F>> for Unwrapped<F> {
 //
 // To work around this, we provide implementations like this:
 //
-//     impl<const FRAC: u32> Op<i8> for Unwrapped<FixedI8<FRAC>> { /* ... */ }
-//     impl<const FRAC: u32> Op<&i8> for Unwrapped<FixedI8<FRAC>> { /* ... */ }
-//     impl<const FRAC: u32> Op<i16> for Unwrapped<FixedI16<FRAC>> { /* ... */ }
-//     impl<const FRAC: u32> Op<&i16> for Unwrapped<FixedI16<FRAC>> { /* ... */ }
+//     impl<const FRAC: i32> Op<i8> for Unwrapped<FixedI8<FRAC>> { /* ... */ }
+//     impl<const FRAC: i32> Op<&i8> for Unwrapped<FixedI8<FRAC>> { /* ... */ }
+//     impl<const FRAC: i32> Op<i16> for Unwrapped<FixedI16<FRAC>> { /* ... */ }
+//     impl<const FRAC: i32> Op<&i16> for Unwrapped<FixedI16<FRAC>> { /* ... */ }
 //     ...
 
 macro_rules! op_bits {
@@ -1996,8 +1996,8 @@ macro_rules! op_bits {
         $Op:ident $op:ident,
         $OpAssign:ident $op_assign:ident
     ) => {
-        impl<const FRAC: u32> $Op<$Bits> for Unwrapped<$Fixed<FRAC>>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Op<$Bits> for Unwrapped<$Fixed<FRAC>>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = Unwrapped<$Fixed<FRAC>>;
             #[inline]
@@ -2006,8 +2006,8 @@ macro_rules! op_bits {
                 Unwrapped((self.0).$unwrapped(other))
             }
         }
-        impl<const FRAC: u32> $Op<$Bits> for &Unwrapped<$Fixed<FRAC>>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Op<$Bits> for &Unwrapped<$Fixed<FRAC>>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = Unwrapped<$Fixed<FRAC>>;
             #[inline]
@@ -2016,8 +2016,8 @@ macro_rules! op_bits {
                 Unwrapped((self.0).$unwrapped(other))
             }
         }
-        impl<const FRAC: u32> $Op<&$Bits> for Unwrapped<$Fixed<FRAC>>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Op<&$Bits> for Unwrapped<$Fixed<FRAC>>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = Unwrapped<$Fixed<FRAC>>;
             #[inline]
@@ -2026,8 +2026,8 @@ macro_rules! op_bits {
                 Unwrapped((self.0).$unwrapped(*other))
             }
         }
-        impl<const FRAC: u32> $Op<&$Bits> for &Unwrapped<$Fixed<FRAC>>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Op<&$Bits> for &Unwrapped<$Fixed<FRAC>>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = Unwrapped<$Fixed<FRAC>>;
             #[inline]
@@ -2036,8 +2036,8 @@ macro_rules! op_bits {
                 Unwrapped((self.0).$unwrapped(*other))
             }
         }
-        impl<const FRAC: u32> $OpAssign<$Bits> for Unwrapped<$Fixed<FRAC>>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $OpAssign<$Bits> for Unwrapped<$Fixed<FRAC>>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             #[inline]
             #[track_caller]
@@ -2045,8 +2045,8 @@ macro_rules! op_bits {
                 self.0 = (self.0).$unwrapped(other);
             }
         }
-        impl<const FRAC: u32> $OpAssign<&$Bits> for Unwrapped<$Fixed<FRAC>>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $OpAssign<&$Bits> for Unwrapped<$Fixed<FRAC>>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             #[inline]
             #[track_caller]

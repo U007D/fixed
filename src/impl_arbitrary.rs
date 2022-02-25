@@ -22,7 +22,7 @@ use arbitrary::{Arbitrary, Result as ArbitraryResult, Unstructured};
 
 macro_rules! impl_trait {
     ($Fixed:ident, $nbits:expr, $Inner:ident) => {
-        impl<'a, const FRAC: u32> Arbitrary<'a> for $Fixed<FRAC> {
+        impl<'a, const FRAC: i32> Arbitrary<'a> for $Fixed<FRAC> {
             #[inline]
             fn arbitrary(u: &mut Unstructured<'a>) -> ArbitraryResult<Self> {
                 Ok(Self::from_bits(<$Inner as Arbitrary<'a>>::arbitrary(u)?))
@@ -34,9 +34,9 @@ macro_rules! impl_trait {
             }
         }
 
-        impl<'a, const FRAC: u32> Arbitrary<'a> for Wrapping<$Fixed<FRAC>>
+        impl<'a, const FRAC: i32> Arbitrary<'a> for Wrapping<$Fixed<FRAC>>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn arbitrary(u: &mut Unstructured<'a>) -> ArbitraryResult<Self> {
@@ -49,9 +49,9 @@ macro_rules! impl_trait {
             }
         }
 
-        impl<'a, const FRAC: u32> Arbitrary<'a> for Unwrapped<$Fixed<FRAC>>
+        impl<'a, const FRAC: i32> Arbitrary<'a> for Unwrapped<$Fixed<FRAC>>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn arbitrary(u: &mut Unstructured<'a>) -> ArbitraryResult<Self> {

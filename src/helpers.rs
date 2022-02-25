@@ -56,9 +56,9 @@ pub trait Sealed: Copy {
 }
 macro_rules! impl_sealed {
     ($Fixed:ident($nbits:expr, $Signedness:tt, $Inner:ident)) => {
-        impl<const FRAC: u32> Sealed for $Fixed<FRAC>
+        impl<const FRAC: i32> Sealed for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn private_to_fixed_helper(

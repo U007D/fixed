@@ -22,14 +22,14 @@ use borsh::{BorshDeserialize, BorshSerialize};
 
 macro_rules! borsh_fixed {
     ($Fixed:ident is $TBits:ident) => {
-        impl<const FRAC: u32> BorshSerialize for $Fixed<FRAC> {
+        impl<const FRAC: i32> BorshSerialize for $Fixed<FRAC> {
             #[inline]
             fn serialize<W: Write>(&self, writer: &mut W) -> Result<()> {
                 <$TBits as BorshSerialize>::serialize(&self.bits, writer)
             }
         }
 
-        impl<const FRAC: u32> BorshDeserialize for $Fixed<FRAC> {
+        impl<const FRAC: i32> BorshDeserialize for $Fixed<FRAC> {
             #[inline]
             fn deserialize(buf: &mut &[u8]) -> Result<Self> {
                 <$TBits as BorshDeserialize>::deserialize(buf).map($Fixed::from_bits)

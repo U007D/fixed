@@ -33,9 +33,9 @@ use {
 
 macro_rules! serde_fixed {
     ($Fixed:ident($nbits:expr) is $TBits:ident name $Name:expr) => {
-        impl<const FRAC: u32> Serialize for $Fixed<FRAC>
+        impl<const FRAC: i32> Serialize for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[cfg(not(feature = "serde-str"))]
             fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
@@ -55,27 +55,27 @@ macro_rules! serde_fixed {
             }
         }
 
-        impl<const FRAC: u32> Serialize for Wrapping<$Fixed<FRAC>>
+        impl<const FRAC: i32> Serialize for Wrapping<$Fixed<FRAC>>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
                 self.0.serialize(serializer)
             }
         }
 
-        impl<const FRAC: u32> Serialize for Unwrapped<$Fixed<FRAC>>
+        impl<const FRAC: i32> Serialize for Unwrapped<$Fixed<FRAC>>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
                 self.0.serialize(serializer)
             }
         }
 
-        impl<'de, const FRAC: u32> Deserialize<'de> for $Fixed<FRAC>
+        impl<'de, const FRAC: i32> Deserialize<'de> for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[cfg(not(feature = "serde-str"))]
             fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
@@ -129,18 +129,18 @@ macro_rules! serde_fixed {
             }
         }
 
-        impl<'de, const FRAC: u32> Deserialize<'de> for Wrapping<$Fixed<FRAC>>
+        impl<'de, const FRAC: i32> Deserialize<'de> for Wrapping<$Fixed<FRAC>>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
                 $Fixed::deserialize(deserializer).map(Wrapping)
             }
         }
 
-        impl<'de, const FRAC: u32> Deserialize<'de> for Unwrapped<$Fixed<FRAC>>
+        impl<'de, const FRAC: i32> Deserialize<'de> for Unwrapped<$Fixed<FRAC>>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
                 $Fixed::deserialize(deserializer).map(Unwrapped)

@@ -45,9 +45,9 @@ type Fix = ", $s_fixed, "<", $s_nbits, ">;
 assert_eq!(Fix::LOG10_2, Fix::from_num(consts::LOG10_2));
 ```
 ";
-            impl<const FRAC: u32> $Fixed<FRAC>
+            impl<const FRAC: i32> $Fixed<FRAC>
             where
-                If<{ FRAC <= $nbits }>: True,
+                If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
             {
                 /// 1/τ = 0.159154…
                 pub const FRAC_1_TAU: $Fixed<FRAC> = shift!(FRAC_1_TAU, $Fixed<FRAC>);
@@ -107,9 +107,9 @@ let _ = Fix::LN_2;
 ```
 "
             };
-            impl<const FRAC: u32> $Fixed<FRAC>
+            impl<const FRAC: i32> $Fixed<FRAC>
             where
-                If<{ FRAC <= $nbits_c0 }>: True,
+                If<{ (0 <= FRAC) & (FRAC <= $nbits_c0) }>: True,
             {
                 /// τ/8 = 0.785398…
                 pub const FRAC_TAU_8: $Fixed<FRAC> = shift!(FRAC_TAU_8, $Fixed<FRAC>);
@@ -189,9 +189,9 @@ type Fix = ", $s_fixed, "<",
 let _ = Fix::LOG2_E;
 ```
 ";
-            impl<const FRAC: u32> $Fixed<FRAC>
+            impl<const FRAC: i32> $Fixed<FRAC>
             where
-                If<{ FRAC <= $nbits_c1 }>: True,
+                If<{ (0 <= FRAC) & (FRAC <= $nbits_c1) }>: True,
             {
                 comment! {
                     "One.
@@ -283,9 +283,9 @@ type Fix = ", $s_fixed, "<",
 let _ = Fix::E;
 ```
 ";
-            impl<const FRAC: u32> $Fixed<FRAC>
+            impl<const FRAC: i32> $Fixed<FRAC>
             where
-                If<{ FRAC <= $nbits_c2 }>: True,
+                If<{ (0 <= FRAC) & (FRAC <= $nbits_c2) }>: True,
             {
                 /// τ/2 = 3.14159…
                 pub const FRAC_TAU_2: $Fixed<FRAC> = shift!(FRAC_TAU_2, 126, $Fixed<FRAC>);
@@ -344,9 +344,9 @@ type Fix = ", $s_fixed, "<",
 let _ = Fix::TAU;
 ```
 ";
-            impl<const FRAC: u32> $Fixed<FRAC>
+            impl<const FRAC: i32> $Fixed<FRAC>
             where
-                If<{ FRAC <= $nbits_c3 }>: True,
+                If<{ (0 <= FRAC) & (FRAC <= $nbits_c3) }>: True,
             {
                 /// A turn, τ = 6.28318…
                 pub const TAU: $Fixed<FRAC> = shift!(TAU, 125, $Fixed<FRAC>);

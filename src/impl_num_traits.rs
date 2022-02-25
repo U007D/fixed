@@ -76,7 +76,7 @@ impl Error for RadixParseFixedError {
 
 macro_rules! impl_traits {
     ($Fixed:ident, $nbits:expr, $one_max_frac:expr, $Signedness:tt) => {
-        impl<const FRAC: u32> Bounded for $Fixed<FRAC> {
+        impl<const FRAC: i32> Bounded for $Fixed<FRAC> {
             #[inline]
             fn min_value() -> Self {
                 Self::MIN
@@ -87,7 +87,7 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: u32> Zero for $Fixed<FRAC> {
+        impl<const FRAC: i32> Zero for $Fixed<FRAC> {
             #[inline]
             fn zero() -> Self {
                 Self::ZERO
@@ -98,10 +98,10 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: u32> One for $Fixed<FRAC>
+        impl<const FRAC: i32> One for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
-            If<{ FRAC <= $one_max_frac }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $one_max_frac) }>: True,
         {
             #[inline]
             fn one() -> Self {
@@ -109,10 +109,10 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: u32> Num for $Fixed<FRAC>
+        impl<const FRAC: i32> Num for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
-            If<{ FRAC <= $one_max_frac }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $one_max_frac) }>: True,
         {
             type FromStrRadixErr = RadixParseFixedError;
 
@@ -129,9 +129,9 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: u32> Inv for $Fixed<FRAC>
+        impl<const FRAC: i32> Inv for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             type Output = Self;
             #[inline]
@@ -142,10 +142,10 @@ macro_rules! impl_traits {
 
         if_signed! {
             $Signedness;
-            impl<const FRAC: u32> Signed for $Fixed<FRAC>
+            impl<const FRAC: i32> Signed for $Fixed<FRAC>
             where
-                If<{ FRAC <= $nbits }>: True,
-                If<{ FRAC <= $one_max_frac }>: True,
+                If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
+                If<{ (0 <= FRAC) & (FRAC <= $one_max_frac) }>: True,
             {
                 #[inline]
                 fn abs(&self) -> Self {
@@ -176,38 +176,38 @@ macro_rules! impl_traits {
 
         if_unsigned! {
             $Signedness;
-            impl<const FRAC: u32> Unsigned for $Fixed<FRAC>
+            impl<const FRAC: i32> Unsigned for $Fixed<FRAC>
             where
-                If<{ FRAC <= $nbits }>: True,
-                If<{ FRAC <= $one_max_frac }>: True,
+                If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
+                If<{ (0 <= FRAC) & (FRAC <= $one_max_frac) }>: True,
             {
             }
         }
 
-        impl<const FRAC: u32> CheckedAdd for $Fixed<FRAC> {
+        impl<const FRAC: i32> CheckedAdd for $Fixed<FRAC> {
             #[inline]
             fn checked_add(&self, v: &Self) -> Option<Self> {
                 (*self).checked_add(*v)
             }
         }
 
-        impl<const FRAC: u32> CheckedSub for $Fixed<FRAC> {
+        impl<const FRAC: i32> CheckedSub for $Fixed<FRAC> {
             #[inline]
             fn checked_sub(&self, v: &Self) -> Option<Self> {
                 (*self).checked_sub(*v)
             }
         }
 
-        impl<const FRAC: u32> CheckedNeg for $Fixed<FRAC> {
+        impl<const FRAC: i32> CheckedNeg for $Fixed<FRAC> {
             #[inline]
             fn checked_neg(&self) -> Option<Self> {
                 (*self).checked_neg()
             }
         }
 
-        impl<const FRAC: u32> CheckedMul for $Fixed<FRAC>
+        impl<const FRAC: i32> CheckedMul for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn checked_mul(&self, v: &Self) -> Option<Self> {
@@ -215,9 +215,9 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: u32> CheckedDiv for $Fixed<FRAC>
+        impl<const FRAC: i32> CheckedDiv for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn checked_div(&self, v: &Self) -> Option<Self> {
@@ -225,44 +225,44 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: u32> CheckedRem for $Fixed<FRAC> {
+        impl<const FRAC: i32> CheckedRem for $Fixed<FRAC> {
             #[inline]
             fn checked_rem(&self, v: &Self) -> Option<Self> {
                 (*self).checked_rem(*v)
             }
         }
 
-        impl<const FRAC: u32> CheckedShl for $Fixed<FRAC> {
+        impl<const FRAC: i32> CheckedShl for $Fixed<FRAC> {
             #[inline]
             fn checked_shl(&self, rhs: u32) -> Option<Self> {
                 (*self).checked_shl(rhs)
             }
         }
 
-        impl<const FRAC: u32> CheckedShr for $Fixed<FRAC> {
+        impl<const FRAC: i32> CheckedShr for $Fixed<FRAC> {
             #[inline]
             fn checked_shr(&self, rhs: u32) -> Option<Self> {
                 (*self).checked_shr(rhs)
             }
         }
 
-        impl<const FRAC: u32> SaturatingAdd for $Fixed<FRAC> {
+        impl<const FRAC: i32> SaturatingAdd for $Fixed<FRAC> {
             #[inline]
             fn saturating_add(&self, v: &Self) -> Self {
                 (*self).saturating_add(*v)
             }
         }
 
-        impl<const FRAC: u32> SaturatingSub for $Fixed<FRAC> {
+        impl<const FRAC: i32> SaturatingSub for $Fixed<FRAC> {
             #[inline]
             fn saturating_sub(&self, v: &Self) -> Self {
                 (*self).saturating_sub(*v)
             }
         }
 
-        impl<const FRAC: u32> SaturatingMul for $Fixed<FRAC>
+        impl<const FRAC: i32> SaturatingMul for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn saturating_mul(&self, v: &Self) -> Self {
@@ -270,30 +270,30 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: u32> WrappingAdd for $Fixed<FRAC> {
+        impl<const FRAC: i32> WrappingAdd for $Fixed<FRAC> {
             #[inline]
             fn wrapping_add(&self, v: &Self) -> Self {
                 (*self).wrapping_add(*v)
             }
         }
 
-        impl<const FRAC: u32> WrappingSub for $Fixed<FRAC> {
+        impl<const FRAC: i32> WrappingSub for $Fixed<FRAC> {
             #[inline]
             fn wrapping_sub(&self, v: &Self) -> Self {
                 (*self).wrapping_sub(*v)
             }
         }
 
-        impl<const FRAC: u32> WrappingNeg for $Fixed<FRAC> {
+        impl<const FRAC: i32> WrappingNeg for $Fixed<FRAC> {
             #[inline]
             fn wrapping_neg(&self) -> Self {
                 (*self).wrapping_neg()
             }
         }
 
-        impl<const FRAC: u32> WrappingMul for $Fixed<FRAC>
+        impl<const FRAC: i32> WrappingMul for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn wrapping_mul(&self, v: &Self) -> Self {
@@ -301,37 +301,37 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: u32> WrappingShl for $Fixed<FRAC> {
+        impl<const FRAC: i32> WrappingShl for $Fixed<FRAC> {
             #[inline]
             fn wrapping_shl(&self, rhs: u32) -> Self {
                 (*self).wrapping_shl(rhs)
             }
         }
 
-        impl<const FRAC: u32> WrappingShr for $Fixed<FRAC> {
+        impl<const FRAC: i32> WrappingShr for $Fixed<FRAC> {
             #[inline]
             fn wrapping_shr(&self, rhs: u32) -> Self {
                 (*self).wrapping_shr(rhs)
             }
         }
 
-        impl<const FRAC: u32> OverflowingAdd for $Fixed<FRAC> {
+        impl<const FRAC: i32> OverflowingAdd for $Fixed<FRAC> {
             #[inline]
             fn overflowing_add(&self, v: &Self) -> (Self, bool) {
                 (*self).overflowing_add(*v)
             }
         }
 
-        impl<const FRAC: u32> OverflowingSub for $Fixed<FRAC> {
+        impl<const FRAC: i32> OverflowingSub for $Fixed<FRAC> {
             #[inline]
             fn overflowing_sub(&self, v: &Self) -> (Self, bool) {
                 (*self).overflowing_sub(*v)
             }
         }
 
-        impl<const FRAC: u32> OverflowingMul for $Fixed<FRAC>
+        impl<const FRAC: i32> OverflowingMul for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn overflowing_mul(&self, v: &Self) -> (Self, bool) {
@@ -339,9 +339,9 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: u32, const MUL_FRAC: u32> MulAdd<$Fixed<MUL_FRAC>> for $Fixed<FRAC>
+        impl<const FRAC: i32, const MUL_FRAC: i32> MulAdd<$Fixed<MUL_FRAC>> for $Fixed<FRAC>
         where
-            If<{ MUL_FRAC <= $nbits }>: True,
+            If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -350,9 +350,9 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: u32, const MUL_FRAC: u32> MulAddAssign<$Fixed<MUL_FRAC>> for $Fixed<FRAC>
+        impl<const FRAC: i32, const MUL_FRAC: i32> MulAddAssign<$Fixed<MUL_FRAC>> for $Fixed<FRAC>
         where
-            If<{ MUL_FRAC <= $nbits }>: True,
+            If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn mul_add_assign(&mut self, a: $Fixed<MUL_FRAC>, b: $Fixed<FRAC>) {
@@ -360,9 +360,9 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: u32> FloatConst for $Fixed<FRAC>
+        impl<const FRAC: i32> FloatConst for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn E() -> Self {
@@ -442,9 +442,9 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: u32> ToPrimitive for $Fixed<FRAC>
+        impl<const FRAC: i32> ToPrimitive for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn to_i64(&self) -> Option<i64> {
@@ -504,9 +504,9 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: u32> FromPrimitive for $Fixed<FRAC>
+        impl<const FRAC: i32> FromPrimitive for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn from_i64(n: i64) -> Option<Self> {

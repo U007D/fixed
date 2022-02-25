@@ -459,9 +459,9 @@ fn fmt_radix2<U: FmtHelper>(
 
 macro_rules! impl_fmt {
     ($Fixed:ident($nbits:expr, $Inner:ident)) => {
-        impl<const FRAC: u32> Display for $Fixed<FRAC>
+        impl<const FRAC: i32> Display for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             fn fmt(&self, f: &mut Formatter) -> FmtResult {
                 let neg_abs = int_helper::$Inner::neg_abs(self.to_bits());
@@ -469,9 +469,9 @@ macro_rules! impl_fmt {
             }
         }
 
-        impl<const FRAC: u32> Debug for $Fixed<FRAC>
+        impl<const FRAC: i32> Debug for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             fn fmt(&self, f: &mut Formatter) -> FmtResult {
                 let neg_abs = int_helper::$Inner::neg_abs(self.to_bits());
@@ -483,9 +483,9 @@ macro_rules! impl_fmt {
             }
         }
 
-        impl<const FRAC: u32> Binary for $Fixed<FRAC>
+        impl<const FRAC: i32> Binary for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             fn fmt(&self, f: &mut Formatter) -> FmtResult {
                 let neg_abs = int_helper::$Inner::neg_abs(self.to_bits());
@@ -493,9 +493,9 @@ macro_rules! impl_fmt {
             }
         }
 
-        impl<const FRAC: u32> Octal for $Fixed<FRAC>
+        impl<const FRAC: i32> Octal for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             fn fmt(&self, f: &mut Formatter) -> FmtResult {
                 let neg_abs = int_helper::$Inner::neg_abs(self.to_bits());
@@ -503,9 +503,9 @@ macro_rules! impl_fmt {
             }
         }
 
-        impl<const FRAC: u32> LowerHex for $Fixed<FRAC>
+        impl<const FRAC: i32> LowerHex for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             fn fmt(&self, f: &mut Formatter) -> FmtResult {
                 let neg_abs = int_helper::$Inner::neg_abs(self.to_bits());
@@ -513,9 +513,9 @@ macro_rules! impl_fmt {
             }
         }
 
-        impl<const FRAC: u32> UpperHex for $Fixed<FRAC>
+        impl<const FRAC: i32> UpperHex for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             fn fmt(&self, f: &mut Formatter) -> FmtResult {
                 let neg_abs = int_helper::$Inner::neg_abs(self.to_bits());

@@ -1786,10 +1786,10 @@ impl<'a, F: 'a + Fixed> Product<&'a Wrapping<F>> for Wrapping<F> {
 //
 // To work around this, we provide implementations like this:
 //
-//     impl<const FRAC: u32> Op<i8> for Wrapping<FixedI8<FRAC>> { /* ... */ }
-//     impl<const FRAC: u32> Op<&i8> for Wrapping<FixedI8<FRAC>> { /* ... */ }
-//     impl<const FRAC: u32> Op<i16> for Wrapping<FixedI16<FRAC>> { /* ... */ }
-//     impl<const FRAC: u32> Op<&i16> for Wrapping<FixedI16<FRAC>> { /* ... */ }
+//     impl<const FRAC: i32> Op<i8> for Wrapping<FixedI8<FRAC>> { /* ... */ }
+//     impl<const FRAC: i32> Op<&i8> for Wrapping<FixedI8<FRAC>> { /* ... */ }
+//     impl<const FRAC: i32> Op<i16> for Wrapping<FixedI16<FRAC>> { /* ... */ }
+//     impl<const FRAC: i32> Op<&i16> for Wrapping<FixedI16<FRAC>> { /* ... */ }
 //     ...
 
 macro_rules! op_bits {
@@ -1798,8 +1798,8 @@ macro_rules! op_bits {
         $Op:ident $op:ident,
         $OpAssign:ident $op_assign:ident
     ) => {
-        impl<const FRAC: u32> $Op<$Bits> for Wrapping<$Fixed<FRAC>>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Op<$Bits> for Wrapping<$Fixed<FRAC>>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = Wrapping<$Fixed<FRAC>>;
             #[inline]
@@ -1807,8 +1807,8 @@ macro_rules! op_bits {
                 Wrapping((self.0).$wrapping(other))
             }
         }
-        impl<const FRAC: u32> $Op<$Bits> for &Wrapping<$Fixed<FRAC>>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Op<$Bits> for &Wrapping<$Fixed<FRAC>>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = Wrapping<$Fixed<FRAC>>;
             #[inline]
@@ -1816,8 +1816,8 @@ macro_rules! op_bits {
                 Wrapping((self.0).$wrapping(other))
             }
         }
-        impl<const FRAC: u32> $Op<&$Bits> for Wrapping<$Fixed<FRAC>>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Op<&$Bits> for Wrapping<$Fixed<FRAC>>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = Wrapping<$Fixed<FRAC>>;
             #[inline]
@@ -1825,8 +1825,8 @@ macro_rules! op_bits {
                 Wrapping((self.0).$wrapping(*other))
             }
         }
-        impl<const FRAC: u32> $Op<&$Bits> for &Wrapping<$Fixed<FRAC>>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Op<&$Bits> for &Wrapping<$Fixed<FRAC>>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = Wrapping<$Fixed<FRAC>>;
             #[inline]
@@ -1834,16 +1834,16 @@ macro_rules! op_bits {
                 Wrapping((self.0).$wrapping(*other))
             }
         }
-        impl<const FRAC: u32> $OpAssign<$Bits> for Wrapping<$Fixed<FRAC>>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $OpAssign<$Bits> for Wrapping<$Fixed<FRAC>>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             #[inline]
             fn $op_assign(&mut self, other: $Bits) {
                 self.0 = (self.0).$wrapping(other);
             }
         }
-        impl<const FRAC: u32> $OpAssign<&$Bits> for Wrapping<$Fixed<FRAC>>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $OpAssign<&$Bits> for Wrapping<$Fixed<FRAC>>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             #[inline]
             fn $op_assign(&mut self, other: &$Bits) {

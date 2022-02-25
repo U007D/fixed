@@ -23,9 +23,9 @@ macro_rules! fixed_frac {
     ) => {
         /// The implementation of items in this block depends on the
         /// number of fractional bits `FRAC`.
-        impl<const FRAC: u32> $Fixed<FRAC>
+        impl<const FRAC: i32> $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             comment! {
                 "The number of integer bits.
@@ -52,7 +52,7 @@ type Fix = ", $s_fixed, "<6>;
 assert_eq!(Fix::FRAC_NBITS, 6);
 ```
 ";
-                pub const FRAC_NBITS: u32 = FRAC;
+                pub const FRAC_NBITS: u32 = FRAC as u32;
             }
 
             // some other useful constants for internal use:
@@ -395,14 +395,14 @@ assert_eq!(acc, Fix::MAX / 2);
 [`wrapping_mul_acc`]: Self::wrapping_mul_acc
 ";
                 #[inline]
-                pub fn mul_acc<const A_FRAC: u32, const B_FRAC: u32>(
+                pub fn mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
                     &mut self,
                     a: $Fixed<A_FRAC>,
                     b: $Fixed<B_FRAC>,
                 )
                 where
-                    If<{ A_FRAC <= $nbits }>: True,
-                    If<{ B_FRAC <= $nbits }>: True,
+                    If<{ (0 <= A_FRAC) & (A_FRAC <= $nbits) }>: True,
+                    If<{ (0 <= B_FRAC) & (B_FRAC <= $nbits) }>: True,
                 {
                     let (ans, overflow) = arith::overflowing_mul_add(
                         a.to_bits(),
@@ -483,7 +483,7 @@ assert_eq!(Fix::from_num(2.0).lerp(start, end), 5);
 [`wrapping_lerp`]: Self::wrapping_lerp
 ";
                 #[inline]
-                pub fn lerp<const RANGE_FRAC: u32>(
+                pub fn lerp<const RANGE_FRAC: i32>(
                     self,
                     start: $Fixed<RANGE_FRAC>,
                     end: $Fixed<RANGE_FRAC>,
@@ -492,7 +492,7 @@ assert_eq!(Fix::from_num(2.0).lerp(start, end), 5);
                         self.to_bits(),
                         start.to_bits(),
                         end.to_bits(),
-                        FRAC,
+                        FRAC as u32,
                     );
                     debug_assert!(!overflow, "overflow");
                     $Fixed::from_bits(ans)
@@ -553,7 +553,7 @@ assert_eq!(Fix::MAX.checked_mul(Fix::from_num(2)), None);
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub fn checked_mul(self, rhs: $Fixed<FRAC>) -> Option<$Fixed<FRAC>> {
-                    match arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC) {
+                    match arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC as u32) {
                         (ans, false) => Some(Self::from_bits(ans)),
                         (_, true) => None,
                     }
@@ -579,7 +579,7 @@ assert_eq!(Fix::MAX.checked_div(Fix::ONE / 2), None);
                     if rhs.to_bits() == 0 {
                         return None;
                     }
-                    match arith::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC) {
+                    match arith::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32) {
                         (ans, false) => Some(Self::from_bits(ans)),
                         (_, true) => None,
                     }
@@ -705,14 +705,14 @@ assert_eq!(acc, Fix::MAX / 2);
 ";
                 #[inline]
                 #[must_use = "this `Option` may be a `None` variant indicating overflow, which should be handled"]
-                pub fn checked_mul_acc<const A_FRAC: u32, const B_FRAC: u32>(
+                pub fn checked_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
                     &mut self,
                     a: $Fixed<A_FRAC>,
                     b: $Fixed<B_FRAC>,
                 ) -> Option<()>
                 where
-                    If<{ A_FRAC <= $nbits }>: True,
-                    If<{ B_FRAC <= $nbits }>: True,
+                    If<{ (0 <= A_FRAC) & (A_FRAC <= $nbits) }>: True,
+                    If<{ (0 <= B_FRAC) & (B_FRAC <= $nbits) }>: True,
                 {
                     let (ans, overflow) = arith::overflowing_mul_add(
                         a.to_bits(),
@@ -891,12 +891,12 @@ assert_eq!(Fix::from_num(1.5).checked_lerp(Fix::ZERO, Fix::MAX), None);
 ```
 ";
                 #[inline]
-                pub fn checked_lerp<const RANGE_FRAC: u32>(
+                pub fn checked_lerp<const RANGE_FRAC: i32>(
                     self,
                     start: $Fixed<RANGE_FRAC>,
                     end: $Fixed<RANGE_FRAC>,
                 ) -> Option<$Fixed<RANGE_FRAC>> {
-                    match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC) {
+                    match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC as u32) {
                         (bits, false) => Some($Fixed::from_bits(bits)),
                         (_, true) => None,
                     }
@@ -958,7 +958,7 @@ assert_eq!(Fix::MAX.saturating_mul(Fix::from_num(2)), Fix::MAX);
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub fn saturating_mul(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                    match arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC) {
+                    match arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC as u32) {
                         (ans, false) => Self::from_bits(ans),
                         (_, true) => {
                             if (self < 0) != (rhs < 0) {
@@ -991,7 +991,7 @@ assert_eq!(Fix::MAX.saturating_div(one_half), Fix::MAX);
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub fn saturating_div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                    match arith::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC) {
+                    match arith::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32) {
                         (ans, false) => Self::from_bits(ans),
                         (_, true) => {
                             if (self < 0) != (rhs < 0) {
@@ -1164,14 +1164,14 @@ assert_eq!(acc, Fix::MAX / 2);
                 "```
 ";
                 #[inline]
-                pub fn saturating_mul_acc<const A_FRAC: u32, const B_FRAC: u32>(
+                pub fn saturating_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
                     &mut self,
                     a: $Fixed<A_FRAC>,
                     b: $Fixed<B_FRAC>,
                 )
                 where
-                    If<{ A_FRAC <= $nbits }>: True,
-                    If<{ B_FRAC <= $nbits }>: True,
+                    If<{ (0 <= A_FRAC) & (A_FRAC <= $nbits) }>: True,
+                    If<{ (0 <= B_FRAC) & (B_FRAC <= $nbits) }>: True,
                 {
                     let (ans, overflow) = arith::overflowing_mul_add(
                         a.to_bits(),
@@ -1266,12 +1266,12 @@ assert_eq!(Fix::from_num(3.0).saturating_lerp(Fix::MAX, Fix::ZERO), Fix::MIN);
                 "```
 ";
                 #[inline]
-                pub fn saturating_lerp<const RANGE_FRAC: u32>(
+                pub fn saturating_lerp<const RANGE_FRAC: i32>(
                     self,
                     start: $Fixed<RANGE_FRAC>,
                     end: $Fixed<RANGE_FRAC>,
                 ) -> $Fixed<RANGE_FRAC> {
-                    match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC) {
+                    match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC as u32) {
                         (bits, false) => $Fixed::from_bits(bits),
                         (_, true) => if_signed_unsigned!(
                             $Signedness,
@@ -1347,7 +1347,7 @@ assert_eq!(Fix::MAX.wrapping_mul(Fix::from_num(4)), wrapped);
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub fn wrapping_mul(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
                     let (ans, _) =
-                        arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC);
+                        arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC as u32);
                     Self::from_bits(ans)
                 }
             }
@@ -1375,7 +1375,7 @@ assert_eq!(Fix::MAX.wrapping_div(quarter), wrapped);
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub fn wrapping_div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
                     let (ans, _) =
-                        arith::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC);
+                        arith::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32);
                     Self::from_bits(ans)
                 }
             }
@@ -1491,14 +1491,14 @@ assert_eq!(acc, Fix::MAX.wrapping_mul_int(4));
 ```
 ";
                 #[inline]
-                pub fn wrapping_mul_acc<const A_FRAC: u32, const B_FRAC: u32>(
+                pub fn wrapping_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
                     &mut self,
                     a: $Fixed<A_FRAC>,
                     b: $Fixed<B_FRAC>,
                 )
                 where
-                    If<{ A_FRAC <= $nbits }>: True,
-                    If<{ B_FRAC <= $nbits }>: True,
+                    If<{ (0 <= A_FRAC) & (A_FRAC <= $nbits) }>: True,
+                    If<{ (0 <= B_FRAC) & (B_FRAC <= $nbits) }>: True,
                 {
                     let (ans, _) = arith::overflowing_mul_add(
                         a.to_bits(),
@@ -1574,13 +1574,13 @@ assert_eq!(
 ```
 ";
                 #[inline]
-                pub fn wrapping_lerp<const RANGE_FRAC: u32>(
+                pub fn wrapping_lerp<const RANGE_FRAC: i32>(
                     self,
                     start: $Fixed<RANGE_FRAC>,
                     end: $Fixed<RANGE_FRAC>,
                 ) -> $Fixed<RANGE_FRAC> {
                     let (bits, _) =
-                        lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC);
+                        lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC as u32);
                     $Fixed::from_bits(bits)
                 }
             }
@@ -1807,14 +1807,14 @@ acc.unwrapped_mul_acc(Fix::MAX, Fix::ONE);
 ";
                 #[inline]
                 #[track_caller]
-                pub fn unwrapped_mul_acc<const A_FRAC: u32, const B_FRAC: u32>(
+                pub fn unwrapped_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
                     &mut self,
                     a: $Fixed<A_FRAC>,
                     b: $Fixed<B_FRAC>,
                 )
                 where
-                    If<{ A_FRAC <= $nbits }>: True,
-                    If<{ B_FRAC <= $nbits }>: True,
+                    If<{ (0 <= A_FRAC) & (A_FRAC <= $nbits) }>: True,
+                    If<{ (0 <= B_FRAC) & (B_FRAC <= $nbits) }>: True,
                 {
                     let (ans, overflow) = arith::overflowing_mul_add(
                         a.to_bits(),
@@ -2002,12 +2002,12 @@ let _overflow = Fix::from_num(1.5).unwrapped_lerp(Fix::ZERO, Fix::MAX);
 ```
 ";
                 #[inline]
-                pub fn unwrapped_lerp<const RANGE_FRAC: u32>(
+                pub fn unwrapped_lerp<const RANGE_FRAC: i32>(
                     self,
                     start: $Fixed<RANGE_FRAC>,
                     end: $Fixed<RANGE_FRAC>,
                 ) -> $Fixed<RANGE_FRAC> {
-                    match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC) {
+                    match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC as u32) {
                         (bits, false) => $Fixed::from_bits(bits),
                         (_, true) => panic!("overflow"),
                     }
@@ -2075,7 +2075,7 @@ assert_eq!(Fix::MAX.overflowing_mul(Fix::from_num(4)), (wrapped, true));
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub fn overflowing_mul(self, rhs: $Fixed<FRAC>) -> ($Fixed<FRAC>, bool) {
                     let (ans, overflow) =
-                        arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC);
+                        arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC as u32);
                     (Self::from_bits(ans), overflow)
                 }
             }
@@ -2106,7 +2106,7 @@ assert_eq!(Fix::MAX.overflowing_div(quarter), (wrapped, true));
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub fn overflowing_div(self, rhs: $Fixed<FRAC>) -> ($Fixed<FRAC>, bool) {
                     let (ans, overflow) =
-                        arith::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC);
+                        arith::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32);
                     (Self::from_bits(ans), overflow)
                 }
             }
@@ -2318,14 +2318,14 @@ assert_eq!(acc, Fix::MAX / 2);
 ";
                 #[inline]
                 #[must_use = "this returns whether overflow occurs; use `wrapping_mul_acc` if the flag is not needed"]
-                pub fn overflowing_mul_acc<const A_FRAC: u32, const B_FRAC: u32>(
+                pub fn overflowing_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
                     &mut self,
                     a: $Fixed<A_FRAC>,
                     b: $Fixed<B_FRAC>,
                 ) -> bool
                 where
-                    If<{ A_FRAC <= $nbits }>: True,
-                    If<{ B_FRAC <= $nbits }>: True,
+                    If<{ (0 <= A_FRAC) & (A_FRAC <= $nbits) }>: True,
+                    If<{ (0 <= B_FRAC) & (B_FRAC <= $nbits) }>: True,
                 {
                     let (ans, overflow) = arith::overflowing_mul_add(
                         a.to_bits(),
@@ -2434,12 +2434,13 @@ assert_eq!(
 ```
 ";
                 #[inline]
-                pub fn overflowing_lerp<const RANGE_FRAC: u32>(
+                pub fn overflowing_lerp<const RANGE_FRAC: i32>(
                     self,
                     start: $Fixed<RANGE_FRAC>,
                     end: $Fixed<RANGE_FRAC>,
                 ) -> ($Fixed<RANGE_FRAC>, bool) {
-                    match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC) {
+                    match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC as u32)
+                    {
                         (bits, overflow) => ($Fixed::from_bits(bits), overflow),
                     }
                 }

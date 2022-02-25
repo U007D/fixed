@@ -37,8 +37,8 @@ use core::{
 
 macro_rules! refs {
     (impl $Imp:ident for $Fixed:ident$(($nbits:expr))? { $method:ident }) => {
-        impl<const FRAC: u32> $Imp<$Fixed<FRAC>> for &$Fixed<FRAC>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Imp<$Fixed<FRAC>> for &$Fixed<FRAC>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -47,8 +47,8 @@ macro_rules! refs {
             }
         }
 
-        impl<const FRAC: u32> $Imp<&$Fixed<FRAC>> for $Fixed<FRAC>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Imp<&$Fixed<FRAC>> for $Fixed<FRAC>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -57,8 +57,8 @@ macro_rules! refs {
             }
         }
 
-        impl<const FRAC: u32> $Imp<&$Fixed<FRAC>> for &$Fixed<FRAC>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Imp<&$Fixed<FRAC>> for &$Fixed<FRAC>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -69,8 +69,8 @@ macro_rules! refs {
     };
 
     (impl $Imp:ident<$Inner:ty> for $Fixed:ident$(($nbits:expr))? { $method:ident }) => {
-        impl<const FRAC: u32> $Imp<$Inner> for &$Fixed<FRAC>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Imp<$Inner> for &$Fixed<FRAC>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -79,8 +79,8 @@ macro_rules! refs {
             }
         }
 
-        impl<const FRAC: u32> $Imp<&$Inner> for $Fixed<FRAC>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Imp<&$Inner> for $Fixed<FRAC>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -89,8 +89,8 @@ macro_rules! refs {
             }
         }
 
-        impl<const FRAC: u32> $Imp<&$Inner> for &$Fixed<FRAC>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Imp<&$Inner> for &$Fixed<FRAC>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -103,8 +103,8 @@ macro_rules! refs {
 
 macro_rules! refs_assign {
     (impl $Imp:ident for $Fixed:ident$(($nbits:expr))? { $method:ident }) => {
-        impl<const FRAC: u32> $Imp<&$Fixed<FRAC>> for $Fixed<FRAC>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Imp<&$Fixed<FRAC>> for $Fixed<FRAC>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             #[inline]
             fn $method(&mut self, rhs: &$Fixed<FRAC>) {
@@ -114,8 +114,8 @@ macro_rules! refs_assign {
     };
 
     (impl $Imp:ident<$Inner:ty> for $Fixed:ident$(($nbits:expr))? { $method:ident }) => {
-        impl<const FRAC: u32> $Imp<&$Inner> for $Fixed<FRAC>
-            $(where If<{ FRAC <= $nbits }>: True)?
+        impl<const FRAC: i32> $Imp<&$Inner> for $Fixed<FRAC>
+            $(where If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True)?
         {
             #[inline]
             fn $method(&mut self, rhs: &$Inner) {
@@ -127,7 +127,7 @@ macro_rules! refs_assign {
 
 macro_rules! pass {
     (impl $Imp:ident for $Fixed:ident { $method:ident }) => {
-        impl<const FRAC: u32> $Imp<$Fixed<FRAC>> for $Fixed<FRAC> {
+        impl<const FRAC: i32> $Imp<$Fixed<FRAC>> for $Fixed<FRAC> {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn $method(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
@@ -141,7 +141,7 @@ macro_rules! pass {
 
 macro_rules! pass_assign {
     (impl $Imp:ident for $Fixed:ident { $method:ident }) => {
-        impl<const FRAC: u32> $Imp<$Fixed<FRAC>> for $Fixed<FRAC> {
+        impl<const FRAC: i32> $Imp<$Fixed<FRAC>> for $Fixed<FRAC> {
             #[inline]
             fn $method(&mut self, rhs: $Fixed<FRAC>) {
                 self.bits.$method(rhs.to_bits())
@@ -154,7 +154,7 @@ macro_rules! pass_assign {
 
 macro_rules! pass_one {
     (impl $Imp:ident for $Fixed:ident { $method:ident }) => {
-        impl<const FRAC: u32> $Imp for $Fixed<FRAC> {
+        impl<const FRAC: i32> $Imp for $Fixed<FRAC> {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn $method(self) -> $Fixed<FRAC> {
@@ -162,7 +162,7 @@ macro_rules! pass_one {
             }
         }
 
-        impl<const FRAC: u32> $Imp for &$Fixed<FRAC> {
+        impl<const FRAC: i32> $Imp for &$Fixed<FRAC> {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn $method(self) -> $Fixed<FRAC> {
@@ -174,7 +174,7 @@ macro_rules! pass_one {
 
 macro_rules! shift {
     (impl $Imp:ident < $Rhs:ty > for $Fixed:ident { $method:ident }) => {
-        impl<const FRAC: u32> $Imp<$Rhs> for $Fixed<FRAC> {
+        impl<const FRAC: i32> $Imp<$Rhs> for $Fixed<FRAC> {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn $method(self, rhs: $Rhs) -> $Fixed<FRAC> {
@@ -182,7 +182,7 @@ macro_rules! shift {
             }
         }
 
-        impl<const FRAC: u32> $Imp<$Rhs> for &$Fixed<FRAC> {
+        impl<const FRAC: i32> $Imp<$Rhs> for &$Fixed<FRAC> {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn $method(self, rhs: $Rhs) -> $Fixed<FRAC> {
@@ -190,7 +190,7 @@ macro_rules! shift {
             }
         }
 
-        impl<const FRAC: u32> $Imp<&$Rhs> for $Fixed<FRAC> {
+        impl<const FRAC: i32> $Imp<&$Rhs> for $Fixed<FRAC> {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn $method(self, rhs: &$Rhs) -> $Fixed<FRAC> {
@@ -198,7 +198,7 @@ macro_rules! shift {
             }
         }
 
-        impl<const FRAC: u32> $Imp<&$Rhs> for &$Fixed<FRAC> {
+        impl<const FRAC: i32> $Imp<&$Rhs> for &$Fixed<FRAC> {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn $method(self, rhs: &$Rhs) -> $Fixed<FRAC> {
@@ -210,14 +210,14 @@ macro_rules! shift {
 
 macro_rules! shift_assign {
     (impl $Imp:ident < $Rhs:ty > for $Fixed:ident { $method:ident }) => {
-        impl<const FRAC: u32> $Imp<$Rhs> for $Fixed<FRAC> {
+        impl<const FRAC: i32> $Imp<$Rhs> for $Fixed<FRAC> {
             #[inline]
             fn $method(&mut self, rhs: $Rhs) {
                 self.bits.$method(rhs)
             }
         }
 
-        impl<const FRAC: u32> $Imp<&$Rhs> for $Fixed<FRAC> {
+        impl<const FRAC: i32> $Imp<&$Rhs> for $Fixed<FRAC> {
             #[inline]
             fn $method(&mut self, rhs: &$Rhs) {
                 self.$method(*rhs)
@@ -251,14 +251,14 @@ macro_rules! fixed_arith {
         pass! { impl Sub for $Fixed { sub } }
         pass_assign! { impl SubAssign for $Fixed { sub_assign } }
 
-        impl<const FRAC: u32> Mul<$Fixed<FRAC>> for $Fixed<FRAC>
+        impl<const FRAC: i32> Mul<$Fixed<FRAC>> for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn mul(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                let (ans, overflow) = overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC);
+                let (ans, overflow) = overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC as u32);
                 debug_assert!(!overflow, "overflow");
                 Self::from_bits(ans)
             }
@@ -266,38 +266,40 @@ macro_rules! fixed_arith {
 
         refs! { impl Mul for $Fixed($nbits) { mul } }
 
-        impl<const FRAC: u32, const RHS_FRAC: u32> MulAssign<$Fixed<RHS_FRAC>> for $Fixed<FRAC>
+        impl<const FRAC: i32, const RHS_FRAC: i32> MulAssign<$Fixed<RHS_FRAC>> for $Fixed<FRAC>
         where
-            If<{ RHS_FRAC <= $nbits }>: True,
+            If<{ (0 <= RHS_FRAC) & (RHS_FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn mul_assign(&mut self, rhs: $Fixed<RHS_FRAC>) {
-                let (ans, overflow) = overflowing_mul(self.to_bits(), rhs.to_bits(), RHS_FRAC);
+                let (ans, overflow) =
+                    overflowing_mul(self.to_bits(), rhs.to_bits(), RHS_FRAC as u32);
                 debug_assert!(!overflow, "overflow");
                 *self = Self::from_bits(ans);
             }
         }
 
-        impl<const FRAC: u32, const RHS_FRAC: u32> MulAssign<&$Fixed<RHS_FRAC>> for $Fixed<FRAC>
+        impl<const FRAC: i32, const RHS_FRAC: i32> MulAssign<&$Fixed<RHS_FRAC>> for $Fixed<FRAC>
         where
-            If<{ RHS_FRAC <= $nbits }>: True,
+            If<{ (0 <= RHS_FRAC) & (RHS_FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn mul_assign(&mut self, rhs: &$Fixed<RHS_FRAC>) {
-                let (ans, overflow) = overflowing_mul(self.to_bits(), rhs.to_bits(), RHS_FRAC);
+                let (ans, overflow) =
+                    overflowing_mul(self.to_bits(), rhs.to_bits(), RHS_FRAC as u32);
                 debug_assert!(!overflow, "overflow");
                 *self = Self::from_bits(ans);
             }
         }
 
-        impl<const FRAC: u32> Div<$Fixed<FRAC>> for $Fixed<FRAC>
+        impl<const FRAC: i32> Div<$Fixed<FRAC>> for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                let (ans, overflow) = overflowing_div(self.to_bits(), rhs.to_bits(), FRAC);
+                let (ans, overflow) = overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32);
                 debug_assert!(!overflow, "overflow");
                 Self::from_bits(ans)
             }
@@ -305,9 +307,9 @@ macro_rules! fixed_arith {
 
         refs! { impl Div for $Fixed($nbits) { div } }
 
-        impl<const FRAC: u32> DivAssign<$Fixed<FRAC>> for $Fixed<FRAC>
+        impl<const FRAC: i32> DivAssign<$Fixed<FRAC>> for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn div_assign(&mut self, rhs: $Fixed<FRAC>) {
@@ -318,7 +320,7 @@ macro_rules! fixed_arith {
         refs_assign! { impl DivAssign for $Fixed($nbits) { div_assign } }
 
         // do not pass! { Rem }, as I::MIN % I::from(-1) should return 0, not panic
-        impl<const FRAC: u32> Rem<$Fixed<FRAC>> for $Fixed<FRAC> {
+        impl<const FRAC: i32> Rem<$Fixed<FRAC>> for $Fixed<FRAC> {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn rem(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
@@ -328,7 +330,7 @@ macro_rules! fixed_arith {
 
         refs! { impl Rem for $Fixed { rem } }
 
-        impl<const FRAC: u32> RemAssign<$Fixed<FRAC>> for $Fixed<FRAC> {
+        impl<const FRAC: i32> RemAssign<$Fixed<FRAC>> for $Fixed<FRAC> {
             #[inline]
             fn rem_assign(&mut self, rhs: $Fixed<FRAC>) {
                 *self = (*self).rem(rhs)
@@ -345,7 +347,7 @@ macro_rules! fixed_arith {
         pass! { impl BitXor for $Fixed { bitxor } }
         pass_assign! { impl BitXorAssign for $Fixed { bitxor_assign } }
 
-        impl<const FRAC: u32> Mul<$Inner> for $Fixed<FRAC> {
+        impl<const FRAC: i32> Mul<$Inner> for $Fixed<FRAC> {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn mul(self, rhs: $Inner) -> $Fixed<FRAC> {
@@ -355,9 +357,9 @@ macro_rules! fixed_arith {
 
         refs! { impl Mul<$Inner> for $Fixed($nbits) { mul } }
 
-        impl<const FRAC: u32> MulAssign<$Inner> for $Fixed<FRAC>
+        impl<const FRAC: i32> MulAssign<$Inner> for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn mul_assign(&mut self, rhs: $Inner) {
@@ -367,9 +369,9 @@ macro_rules! fixed_arith {
 
         refs_assign! { impl MulAssign<$Inner> for $Fixed($nbits) { mul_assign } }
 
-        impl<const FRAC: u32> Mul<$Fixed<FRAC>> for $Inner
+        impl<const FRAC: i32> Mul<$Fixed<FRAC>> for $Inner
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -378,9 +380,9 @@ macro_rules! fixed_arith {
             }
         }
 
-        impl<const FRAC: u32> Mul<&$Fixed<FRAC>> for $Inner
+        impl<const FRAC: i32> Mul<&$Fixed<FRAC>> for $Inner
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -389,9 +391,9 @@ macro_rules! fixed_arith {
             }
         }
 
-        impl<const FRAC: u32> Mul<$Fixed<FRAC>> for &$Inner
+        impl<const FRAC: i32> Mul<$Fixed<FRAC>> for &$Inner
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -400,9 +402,9 @@ macro_rules! fixed_arith {
             }
         }
 
-        impl<const FRAC: u32> Mul<&$Fixed<FRAC>> for &$Inner
+        impl<const FRAC: i32> Mul<&$Fixed<FRAC>> for &$Inner
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -411,7 +413,7 @@ macro_rules! fixed_arith {
             }
         }
 
-        impl<const FRAC: u32> Div<$Inner> for $Fixed<FRAC> {
+        impl<const FRAC: i32> Div<$Inner> for $Fixed<FRAC> {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn div(self, rhs: $Inner) -> $Fixed<FRAC> {
@@ -421,9 +423,9 @@ macro_rules! fixed_arith {
 
         refs! { impl Div<$Inner> for $Fixed($nbits) { div } }
 
-        impl<const FRAC: u32> DivAssign<$Inner> for $Fixed<FRAC>
+        impl<const FRAC: i32> DivAssign<$Inner> for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn div_assign(&mut self, rhs: $Inner) {
@@ -433,9 +435,9 @@ macro_rules! fixed_arith {
 
         refs_assign! { impl DivAssign<$Inner> for $Fixed($nbits) { div_assign } }
 
-        impl<const FRAC: u32> Rem<$Inner> for $Fixed<FRAC>
+        impl<const FRAC: i32> Rem<$Inner> for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -446,9 +448,9 @@ macro_rules! fixed_arith {
 
         refs! { impl Rem<$Inner> for $Fixed($nbits) { rem } }
 
-        impl<const FRAC: u32> RemAssign<$Inner> for $Fixed<FRAC>
+        impl<const FRAC: i32> RemAssign<$Inner> for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn rem_assign(&mut self, rhs: $Inner) {
@@ -473,7 +475,7 @@ macro_rules! fixed_arith {
             }
         }
 
-        impl<const FRAC: u32> Sum<$Fixed<FRAC>> for $Fixed<FRAC> {
+        impl<const FRAC: i32> Sum<$Fixed<FRAC>> for $Fixed<FRAC> {
             fn sum<I>(iter: I) -> $Fixed<FRAC>
             where
                 I: Iterator<Item = $Fixed<FRAC>>,
@@ -482,7 +484,7 @@ macro_rules! fixed_arith {
             }
         }
 
-        impl<'a, const FRAC: u32> Sum<&'a $Fixed<FRAC>> for $Fixed<FRAC> {
+        impl<'a, const FRAC: i32> Sum<&'a $Fixed<FRAC>> for $Fixed<FRAC> {
             fn sum<I>(iter: I) -> $Fixed<FRAC>
             where
                 I: Iterator<Item = &'a $Fixed<FRAC>>,
@@ -491,9 +493,9 @@ macro_rules! fixed_arith {
             }
         }
 
-        impl<const FRAC: u32> Product<$Fixed<FRAC>> for $Fixed<FRAC>
+        impl<const FRAC: i32> Product<$Fixed<FRAC>> for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             fn product<I>(mut iter: I) -> $Fixed<FRAC>
             where
@@ -506,9 +508,9 @@ macro_rules! fixed_arith {
             }
         }
 
-        impl<'a, const FRAC: u32> Product<&'a $Fixed<FRAC>> for $Fixed<FRAC>
+        impl<'a, const FRAC: i32> Product<&'a $Fixed<FRAC>> for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             fn product<I>(mut iter: I) -> $Fixed<FRAC>
             where
@@ -524,7 +526,7 @@ macro_rules! fixed_arith {
         if_unsigned! {
             $Signedness;
 
-            impl<const FRAC: u32> Div<$NonZeroInner> for $Fixed<FRAC> {
+            impl<const FRAC: i32> Div<$NonZeroInner> for $Fixed<FRAC> {
                 type Output = $Fixed<FRAC>;
                 #[inline]
                 fn div(self, rhs: $NonZeroInner) -> $Fixed<FRAC> {
@@ -534,7 +536,7 @@ macro_rules! fixed_arith {
 
             refs! { impl Div<$NonZeroInner> for $Fixed { div } }
 
-            impl<const FRAC: u32> DivAssign<$NonZeroInner> for $Fixed<FRAC> {
+            impl<const FRAC: i32> DivAssign<$NonZeroInner> for $Fixed<FRAC> {
                 #[inline]
                 fn div_assign(&mut self, rhs: $NonZeroInner) {
                     *self = (*self).div(rhs)
@@ -543,16 +545,16 @@ macro_rules! fixed_arith {
 
             refs_assign! { impl DivAssign<$NonZeroInner> for $Fixed { div_assign } }
 
-            impl<const FRAC: u32> Rem<$NonZeroInner> for $Fixed<FRAC>
+            impl<const FRAC: i32> Rem<$NonZeroInner> for $Fixed<FRAC>
             where
-                If<{ FRAC <= $nbits }>: True,
+                If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
             {
                 type Output = $Fixed<FRAC>;
                 #[inline]
                 fn rem(self, rhs: $NonZeroInner) -> $Fixed<FRAC> {
                     // Hack to silence overflow operation error if we shift
                     // by FRAC directly.
-                    let frac_nbits = FRAC;
+                    let frac_nbits = FRAC as u32;
                     let rhs = rhs.get();
                     if frac_nbits == <$Inner>::BITS {
                         // rhs > self, so the remainder is self
@@ -575,16 +577,16 @@ macro_rules! fixed_arith {
         if_signed! {
             $Signedness;
 
-            impl<const FRAC: u32> Rem<$NonZeroInner> for $Fixed<FRAC>
+            impl<const FRAC: i32> Rem<$NonZeroInner> for $Fixed<FRAC>
             where
-                If<{ FRAC <= $nbits }>: True,
+                If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
             {
                 type Output = $Fixed<FRAC>;
                 #[inline]
                 fn rem(self, rhs: $NonZeroInner) -> $Fixed<FRAC> {
                     // Hack to silence overflow operation error if we shift
                     // by FRAC directly.
-                    let frac_nbits = FRAC;
+                    let frac_nbits = FRAC as u32;
                     let rhs = rhs.get();
                     let mut overflow = false;
                     let rhs_fixed_bits = if frac_nbits == <$Inner>::BITS {
@@ -631,9 +633,9 @@ macro_rules! fixed_arith {
 
         refs! { impl Rem<$NonZeroInner> for $Fixed($nbits) { rem } }
 
-        impl<const FRAC: u32> RemAssign<$NonZeroInner> for $Fixed<FRAC>
+        impl<const FRAC: i32> RemAssign<$NonZeroInner> for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
             fn rem_assign(&mut self, rhs: $NonZeroInner) {
@@ -886,7 +888,7 @@ mod tests {
 
     #[test]
     fn fixed_u16() {
-        const FRAC: u32 = 7;
+        const FRAC: i32 = 7;
         let frac = FRAC;
         let a = 12;
         let b = 5;
@@ -915,7 +917,7 @@ mod tests {
 
     #[test]
     fn fixed_i16() {
-        const FRAC: u32 = 7;
+        const FRAC: i32 = 7;
         let frac = FRAC;
         let a = 12;
         let b = 5;

@@ -26,10 +26,10 @@ macro_rules! convert {
     (
         ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
-        impl<const SRC_FRAC: u32, const DST_FRAC: u32> From<$SrcU<SRC_FRAC>> for $DstU<DST_FRAC>
+        impl<const SRC_FRAC: i32, const DST_FRAC: i32> From<$SrcU<SRC_FRAC>> for $DstU<DST_FRAC>
         where
-            If<{ SRC_FRAC <= $nbits_src }>: True,
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ SRC_FRAC <= DST_FRAC }>: True,
             If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
         {
@@ -45,10 +45,10 @@ macro_rules! convert {
             }
         }
 
-        impl<const SRC_FRAC: u32, const DST_FRAC: u32> From<$SrcI<SRC_FRAC>> for $DstI<DST_FRAC>
+        impl<const SRC_FRAC: i32, const DST_FRAC: i32> From<$SrcI<SRC_FRAC>> for $DstI<DST_FRAC>
         where
-            If<{ SRC_FRAC <= $nbits_src }>: True,
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ SRC_FRAC <= DST_FRAC }>: True,
             If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
         {
@@ -64,10 +64,10 @@ macro_rules! convert {
             }
         }
 
-        impl<const SRC_FRAC: u32, const DST_FRAC: u32> From<$SrcU<SRC_FRAC>> for $DstI<DST_FRAC>
+        impl<const SRC_FRAC: i32, const DST_FRAC: i32> From<$SrcU<SRC_FRAC>> for $DstI<DST_FRAC>
         where
-            If<{ SRC_FRAC <= $nbits_src }>: True,
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ SRC_FRAC <= DST_FRAC }>: True,
             If<{ $nbits_src - SRC_FRAC + 1 <= $nbits_dst - DST_FRAC }>: True,
         {
@@ -88,11 +88,11 @@ macro_rules! convert {
 macro_rules! convert_lossless {
     (($Src:ident, $nbits_src:expr) -> ($Dst:ident, $nbits_dst:expr)) => {
         // lossless because Src::FRAC_NBITS <= Dst::FRAC_NBITS
-        impl<const SRC_FRAC: u32, const DST_FRAC: u32> LosslessTryFrom<$Src<SRC_FRAC>>
+        impl<const SRC_FRAC: i32, const DST_FRAC: i32> LosslessTryFrom<$Src<SRC_FRAC>>
             for $Dst<DST_FRAC>
         where
-            If<{ SRC_FRAC <= $nbits_src }>: True,
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ SRC_FRAC <= DST_FRAC }>: True,
         {
             /// Converts a fixed-pint number.
@@ -124,11 +124,11 @@ macro_rules! convert_lossy {
         ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
         // unsigned -> unsigned, infallible because Src::INT_NBITS <= Dst::INT_NBITS
-        impl<const SRC_FRAC: u32, const DST_FRAC: u32> LossyFrom<$SrcU<SRC_FRAC>>
+        impl<const SRC_FRAC: i32, const DST_FRAC: i32> LossyFrom<$SrcU<SRC_FRAC>>
             for $DstU<DST_FRAC>
         where
-            If<{ SRC_FRAC <= $nbits_src }>: True,
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a fixed-pint number.
@@ -144,11 +144,11 @@ macro_rules! convert_lossy {
         }
 
         // signed -> signed, infallible because Src::INT_NBITS <= Dst::INT_NBITS
-        impl<const SRC_FRAC: u32, const DST_FRAC: u32> LossyFrom<$SrcI<SRC_FRAC>>
+        impl<const SRC_FRAC: i32, const DST_FRAC: i32> LossyFrom<$SrcI<SRC_FRAC>>
             for $DstI<DST_FRAC>
         where
-            If<{ SRC_FRAC <= $nbits_src }>: True,
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a fixed-pint number.
@@ -164,11 +164,11 @@ macro_rules! convert_lossy {
         }
 
         // signed -> signed, infallible because Src::INT_NBITS <= Dst::INT_NBITS - 1
-        impl<const SRC_FRAC: u32, const DST_FRAC: u32> LossyFrom<$SrcU<SRC_FRAC>>
+        impl<const SRC_FRAC: i32, const DST_FRAC: i32> LossyFrom<$SrcU<SRC_FRAC>>
             for $DstI<DST_FRAC>
         where
-            If<{ SRC_FRAC <= $nbits_src }>: True,
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ $nbits_src - SRC_FRAC + 1 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a fixed-pint number.
@@ -225,9 +225,9 @@ convert_lossy! { FixedU128, FixedI128, 128 }
 
 macro_rules! int_to_fixed {
     ($Src:ident, $Dst:ident, $nbits:expr) => {
-        impl<const FRAC: u32> LosslessTryFrom<$Src> for $Dst<FRAC>
+        impl<const FRAC: i32> LosslessTryFrom<$Src> for $Dst<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -294,9 +294,9 @@ macro_rules! int_to_wider_fixed {
     (
         ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
-        impl<const DST_FRAC: u32> From<$SrcU> for $DstU<DST_FRAC>
+        impl<const DST_FRAC: i32> From<$SrcU> for $DstU<DST_FRAC>
         where
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ $nbits_src <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
@@ -311,9 +311,9 @@ macro_rules! int_to_wider_fixed {
             }
         }
 
-        impl<const DST_FRAC: u32> From<$SrcI> for $DstI<DST_FRAC>
+        impl<const DST_FRAC: i32> From<$SrcI> for $DstI<DST_FRAC>
         where
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ $nbits_src <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
@@ -328,9 +328,9 @@ macro_rules! int_to_wider_fixed {
             }
         }
 
-        impl<const DST_FRAC: u32> From<$SrcU> for $DstI<DST_FRAC>
+        impl<const DST_FRAC: i32> From<$SrcU> for $DstI<DST_FRAC>
         where
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ $nbits_src + 1 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
@@ -345,9 +345,9 @@ macro_rules! int_to_wider_fixed {
             }
         }
 
-        impl<const DST_FRAC: u32> LossyFrom<$SrcU> for $DstU<DST_FRAC>
+        impl<const DST_FRAC: i32> LossyFrom<$SrcU> for $DstU<DST_FRAC>
         where
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ $nbits_src <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
@@ -360,9 +360,9 @@ macro_rules! int_to_wider_fixed {
             }
         }
 
-        impl<const DST_FRAC: u32> LossyFrom<$SrcI> for $DstI<DST_FRAC>
+        impl<const DST_FRAC: i32> LossyFrom<$SrcI> for $DstI<DST_FRAC>
         where
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ $nbits_src <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
@@ -375,9 +375,9 @@ macro_rules! int_to_wider_fixed {
             }
         }
 
-        impl<const DST_FRAC: u32> LossyFrom<$SrcU> for $DstI<DST_FRAC>
+        impl<const DST_FRAC: i32> LossyFrom<$SrcU> for $DstI<DST_FRAC>
         where
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ $nbits_src + 1 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
@@ -405,9 +405,9 @@ int_to_wider_fixed! { (u64, i64, 64) -> (FixedU128, FixedI128, 128) }
 
 macro_rules! bool_to_fixed {
     ($DstU:ident, $DstI:ident, $nbits_dst:expr) => {
-        impl<const DST_FRAC: u32> From<bool> for $DstU<DST_FRAC>
+        impl<const DST_FRAC: i32> From<bool> for $DstU<DST_FRAC>
         where
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ 1 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
@@ -422,9 +422,9 @@ macro_rules! bool_to_fixed {
             }
         }
 
-        impl<const DST_FRAC: u32> From<bool> for $DstI<DST_FRAC>
+        impl<const DST_FRAC: i32> From<bool> for $DstI<DST_FRAC>
         where
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ 2 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
@@ -439,9 +439,9 @@ macro_rules! bool_to_fixed {
             }
         }
 
-        impl<const DST_FRAC: u32> LossyFrom<bool> for $DstU<DST_FRAC>
+        impl<const DST_FRAC: i32> LossyFrom<bool> for $DstU<DST_FRAC>
         where
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ 1 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
@@ -454,9 +454,9 @@ macro_rules! bool_to_fixed {
             }
         }
 
-        impl<const DST_FRAC: u32> LossyFrom<bool> for $DstI<DST_FRAC>
+        impl<const DST_FRAC: i32> LossyFrom<bool> for $DstI<DST_FRAC>
         where
-            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ 2 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
@@ -584,9 +584,9 @@ macro_rules! fixed_to_int_lossy {
     (
         ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
-        impl<const SRC_FRAC: u32> LossyFrom<$SrcU<SRC_FRAC>> for $DstU
+        impl<const SRC_FRAC: i32> LossyFrom<$SrcU<SRC_FRAC>> for $DstU
         where
-            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
             If<{ $nbits_src - SRC_FRAC <= $nbits_dst }>: True,
         {
             /// Converts a fixed-point number to an integer.
@@ -600,9 +600,9 @@ macro_rules! fixed_to_int_lossy {
             }
         }
 
-        impl<const SRC_FRAC: u32> LossyFrom<$SrcI<SRC_FRAC>> for $DstI
+        impl<const SRC_FRAC: i32> LossyFrom<$SrcI<SRC_FRAC>> for $DstI
         where
-            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
             If<{ $nbits_src - SRC_FRAC <= $nbits_dst }>: True,
         {
             /// Converts a fixed-point number to an integer.
@@ -616,9 +616,9 @@ macro_rules! fixed_to_int_lossy {
             }
         }
 
-        impl<const SRC_FRAC: u32> LossyFrom<$SrcU<SRC_FRAC>> for $DstI
+        impl<const SRC_FRAC: i32> LossyFrom<$SrcU<SRC_FRAC>> for $DstI
         where
-            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
             If<{ $nbits_src - SRC_FRAC + 1 <= $nbits_dst }>: True,
         {
             /// Converts a fixed-point number to an integer.
@@ -657,9 +657,9 @@ fixed_to_int_lossy! { FixedU128, FixedI128, 128 }
 // fixed-point numbers with 24 or more fractional bits.
 macro_rules! float_to_fixed {
     ($Src:ident, $Dst:ident, $nbits:expr) => {
-        impl<const FRAC: u32> LosslessTryFrom<$Src> for $Dst<FRAC>
+        impl<const FRAC: i32> LosslessTryFrom<$Src> for $Dst<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
             If<{ FRAC >= 24 }>: True,
         {
             /// Converts a floating-point number to a fixed-point
@@ -680,9 +680,9 @@ float_to_fixed! { f16, FixedI128, 128 }
 
 macro_rules! fixed_to_float {
     ($Fixed:ident($nbits:expr) -> $Float:ident) => {
-        impl<const FRAC: u32> From<$Fixed<FRAC>> for $Float
+        impl<const FRAC: i32> From<$Fixed<FRAC>> for $Float
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             /// Converts a fixed-point number to a floating-point number.
             ///
@@ -694,9 +694,9 @@ macro_rules! fixed_to_float {
             }
         }
 
-        impl<const FRAC: u32> LosslessTryFrom<$Fixed<FRAC>> for $Float
+        impl<const FRAC: i32> LosslessTryFrom<$Fixed<FRAC>> for $Float
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             /// Converts a fixed-point number to a floating-point number.
             ///
@@ -733,9 +733,9 @@ fixed_to_float! { FixedU64(64) -> F128Bits }
 
 macro_rules! fixed_to_float_lossy {
     ($Fixed:ident($nbits:expr) -> $Float:ident) => {
-        impl<const FRAC: u32> LossyFrom<$Fixed<FRAC>> for $Float
+        impl<const FRAC: i32> LossyFrom<$Fixed<FRAC>> for $Float
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             /// Converts a fixed-point number to a floating-point number.
             ///

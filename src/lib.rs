@@ -477,21 +477,21 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
 ```
 ";
             #[repr(transparent)]
-            pub struct $Fixed<const FRAC: u32> {
+            pub struct $Fixed<const FRAC: i32> {
                 pub(crate) bits: $Inner,
             }
         }
 
-        impl<const FRAC: u32> Clone for $Fixed<FRAC> {
+        impl<const FRAC: i32> Clone for $Fixed<FRAC> {
             #[inline]
             fn clone(&self) -> $Fixed<FRAC> {
                 $Fixed { bits: self.bits }
             }
         }
 
-        impl<const FRAC: u32> Copy for $Fixed<FRAC> {}
+        impl<const FRAC: i32> Copy for $Fixed<FRAC> {}
 
-        impl<const FRAC: u32> Default for $Fixed<FRAC> {
+        impl<const FRAC: i32> Default for $Fixed<FRAC> {
             #[inline]
             fn default() -> Self {
                 $Fixed {
@@ -500,7 +500,7 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
             }
         }
 
-        impl<const FRAC: u32> Hash for $Fixed<FRAC> {
+        impl<const FRAC: i32> Hash for $Fixed<FRAC> {
             #[inline]
             fn hash<H: Hasher>(&self, state: &mut H) {
                 self.bits.hash(state);

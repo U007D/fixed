@@ -640,9 +640,9 @@ pub(crate) trait FromStrRadix: Sized {
 
 macro_rules! impl_from_str_traits {
     ($Fixed:ident($Bits:ident), $nbits:expr; fn $from:ident) => {
-        impl<const FRAC: u32> FromStr for $Fixed<FRAC>
+        impl<const FRAC: i32> FromStr for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             type Err = ParseFixedError;
             /// Parses a string slice to return a fixed-point number.
@@ -653,9 +653,9 @@ macro_rules! impl_from_str_traits {
                 Self::from_str_radix(s, 10)
             }
         }
-        impl<const FRAC: u32> FromStrRadix for $Fixed<FRAC>
+        impl<const FRAC: i32> FromStrRadix for $Fixed<FRAC>
         where
-            If<{ FRAC <= $nbits }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             type Err = ParseFixedError;
             #[inline]
