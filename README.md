@@ -99,11 +99,11 @@ The conversions supported cover the following cases.
     fractional bits.
   * The deprecated optional features `az` and `f16` were removed. These features
     had no effect, as the functionality they enabled is now always enabled.
-  * The [`INT_NBITS`][f-in-2-0] and [`FRAC_NBITS`][f-fn-2-0] associated
-    constants can now be negative.
+  * The `INT_NBITS` and `FRAC_NBITS` associated constants were replaced with
+    [`INT_BITS`][f-ib-2-0] and [`FRAC_BITS`][f-fb-2-0] which can be negative.
 
-[f-fn-2-0]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.FRAC_NBITS
-[f-in-2-0]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.INT_NBITS
+[f-fb-2-0]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
+[f-ib-2-0]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
 
 ### Version 1.13.0 news (2022-02-22)
 

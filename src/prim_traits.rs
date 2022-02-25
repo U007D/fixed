@@ -309,8 +309,8 @@ macro_rules! impl_float {
                 let helper = src.private_to_float_helper();
                 float_helper::$Float::from_to_float_helper(
                     helper,
-                    F::FRAC_NBITS as u32,
-                    F::INT_NBITS as u32,
+                    F::FRAC_BITS as u32,
+                    F::INT_BITS as u32,
                 )
             }
 
@@ -403,8 +403,8 @@ it panics; if wrapping is required use [`wrapping_to_fixed`] instead.
             fn checked_to_fixed<F: Fixed>(self) -> Option<F> {
                 let kind = float_helper::$Float::to_float_kind(
                     self,
-                    F::FRAC_NBITS as u32,
-                    F::INT_NBITS as u32,
+                    F::FRAC_BITS as u32,
+                    F::INT_BITS as u32,
                 );
                 match kind {
                     FloatKind::Finite { .. } => {
@@ -434,8 +434,8 @@ Panics if `self` is [NaN].
                 fn saturating_to_fixed<F: Fixed>(self) -> F {
                     let kind = float_helper::$Float::to_float_kind(
                         self,
-                        F::FRAC_NBITS as u32,
-                        F::INT_NBITS as u32,
+                        F::FRAC_BITS as u32,
+                        F::INT_BITS as u32,
                     );
                     let helper = FromFloatHelper { kind };
                     F::private_saturating_from_float_helper(helper)
@@ -481,8 +481,8 @@ Panics if `self` is not [finite].
                 fn overflowing_to_fixed<F: Fixed>(self) -> (F, bool) {
                     let kind = float_helper::$Float::to_float_kind(
                         self,
-                        F::FRAC_NBITS as u32,
-                        F::INT_NBITS as u32,
+                        F::FRAC_BITS as u32,
+                        F::INT_BITS as u32,
                     );
                     let helper = FromFloatHelper { kind };
                     F::private_overflowing_from_float_helper(helper)

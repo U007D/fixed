@@ -87,7 +87,7 @@ macro_rules! convert {
 
 macro_rules! convert_lossless {
     (($Src:ident, $nbits_src:expr) -> ($Dst:ident, $nbits_dst:expr)) => {
-        // lossless because Src::FRAC_NBITS <= Dst::FRAC_NBITS
+        // lossless because Src::FRAC_BITS <= Dst::FRAC_BITS
         impl<const SRC_FRAC: i32, const DST_FRAC: i32> LosslessTryFrom<$Src<SRC_FRAC>>
             for $Dst<DST_FRAC>
         where
@@ -123,7 +123,7 @@ macro_rules! convert_lossy {
     (
         ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
-        // unsigned -> unsigned, infallible because Src::INT_NBITS <= Dst::INT_NBITS
+        // unsigned -> unsigned, infallible because Src::INT_BITS <= Dst::INT_BITS
         impl<const SRC_FRAC: i32, const DST_FRAC: i32> LossyFrom<$SrcU<SRC_FRAC>>
             for $DstU<DST_FRAC>
         where
@@ -143,7 +143,7 @@ macro_rules! convert_lossy {
             }
         }
 
-        // signed -> signed, infallible because Src::INT_NBITS <= Dst::INT_NBITS
+        // signed -> signed, infallible because Src::INT_BITS <= Dst::INT_BITS
         impl<const SRC_FRAC: i32, const DST_FRAC: i32> LossyFrom<$SrcI<SRC_FRAC>>
             for $DstI<DST_FRAC>
         where
@@ -163,7 +163,7 @@ macro_rules! convert_lossy {
             }
         }
 
-        // signed -> signed, infallible because Src::INT_NBITS <= Dst::INT_NBITS - 1
+        // signed -> signed, infallible because Src::INT_BITS <= Dst::INT_BITS - 1
         impl<const SRC_FRAC: i32, const DST_FRAC: i32> LossyFrom<$SrcU<SRC_FRAC>>
             for $DstI<DST_FRAC>
         where

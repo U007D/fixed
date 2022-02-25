@@ -601,7 +601,7 @@ macro_rules! fixed_arith {
                         //   * self is signed min with at least one integer bit,
                         //     and the value of rhs is -self, so remainder is 0.
                         return if self == Self::MIN
-                            && (Self::INT_NBITS > 0 && rhs == 1 << (Self::INT_NBITS - 1))
+                            && (Self::INT_BITS > 0 && rhs == 1 << (Self::INT_BITS - 1))
                         {
                             Self::ZERO
                         } else {
@@ -956,7 +956,7 @@ mod tests {
     fn fixed_u128() {
         use crate::types::{U0F128, U121F7, U128F0};
 
-        let frac = U121F7::FRAC_NBITS;
+        let frac = U121F7::FRAC_BITS;
         let a = 0x0003_4567_89ab_cdef_0123_4567_89ab_cdef_u128;
         let b = 5;
         for &(a, b) in &[(a, b), (b, a)] {
@@ -1004,7 +1004,7 @@ mod tests {
     fn fixed_i128() {
         use crate::types::{I0F128, I121F7, I128F0};
 
-        let frac = I121F7::FRAC_NBITS;
+        let frac = I121F7::FRAC_BITS;
         let a = 0x0003_4567_89ab_cdef_0123_4567_89ab_cdef_i128;
         let b = 5;
         for &(a, b) in &[
@@ -1270,7 +1270,7 @@ mod tests {
             let hmax = max / 2;
             let delta = <$F>::DELTA;
             let zero = <$F>::ZERO;
-            let quarter = delta << (<$F>::FRAC_NBITS - 2);
+            let quarter = delta << (<$F>::FRAC_BITS - 2);
             assert_eq!(max.overflowing_mul_add(quarter, zero), (max >> 2, false));
             if <$F>::IS_SIGNED {
                 assert_eq!(max.overflowing_mul_add(max, zero), (hmax, false));

@@ -152,7 +152,7 @@ assert_eq!(Fix::from_num(-2.9).round_to_zero(), Fix::from_num(-2));
                     if self.is_negative() && self.frac() != 0 {
                         let int = self.int();
                         let increment = Self::from_bits(Self::INT_LSB);
-                        if Self::INT_NBITS == 1 {
+                        if Self::INT_BITS == 1 {
                             // increment is -1, so subtract it
                             return int - increment;
                         }
@@ -828,13 +828,13 @@ assert_eq!(Fix::from_num(2.5).overflowing_ceil(), (Fix::from_num(3), false));
                 if self.frac() == 0 {
                     return (int, false);
                 }
-                if Self::INT_NBITS == 0 {
+                if Self::INT_BITS == 0 {
                     return (int, self.to_bits() > 0);
                 }
                 let increment = Self::from_bits(Self::INT_LSB);
                 if_signed! {
                     $Signedness;
-                    if Self::INT_NBITS == 1 {
+                    if Self::INT_BITS == 1 {
                         // increment is -1, so subtract it
                         return int.overflowing_sub(increment);
                     }
@@ -878,7 +878,7 @@ assert_eq!(AllFrac::MIN.overflowing_floor(), (AllFrac::ZERO, true));
                 let int = self.int();
                 if_signed! {
                     $Signedness;
-                    if Self::INT_NBITS == 0 {
+                    if Self::INT_BITS == 0 {
                         return (int, self.to_bits() < 0);
                     }
                 }
@@ -919,7 +919,7 @@ assert_eq!(Fix::from_num(2.5).overflowing_round(), (Fix::from_num(3), false));
                 if_signed! {
                     $Signedness;
                     let tie = self.frac().to_bits() == Self::FRAC_MSB;
-                    if Self::INT_NBITS == 0 {
+                    if Self::INT_BITS == 0 {
                         // if num is .100...00 = -0.5, we have overflow
                         // otherwise .100...01, 0 < x < -0.5,  no overflow
                         return (int, tie);
@@ -931,7 +931,7 @@ assert_eq!(Fix::from_num(2.5).overflowing_round(), (Fix::from_num(3), false));
                     if tie && self.to_bits() < 0 {
                         return (int, false);
                     }
-                    if Self::INT_NBITS == 1 {
+                    if Self::INT_BITS == 1 {
                         // increment is -1, so subtract it
                         return int.overflowing_sub(increment);
                     }
@@ -939,7 +939,7 @@ assert_eq!(Fix::from_num(2.5).overflowing_round(), (Fix::from_num(3), false));
                 }
                 if_unsigned! {
                     $Signedness;
-                    if Self::INT_NBITS == 0 {
+                    if Self::INT_BITS == 0 {
                         return (int, true);
                     }
                     int.overflowing_add(increment)
@@ -977,9 +977,9 @@ assert_eq!(Fix::MAX.overflowing_round_ties_to_even(), (Fix::MIN, true));
                 let increment = Self::from_bits(Self::INT_LSB);
                 if_signed! {
                     $Signedness;
-                    // If INT_NBITS is 0, increment is zero, and -0.5 ≤ self < 0.5,
+                    // If INT_BITS is 0, increment is zero, and -0.5 ≤ self < 0.5,
                     // so we're fine returning 0.overflowing_add(0).
-                    if Self::INT_NBITS == 1 {
+                    if Self::INT_BITS == 1 {
                         // increment is -1, so subtract it
                         int.overflowing_sub(increment)
                     } else {
@@ -988,7 +988,7 @@ assert_eq!(Fix::MAX.overflowing_round_ties_to_even(), (Fix::MIN, true));
                 }
                 if_unsigned! {
                     $Signedness;
-                    if Self::INT_NBITS == 0 {
+                    if Self::INT_BITS == 0 {
                         return (int, true);
                     }
                     int.overflowing_add(increment)

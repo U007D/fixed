@@ -624,12 +624,12 @@ where
     ///     types::{I16F16, U16F16},
     /// };
     /// // I16F16::Signed is I16F16
-    /// assert_eq!(<I16F16 as Fixed>::Signed::FRAC_NBITS, I16F16::FRAC_NBITS);
-    /// assert_eq!(<I16F16 as Fixed>::Signed::INT_NBITS, I16F16::INT_NBITS);
+    /// assert_eq!(<I16F16 as Fixed>::Signed::FRAC_BITS, I16F16::FRAC_BITS);
+    /// assert_eq!(<I16F16 as Fixed>::Signed::INT_BITS, I16F16::INT_BITS);
     /// assert_eq!(<I16F16 as Fixed>::Signed::IS_SIGNED, I16F16::IS_SIGNED);
     /// // U16F16::Signed is I16F16
-    /// assert_eq!(<U16F16 as Fixed>::Signed::FRAC_NBITS, I16F16::FRAC_NBITS);
-    /// assert_eq!(<U16F16 as Fixed>::Signed::INT_NBITS, I16F16::INT_NBITS);
+    /// assert_eq!(<U16F16 as Fixed>::Signed::FRAC_BITS, I16F16::FRAC_BITS);
+    /// assert_eq!(<U16F16 as Fixed>::Signed::INT_BITS, I16F16::INT_BITS);
     /// assert_eq!(<U16F16 as Fixed>::Signed::IS_SIGNED, I16F16::IS_SIGNED);
     /// ```
     ///
@@ -651,12 +651,12 @@ where
     ///     types::{I16F16, U16F16},
     /// };
     /// // I16F16::Unsigned is U16F16
-    /// assert_eq!(<I16F16 as Fixed>::Unsigned::FRAC_NBITS, U16F16::FRAC_NBITS);
-    /// assert_eq!(<I16F16 as Fixed>::Unsigned::INT_NBITS, U16F16::INT_NBITS);
+    /// assert_eq!(<I16F16 as Fixed>::Unsigned::FRAC_BITS, U16F16::FRAC_BITS);
+    /// assert_eq!(<I16F16 as Fixed>::Unsigned::INT_BITS, U16F16::INT_BITS);
     /// assert_eq!(<I16F16 as Fixed>::Unsigned::IS_SIGNED, U16F16::IS_SIGNED);
     /// // U16F16::Unsigned is U16F16
-    /// assert_eq!(<U16F16 as Fixed>::Unsigned::FRAC_NBITS, U16F16::FRAC_NBITS);
-    /// assert_eq!(<U16F16 as Fixed>::Unsigned::INT_NBITS, U16F16::INT_NBITS);
+    /// assert_eq!(<U16F16 as Fixed>::Unsigned::FRAC_BITS, U16F16::FRAC_BITS);
+    /// assert_eq!(<U16F16 as Fixed>::Unsigned::INT_BITS, U16F16::INT_BITS);
     /// assert_eq!(<U16F16 as Fixed>::Unsigned::IS_SIGNED, U16F16::IS_SIGNED);
     /// ```
     ///
@@ -815,15 +815,15 @@ where
 
     /// The number of integer bits.
     ///
-    /// See also <code>FixedI32::[INT\_NBITS][FixedI32::INT_NBITS]</code> and
-    /// <code>FixedU32::[INT\_NBITS][FixedU32::INT_NBITS]</code>.
-    const INT_NBITS: i32;
+    /// See also <code>FixedI32::[INT\_NBITS][FixedI32::INT_BITS]</code> and
+    /// <code>FixedU32::[INT\_NBITS][FixedU32::INT_BITS]</code>.
+    const INT_BITS: i32;
 
     /// The number of fractional bits.
     ///
-    /// See also <code>FixedI32::[FRAC\_NBITS][FixedI32::FRAC_NBITS]</code> and
-    /// <code>FixedU32::[FRAC\_NBITS][FixedU32::FRAC_NBITS]</code>.
-    const FRAC_NBITS: i32;
+    /// See also <code>FixedI32::[FRAC\_NBITS][FixedI32::FRAC_BITS]</code> and
+    /// <code>FixedU32::[FRAC\_NBITS][FixedU32::FRAC_BITS]</code>.
+    const FRAC_BITS: i32;
 
     /// Creates a fixed-point number that has a bitwise representation
     /// identical to the given integer.
@@ -3462,8 +3462,8 @@ macro_rules! impl_fixed {
             const MIN: Self = Self::MIN;
             const MAX: Self = Self::MAX;
             const IS_SIGNED: bool = Self::IS_SIGNED;
-            const INT_NBITS: i32 = Self::INT_NBITS;
-            const FRAC_NBITS: i32 = Self::FRAC_NBITS;
+            const INT_BITS: i32 = Self::INT_BITS;
+            const FRAC_BITS: i32 = Self::FRAC_BITS;
             trait_delegate! { fn from_bits(bits: Self::Bits) -> Self }
             trait_delegate! { fn to_bits(self) -> Self::Bits }
             trait_delegate! { fn from_be(fixed: Self) -> Self }
@@ -3720,7 +3720,7 @@ macro_rules! impl_fixed {
             #[inline]
             fn saturating_from_fixed<F: Fixed>(src: F) -> Self {
                 let conv =
-                    src.private_to_fixed_helper(Self::FRAC_NBITS as u32, Self::INT_NBITS as u32);
+                    src.private_to_fixed_helper(Self::FRAC_BITS as u32, Self::INT_BITS as u32);
                 if conv.overflow {
                     return if src < 0 { Self::MIN } else { Self::MAX };
                 }
@@ -3764,7 +3764,7 @@ macro_rules! impl_fixed {
             #[inline]
             fn overflowing_from_fixed<F: Fixed>(src: F) -> (Self, bool) {
                 let conv =
-                    src.private_to_fixed_helper(Self::FRAC_NBITS as u32, Self::INT_NBITS as u32);
+                    src.private_to_fixed_helper(Self::FRAC_BITS as u32, Self::INT_BITS as u32);
                 let mut new_overflow = false;
                 let bits = if_signed_unsigned!(
                     $Signedness,

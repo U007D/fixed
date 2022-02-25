@@ -123,12 +123,12 @@ assert!(", if_signed_unsigned!($Signedness, "", "!"), "Fix::IS_SIGNED);
             comment! {
                 "The number of integer bits.
 
-Note that `INT_NBITS`&nbsp;+&nbsp;[`FRAC_NBITS`]&nbsp;=&nbsp;", $s_nbits, ".
-Both `INT_NBITS` and [`FRAC_NBITS`] can be negative.
+Note that `INT_BITS`&nbsp;+&nbsp;[`FRAC_BITS`]&nbsp;=&nbsp;", $s_nbits, ".
+Both `INT_BITS` and [`FRAC_BITS`] can be negative.
 
-  * When `INT_NBITS`&nbsp;<&nbsp;0 and [`FRAC_NBITS`]&nbsp;>&nbsp;", $s_nbits, ",
+  * When `INT_BITS`&nbsp;<&nbsp;0 and [`FRAC_BITS`]&nbsp;>&nbsp;", $s_nbits, ",
     the magnitude can be very large and [`DELTA`]&nbsp;>&nbsp;1.
-  * When `INT_NBITS`&nbsp;>&nbsp;", $s_nbits, " and [`FRAC_NBITS`]&nbsp;<&nbsp;0,
+  * When `INT_BITS`&nbsp;>&nbsp;", $s_nbits, " and [`FRAC_BITS`]&nbsp;<&nbsp;0,
     the magnitude can be very small and [`DELTA`]&nbsp;<&nbsp;2<sup>&minus;", $s_nbits, "</sup>.
 
 # Examples
@@ -136,24 +136,24 @@ Both `INT_NBITS` and [`FRAC_NBITS`] can be negative.
 ```rust
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<6>;
-assert_eq!(Fix::INT_NBITS, ", $s_nbits, " - 6);
+assert_eq!(Fix::INT_BITS, ", $s_nbits, " - 6);
 ```
 
 [`DELTA`]: Self::DELTA
-[`FRAC_NBITS`]: Self::FRAC_NBITS
+[`FRAC_BITS`]: Self::FRAC_BITS
 ";
-                pub const INT_NBITS: i32 = $Inner::BITS as i32 - FRAC;
+                pub const INT_BITS: i32 = $Inner::BITS as i32 - FRAC;
             }
 
             comment! {
                 "The number of fractional bits.
 
-Note that [`INT_NBITS`]&nbsp;+&nbsp;`FRAC_NBITS`&nbsp;=&nbsp;", $s_nbits, ".
-Both [`INT_NBITS`] and `FRAC_NBITS` can be negative.
+Note that [`INT_BITS`]&nbsp;+&nbsp;`FRAC_BITS`&nbsp;=&nbsp;", $s_nbits, ".
+Both [`INT_BITS`] and `FRAC_BITS` can be negative.
 
-  * When [`INT_NBITS`]&nbsp;<&nbsp;0 and `FRAC_NBITS`&nbsp;>&nbsp;", $s_nbits, ",
+  * When [`INT_BITS`]&nbsp;<&nbsp;0 and `FRAC_BITS`&nbsp;>&nbsp;", $s_nbits, ",
     [`DELTA`]&nbsp;>&nbsp;1. That is, the magnitude can be very large.
-  * When [`INT_NBITS`]&nbsp;>&nbsp;", $s_nbits, " and `FRAC_NBITS`&nbsp;<&nbsp;0,
+  * When [`INT_BITS`]&nbsp;>&nbsp;", $s_nbits, " and `FRAC_BITS`&nbsp;<&nbsp;0,
     [`DELTA`]&nbsp;<&nbsp;2<sup>&minus;", $s_nbits, "</sup>. That is, the
     magnitude can be very small.
 
@@ -162,13 +162,13 @@ Both [`INT_NBITS`] and `FRAC_NBITS` can be negative.
 ```rust
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<6>;
-assert_eq!(Fix::FRAC_NBITS, 6);
+assert_eq!(Fix::FRAC_BITS, 6);
 ```
 
 [`DELTA`]: Self::DELTA
-[`INT_NBITS`]: Self::INT_NBITS
+[`INT_BITS`]: Self::INT_BITS
 ";
-                pub const FRAC_NBITS: i32 = FRAC;
+                pub const FRAC_BITS: i32 = FRAC;
             }
 
             comment! {
@@ -1016,7 +1016,7 @@ type Fix = ", $s_fixed, "<4>;
 type UFix = ", $s_ufixed, "<4>;
 assert_eq!(Fix::from_num(-5).unsigned_abs(), UFix::from_num(5));
 // min_as_unsigned has only highest bit set
-let min_as_unsigned = UFix::ONE << (UFix::INT_NBITS - 1);
+let min_as_unsigned = UFix::ONE << (UFix::INT_BITS - 1);
 assert_eq!(Fix::MIN.unsigned_abs(), min_as_unsigned);
 ```
 ";

@@ -727,7 +727,7 @@ macro_rules! const_fixed_from_int {
             // Coerce type.
             let int = <$Fixed>::from_bits($int).to_bits();
             // Divide shift into two parts for cases where $Fixed cannot represent 1.
-            let frac_nbits = <$Fixed>::FRAC_NBITS;
+            let frac_nbits = <$Fixed>::FRAC_BITS;
             let one_a = <$Fixed>::DELTA.to_bits() << (frac_nbits / 2);
             let one_b = <$Fixed>::DELTA.to_bits() << (frac_nbits - frac_nbits / 2);
             int * one_a * one_b

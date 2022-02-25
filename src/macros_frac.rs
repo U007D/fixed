@@ -31,13 +31,13 @@ macro_rules! fixed_frac {
             // some other useful constants for internal use:
 
             const INT_MASK: $Inner =
-                !0 << (Self::FRAC_NBITS / 2) << (Self::FRAC_NBITS - Self::FRAC_NBITS / 2);
+                !0 << (Self::FRAC_BITS / 2) << (Self::FRAC_BITS - Self::FRAC_BITS / 2);
             const FRAC_MASK: $Inner = !Self::INT_MASK;
 
-            // 0 when FRAC_NBITS = 0
+            // 0 when FRAC_BITS = 0
             const INT_LSB: $Inner = Self::INT_MASK ^ (Self::INT_MASK << 1);
 
-            // 0 when INT_NBITS = 0
+            // 0 when INT_BITS = 0
             const FRAC_MSB: $Inner =
                 Self::FRAC_MASK ^ ((Self::FRAC_MASK as $UInner) >> 1) as $Inner;
 
@@ -113,7 +113,7 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log2(), Some(-3));
                     if self <= 0 {
                         None
                     } else {
-                        Some(Self::INT_NBITS as i32 - 1 - self.leading_zeros() as i32)
+                        Some(Self::INT_BITS as i32 - 1 - self.leading_zeros() as i32)
                     }
                 }
             }
@@ -141,11 +141,11 @@ assert_eq!(", $s_fixed, "::<6>::from_num(0.09375).checked_int_log10(), Some(-2))
                     }
                     // Use unsigned representation because we use all bits in fractional part.
                     let bits = self.to_bits() as $UInner;
-                    let int = bits >> Self::FRAC_NBITS;
+                    let int = bits >> Self::FRAC_BITS;
                     if int != 0 {
                         Some(log10::int_part::$UInner(int))
                     } else {
-                        let frac = bits << Self::INT_NBITS;
+                        let frac = bits << Self::INT_BITS;
                         Some(log10::frac_part::$UInner(frac))
                     }
                 }
@@ -732,7 +732,7 @@ assert_eq!(Fix::from_num(3.75).checked_rem_int(0), None);
                         None => Some(if_signed_unsigned!(
                             $Signedness,
                             if self == Self::MIN
-                                && (Self::INT_NBITS > 0 && rhs == 1 << (Self::INT_NBITS - 1))
+                                && (Self::INT_BITS > 0 && rhs == 1 << (Self::INT_BITS - 1))
                             {
                                 Self::ZERO
                             } else {
@@ -823,8 +823,8 @@ assert_eq!(Fix::from_num(-7.5).checked_rem_euclid_int(20), None);
                         }
                         // Work in unsigned.
                         // Answer required is |rhs| - |rem|, but rhs is int, rem is fixed.
-                        // INT_NBITS == 0 is a special case, as fraction can be negative.
-                        if Self::INT_NBITS == 0 {
+                        // INT_BITS == 0 is a special case, as fraction can be negative.
+                        if Self::INT_BITS == 0 {
                             // -0.5 <= rem < 0, so euclidean remainder is in the range
                             // 0.5 <= answer < 1, which does not fit.
                             return None;
@@ -832,7 +832,7 @@ assert_eq!(Fix::from_num(-7.5).checked_rem_euclid_int(20), None);
                         let rhs_abs = rhs.wrapping_abs() as $UInner;
                         let remb = rem.to_bits();
                         let remb_abs = remb.wrapping_neg() as $UInner;
-                        let rem_int_abs = remb_abs >> Self::FRAC_NBITS;
+                        let rem_int_abs = remb_abs >> Self::FRAC_BITS;
                         let rem_frac = remb & Self::FRAC_MASK;
                         let ans_int = rhs_abs - rem_int_abs - if rem_frac > 0 { 1 } else { 0 };
                         Self::checked_from_num(ans_int).map(|x| x | Self::from_bits(rem_frac))
@@ -2357,8 +2357,8 @@ assert_eq!(Fix::from_num(-7.5).overflowing_rem_euclid_int(20), (Fix::from_num(-3
                         }
                         // Work in unsigned.
                         // Answer required is |rhs| - |rem|, but rhs is int, rem is fixed.
-                        // INT_NBITS == 0 is a special case, as fraction can be negative.
-                        if Self::INT_NBITS == 0 {
+                        // INT_BITS == 0 is a special case, as fraction can be negative.
+                        if Self::INT_BITS == 0 {
                             // -0.5 <= rem < 0, so euclidean remainder is in the range
                             // 0.5 <= answer < 1, which does not fit.
                             return (rem, true);
@@ -2366,7 +2366,7 @@ assert_eq!(Fix::from_num(-7.5).overflowing_rem_euclid_int(20), (Fix::from_num(-3
                         let rhs_abs = rhs.wrapping_abs() as $UInner;
                         let remb = rem.to_bits();
                         let remb_abs = remb.wrapping_neg() as $UInner;
-                        let rem_int_abs = remb_abs >> Self::FRAC_NBITS;
+                        let rem_int_abs = remb_abs >> Self::FRAC_BITS;
                         let rem_frac = remb & Self::FRAC_MASK;
                         let ans_int = rhs_abs - rem_int_abs - if rem_frac > 0 { 1 } else { 0 };
                         let (ans, overflow) = Self::overflowing_from_num(ans_int);

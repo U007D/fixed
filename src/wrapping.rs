@@ -120,29 +120,29 @@ impl<F: Fixed> Wrapping<F> {
 
     /// The number of integer bits.
     ///
-    /// See also <code>FixedI32::[INT\_NBITS][FixedI32::INT_NBITS]</code> and
-    /// <code>FixedU32::[INT\_NBITS][FixedU32::INT_NBITS]</code>.
+    /// See also <code>FixedI32::[INT\_NBITS][FixedI32::INT_BITS]</code> and
+    /// <code>FixedU32::[INT\_NBITS][FixedU32::INT_BITS]</code>.
     ///
     /// # Examples
     ///
     /// ```rust
     /// use fixed::{types::I16F16, Wrapping};
-    /// assert_eq!(Wrapping::<I16F16>::INT_NBITS, I16F16::INT_NBITS);
+    /// assert_eq!(Wrapping::<I16F16>::INT_BITS, I16F16::INT_BITS);
     /// ```
-    pub const INT_NBITS: i32 = F::INT_NBITS;
+    pub const INT_BITS: i32 = F::INT_BITS;
 
     /// The number of fractional bits.
     ///
-    /// See also <code>FixedI32::[FRAC\_NBITS][FixedI32::FRAC_NBITS]</code> and
-    /// <code>FixedU32::[FRAC\_NBITS][FixedU32::FRAC_NBITS]</code>.
+    /// See also <code>FixedI32::[FRAC\_NBITS][FixedI32::FRAC_BITS]</code> and
+    /// <code>FixedU32::[FRAC\_NBITS][FixedU32::FRAC_BITS]</code>.
     ///
     /// # Examples
     ///
     /// ```rust
     /// use fixed::{types::I16F16, Wrapping};
-    /// assert_eq!(Wrapping::<I16F16>::FRAC_NBITS, I16F16::FRAC_NBITS);
+    /// assert_eq!(Wrapping::<I16F16>::FRAC_BITS, I16F16::FRAC_BITS);
     /// ```
-    pub const FRAC_NBITS: i32 = F::FRAC_NBITS;
+    pub const FRAC_BITS: i32 = F::FRAC_BITS;
 
     /// Creates a fixed-point number that has a bitwise representation
     /// identical to the given integer.

@@ -689,8 +689,8 @@ macro_rules! impl_from_str_traits {
                 $from(
                     s.as_bytes(),
                     radix,
-                    Self::INT_NBITS as u32,
-                    Self::FRAC_NBITS as u32,
+                    Self::INT_BITS as u32,
+                    Self::FRAC_BITS as u32,
                 )
                 .map(|(bits, overflow)| (Self::from_bits(bits), overflow))
             }
