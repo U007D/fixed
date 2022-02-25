@@ -25,7 +25,7 @@ macro_rules! fixed_frac {
         /// number of fractional bits `FRAC`.
         impl<const FRAC: u32> $Fixed<FRAC>
         where
-            If<{FRAC <= $nbits}>: True,
+            If<{ FRAC <= $nbits }>: True,
         {
             comment! {
                 "The number of integer bits.
@@ -401,8 +401,8 @@ assert_eq!(acc, Fix::MAX / 2);
                     b: $Fixed<B_FRAC>,
                 )
                 where
-                    If<{A_FRAC <= $nbits}>: True,
-                    If<{B_FRAC <= $nbits}>: True,
+                    If<{ A_FRAC <= $nbits }>: True,
+                    If<{ B_FRAC <= $nbits }>: True,
                 {
                     let (ans, overflow) = arith::overflowing_mul_add(
                         a.to_bits(),
@@ -711,8 +711,8 @@ assert_eq!(acc, Fix::MAX / 2);
                     b: $Fixed<B_FRAC>,
                 ) -> Option<()>
                 where
-                    If<{A_FRAC <= $nbits}>: True,
-                    If<{B_FRAC <= $nbits}>: True,
+                    If<{ A_FRAC <= $nbits }>: True,
+                    If<{ B_FRAC <= $nbits }>: True,
                 {
                     let (ans, overflow) = arith::overflowing_mul_add(
                         a.to_bits(),
@@ -1170,8 +1170,8 @@ assert_eq!(acc, Fix::MAX / 2);
                     b: $Fixed<B_FRAC>,
                 )
                 where
-                    If<{A_FRAC <= $nbits}>: True,
-                    If<{B_FRAC <= $nbits}>: True,
+                    If<{ A_FRAC <= $nbits }>: True,
+                    If<{ B_FRAC <= $nbits }>: True,
                 {
                     let (ans, overflow) = arith::overflowing_mul_add(
                         a.to_bits(),
@@ -1497,8 +1497,8 @@ assert_eq!(acc, Fix::MAX.wrapping_mul_int(4));
                     b: $Fixed<B_FRAC>,
                 )
                 where
-                    If<{A_FRAC <= $nbits}>: True,
-                    If<{B_FRAC <= $nbits}>: True,
+                    If<{ A_FRAC <= $nbits }>: True,
+                    If<{ B_FRAC <= $nbits }>: True,
                 {
                     let (ans, _) = arith::overflowing_mul_add(
                         a.to_bits(),
@@ -1813,8 +1813,8 @@ acc.unwrapped_mul_acc(Fix::MAX, Fix::ONE);
                     b: $Fixed<B_FRAC>,
                 )
                 where
-                    If<{A_FRAC <= $nbits}>: True,
-                    If<{B_FRAC <= $nbits}>: True,
+                    If<{ A_FRAC <= $nbits }>: True,
+                    If<{ B_FRAC <= $nbits }>: True,
                 {
                     let (ans, overflow) = arith::overflowing_mul_add(
                         a.to_bits(),
@@ -2324,8 +2324,8 @@ assert_eq!(acc, Fix::MAX / 2);
                     b: $Fixed<B_FRAC>,
                 ) -> bool
                 where
-                    If<{A_FRAC <= $nbits}>: True,
-                    If<{B_FRAC <= $nbits}>: True,
+                    If<{ A_FRAC <= $nbits }>: True,
+                    If<{ B_FRAC <= $nbits }>: True,
                 {
                     let (ans, overflow) = arith::overflowing_mul_add(
                         a.to_bits(),

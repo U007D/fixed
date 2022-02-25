@@ -144,8 +144,8 @@ macro_rules! impl_traits {
             $Signedness;
             impl<const FRAC: u32> Signed for $Fixed<FRAC>
             where
-                If<{FRAC <= $nbits}>: True,
-                If<{FRAC <= $one_max_frac}>: True,
+                If<{ FRAC <= $nbits }>: True,
+                If<{ FRAC <= $one_max_frac }>: True,
             {
                 #[inline]
                 fn abs(&self) -> Self {
@@ -178,8 +178,8 @@ macro_rules! impl_traits {
             $Signedness;
             impl<const FRAC: u32> Unsigned for $Fixed<FRAC>
             where
-                If<{FRAC <= $nbits}>: True,
-                If<{FRAC <= $one_max_frac}>: True,
+                If<{ FRAC <= $nbits }>: True,
+                If<{ FRAC <= $one_max_frac }>: True,
             {
             }
         }

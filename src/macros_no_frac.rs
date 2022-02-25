@@ -756,7 +756,7 @@ assert_eq!(a.wide_mul(b), 1.328_125);
                     pub fn wide_mul<const RHS_FRAC: u32>(
                         self,
                         rhs: $Fixed<RHS_FRAC>,
-                    ) -> $Double<{FRAC + RHS_FRAC}> {
+                    ) -> $Double<{ FRAC + RHS_FRAC }> {
                         let self_bits = <$DoubleInner>::from(self.to_bits());
                         let rhs_bits = <$DoubleInner>::from(rhs.to_bits());
                         $Double::from_bits(self_bits * rhs_bits)
@@ -824,7 +824,7 @@ let _overflow = Fix::MIN.wide_div(-Fix::DELTA);
                     pub fn wide_div<const RHS_FRAC: u32>(
                         self,
                         rhs: $Fixed<RHS_FRAC>,
-                    ) -> $Double<{$nbits + FRAC - RHS_FRAC}> {
+                    ) -> $Double<{ $nbits + FRAC - RHS_FRAC }> {
                         let self_bits = <$DoubleInner>::from(self.to_bits());
                         let rhs_bits = <$DoubleInner>::from(rhs.to_bits());
                         $Double::from_bits((self_bits << $nbits) / rhs_bits)
@@ -883,7 +883,7 @@ assert_eq!(Fix::MAX.mul_add(Fix::from_num(1.5), -Fix::MAX), Fix::MAX / 2);
                     add: $Fixed<FRAC>,
                 ) -> $Fixed<FRAC>
                 where
-                    If<{MUL_FRAC <= $nbits}>: True,
+                    If<{ MUL_FRAC <= $nbits }>: True,
                 {
                     let (ans, overflow) = arith::overflowing_mul_add(
                         self.to_bits(),
@@ -1148,7 +1148,7 @@ assert_eq!(Fix::from_num(5).inv_lerp::<4>(start, end), 2);
                     end: $Fixed<FRAC>,
                 ) -> $Fixed<RET_FRAC>
                 where
-                    If<{RET_FRAC <= $nbits}>: True,
+                    If<{ RET_FRAC <= $nbits }>: True,
                 {
                     let (ans, overflow) = inv_lerp::$Inner(
                         self.to_bits(),
@@ -1504,7 +1504,7 @@ assert_eq!(Fix::MAX.checked_mul_add(Fix::from_num(1.5), -Fix::MAX), Some(Fix::MA
                     add: $Fixed<FRAC>,
                 ) -> Option<$Fixed<FRAC>>
                 where
-                    If<{MUL_FRAC <= $nbits}>: True,
+                    If<{ MUL_FRAC <= $nbits }>: True,
                 {
                     match arith::overflowing_mul_add(
                         self.to_bits(),
@@ -1762,7 +1762,7 @@ assert_eq!(Fix::MAX.checked_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5)), None);
                     end: $Fixed<FRAC>,
                 ) -> Option<$Fixed<RET_FRAC>>
                 where
-                    If<{RET_FRAC <= $nbits}>: True,
+                    If<{ RET_FRAC <= $nbits }>: True,
                 {
                     let start = start.to_bits();
                     let end = end.to_bits();
@@ -1956,7 +1956,7 @@ assert_eq!(Fix::MAX.saturating_mul_add(Fix::from_num(1.5), -Fix::MAX), half_max)
                     add: $Fixed<FRAC>,
                 ) -> $Fixed<FRAC>
                 where
-                    If<{MUL_FRAC <= $nbits}>: True,
+                    If<{ MUL_FRAC <= $nbits }>: True,
                 {
                     match arith::overflowing_mul_add(
                         self.to_bits(),
@@ -2118,7 +2118,7 @@ assert_eq!(Fix::MAX.saturating_inv_lerp::<4>(Fix::from_num(0.5), Fix::ZERO), Fix
                     end: $Fixed<FRAC>,
                 ) -> $Fixed<RET_FRAC>
                 where
-                    If<{RET_FRAC <= $nbits}>: True,
+                    If<{ RET_FRAC <= $nbits }>: True,
                 {
                     let self_bits = self.to_bits();
                     let start = start.to_bits();
@@ -2258,7 +2258,7 @@ assert_eq!(Fix::MAX.wrapping_mul_add(Fix::from_num(3), Fix::MAX), wrapped);
                     add: $Fixed<FRAC>,
                 ) -> $Fixed<FRAC>
                 where
-                    If<{MUL_FRAC <= $nbits}>: True,
+                    If<{ MUL_FRAC <= $nbits }>: True,
                 {
                     let (ans, _) = arith::overflowing_mul_add(
                         self.to_bits(),
@@ -2470,7 +2470,7 @@ assert_eq!(
                     end: $Fixed<FRAC>,
                 ) -> $Fixed<RET_FRAC>
                 where
-                    If<{RET_FRAC <= $nbits}>: True,
+                    If<{ RET_FRAC <= $nbits }>: True,
                 {
                     let (bits, _) = inv_lerp::$Inner(
                         self.to_bits(),
@@ -2740,7 +2740,7 @@ let _overflow = Fix::MAX.unwrapped_mul_add(Fix::ONE, Fix::DELTA);
                     add: $Fixed<FRAC>,
                 ) -> $Fixed<FRAC>
                 where
-                    If<{MUL_FRAC <= $nbits}>: True,
+                    If<{ MUL_FRAC <= $nbits }>: True,
                 {
                     self.checked_mul_add(mul, add).expect("overflow")
                 }
@@ -3083,7 +3083,7 @@ let _overflow = Fix::MAX.unwrapped_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5));
                     end: $Fixed<FRAC>,
                 ) -> $Fixed<RET_FRAC>
                 where
-                    If<{RET_FRAC <= $nbits}>: True,
+                    If<{ RET_FRAC <= $nbits }>: True,
                 {
                     let (bits, overflow) = inv_lerp::$Inner(
                         self.to_bits(),
@@ -3290,7 +3290,7 @@ assert_eq!(
                     add: $Fixed<FRAC>,
                 ) -> ($Fixed<FRAC>, bool)
                 where
-                    If<{MUL_FRAC <= $nbits}>: True,
+                    If<{ MUL_FRAC <= $nbits }>: True,
                 {
                     let (ans, overflow) = arith::overflowing_mul_add(
                         self.to_bits(),
@@ -3540,7 +3540,7 @@ assert_eq!(
                     end: $Fixed<FRAC>,
                 ) -> ($Fixed<RET_FRAC>, bool)
                 where
-                    If<{RET_FRAC <= $nbits}>: True,
+                    If<{ RET_FRAC <= $nbits }>: True,
                 {
                     let (bits, overflow) = inv_lerp::$Inner(
                         self.to_bits(),

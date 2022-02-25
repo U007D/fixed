@@ -38,7 +38,7 @@ use core::{
 macro_rules! refs {
     (impl $Imp:ident for $Fixed:ident$(($nbits:expr))? { $method:ident }) => {
         impl<const FRAC: u32> $Imp<$Fixed<FRAC>> for &$Fixed<FRAC>
-            $(where If<{FRAC <= $nbits}>: True)?
+            $(where If<{ FRAC <= $nbits }>: True)?
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -48,7 +48,7 @@ macro_rules! refs {
         }
 
         impl<const FRAC: u32> $Imp<&$Fixed<FRAC>> for $Fixed<FRAC>
-            $(where If<{FRAC <= $nbits}>: True)?
+            $(where If<{ FRAC <= $nbits }>: True)?
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -58,7 +58,7 @@ macro_rules! refs {
         }
 
         impl<const FRAC: u32> $Imp<&$Fixed<FRAC>> for &$Fixed<FRAC>
-            $(where If<{FRAC <= $nbits}>: True)?
+            $(where If<{ FRAC <= $nbits }>: True)?
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -70,7 +70,7 @@ macro_rules! refs {
 
     (impl $Imp:ident<$Inner:ty> for $Fixed:ident$(($nbits:expr))? { $method:ident }) => {
         impl<const FRAC: u32> $Imp<$Inner> for &$Fixed<FRAC>
-            $(where If<{FRAC <= $nbits}>: True)?
+            $(where If<{ FRAC <= $nbits }>: True)?
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -80,7 +80,7 @@ macro_rules! refs {
         }
 
         impl<const FRAC: u32> $Imp<&$Inner> for $Fixed<FRAC>
-            $(where If<{FRAC <= $nbits}>: True)?
+            $(where If<{ FRAC <= $nbits }>: True)?
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -90,7 +90,7 @@ macro_rules! refs {
         }
 
         impl<const FRAC: u32> $Imp<&$Inner> for &$Fixed<FRAC>
-            $(where If<{FRAC <= $nbits}>: True)?
+            $(where If<{ FRAC <= $nbits }>: True)?
         {
             type Output = $Fixed<FRAC>;
             #[inline]
@@ -104,7 +104,7 @@ macro_rules! refs {
 macro_rules! refs_assign {
     (impl $Imp:ident for $Fixed:ident$(($nbits:expr))? { $method:ident }) => {
         impl<const FRAC: u32> $Imp<&$Fixed<FRAC>> for $Fixed<FRAC>
-            $(where If<{FRAC <= $nbits}>: True)?
+            $(where If<{ FRAC <= $nbits }>: True)?
         {
             #[inline]
             fn $method(&mut self, rhs: &$Fixed<FRAC>) {
@@ -115,7 +115,7 @@ macro_rules! refs_assign {
 
     (impl $Imp:ident<$Inner:ty> for $Fixed:ident$(($nbits:expr))? { $method:ident }) => {
         impl<const FRAC: u32> $Imp<&$Inner> for $Fixed<FRAC>
-            $(where If<{FRAC <= $nbits}>: True)?
+            $(where If<{ FRAC <= $nbits }>: True)?
         {
             #[inline]
             fn $method(&mut self, rhs: &$Inner) {
@@ -228,7 +228,7 @@ macro_rules! shift_assign {
 
 macro_rules! shift_all {
     (
-        impl {$Imp:ident, $ImpAssign:ident}<{$($Rhs:ty),*}> for $Fixed:ident
+        impl {$Imp:ident, $ImpAssign:ident}<{ $($Rhs:ty),* }> for $Fixed:ident
         { $method:ident, $method_assign:ident }
     ) => { $(
         shift! { impl $Imp<$Rhs> for $Fixed { $method } }
@@ -545,7 +545,7 @@ macro_rules! fixed_arith {
 
             impl<const FRAC: u32> Rem<$NonZeroInner> for $Fixed<FRAC>
             where
-                If<{FRAC <= $nbits}>: True,
+                If<{ FRAC <= $nbits }>: True,
             {
                 type Output = $Fixed<FRAC>;
                 #[inline]
@@ -577,7 +577,7 @@ macro_rules! fixed_arith {
 
             impl<const FRAC: u32> Rem<$NonZeroInner> for $Fixed<FRAC>
             where
-                If<{FRAC <= $nbits}>: True,
+                If<{ FRAC <= $nbits }>: True,
             {
                 type Output = $Fixed<FRAC>;
                 #[inline]

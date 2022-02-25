@@ -3879,7 +3879,7 @@ macro_rules! impl_fixed {
             $Signedness;
             impl<const FRAC: u32> FixedSigned for $Fixed<FRAC>
             where
-                If<{FRAC <= $nbits}>: True,
+                If<{ FRAC <= $nbits }>: True,
             {
                 trait_delegate! { fn signed_bits(self) -> u32 }
                 trait_delegate! { fn abs(self) -> Self }
@@ -3905,7 +3905,7 @@ macro_rules! impl_fixed {
             $Signedness;
             impl<const FRAC: u32> FixedUnsigned for $Fixed<FRAC>
             where
-                If<{FRAC <= $nbits}>: True,
+                If<{ FRAC <= $nbits }>: True,
             {
                 trait_delegate! { fn significant_bits(self) -> u32 }
                 trait_delegate! { fn is_power_of_two(self) -> bool }
