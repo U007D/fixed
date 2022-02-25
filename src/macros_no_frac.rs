@@ -24,8 +24,7 @@ macro_rules! fixed_no_frac {
         $UFixed:ident[$s_ufixed:expr], $UInner:ty, $Signedness:tt,
         $HasDouble:tt, $Double:ident[$s_double:expr], $DoubleInner:ty, $s_nbits_2:expr
     ) => {
-        /// The implementation of items in this block is independent
-        /// of the number of fractional bits `FRAC`.
+        /// The items in this block are implemented for all values of `FRAC`.
         impl<const FRAC: i32> $Fixed<FRAC> {
             comment! {
                 "Zero.
@@ -119,6 +118,57 @@ assert!(", if_signed_unsigned!($Signedness, "", "!"), "Fix::IS_SIGNED);
 ```
 ";
                 pub const IS_SIGNED: bool = if_signed_unsigned!($Signedness, true, false);
+            }
+
+            comment! {
+                "The number of integer bits.
+
+Note that `INT_NBITS`&nbsp;+&nbsp;[`FRAC_NBITS`]&nbsp;=&nbsp;", $s_nbits, ".
+Both `INT_NBITS` and [`FRAC_NBITS`] can be negative.
+
+  * When `INT_NBITS`&nbsp;<&nbsp;0 and [`FRAC_NBITS`]&nbsp;>&nbsp;", $s_nbits, ",
+    the magnitude can be very large and [`DELTA`]&nbsp;>&nbsp;1.
+  * When `INT_NBITS`&nbsp;>&nbsp;", $s_nbits, " and [`FRAC_NBITS`]&nbsp;<&nbsp;0,
+    the magnitude can be very small and [`DELTA`]&nbsp;<&nbsp;2<sup>&minus;", $s_nbits, "</sup>.
+
+# Examples
+
+```rust
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<6>;
+assert_eq!(Fix::INT_NBITS, ", $s_nbits, " - 6);
+```
+
+[`DELTA`]: Self::DELTA
+[`FRAC_NBITS`]: Self::FRAC_NBITS
+";
+                pub const INT_NBITS: i32 = $Inner::BITS as i32 - FRAC;
+            }
+
+            comment! {
+                "The number of fractional bits.
+
+Note that [`INT_NBITS`]&nbsp;+&nbsp;`FRAC_NBITS`&nbsp;=&nbsp;", $s_nbits, ".
+Both [`INT_NBITS`] and `FRAC_NBITS` can be negative.
+
+  * When [`INT_NBITS`]&nbsp;<&nbsp;0 and `FRAC_NBITS`&nbsp;>&nbsp;", $s_nbits, ",
+    [`DELTA`]&nbsp;>&nbsp;1. That is, the magnitude can be very large.
+  * When [`INT_NBITS`]&nbsp;>&nbsp;", $s_nbits, " and `FRAC_NBITS`&nbsp;<&nbsp;0,
+    [`DELTA`]&nbsp;<&nbsp;2<sup>&minus;", $s_nbits, "</sup>. That is, the
+    magnitude can be very small.
+
+# Examples
+
+```rust
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<6>;
+assert_eq!(Fix::FRAC_NBITS, 6);
+```
+
+[`DELTA`]: Self::DELTA
+[`INT_NBITS`]: Self::INT_NBITS
+";
+                pub const FRAC_NBITS: i32 = FRAC;
             }
 
             comment! {

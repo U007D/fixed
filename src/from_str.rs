@@ -686,8 +686,13 @@ macro_rules! impl_from_str_traits {
             }
             #[inline]
             fn overflowing_from_str_radix(s: &str, radix: u32) -> Result<(Self, bool), Self::Err> {
-                $from(s.as_bytes(), radix, Self::INT_NBITS, Self::FRAC_NBITS)
-                    .map(|(bits, overflow)| (Self::from_bits(bits), overflow))
+                $from(
+                    s.as_bytes(),
+                    radix,
+                    Self::INT_NBITS as u32,
+                    Self::FRAC_NBITS as u32,
+                )
+                .map(|(bits, overflow)| (Self::from_bits(bits), overflow))
             }
         }
     };

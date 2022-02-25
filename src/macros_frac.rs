@@ -21,39 +21,12 @@ macro_rules! fixed_frac {
         ),
         $UFixed:ident, $UInner:ident, $Signedness:tt
     ) => {
-        /// The implementation of items in this block depends on the
-        /// number of fractional bits `FRAC`.
+        /// The items in this block are implemented for `FRAC` in the range
+        #[doc = concat!("0&nbsp;≤&nbsp;`FRAC`&nbsp;≤&nbsp;", $s_nbits, ".")]
         impl<const FRAC: i32> $Fixed<FRAC>
         where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
-            comment! {
-                "The number of integer bits.
-
-# Examples
-
-```rust
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<6>;
-assert_eq!(Fix::INT_NBITS, ", $s_nbits, " - 6);
-```
-";
-                pub const INT_NBITS: u32 = $Inner::BITS - Self::FRAC_NBITS;
-            }
-
-            comment! {
-                "The number of fractional bits.
-
-# Examples
-
-```rust
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<6>;
-assert_eq!(Fix::FRAC_NBITS, 6);
-```
-";
-                pub const FRAC_NBITS: u32 = FRAC as u32;
-            }
 
             // some other useful constants for internal use:
 

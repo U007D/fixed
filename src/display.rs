@@ -465,7 +465,7 @@ macro_rules! impl_fmt {
         {
             fn fmt(&self, f: &mut Formatter) -> FmtResult {
                 let neg_abs = int_helper::$Inner::neg_abs(self.to_bits());
-                fmt_dec(neg_abs, Self::FRAC_NBITS, f)
+                fmt_dec(neg_abs, Self::FRAC_NBITS as u32, f)
             }
         }
 
@@ -476,9 +476,13 @@ macro_rules! impl_fmt {
             fn fmt(&self, f: &mut Formatter) -> FmtResult {
                 let neg_abs = int_helper::$Inner::neg_abs(self.to_bits());
                 match debug_hex::is_debug_hex(f) {
-                    IsDebugHex::Lower => fmt_radix2(neg_abs, Self::FRAC_NBITS, Radix::LowHex, f),
-                    IsDebugHex::Upper => fmt_radix2(neg_abs, Self::FRAC_NBITS, Radix::UpHex, f),
-                    IsDebugHex::No => fmt_dec(neg_abs, Self::FRAC_NBITS, f),
+                    IsDebugHex::Lower => {
+                        fmt_radix2(neg_abs, Self::FRAC_NBITS as u32, Radix::LowHex, f)
+                    }
+                    IsDebugHex::Upper => {
+                        fmt_radix2(neg_abs, Self::FRAC_NBITS as u32, Radix::UpHex, f)
+                    }
+                    IsDebugHex::No => fmt_dec(neg_abs, Self::FRAC_NBITS as u32, f),
                 }
             }
         }
@@ -489,7 +493,7 @@ macro_rules! impl_fmt {
         {
             fn fmt(&self, f: &mut Formatter) -> FmtResult {
                 let neg_abs = int_helper::$Inner::neg_abs(self.to_bits());
-                fmt_radix2(neg_abs, Self::FRAC_NBITS, Radix::Bin, f)
+                fmt_radix2(neg_abs, Self::FRAC_NBITS as u32, Radix::Bin, f)
             }
         }
 
@@ -499,7 +503,7 @@ macro_rules! impl_fmt {
         {
             fn fmt(&self, f: &mut Formatter) -> FmtResult {
                 let neg_abs = int_helper::$Inner::neg_abs(self.to_bits());
-                fmt_radix2(neg_abs, Self::FRAC_NBITS, Radix::Oct, f)
+                fmt_radix2(neg_abs, Self::FRAC_NBITS as u32, Radix::Oct, f)
             }
         }
 
@@ -509,7 +513,7 @@ macro_rules! impl_fmt {
         {
             fn fmt(&self, f: &mut Formatter) -> FmtResult {
                 let neg_abs = int_helper::$Inner::neg_abs(self.to_bits());
-                fmt_radix2(neg_abs, Self::FRAC_NBITS, Radix::LowHex, f)
+                fmt_radix2(neg_abs, Self::FRAC_NBITS as u32, Radix::LowHex, f)
             }
         }
 
@@ -519,7 +523,7 @@ macro_rules! impl_fmt {
         {
             fn fmt(&self, f: &mut Formatter) -> FmtResult {
                 let neg_abs = int_helper::$Inner::neg_abs(self.to_bits());
-                fmt_radix2(neg_abs, Self::FRAC_NBITS, Radix::UpHex, f)
+                fmt_radix2(neg_abs, Self::FRAC_NBITS as u32, Radix::UpHex, f)
             }
         }
     };

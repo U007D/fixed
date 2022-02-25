@@ -12,6 +12,11 @@ Version 2.0.0 (unreleased)
     fractional bits.
   * The deprecated optional features `az` and `f16` were removed. These features
     had no effect, as the functionality they enabled is now always enabled.
+  * The [`INT_NBITS`][f-in-2-0] and [`FRAC_NBITS`][f-fn-2-0] associated
+    constants can now be negative.
+
+[f-fn-2-0]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.FRAC_NBITS
+[f-in-2-0]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.INT_NBITS
 
 Version 1.13.0 (2022-02-22)
 ===========================

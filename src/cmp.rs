@@ -39,8 +39,8 @@ macro_rules! fixed_cmp_fixed {
                 let conv = int_helper::$RhsInner::to_fixed_helper(
                     rhs.to_bits(),
                     <$Rhs<RHS_FRAC>>::FRAC_NBITS as i32,
-                    Self::FRAC_NBITS,
-                    Self::INT_NBITS,
+                    Self::FRAC_NBITS as u32,
+                    Self::INT_NBITS as u32,
                 );
                 let (rhs_is_neg, rhs_bits) = match conv.bits {
                     Widest::Unsigned(bits) => (false, bits as $LhsInner),
@@ -70,8 +70,8 @@ macro_rules! fixed_cmp_fixed {
                 let conv = int_helper::$RhsInner::to_fixed_helper(
                     rhs.to_bits(),
                     <$Rhs<RHS_FRAC>>::FRAC_NBITS as i32,
-                    Self::FRAC_NBITS,
-                    Self::INT_NBITS,
+                    Self::FRAC_NBITS as u32,
+                    Self::INT_NBITS as u32,
                 );
                 let rhs_bits = match conv.bits {
                     Widest::Unsigned(bits) => bits as $LhsInner,
@@ -99,8 +99,8 @@ macro_rules! fixed_cmp_fixed {
                 let conv = int_helper::$RhsInner::to_fixed_helper(
                     rhs.to_bits(),
                     <$Rhs<RHS_FRAC>>::FRAC_NBITS as i32,
-                    Self::FRAC_NBITS,
-                    Self::INT_NBITS,
+                    Self::FRAC_NBITS as u32,
+                    Self::INT_NBITS as u32,
                 );
                 let rhs_bits = match conv.bits {
                     Widest::Unsigned(bits) => bits as $LhsInner,
@@ -237,8 +237,11 @@ macro_rules! fixed_cmp_float {
         {
             #[inline]
             fn eq(&self, rhs: &$Float) -> bool {
-                let kind =
-                    float_helper::$Float::to_float_kind(*rhs, Self::FRAC_NBITS, Self::INT_NBITS);
+                let kind = float_helper::$Float::to_float_kind(
+                    *rhs,
+                    Self::FRAC_NBITS as u32,
+                    Self::INT_NBITS as u32,
+                );
                 let conv = match kind {
                     FloatKind::Finite { conv, .. } => conv,
                     _ => return false,
@@ -271,8 +274,11 @@ macro_rules! fixed_cmp_float {
             #[inline]
             fn partial_cmp(&self, rhs: &$Float) -> Option<Ordering> {
                 let lhs_is_neg = int_helper::$Inner::is_negative(self.to_bits());
-                let kind =
-                    float_helper::$Float::to_float_kind(*rhs, Self::FRAC_NBITS, Self::INT_NBITS);
+                let kind = float_helper::$Float::to_float_kind(
+                    *rhs,
+                    Self::FRAC_NBITS as u32,
+                    Self::INT_NBITS as u32,
+                );
                 let (rhs_is_neg, conv) = match kind {
                     FloatKind::NaN => return None,
                     FloatKind::Infinite { neg } => {
@@ -306,8 +312,11 @@ macro_rules! fixed_cmp_float {
             #[inline]
             fn lt(&self, rhs: &$Float) -> bool {
                 let lhs_is_neg = int_helper::$Inner::is_negative(self.to_bits());
-                let kind =
-                    float_helper::$Float::to_float_kind(*rhs, Self::FRAC_NBITS, Self::INT_NBITS);
+                let kind = float_helper::$Float::to_float_kind(
+                    *rhs,
+                    Self::FRAC_NBITS as u32,
+                    Self::INT_NBITS as u32,
+                );
                 let (rhs_is_neg, conv) = match kind {
                     FloatKind::NaN => return false,
                     FloatKind::Infinite { neg } => return !neg,
@@ -359,8 +368,8 @@ macro_rules! fixed_cmp_float {
             fn lt(&self, rhs: &$Fix<FRAC>) -> bool {
                 let kind = float_helper::$Float::to_float_kind(
                     *self,
-                    <$Fix<FRAC>>::FRAC_NBITS,
-                    <$Fix<FRAC>>::INT_NBITS,
+                    <$Fix<FRAC>>::FRAC_NBITS as u32,
+                    <$Fix<FRAC>>::INT_NBITS as u32,
                 );
                 let (lhs_is_neg, conv) = match kind {
                     FloatKind::NaN => return false,

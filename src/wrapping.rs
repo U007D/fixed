@@ -129,7 +129,7 @@ impl<F: Fixed> Wrapping<F> {
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(Wrapping::<I16F16>::INT_NBITS, I16F16::INT_NBITS);
     /// ```
-    pub const INT_NBITS: u32 = F::INT_NBITS;
+    pub const INT_NBITS: i32 = F::INT_NBITS;
 
     /// The number of fractional bits.
     ///
@@ -142,7 +142,7 @@ impl<F: Fixed> Wrapping<F> {
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(Wrapping::<I16F16>::FRAC_NBITS, I16F16::FRAC_NBITS);
     /// ```
-    pub const FRAC_NBITS: u32 = F::FRAC_NBITS;
+    pub const FRAC_NBITS: i32 = F::FRAC_NBITS;
 
     /// Creates a fixed-point number that has a bitwise representation
     /// identical to the given integer.

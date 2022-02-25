@@ -16,8 +16,7 @@ The [*fixed* crate] provides fixed-point numbers.
   * [`FixedI128`] and [`FixedU128`] are 128-bit fixed-point numbers.
 
 An <i>n</i>-bit fixed-point number has <i>f</i>&nbsp;=&nbsp;`FRAC` fractional
-bits where 0&nbsp;≤&nbsp;<i>f</i>&nbsp;≤&nbsp;<i>n</i>, and
-<i>n</i>&nbsp;&minus;&nbsp;<i>f</i> integer bits. For example,
+bits, and <i>n</i>&nbsp;&minus;&nbsp;<i>f</i> integer bits. For example,
 <code>[FixedI32]\<24></code> is a 32-bit signed fixed-point number with
 <i>n</i>&nbsp;=&nbsp;32 total bits, <i>f</i>&nbsp;=&nbsp;24 fractional bits, and
 <i>n</i>&nbsp;&minus;&nbsp;<i>f</i>&nbsp;=&nbsp;8 integer bits.
@@ -100,6 +99,11 @@ The conversions supported cover the following cases.
     fractional bits.
   * The deprecated optional features `az` and `f16` were removed. These features
     had no effect, as the functionality they enabled is now always enabled.
+  * The [`INT_NBITS`][f-in-2-0] and [`FRAC_NBITS`][f-fn-2-0] associated
+    constants can now be negative.
+
+[f-fn-2-0]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.FRAC_NBITS
+[f-in-2-0]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.INT_NBITS
 
 ### Version 1.13.0 news (2022-02-22)
 
