@@ -939,7 +939,7 @@ assert_eq!(Fix::MAX.mul_add(Fix::from_num(1.5), -Fix::MAX), Fix::MAX / 2);
                         self.to_bits(),
                         mul.to_bits(),
                         add.to_bits(),
-                        MUL_FRAC as i32,
+                        MUL_FRAC,
                     );
                     debug_assert!(!overflow, "overflow");
                     Self::from_bits(ans)
@@ -1560,7 +1560,7 @@ assert_eq!(Fix::MAX.checked_mul_add(Fix::from_num(1.5), -Fix::MAX), Some(Fix::MA
                         self.to_bits(),
                         mul.to_bits(),
                         add.to_bits(),
-                        MUL_FRAC as i32,
+                        MUL_FRAC,
                     ) {
                         (ans, false) => Some(Self::from_bits(ans)),
                         (_, true) => None,
@@ -2012,7 +2012,7 @@ assert_eq!(Fix::MAX.saturating_mul_add(Fix::from_num(1.5), -Fix::MAX), half_max)
                         self.to_bits(),
                         mul.to_bits(),
                         add.to_bits(),
-                        MUL_FRAC as i32,
+                        MUL_FRAC,
                     ) {
                         (ans, false) => Self::from_bits(ans),
                         (_, true) => {
@@ -2314,7 +2314,7 @@ assert_eq!(Fix::MAX.wrapping_mul_add(Fix::from_num(3), Fix::MAX), wrapped);
                         self.to_bits(),
                         mul.to_bits(),
                         add.to_bits(),
-                        MUL_FRAC as i32,
+                        MUL_FRAC,
                     );
                     Self::from_bits(ans)
                 }
@@ -3346,7 +3346,7 @@ assert_eq!(
                         self.to_bits(),
                         mul.to_bits(),
                         add.to_bits(),
-                        MUL_FRAC as i32,
+                        MUL_FRAC,
                     );
                     (Self::from_bits(ans), overflow)
                 }

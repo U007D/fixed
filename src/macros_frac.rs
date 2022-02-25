@@ -113,7 +113,7 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log2(), Some(-3));
                     if self <= 0 {
                         None
                     } else {
-                        Some(Self::INT_BITS as i32 - 1 - self.leading_zeros() as i32)
+                        Some(Self::INT_BITS - 1 - self.leading_zeros() as i32)
                     }
                 }
             }
@@ -381,7 +381,7 @@ assert_eq!(acc, Fix::MAX / 2);
                         a.to_bits(),
                         b.to_bits(),
                         self.to_bits(),
-                        A_FRAC as i32 + B_FRAC as i32 - FRAC as i32,
+                        A_FRAC + B_FRAC - FRAC,
                     );
                     debug_assert!(!overflow, "overflow");
                     *self = Self::from_bits(ans);
@@ -691,7 +691,7 @@ assert_eq!(acc, Fix::MAX / 2);
                         a.to_bits(),
                         b.to_bits(),
                         self.to_bits(),
-                        A_FRAC as i32 + B_FRAC as i32 - FRAC as i32,
+                        A_FRAC + B_FRAC - FRAC,
                     );
                     if overflow {
                         return None;
@@ -1150,7 +1150,7 @@ assert_eq!(acc, Fix::MAX / 2);
                         a.to_bits(),
                         b.to_bits(),
                         self.to_bits(),
-                        A_FRAC as i32 + B_FRAC as i32 - FRAC as i32,
+                        A_FRAC + B_FRAC - FRAC,
                     );
                     *self = if overflow {
                         let negative = if_signed_unsigned!(
@@ -1477,7 +1477,7 @@ assert_eq!(acc, Fix::MAX.wrapping_mul_int(4));
                         a.to_bits(),
                         b.to_bits(),
                         self.to_bits(),
-                        A_FRAC as i32 + B_FRAC as i32 - FRAC as i32,
+                        A_FRAC + B_FRAC - FRAC,
                     );
                     *self = Self::from_bits(ans);
                 }
@@ -1793,7 +1793,7 @@ acc.unwrapped_mul_acc(Fix::MAX, Fix::ONE);
                         a.to_bits(),
                         b.to_bits(),
                         self.to_bits(),
-                        A_FRAC as i32 + B_FRAC as i32 - FRAC as i32,
+                        A_FRAC + B_FRAC - FRAC,
                     );
                     assert!(!overflow, "overflow");
                     *self = Self::from_bits(ans);
@@ -2304,7 +2304,7 @@ assert_eq!(acc, Fix::MAX / 2);
                         a.to_bits(),
                         b.to_bits(),
                         self.to_bits(),
-                        A_FRAC as i32 + B_FRAC as i32 - FRAC as i32,
+                        A_FRAC + B_FRAC - FRAC,
                     );
                     *self = Self::from_bits(ans);
                     overflow

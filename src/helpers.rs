@@ -68,7 +68,7 @@ macro_rules! impl_sealed {
             ) -> ToFixedHelper {
                 int_helper::$Inner::to_fixed_helper(
                     self.to_bits(),
-                    FRAC as i32,
+                    FRAC,
                     dst_frac_nbits,
                     dst_int_nbits,
                 )

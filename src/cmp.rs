@@ -38,7 +38,7 @@ macro_rules! fixed_cmp_fixed {
             fn eq(&self, rhs: &$Rhs<RHS_FRAC>) -> bool {
                 let conv = int_helper::$RhsInner::to_fixed_helper(
                     rhs.to_bits(),
-                    <$Rhs<RHS_FRAC>>::FRAC_BITS as i32,
+                    <$Rhs<RHS_FRAC>>::FRAC_BITS,
                     Self::FRAC_BITS as u32,
                     Self::INT_BITS as u32,
                 );
@@ -69,7 +69,7 @@ macro_rules! fixed_cmp_fixed {
                 }
                 let conv = int_helper::$RhsInner::to_fixed_helper(
                     rhs.to_bits(),
-                    <$Rhs<RHS_FRAC>>::FRAC_BITS as i32,
+                    <$Rhs<RHS_FRAC>>::FRAC_BITS,
                     Self::FRAC_BITS as u32,
                     Self::INT_BITS as u32,
                 );
@@ -98,7 +98,7 @@ macro_rules! fixed_cmp_fixed {
                 }
                 let conv = int_helper::$RhsInner::to_fixed_helper(
                     rhs.to_bits(),
-                    <$Rhs<RHS_FRAC>>::FRAC_BITS as i32,
+                    <$Rhs<RHS_FRAC>>::FRAC_BITS,
                     Self::FRAC_BITS as u32,
                     Self::INT_BITS as u32,
                 );

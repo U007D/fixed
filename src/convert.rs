@@ -33,7 +33,7 @@ macro_rules! convert {
             If<{ SRC_FRAC <= DST_FRAC }>: True,
             If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
         {
-            /// Converts a fixed-pint number.
+            /// Converts a fixed-point number.
             ///
             /// This conversion never fails (infallible) and does not
             /// lose any precision (lossless).
@@ -52,7 +52,7 @@ macro_rules! convert {
             If<{ SRC_FRAC <= DST_FRAC }>: True,
             If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
         {
-            /// Converts a fixed-pint number.
+            /// Converts a fixed-point number.
             ///
             /// This conversion never fails (infallible) and does not
             /// lose any precision (lossless).
@@ -69,9 +69,9 @@ macro_rules! convert {
             If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
             If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ SRC_FRAC <= DST_FRAC }>: True,
-            If<{ $nbits_src - SRC_FRAC + 1 <= $nbits_dst - DST_FRAC }>: True,
+            If<{ $nbits_src - SRC_FRAC < $nbits_dst - DST_FRAC }>: True,
         {
-            /// Converts a fixed-pint number.
+            /// Converts a fixed-point number.
             ///
             /// This conversion never fails (infallible) and does not
             /// lose any precision (lossless).
@@ -95,7 +95,7 @@ macro_rules! convert_lossless {
             If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ SRC_FRAC <= DST_FRAC }>: True,
         {
-            /// Converts a fixed-pint number.
+            /// Converts a fixed-point number.
             ///
             /// This conversion may fail (fallible) but does not lose
             /// precision (lossless).
@@ -131,7 +131,7 @@ macro_rules! convert_lossy {
             If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
         {
-            /// Converts a fixed-pint number.
+            /// Converts a fixed-point number.
             ///
             /// This conversion never fails (infallible) but may lose
             /// precision (lossy). Any fractional bits in the source
@@ -151,7 +151,7 @@ macro_rules! convert_lossy {
             If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
         {
-            /// Converts a fixed-pint number.
+            /// Converts a fixed-point number.
             ///
             /// This conversion never fails (infallible) but may lose
             /// precision (lossy). Any fractional bits in the source
@@ -169,9 +169,9 @@ macro_rules! convert_lossy {
         where
             If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
             If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ $nbits_src - SRC_FRAC + 1 <= $nbits_dst - DST_FRAC }>: True,
+            If<{ $nbits_src - SRC_FRAC < $nbits_dst - DST_FRAC }>: True,
         {
-            /// Converts a fixed-pint number.
+            /// Converts a fixed-point number.
             ///
             /// This conversion never fails (infallible) but may lose
             /// precision (lossy). Any fractional bits in the source
@@ -331,7 +331,7 @@ macro_rules! int_to_wider_fixed {
         impl<const DST_FRAC: i32> From<$SrcU> for $DstI<DST_FRAC>
         where
             If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ $nbits_src + 1 <= $nbits_dst - DST_FRAC }>: True,
+            If<{ $nbits_src < $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -378,7 +378,7 @@ macro_rules! int_to_wider_fixed {
         impl<const DST_FRAC: i32> LossyFrom<$SrcU> for $DstI<DST_FRAC>
         where
             If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ $nbits_src + 1 <= $nbits_dst - DST_FRAC }>: True,
+            If<{ $nbits_src < $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -425,7 +425,7 @@ macro_rules! bool_to_fixed {
         impl<const DST_FRAC: i32> From<bool> for $DstI<DST_FRAC>
         where
             If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ 2 <= $nbits_dst - DST_FRAC }>: True,
+            If<{ 1 < $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
             ///
@@ -457,7 +457,7 @@ macro_rules! bool_to_fixed {
         impl<const DST_FRAC: i32> LossyFrom<bool> for $DstI<DST_FRAC>
         where
             If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ 2 <= $nbits_dst - DST_FRAC }>: True,
+            If<{ 1 < $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
             ///
@@ -619,7 +619,7 @@ macro_rules! fixed_to_int_lossy {
         impl<const SRC_FRAC: i32> LossyFrom<$SrcU<SRC_FRAC>> for $DstI
         where
             If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
-            If<{ $nbits_src - SRC_FRAC + 1 <= $nbits_dst }>: True,
+            If<{ $nbits_src - SRC_FRAC < $nbits_dst }>: True,
         {
             /// Converts a fixed-point number to an integer.
             ///
