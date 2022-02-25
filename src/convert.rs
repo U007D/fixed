@@ -26,59 +26,59 @@ macro_rules! convert {
     (
         ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
-        impl<const FRAC_SRC: u32, const FRAC_DST: u32> From<$SrcU<FRAC_SRC>> for $DstU<FRAC_DST>
+        impl<const SRC_FRAC: u32, const DST_FRAC: u32> From<$SrcU<SRC_FRAC>> for $DstU<DST_FRAC>
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ FRAC_SRC <= FRAC_DST }>: True,
-            If<{ $nbits_src - FRAC_SRC <= $nbits_dst - FRAC_DST }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ SRC_FRAC <= DST_FRAC }>: True,
+            If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a fixed-pint number.
             ///
             /// This conversion never fails (infallible) and does not
             /// lose any precision (lossless).
             #[inline]
-            fn from(src: $SrcU<FRAC_SRC>) -> Self {
+            fn from(src: $SrcU<SRC_FRAC>) -> Self {
                 let unshifted = Self::from_bits(src.to_bits().into()).to_bits();
-                let shift = FRAC_DST - FRAC_SRC;
+                let shift = DST_FRAC - SRC_FRAC;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<const FRAC_SRC: u32, const FRAC_DST: u32> From<$SrcI<FRAC_SRC>> for $DstI<FRAC_DST>
+        impl<const SRC_FRAC: u32, const DST_FRAC: u32> From<$SrcI<SRC_FRAC>> for $DstI<DST_FRAC>
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ FRAC_SRC <= FRAC_DST }>: True,
-            If<{ $nbits_src - FRAC_SRC <= $nbits_dst - FRAC_DST }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ SRC_FRAC <= DST_FRAC }>: True,
+            If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a fixed-pint number.
             ///
             /// This conversion never fails (infallible) and does not
             /// lose any precision (lossless).
             #[inline]
-            fn from(src: $SrcI<FRAC_SRC>) -> Self {
+            fn from(src: $SrcI<SRC_FRAC>) -> Self {
                 let unshifted = Self::from_bits(src.to_bits().into()).to_bits();
-                let shift = FRAC_DST - FRAC_SRC;
+                let shift = DST_FRAC - SRC_FRAC;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<const FRAC_SRC: u32, const FRAC_DST: u32> From<$SrcU<FRAC_SRC>> for $DstI<FRAC_DST>
+        impl<const SRC_FRAC: u32, const DST_FRAC: u32> From<$SrcU<SRC_FRAC>> for $DstI<DST_FRAC>
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ FRAC_SRC <= FRAC_DST }>: True,
-            If<{ $nbits_src - FRAC_SRC + 1 <= $nbits_dst - FRAC_DST }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ SRC_FRAC <= DST_FRAC }>: True,
+            If<{ $nbits_src - SRC_FRAC + 1 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a fixed-pint number.
             ///
             /// This conversion never fails (infallible) and does not
             /// lose any precision (lossless).
             #[inline]
-            fn from(src: $SrcU<FRAC_SRC>) -> Self {
+            fn from(src: $SrcU<SRC_FRAC>) -> Self {
                 let unshifted = Self::from_bits(src.to_bits().into()).to_bits();
-                let shift = FRAC_DST - FRAC_SRC;
+                let shift = DST_FRAC - SRC_FRAC;
                 Self::from_bits(unshifted << shift)
             }
         }
@@ -88,19 +88,19 @@ macro_rules! convert {
 macro_rules! convert_lossless {
     (($Src:ident, $nbits_src:expr) -> ($Dst:ident, $nbits_dst:expr)) => {
         // lossless because Src::FRAC_NBITS <= Dst::FRAC_NBITS
-        impl<const FRAC_SRC: u32, const FRAC_DST: u32> LosslessTryFrom<$Src<FRAC_SRC>>
-            for $Dst<FRAC_DST>
+        impl<const SRC_FRAC: u32, const DST_FRAC: u32> LosslessTryFrom<$Src<SRC_FRAC>>
+            for $Dst<DST_FRAC>
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ FRAC_SRC <= FRAC_DST }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ SRC_FRAC <= DST_FRAC }>: True,
         {
             /// Converts a fixed-pint number.
             ///
             /// This conversion may fail (fallible) but does not lose
             /// precision (lossless).
             #[inline]
-            fn lossless_try_from(src: $Src<FRAC_SRC>) -> Option<Self> {
+            fn lossless_try_from(src: $Src<SRC_FRAC>) -> Option<Self> {
                 Self::checked_from_fixed(src)
             }
         }
@@ -124,12 +124,12 @@ macro_rules! convert_lossy {
         ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
         // unsigned -> unsigned, infallible because Src::INT_NBITS <= Dst::INT_NBITS
-        impl<const FRAC_SRC: u32, const FRAC_DST: u32> LossyFrom<$SrcU<FRAC_SRC>>
-            for $DstU<FRAC_DST>
+        impl<const SRC_FRAC: u32, const DST_FRAC: u32> LossyFrom<$SrcU<SRC_FRAC>>
+            for $DstU<DST_FRAC>
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ $nbits_src - FRAC_SRC <= $nbits_dst - FRAC_DST }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a fixed-pint number.
             ///
@@ -138,18 +138,18 @@ macro_rules! convert_lossy {
             /// that cannot be represented in the destination are
             /// discarded, which rounds towards &minus;∞.
             #[inline]
-            fn lossy_from(src: $SrcU<FRAC_SRC>) -> Self {
+            fn lossy_from(src: $SrcU<SRC_FRAC>) -> Self {
                 src.to_num()
             }
         }
 
         // signed -> signed, infallible because Src::INT_NBITS <= Dst::INT_NBITS
-        impl<const FRAC_SRC: u32, const FRAC_DST: u32> LossyFrom<$SrcI<FRAC_SRC>>
-            for $DstI<FRAC_DST>
+        impl<const SRC_FRAC: u32, const DST_FRAC: u32> LossyFrom<$SrcI<SRC_FRAC>>
+            for $DstI<DST_FRAC>
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ $nbits_src - FRAC_SRC <= $nbits_dst - FRAC_DST }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a fixed-pint number.
             ///
@@ -158,18 +158,18 @@ macro_rules! convert_lossy {
             /// that cannot be represented in the destination are
             /// discarded, which rounds towards &minus;∞.
             #[inline]
-            fn lossy_from(src: $SrcI<FRAC_SRC>) -> Self {
+            fn lossy_from(src: $SrcI<SRC_FRAC>) -> Self {
                 src.to_num()
             }
         }
 
         // signed -> signed, infallible because Src::INT_NBITS <= Dst::INT_NBITS - 1
-        impl<const FRAC_SRC: u32, const FRAC_DST: u32> LossyFrom<$SrcU<FRAC_SRC>>
-            for $DstI<FRAC_DST>
+        impl<const SRC_FRAC: u32, const DST_FRAC: u32> LossyFrom<$SrcU<SRC_FRAC>>
+            for $DstI<DST_FRAC>
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ $nbits_src - FRAC_SRC + 1 <= $nbits_dst - FRAC_DST }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ $nbits_src - SRC_FRAC + 1 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a fixed-pint number.
             ///
@@ -178,7 +178,7 @@ macro_rules! convert_lossy {
             /// that cannot be represented in the destination are
             /// discarded, which rounds towards &minus;∞.
             #[inline]
-            fn lossy_from(src: $SrcU<FRAC_SRC>) -> Self {
+            fn lossy_from(src: $SrcU<SRC_FRAC>) -> Self {
                 src.to_num()
             }
         }
@@ -294,10 +294,10 @@ macro_rules! int_to_wider_fixed {
     (
         ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
-        impl<const FRAC_DST: u32> From<$SrcU> for $DstU<FRAC_DST>
+        impl<const DST_FRAC: u32> From<$SrcU> for $DstU<DST_FRAC>
         where
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ $nbits_src <= $nbits_dst - FRAC_DST }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ $nbits_src <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -306,15 +306,15 @@ macro_rules! int_to_wider_fixed {
             #[inline]
             fn from(src: $SrcU) -> Self {
                 let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = FRAC_DST;
+                let shift = DST_FRAC;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<const FRAC_DST: u32> From<$SrcI> for $DstI<FRAC_DST>
+        impl<const DST_FRAC: u32> From<$SrcI> for $DstI<DST_FRAC>
         where
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ $nbits_src <= $nbits_dst - FRAC_DST }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ $nbits_src <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -323,15 +323,15 @@ macro_rules! int_to_wider_fixed {
             #[inline]
             fn from(src: $SrcI) -> Self {
                 let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = FRAC_DST;
+                let shift = DST_FRAC;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<const FRAC_DST: u32> From<$SrcU> for $DstI<FRAC_DST>
+        impl<const DST_FRAC: u32> From<$SrcU> for $DstI<DST_FRAC>
         where
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ $nbits_src + 1 <= $nbits_dst - FRAC_DST }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ $nbits_src + 1 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -340,15 +340,15 @@ macro_rules! int_to_wider_fixed {
             #[inline]
             fn from(src: $SrcU) -> Self {
                 let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = FRAC_DST;
+                let shift = DST_FRAC;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<const FRAC_DST: u32> LossyFrom<$SrcU> for $DstU<FRAC_DST>
+        impl<const DST_FRAC: u32> LossyFrom<$SrcU> for $DstU<DST_FRAC>
         where
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ $nbits_src <= $nbits_dst - FRAC_DST }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ $nbits_src <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -360,10 +360,10 @@ macro_rules! int_to_wider_fixed {
             }
         }
 
-        impl<const FRAC_DST: u32> LossyFrom<$SrcI> for $DstI<FRAC_DST>
+        impl<const DST_FRAC: u32> LossyFrom<$SrcI> for $DstI<DST_FRAC>
         where
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ $nbits_src <= $nbits_dst - FRAC_DST }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ $nbits_src <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -375,10 +375,10 @@ macro_rules! int_to_wider_fixed {
             }
         }
 
-        impl<const FRAC_DST: u32> LossyFrom<$SrcU> for $DstI<FRAC_DST>
+        impl<const DST_FRAC: u32> LossyFrom<$SrcU> for $DstI<DST_FRAC>
         where
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ $nbits_src + 1 <= $nbits_dst - FRAC_DST }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ $nbits_src + 1 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
@@ -405,10 +405,10 @@ int_to_wider_fixed! { (u64, i64, 64) -> (FixedU128, FixedI128, 128) }
 
 macro_rules! bool_to_fixed {
     ($DstU:ident, $DstI:ident, $nbits_dst:expr) => {
-        impl<const FRAC_DST: u32> From<bool> for $DstU<FRAC_DST>
+        impl<const DST_FRAC: u32> From<bool> for $DstU<DST_FRAC>
         where
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ 1 <= $nbits_dst - FRAC_DST }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ 1 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
             ///
@@ -417,15 +417,15 @@ macro_rules! bool_to_fixed {
             #[inline]
             fn from(src: bool) -> Self {
                 let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = FRAC_DST;
+                let shift = DST_FRAC;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<const FRAC_DST: u32> From<bool> for $DstI<FRAC_DST>
+        impl<const DST_FRAC: u32> From<bool> for $DstI<DST_FRAC>
         where
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ 2 <= $nbits_dst - FRAC_DST }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ 2 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
             ///
@@ -434,15 +434,15 @@ macro_rules! bool_to_fixed {
             #[inline]
             fn from(src: bool) -> Self {
                 let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = FRAC_DST;
+                let shift = DST_FRAC;
                 Self::from_bits(unshifted << shift)
             }
         }
 
-        impl<const FRAC_DST: u32> LossyFrom<bool> for $DstU<FRAC_DST>
+        impl<const DST_FRAC: u32> LossyFrom<bool> for $DstU<DST_FRAC>
         where
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ 1 <= $nbits_dst - FRAC_DST }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ 1 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
             ///
@@ -454,10 +454,10 @@ macro_rules! bool_to_fixed {
             }
         }
 
-        impl<const FRAC_DST: u32> LossyFrom<bool> for $DstI<FRAC_DST>
+        impl<const DST_FRAC: u32> LossyFrom<bool> for $DstI<DST_FRAC>
         where
-            If<{ FRAC_DST <= $nbits_dst }>: True,
-            If<{ 2 <= $nbits_dst - FRAC_DST }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
+            If<{ 2 <= $nbits_dst - DST_FRAC }>: True,
         {
             /// Converts a [`bool`] to a fixed-point number.
             ///
@@ -584,10 +584,10 @@ macro_rules! fixed_to_int_lossy {
     (
         ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
-        impl<const FRAC_SRC: u32> LossyFrom<$SrcU<FRAC_SRC>> for $DstU
+        impl<const SRC_FRAC: u32> LossyFrom<$SrcU<SRC_FRAC>> for $DstU
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ $nbits_src - FRAC_SRC <= $nbits_dst }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ $nbits_src - SRC_FRAC <= $nbits_dst }>: True,
         {
             /// Converts a fixed-point number to an integer.
             ///
@@ -595,15 +595,15 @@ macro_rules! fixed_to_int_lossy {
             /// precision (lossy). Any fractional bits in the source
             /// are discarded, which rounds towards &minus;∞.
             #[inline]
-            fn lossy_from(src: $SrcU<FRAC_SRC>) -> Self {
+            fn lossy_from(src: $SrcU<SRC_FRAC>) -> Self {
                 src.to_num()
             }
         }
 
-        impl<const FRAC_SRC: u32> LossyFrom<$SrcI<FRAC_SRC>> for $DstI
+        impl<const SRC_FRAC: u32> LossyFrom<$SrcI<SRC_FRAC>> for $DstI
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ $nbits_src - FRAC_SRC <= $nbits_dst }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ $nbits_src - SRC_FRAC <= $nbits_dst }>: True,
         {
             /// Converts a fixed-point number to an integer.
             ///
@@ -611,15 +611,15 @@ macro_rules! fixed_to_int_lossy {
             /// precision (lossy). Any fractional bits in the source
             /// are discarded, which rounds towards &minus;∞.
             #[inline]
-            fn lossy_from(src: $SrcI<FRAC_SRC>) -> Self {
+            fn lossy_from(src: $SrcI<SRC_FRAC>) -> Self {
                 src.to_num()
             }
         }
 
-        impl<const FRAC_SRC: u32> LossyFrom<$SrcU<FRAC_SRC>> for $DstI
+        impl<const SRC_FRAC: u32> LossyFrom<$SrcU<SRC_FRAC>> for $DstI
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ $nbits_src - FRAC_SRC + 1 <= $nbits_dst }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ $nbits_src - SRC_FRAC + 1 <= $nbits_dst }>: True,
         {
             /// Converts a fixed-point number to an integer.
             ///
@@ -627,7 +627,7 @@ macro_rules! fixed_to_int_lossy {
             /// precision (lossy). Any fractional bits in the source
             /// are discarded, which rounds towards &minus;∞.
             #[inline]
-            fn lossy_from(src: $SrcU<FRAC_SRC>) -> Self {
+            fn lossy_from(src: $SrcU<SRC_FRAC>) -> Self {
                 src.to_num()
             }
         }

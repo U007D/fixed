@@ -23,74 +23,74 @@ use half::{bf16, f16};
 
 macro_rules! cast {
     ($Src:ident($nbits_src:expr); $Dst:ident($nbits_dst:expr)) => {
-        impl<const FRAC_SRC: u32, const FRAC_DST: u32> Cast<$Dst<FRAC_DST>> for $Src<FRAC_SRC>
+        impl<const SRC_FRAC: u32, const DST_FRAC: u32> Cast<$Dst<DST_FRAC>> for $Src<SRC_FRAC>
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
         {
             #[inline]
-            fn cast(self) -> $Dst<FRAC_DST> {
+            fn cast(self) -> $Dst<DST_FRAC> {
                 self.to_num()
             }
         }
 
-        impl<const FRAC_SRC: u32, const FRAC_DST: u32> CheckedCast<$Dst<FRAC_DST>>
-            for $Src<FRAC_SRC>
+        impl<const SRC_FRAC: u32, const DST_FRAC: u32> CheckedCast<$Dst<DST_FRAC>>
+            for $Src<SRC_FRAC>
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
         {
             #[inline]
-            fn checked_cast(self) -> Option<$Dst<FRAC_DST>> {
+            fn checked_cast(self) -> Option<$Dst<DST_FRAC>> {
                 self.checked_to_num()
             }
         }
 
-        impl<const FRAC_SRC: u32, const FRAC_DST: u32> SaturatingCast<$Dst<FRAC_DST>>
-            for $Src<FRAC_SRC>
+        impl<const SRC_FRAC: u32, const DST_FRAC: u32> SaturatingCast<$Dst<DST_FRAC>>
+            for $Src<SRC_FRAC>
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
         {
             #[inline]
-            fn saturating_cast(self) -> $Dst<FRAC_DST> {
+            fn saturating_cast(self) -> $Dst<DST_FRAC> {
                 self.saturating_to_num()
             }
         }
 
-        impl<const FRAC_SRC: u32, const FRAC_DST: u32> WrappingCast<$Dst<FRAC_DST>>
-            for $Src<FRAC_SRC>
+        impl<const SRC_FRAC: u32, const DST_FRAC: u32> WrappingCast<$Dst<DST_FRAC>>
+            for $Src<SRC_FRAC>
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
         {
             #[inline]
-            fn wrapping_cast(self) -> $Dst<FRAC_DST> {
+            fn wrapping_cast(self) -> $Dst<DST_FRAC> {
                 self.wrapping_to_num()
             }
         }
 
-        impl<const FRAC_SRC: u32, const FRAC_DST: u32> OverflowingCast<$Dst<FRAC_DST>>
-            for $Src<FRAC_SRC>
+        impl<const SRC_FRAC: u32, const DST_FRAC: u32> OverflowingCast<$Dst<DST_FRAC>>
+            for $Src<SRC_FRAC>
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
         {
             #[inline]
-            fn overflowing_cast(self) -> ($Dst<FRAC_DST>, bool) {
+            fn overflowing_cast(self) -> ($Dst<DST_FRAC>, bool) {
                 self.overflowing_to_num()
             }
         }
 
-        impl<const FRAC_SRC: u32, const FRAC_DST: u32> UnwrappedCast<$Dst<FRAC_DST>>
-            for $Src<FRAC_SRC>
+        impl<const SRC_FRAC: u32, const DST_FRAC: u32> UnwrappedCast<$Dst<DST_FRAC>>
+            for $Src<SRC_FRAC>
         where
-            If<{ FRAC_SRC <= $nbits_src }>: True,
-            If<{ FRAC_DST <= $nbits_dst }>: True,
+            If<{ SRC_FRAC <= $nbits_src }>: True,
+            If<{ DST_FRAC <= $nbits_dst }>: True,
         {
             #[inline]
             #[track_caller]
-            fn unwrapped_cast(self) -> $Dst<FRAC_DST> {
+            fn unwrapped_cast(self) -> $Dst<DST_FRAC> {
                 self.unwrapped_to_num()
             }
         }

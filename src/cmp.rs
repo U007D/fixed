@@ -29,16 +29,16 @@ macro_rules! fixed_cmp_fixed {
         $Lhs:ident($nbits_lhs:expr, $LhsInner:ident),
         $Rhs:ident($nbits_rhs:expr, $RhsInner:ident)
     ) => {
-        impl<const FRAC_LHS: u32, const FRAC_RHS: u32> PartialEq<$Rhs<FRAC_RHS>> for $Lhs<FRAC_LHS>
+        impl<const LHS_FRAC: u32, const RHS_FRAC: u32> PartialEq<$Rhs<RHS_FRAC>> for $Lhs<LHS_FRAC>
         where
-            If<{ FRAC_LHS <= $nbits_lhs }>: True,
-            If<{ FRAC_RHS <= $nbits_rhs }>: True,
+            If<{ LHS_FRAC <= $nbits_lhs }>: True,
+            If<{ RHS_FRAC <= $nbits_rhs }>: True,
         {
             #[inline]
-            fn eq(&self, rhs: &$Rhs<FRAC_RHS>) -> bool {
+            fn eq(&self, rhs: &$Rhs<RHS_FRAC>) -> bool {
                 let conv = int_helper::$RhsInner::to_fixed_helper(
                     rhs.to_bits(),
-                    <$Rhs<FRAC_RHS>>::FRAC_NBITS as i32,
+                    <$Rhs<RHS_FRAC>>::FRAC_NBITS as i32,
                     Self::FRAC_NBITS,
                     Self::INT_NBITS,
                 );
@@ -53,13 +53,13 @@ macro_rules! fixed_cmp_fixed {
             }
         }
 
-        impl<const FRAC_LHS: u32, const FRAC_RHS: u32> PartialOrd<$Rhs<FRAC_RHS>> for $Lhs<FRAC_LHS>
+        impl<const LHS_FRAC: u32, const RHS_FRAC: u32> PartialOrd<$Rhs<RHS_FRAC>> for $Lhs<LHS_FRAC>
         where
-            If<{ FRAC_LHS <= $nbits_lhs }>: True,
-            If<{ FRAC_RHS <= $nbits_rhs }>: True,
+            If<{ LHS_FRAC <= $nbits_lhs }>: True,
+            If<{ RHS_FRAC <= $nbits_rhs }>: True,
         {
             #[inline]
-            fn partial_cmp(&self, rhs: &$Rhs<FRAC_RHS>) -> Option<Ordering> {
+            fn partial_cmp(&self, rhs: &$Rhs<RHS_FRAC>) -> Option<Ordering> {
                 let lhs_is_neg = int_helper::$LhsInner::is_negative(self.to_bits());
                 let rhs_is_neg = int_helper::$RhsInner::is_negative(rhs.to_bits());
                 match (lhs_is_neg, rhs_is_neg) {
@@ -69,7 +69,7 @@ macro_rules! fixed_cmp_fixed {
                 }
                 let conv = int_helper::$RhsInner::to_fixed_helper(
                     rhs.to_bits(),
-                    <$Rhs<FRAC_RHS>>::FRAC_NBITS as i32,
+                    <$Rhs<RHS_FRAC>>::FRAC_NBITS as i32,
                     Self::FRAC_NBITS,
                     Self::INT_NBITS,
                 );
@@ -88,7 +88,7 @@ macro_rules! fixed_cmp_fixed {
             }
 
             #[inline]
-            fn lt(&self, rhs: &$Rhs<FRAC_RHS>) -> bool {
+            fn lt(&self, rhs: &$Rhs<RHS_FRAC>) -> bool {
                 let lhs_is_neg = int_helper::$LhsInner::is_negative(self.to_bits());
                 let rhs_is_neg = int_helper::$RhsInner::is_negative(rhs.to_bits());
                 match (lhs_is_neg, rhs_is_neg) {
@@ -98,7 +98,7 @@ macro_rules! fixed_cmp_fixed {
                 }
                 let conv = int_helper::$RhsInner::to_fixed_helper(
                     rhs.to_bits(),
-                    <$Rhs<FRAC_RHS>>::FRAC_NBITS as i32,
+                    <$Rhs<RHS_FRAC>>::FRAC_NBITS as i32,
                     Self::FRAC_NBITS,
                     Self::INT_NBITS,
                 );
@@ -114,17 +114,17 @@ macro_rules! fixed_cmp_fixed {
             }
 
             #[inline]
-            fn le(&self, rhs: &$Rhs<FRAC_RHS>) -> bool {
+            fn le(&self, rhs: &$Rhs<RHS_FRAC>) -> bool {
                 !rhs.lt(self)
             }
 
             #[inline]
-            fn gt(&self, rhs: &$Rhs<FRAC_RHS>) -> bool {
+            fn gt(&self, rhs: &$Rhs<RHS_FRAC>) -> bool {
                 rhs.lt(self)
             }
 
             #[inline]
-            fn ge(&self, rhs: &$Rhs<FRAC_RHS>) -> bool {
+            fn ge(&self, rhs: &$Rhs<RHS_FRAC>) -> bool {
                 !self.lt(rhs)
             }
         }
