@@ -69,8 +69,6 @@ assert_eq!(Fix::LOG10_2, Fix::from_num(consts::LOG10_2));
             }
         }
 
-        // TODO: change Fix::LN_2 >= 0.5 to 0.5 <= Fix::LN_2
-        // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
         comment! {
             "This block contains constants in the range 0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;1.
 
@@ -90,7 +88,7 @@ type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
             ">;
 assert_eq!(Fix::LN_2, Fix::from_num(consts::LN_2));
-assert!(Fix::LN_2 >= 0.5 && Fix::LN_2 < 1);
+assert!(0.5 <= Fix::LN_2  && Fix::LN_2 < 1);
 ```
 ",
             if_signed_else_empty_str! {
@@ -152,8 +150,6 @@ let _ = Fix::LN_2;
             }
         }
 
-        // TODO: change Fix::LOG2_E >= 1 to 1 <= Fix::LOG2_E
-        // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
         comment! {
             "This block contains constants in the range 1&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;2.
 
@@ -171,7 +167,7 @@ type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m2, $s_nbits_m1),
             ">;
 assert_eq!(Fix::LOG2_E, Fix::from_num(consts::LOG2_E));
-assert!(Fix::LOG2_E >= 1 && Fix::LOG2_E < 2);
+assert!(1 <= Fix::LOG2_E && Fix::LOG2_E < 2);
 ```
 
 The following example fails to compile, since the maximum
@@ -246,8 +242,6 @@ assert_eq!(Fix::ONE, Fix::from_num(1));
             }
         }
 
-        // TODO: change Fix::E >= 2 to 2 <= Fix::E
-        // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
         comment! {
             "This block contains constants in the range 2&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;4.
 
@@ -265,7 +259,7 @@ type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m3, $s_nbits_m2),
             ">;
 assert_eq!(Fix::E, Fix::from_num(consts::E));
-assert!(Fix::E >= 2 && Fix::E < 4);
+assert!(2 <= Fix::E && Fix::E < 4);
 ```
 
 The following example fails to compile, since the maximum
@@ -307,8 +301,6 @@ let _ = Fix::E;
             }
         }
 
-        // TODO: change Fix::TAU >= 4 to 4 <= Fix::TAU
-        // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
         comment! {
             "This block contains constants in the range 4&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;8.
 
@@ -326,7 +318,7 @@ type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m4, $s_nbits_m3),
             ">;
 assert_eq!(Fix::TAU, Fix::from_num(consts::TAU));
-assert!(Fix::TAU >= 4 && Fix::TAU < 8);
+assert!(4 <= Fix::TAU && Fix::TAU < 8);
 ```
 
 The following example fails to compile, since the maximum

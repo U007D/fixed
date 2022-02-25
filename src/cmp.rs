@@ -340,10 +340,7 @@ fixed_cmp_wider! { FixedI128, FixedU128; FixedI64, FixedU64 }
 
 macro_rules! fixed_cmp_int {
     ($Fix:ident($nbits:expr), $Int:ident, $IntAs:ident, $IntFixed:ident) => {
-        impl<const FRAC: i32> PartialEq<$Int> for $Fix<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> PartialEq<$Int> for $Fix<FRAC> {
             #[inline]
             fn eq(&self, rhs: &$Int) -> bool {
                 let rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
@@ -351,22 +348,15 @@ macro_rules! fixed_cmp_int {
             }
         }
 
-        // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
-        // impl<const FRAC: i32> PartialEq<$Fix<FRAC>> for $Int
-        // where
-        //     If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        // {
-        //     #[inline]
-        //     fn eq(&self, rhs: &$Fix<FRAC>) -> bool {
-        //         let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-        //         slf.eq(rhs)
-        //     }
-        // }
+        impl<const FRAC: i32> PartialEq<$Fix<FRAC>> for $Int {
+            #[inline]
+            fn eq(&self, rhs: &$Fix<FRAC>) -> bool {
+                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
+                slf.eq(rhs)
+            }
+        }
 
-        impl<const FRAC: i32> PartialOrd<$Int> for $Fix<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> PartialOrd<$Int> for $Fix<FRAC> {
             #[inline]
             fn partial_cmp(&self, rhs: &$Int) -> Option<Ordering> {
                 let rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
@@ -398,41 +388,37 @@ macro_rules! fixed_cmp_int {
             }
         }
 
-        // TODO: blocked on https://github.com/rust-lang/rust/issues/94282
-        // impl<const FRAC: i32> PartialOrd<$Fix<FRAC>> for $Int
-        // where
-        //     If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        // {
-        //     #[inline]
-        //     fn partial_cmp(&self, rhs: &$Fix<FRAC>) -> Option<Ordering> {
-        //         let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-        //         slf.partial_cmp(rhs)
-        //     }
+        impl<const FRAC: i32> PartialOrd<$Fix<FRAC>> for $Int {
+            #[inline]
+            fn partial_cmp(&self, rhs: &$Fix<FRAC>) -> Option<Ordering> {
+                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
+                slf.partial_cmp(rhs)
+            }
 
-        //     #[inline]
-        //     fn lt(&self, rhs: &$Fix<FRAC>) -> bool {
-        //         let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-        //         slf.lt(rhs)
-        //     }
+            #[inline]
+            fn lt(&self, rhs: &$Fix<FRAC>) -> bool {
+                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
+                slf.lt(rhs)
+            }
 
-        //     #[inline]
-        //     fn le(&self, rhs: &$Fix<FRAC>) -> bool {
-        //         let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-        //         slf.le(rhs)
-        //     }
+            #[inline]
+            fn le(&self, rhs: &$Fix<FRAC>) -> bool {
+                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
+                slf.le(rhs)
+            }
 
-        //     #[inline]
-        //     fn gt(&self, rhs: &$Fix<FRAC>) -> bool {
-        //         let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-        //         slf.gt(rhs)
-        //     }
+            #[inline]
+            fn gt(&self, rhs: &$Fix<FRAC>) -> bool {
+                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
+                slf.gt(rhs)
+            }
 
-        //     #[inline]
-        //     fn ge(&self, rhs: &$Fix<FRAC>) -> bool {
-        //         let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-        //         slf.ge(rhs)
-        //     }
-        // }
+            #[inline]
+            fn ge(&self, rhs: &$Fix<FRAC>) -> bool {
+                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
+                slf.ge(rhs)
+            }
+        }
     };
 }
 
