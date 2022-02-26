@@ -194,10 +194,13 @@ crate, add it as a dependency inside [*Cargo.toml*]:
 
 ```toml
 [dependencies]
-fixed = "1.13"
+fixed = "2.0.0-alpha.1"
 ```
 
-The *fixed* crate requires rustc version 1.57.0 or later.
+This alpha version of the *fixed* crate requires the nightly compiler with the
+[`generic_const_exprs` feature] enabled.
+
+[`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
 
 ## Optional features
 
@@ -221,7 +224,7 @@ To enable features, you can add the dependency like this to [*Cargo.toml*]:
 
 ```toml
 [dependencies.fixed]
-version = "1.13"
+version = "2.0.0-alpha.1"
 features = ["serde"]
 ```
 
@@ -295,7 +298,7 @@ shall be dual licensed as above, without any additional terms or conditions.
 #![cfg_attr(not(feature = "std"), no_std)]
 #![warn(missing_docs)]
 #![warn(unsafe_op_in_unsafe_fn)]
-#![doc(html_root_url = "https://docs.rs/fixed/~1.13")]
+#![doc(html_root_url = "https://docs.rs/fixed/2.0.0-alpha.1")]
 #![doc(test(attr(deny(warnings))))]
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
 #![feature(generic_const_exprs)]

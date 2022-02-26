@@ -5,9 +5,11 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-Version 2.0.0-alpha.1 (unreleased)
+Version 2.0.0-alpha.1 (2022-02-26)
 ==================================
 
+  * The crate now requires the nightly compiler with the [`generic_const_exprs`
+    feature] enabled.
   * The crate now uses generic constant expressions to specify the number of
     fractional bits.
   * The deprecated optional features `az` and `f16` were removed. These features
@@ -15,8 +17,9 @@ Version 2.0.0-alpha.1 (unreleased)
   * The `INT_NBITS` and `FRAC_NBITS` associated constants were replaced with
     [`INT_BITS`][f-ib-2-0] and [`FRAC_BITS`][f-fb-2-0] which can be negative.
 
-[f-fb-2-0]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
-[f-ib-2-0]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
+[f-fb-2-0]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
+[f-ib-2-0]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
+[`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
 
 Version 1.13.0 (2022-02-22)
 ===========================
