@@ -16,6 +16,15 @@
 /*!
 # Fixed-point numbers
 
+**Alpha:** This is an alpha release of the new major version 2.0.0 that makes
+use of const generics instead of the [*typenum*
+crate](https://crates.io/crate/typenum). This version requires the nightly
+compiler with the [`generic_const_exprs` feature] enabled. The stable version
+2.0.0 itself will not be released before the [`generic_const_exprs` feature] is
+stabilized.
+
+[`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
+
 The [*fixed* crate] provides fixed-point numbers.
 
   * [`FixedI8`] and [`FixedU8`] are eight-bit fixed-point numbers.

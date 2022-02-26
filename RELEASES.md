@@ -5,8 +5,8 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-Version 2.0.0 (unreleased)
-==========================
+Version 2.0.0-alpha.1 (unreleased)
+==================================
 
   * The crate now uses generic constant expressions to specify the number of
     fractional bits.

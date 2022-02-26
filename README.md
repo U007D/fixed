@@ -7,6 +7,15 @@ as-is, without any warranty. -->
 
 # Fixed-point numbers
 
+**Alpha:** This is an alpha release of the new major version 2.0.0 that makes
+use of const generics instead of the [*typenum*
+crate](https://crates.io/crate/typenum). This version requires the nightly
+compiler with the [`generic_const_exprs` feature] enabled. The stable version
+2.0.0 itself will not be released before the [`generic_const_exprs` feature] is
+stabilized.
+
+[`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
+
 The [*fixed* crate] provides fixed-point numbers.
 
   * [`FixedI8`] and [`FixedU8`] are eight-bit fixed-point numbers.
@@ -93,7 +102,7 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
-### Version 2.0.0 news (unreleased)
+### Version 2.0.0-alpha.1 news (unreleased)
 
   * The crate now uses generic constant expressions to specify the number of
     fractional bits.
@@ -163,6 +172,8 @@ Details on other releases can be found in [*RELEASES.md*].
 ## Quick examples
 
 ```rust
+#![feature(generic_const_exprs)]
+
 use fixed::types::I20F12;
 
 // 19/3 = 6 1/3
@@ -182,6 +193,8 @@ combinations of integer and fractional bits adding up to a total of eight, 16,
 32, 64 or 128 bits.
 
 ```rust
+#![feature(generic_const_exprs)]
+
 use fixed::types::{I4F4, I4F12};
 
 // -8 ≤ I4F4 < 8 with steps of 1/16 (~0.06)
@@ -219,6 +232,8 @@ The [*fixed-macro* crate] provides a convenient macro to write down fixed-point
 constants literally in the code.
 
 ```rust
+#![feature(generic_const_exprs)]
+
 use fixed::types::I16F16;
 use fixed_macro::fixed;
 
