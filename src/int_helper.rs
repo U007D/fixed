@@ -34,11 +34,6 @@ macro_rules! make_helper {
             }
 
             #[inline]
-            pub fn is_negative(val: $i) -> bool {
-                val.is_negative()
-            }
-
-            #[inline]
             pub fn to_fixed_helper(
                 val: $i,
                 src_frac_bits: i32,
@@ -99,12 +94,6 @@ macro_rules! make_helper {
             #[inline]
             pub fn neg_abs(val: $u) -> (bool, $u) {
                 (false, val)
-            }
-
-            #[inline]
-            pub fn is_negative(val: $u) -> bool {
-                let _ = val;
-                false
             }
 
             #[inline]

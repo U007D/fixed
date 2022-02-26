@@ -32,6 +32,42 @@ macro_rules! make_helper {
             pub const EXP_MASK: $Bits = !(SIGN_MASK | MANT_MASK);
             const MANT_MASK: $Bits = (1 << (PREC - 1)) - 1;
 
+            // zero is NOT negative, that is zero is represented as
+            // Kind::Finite { neg: false, abs: 0, frac_bits: 0 },
+            pub enum CmpKind {
+                NaN,
+                Infinite { neg: bool },
+                Finite { neg: bool, abs: $Bits, frac_bits: i32 },
+            }
+
+            #[inline]
+            pub fn cmp_kind(val: $Float) -> CmpKind {
+                let (neg, exp, mut mantissa) = parts(val);
+                if exp > EXP_MAX {
+                    if mantissa == 0 {
+                        return CmpKind::Infinite { neg };
+                    } else {
+                        return CmpKind::NaN;
+                    };
+                }
+                // if not subnormal, add implicit bit
+                if exp >= EXP_MIN {
+                    mantissa |= 1 << (PREC - 1);
+                }
+                if mantissa == 0 {
+                    return CmpKind::Finite {
+                        neg: false,
+                        abs: 0,
+                        frac_bits: 0,
+                    };
+                }
+                CmpKind::Finite {
+                    neg,
+                    abs: mantissa,
+                    frac_bits: PREC as i32 - 1 - exp,
+                }
+            }
+
             #[inline]
             fn parts(val: $Float) -> (bool, i32, $Bits) {
                 let bits = val.to_bits();
@@ -42,6 +78,7 @@ macro_rules! make_helper {
 
                 (neg, exp, mant)
             }
+
 
             #[inline]
             pub fn from_to_float_helper(
