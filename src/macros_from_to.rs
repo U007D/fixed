@@ -570,7 +570,7 @@ assert_eq!(Fix::unwrapped_from_num(src), Fix::from_bits(0b111 << (4 - 2)));
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let too_large = ", $s_fixed, "::<0>::from_bits(0b1101 << (", $s_nbits, " - 7));
@@ -628,7 +628,7 @@ assert_eq!(src.unwrapped_to_num::<I16F16>(), expected);
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 type TooFewIntBits = ", $s_fixed, "<6>;

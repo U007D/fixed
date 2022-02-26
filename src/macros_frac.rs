@@ -1586,7 +1586,7 @@ assert_eq!(Fix::from_num(-5).unwrapped_signum(), -1);
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type OneIntBit = ", $s_fixed, "<", $s_nbits_m1, ">;
 let _overflow = OneIntBit::from_num(0.5).unwrapped_signum();
@@ -1618,7 +1618,7 @@ assert_eq!(Fix::from_num(3).unwrapped_mul(Fix::from_num(2)), Fix::from_num(6));
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_mul(Fix::from_num(4));
@@ -1650,7 +1650,7 @@ assert_eq!(Fix::from_num(3).unwrapped_div(Fix::from_num(2)), one_point_5);
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let quarter = Fix::ONE / 4;
@@ -1712,7 +1712,7 @@ assert_eq!(Fix::from_num(7.5).unwrapped_div_euclid(Fix::from_num(2)), Fix::from_
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_div_euclid(Fix::from_num(0.25));
@@ -1771,7 +1771,7 @@ assert_eq!(acc, Fix::MAX / 2);
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let mut acc = Fix::DELTA;
@@ -1818,7 +1818,7 @@ assert_eq!(Fix::from_num(3.75).unwrapped_rem_int(2), Fix::from_num(1.75));
 
 The following panics because the divisor is zero.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _divisor_is_zero = Fix::from_num(3.75).unwrapped_rem_int(0);
@@ -1868,7 +1868,7 @@ assert_eq!(Fix::from_num(7.5).unwrapped_div_euclid_int(2), Fix::from_num(3));
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MIN.unwrapped_div_euclid_int(-1);
@@ -1924,7 +1924,7 @@ assert_eq!(Fix::from_num(7.5).unwrapped_rem_euclid_int(2), Fix::from_num(1.5));
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<", $s_nbits_m4, ">;
 // -8 ≤ Fix < 8, so the answer 12.5 overflows
@@ -1968,7 +1968,7 @@ assert_eq!(Fix::from_num(0.5).unwrapped_lerp(Fix::ZERO, Fix::MAX), Fix::MAX / 2)
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::from_num(1.5).unwrapped_lerp(Fix::ZERO, Fix::MAX);

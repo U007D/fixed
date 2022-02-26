@@ -465,7 +465,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics even when debug assertions are disabled.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{
     ///     types::{I4F4, I16F16},
     ///     Unwrapped,
@@ -520,7 +520,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics even when debug assertions are disabled.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{
     ///     types::{I2F6, I4F4},
     ///     Unwrapped,
@@ -693,7 +693,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I16F16, Unwrapped};
     /// let _overflow = Unwrapped(I16F16::MAX).ceil();
     /// ```
@@ -728,7 +728,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I0F32, Unwrapped};
     /// let _overflow = Unwrapped(I0F32::MIN).floor();
     /// ```
@@ -761,7 +761,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I16F16, Unwrapped};
     /// let _overflow = Unwrapped(I16F16::MAX).round();
     /// ```
@@ -796,7 +796,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I16F16, Unwrapped};
     /// let max = Unwrapped(I16F16::MAX);
     /// let _overflow = max.round_ties_to_even();
@@ -1033,7 +1033,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I16F16, Unwrapped};
     /// type Unwr = Unwrapped<I16F16>;
     /// let _overflow = Unwr::MIN.dist(Unwr::ZERO);
@@ -1085,7 +1085,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I8F24, Unwrapped};
     /// let frac_1_512 = Unwrapped(I8F24::ONE / 512);
     /// let _overflow = frac_1_512.recip();
@@ -1123,7 +1123,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I16F16, Unwrapped};
     /// let one = Unwrapped(I16F16::ONE);
     /// let max = Unwrapped(I16F16::MAX);
@@ -1158,7 +1158,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I16F16, Unwrapped};
     /// let mut acc = Unwrapped(I16F16::MAX);
     /// acc.mul_acc(Unwrapped(I16F16::MAX), Unwrapped(I16F16::from_num(3)));
@@ -1190,7 +1190,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I16F16, Unwrapped};
     /// let quarter = Unwrapped(I16F16::from_num(0.25));
     /// let _overflow = Unwrapped(I16F16::MAX).div_euclid(quarter);
@@ -1250,7 +1250,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I16F16, Unwrapped};
     /// let min = Unwrapped(I16F16::MIN);
     /// let _overflow = min.div_euclid_int(-1);
@@ -1284,7 +1284,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I8F8, Unwrapped};
     /// let num = Unwrapped(I8F8::from_num(-7.5));
     /// // -128 ≤ Fix < 128, so the answer 192.5 overflows
@@ -1317,7 +1317,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I16F16, Unwrapped};
     /// type Unwr = Unwrapped<I16F16>;
     /// let _overflow = Unwr::from_num(1.5).lerp(Unwr::ZERO, Unwr::MAX);
@@ -1351,7 +1351,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because `start`&nbsp;=&nbsp;`end`.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I16F16, Unwrapped};
     /// type Unwr = Unwrapped<I16F16>;
     /// let two = Unwr::from_num(2);
@@ -1360,7 +1360,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I16F16, Unwrapped};
     /// type Unwr = Unwrapped<I16F16>;
     /// let _overflow = Unwr::MAX.inv_lerp(Unwr::ZERO, Unwr::from_num(0.5));
@@ -1454,7 +1454,7 @@ impl<F: FixedSigned> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I16F16, Unwrapped};
     /// let _overflow = Unwrapped(I16F16::MIN).abs();
     /// ```
@@ -1489,7 +1489,7 @@ impl<F: FixedSigned> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::I1F31, Unwrapped};
     /// let _overflow = Unwrapped(<I1F31>::from_num(0.5)).signum();
     /// ```
@@ -1587,7 +1587,7 @@ impl<F: FixedUnsigned> Unwrapped<F> {
     ///
     /// The following panics because of overflow.
     ///
-    /// ```should_panic
+    /// ```rust,should_panic
     /// use fixed::{types::U16F16, Unwrapped};
     /// let _overflow = Unwrapped(U16F16::MAX).next_power_of_two();
     /// ```

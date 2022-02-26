@@ -670,7 +670,7 @@ assert_eq!(Fix::from_num(2.5).unwrapped_ceil(), Fix::from_num(3));
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_ceil();
@@ -713,7 +713,7 @@ assert_eq!(Fix::from_num(2.5).unwrapped_floor(), Fix::from_num(2));
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type AllFrac = ", $s_fixed, "<", $s_nbits, ">;
 let _overflow = AllFrac::MIN.unwrapped_floor();
@@ -753,7 +753,7 @@ assert_eq!(Fix::from_num(2.5).unwrapped_round(), Fix::from_num(3));
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_round();
@@ -786,7 +786,7 @@ assert_eq!(Fix::from_num(3.5).unwrapped_round_ties_to_even(), Fix::from_num(4));
 
 The following panics because of overflow.
 
-```should_panic
+```rust,should_panic
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_round_ties_to_even();
