@@ -103,6 +103,9 @@ The conversions supported cover the following cases.
 ## Quick examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::types::I20F12;
 
 // 19/3 = 6 1/3
@@ -122,6 +125,9 @@ combinations of integer and fractional bits adding up to a total of eight, 16,
 32, 64 or 128 bits.
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::types::{I4F4, I4F12};
 
 // -8 ≤ I4F4 < 8 with steps of 1/16 (~0.06)
@@ -159,6 +165,9 @@ The [*fixed-macro* crate] provides a convenient macro to write down fixed-point
 constants literally in the code.
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 # #[cfg(feature = "skip-this-test")] {
 use fixed::types::I16F16;
 use fixed_macro::fixed;
@@ -342,6 +351,9 @@ use core::{
 /// standard library’s prelude you’ll have to do so manually:
 ///
 /// ```rust
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// # #[allow(unused_imports)]
 /// use fixed::prelude::*;
 /// ```
@@ -464,6 +476,9 @@ it is `#[repr(transparent)]` with [`", $s_inner, "`] as the only non-zero-sized 
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 let eleven = ", $s_fixed, "::<3>::from_num(11);
 assert_eq!(eleven, ", $s_fixed, "::<3>::from_bits(11 << 3));
@@ -633,6 +648,9 @@ fixed! {
 /// # Examples
 ///
 /// ```rust
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::{types::I16F16, F128Bits};
 /// // binary128 representation for 1.0 is 0x3FFF << 112
 /// let one = F128Bits(0x3FFF_u128 << 112);
@@ -678,6 +696,9 @@ impl F128Bits {
 /// # Examples
 ///
 /// ```rust
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::{const_fixed_from_int, types::I16F16};
 /// const_fixed_from_int! {
 ///     // define a constant using an integer
@@ -693,6 +714,9 @@ impl F128Bits {
 /// <code>[i32]::[MAX][i32::MAX]</code> is not representable by [`I16F16`].
 ///
 /// ```rust,compile_fail
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::{const_fixed_from_int, types::I16F16};
 /// const_fixed_from_int! {
 ///     // fails because i32::MAX > I16F16::MAX
@@ -705,6 +729,9 @@ impl F128Bits {
 /// constants using [`i32`] expressions, not [`i16`] expressions.
 ///
 /// ```rust,compile_fail
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::{const_fixed_from_int, types::I16F16};
 /// const_fixed_from_int! {
 ///     // fails because 0i16 is not of type i32
@@ -736,6 +763,9 @@ macro_rules! const_fixed_from_int {
 /// The first snippet succeeds, and acts as a control.
 ///
 /// ```rust
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::{const_fixed_from_int, types::*};
 /// const_fixed_from_int! {
 ///     const ZERO_I0: I0F32 = 0;
@@ -775,18 +805,27 @@ macro_rules! const_fixed_from_int {
 ///
 /// Not enough integer bits for 1.
 /// ```rust,compile_fail
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::{const_fixed_from_int, types::*};
 /// const_fixed_from_int! {
 ///     const _ONE: I0F32 = 1;
 /// }
 /// ```
 /// ```rust,compile_fail
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::{const_fixed_from_int, types::*};
 /// const_fixed_from_int! {
 ///     const _ONE: I1F31 = 1;
 /// }
 /// ```
 /// ```rust,compile_fail
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::{const_fixed_from_int, types::*};
 /// const_fixed_from_int! {
 ///     const _ONE: U0F32 = 1;
@@ -795,6 +834,9 @@ macro_rules! const_fixed_from_int {
 ///
 /// Not enough integer bits for -1.
 /// ```rust,compile_fail
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::{const_fixed_from_int, types::*};
 /// const_fixed_from_int! {
 ///     const _MINUS_ONE: I0F32 = -1;
@@ -803,6 +845,9 @@ macro_rules! const_fixed_from_int {
 ///
 /// Not enough integer bits for -2.
 /// ```rust,compile_fail
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::{const_fixed_from_int, types::*};
 /// const_fixed_from_int! {
 ///     const _MINUS_TWO: I1F31 = -2;

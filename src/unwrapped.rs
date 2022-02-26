@@ -42,6 +42,9 @@ use core::{
 /// This panics even when debug assertions are disabled.
 ///
 /// ```rust,should_panic
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::{types::I16F16, Unwrapped};
 /// let max = Unwrapped(I16F16::MAX);
 /// let delta = Unwrapped(I16F16::DELTA);
@@ -60,6 +63,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert_eq!(Unwrapped::<I16F16>::ZERO, Unwrapped(I16F16::ZERO));
     /// ```
@@ -73,6 +79,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert_eq!(Unwrapped::<I16F16>::DELTA, Unwrapped(I16F16::DELTA));
     /// ```
@@ -86,6 +95,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert_eq!(Unwrapped::<I16F16>::MIN, Unwrapped(I16F16::MIN));
     /// ```
@@ -99,6 +111,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert_eq!(Unwrapped::<I16F16>::MAX, Unwrapped(I16F16::MAX));
     /// ```
@@ -112,6 +127,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Unwrapped,
@@ -129,6 +147,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert_eq!(Unwrapped::<I16F16>::INT_BITS, I16F16::INT_BITS);
     /// ```
@@ -142,6 +163,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert_eq!(Unwrapped::<I16F16>::FRAC_BITS, I16F16::FRAC_BITS);
     /// ```
@@ -156,6 +180,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert_eq!(Unwrapped::<I16F16>::from_bits(0x1C), Unwrapped(I16F16::from_bits(0x1C)));
     /// ```
@@ -173,6 +200,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let w = Unwrapped(I16F16::from_bits(0x1C));
     /// assert_eq!(w.to_bits(), 0x1C);
@@ -191,6 +221,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let w = Unwrapped(I16F16::from_bits(0x1234_5678));
     /// if cfg!(target_endian = "big") {
@@ -213,6 +246,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let w = Unwrapped(I16F16::from_bits(0x1234_5678));
     /// if cfg!(target_endian = "little") {
@@ -234,6 +270,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let w = Unwrapped(I16F16::from_bits(0x1234_5678));
     /// if cfg!(target_endian = "big") {
@@ -256,6 +295,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let w = Unwrapped(I16F16::from_bits(0x1234_5678));
     /// if cfg!(target_endian = "little") {
@@ -278,6 +320,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let w = Unwrapped(I16F16::from_bits(0x1234_5678));
     /// let swapped = Unwrapped(I16F16::from_bits(0x7856_3412));
@@ -299,6 +344,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let bytes = [0x12, 0x34, 0x56, 0x78];
     /// assert_eq!(
@@ -321,6 +369,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let bytes = [0x78, 0x56, 0x34, 0x12];
     /// assert_eq!(
@@ -343,6 +394,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let bytes = if cfg!(target_endian = "big") {
     ///     [0x12, 0x34, 0x56, 0x78]
@@ -368,6 +422,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert_eq!(
     ///     Unwrapped::<I16F16>::from_bits(0x1234_5678).to_be_bytes(),
@@ -388,6 +445,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert_eq!(
     ///     Unwrapped::<I16F16>::from_bits(0x1234_5678).to_le_bytes(),
@@ -408,6 +468,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let bytes = if cfg!(target_endian = "big") {
     ///     [0x12, 0x34, 0x56, 0x78]
@@ -454,6 +517,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I4F4, I16F16},
     ///     Unwrapped,
@@ -466,6 +532,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics even when debug assertions are disabled.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I4F4, I16F16},
     ///     Unwrapped,
@@ -510,6 +579,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, I4F4},
     ///     Unwrapped,
@@ -521,6 +593,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics even when debug assertions are disabled.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I2F6, I4F4},
     ///     Unwrapped,
@@ -550,6 +625,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I8F8, Unwrapped};
     /// let check = Unwrapped(I8F8::from_bits(0b1110001 << (8 - 1)));
     /// assert_eq!(Unwrapped::<I8F8>::from_str_binary("111000.1"), Ok(check));
@@ -570,6 +648,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I8F8, Unwrapped};
     /// let check = Unwrapped(I8F8::from_bits(0o1654 << (8 - 3)));
     /// assert_eq!(Unwrapped::<I8F8>::from_str_octal("165.4"), Ok(check));
@@ -589,6 +670,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I8F8, Unwrapped};
     /// let check = Unwrapped(I8F8::from_bits(0xFFE));
     /// assert_eq!(Unwrapped::<I8F8>::from_str_hex("F.FE"), Ok(check));
@@ -613,6 +697,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert_eq!(Unwrapped(I16F16::from_num(12.25)).int(), Unwrapped(I16F16::from_num(12)));
     /// assert_eq!(Unwrapped(I16F16::from_num(-12.25)).int(), Unwrapped(I16F16::from_num(-13)));
@@ -640,6 +727,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert_eq!(Unwrapped(I16F16::from_num(12.25)).frac(), Unwrapped(I16F16::from_num(0.25)));
     /// assert_eq!(Unwrapped(I16F16::from_num(-12.25)).frac(), Unwrapped(I16F16::from_num(0.75)));
@@ -661,6 +751,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let three = Unwrapped(I16F16::from_num(3));
     /// assert_eq!(Unwrapped(I16F16::from_num(3.9)).round_to_zero(), three);
@@ -686,6 +779,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let two_half = Unwrapped(I16F16::from_num(5) / 2);
     /// assert_eq!(two_half.ceil(), Unwrapped(I16F16::from_num(3)));
@@ -694,6 +790,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let _overflow = Unwrapped(I16F16::MAX).ceil();
     /// ```
@@ -721,6 +820,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let two_half = Unwrapped(I16F16::from_num(5) / 2);
     /// assert_eq!(two_half.floor(), Unwrapped(I16F16::from_num(2)));
@@ -729,6 +831,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I0F32, Unwrapped};
     /// let _overflow = Unwrapped(I0F32::MIN).floor();
     /// ```
@@ -753,6 +858,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let two_half = Unwrapped(I16F16::from_num(5) / 2);
     /// assert_eq!(two_half.round(), Unwrapped(I16F16::from_num(3)));
@@ -762,6 +870,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let _overflow = Unwrapped(I16F16::MAX).round();
     /// ```
@@ -787,6 +898,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let two_half = Unwrapped(I16F16::from_num(2.5));
     /// assert_eq!(two_half.round_ties_to_even(), Unwrapped(I16F16::from_num(2)));
@@ -797,6 +911,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let max = Unwrapped(I16F16::MAX);
     /// let _overflow = max.round_ties_to_even();
@@ -816,6 +933,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let w = Unwrapped(I16F16::from_bits(0x00FF_FF00));
     /// assert_eq!(w.count_ones(), w.0.count_ones());
@@ -834,6 +954,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let w = Unwrapped(I16F16::from_bits(0x00FF_FF00));
     /// assert_eq!(w.count_zeros(), w.0.count_zeros());
@@ -851,6 +974,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::U16F16, Unwrapped};
     /// let w = Unwrapped(U16F16::from_bits(0xFF00_00FF));
     /// assert_eq!(w.leading_ones(), w.0.leading_ones());
@@ -869,6 +995,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let w = Unwrapped(I16F16::from_bits(0x00FF_FF00));
     /// assert_eq!(w.leading_zeros(), w.0.leading_zeros());
@@ -887,6 +1016,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::U16F16, Unwrapped};
     /// let w = Unwrapped(U16F16::from_bits(0xFF00_00FF));
     /// assert_eq!(w.trailing_ones(), w.0.trailing_ones());
@@ -905,6 +1037,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let w = Unwrapped(I16F16::from_bits(0x00FF_FF00));
     /// assert_eq!(w.trailing_zeros(), w.0.trailing_zeros());
@@ -950,6 +1085,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let i = I16F16::from_bits(0x1234_5678);
     /// assert_eq!(Unwrapped(i).reverse_bits(), Unwrapped(i.reverse_bits()));
@@ -968,6 +1106,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let i = I16F16::from_bits(0x00FF_FF00);
     /// assert_eq!(Unwrapped(i).rotate_left(12), Unwrapped(i.rotate_left(12)));
@@ -986,6 +1127,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let i = I16F16::from_bits(0x00FF_FF00);
     /// assert_eq!(Unwrapped(i).rotate_right(12), Unwrapped(i.rotate_right(12)));
@@ -1004,6 +1148,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert!(Unwrapped(I16F16::ZERO).is_zero());
     /// assert!(!Unwrapped(I16F16::from_num(4.3)).is_zero());
@@ -1026,6 +1173,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// type Unwr = Unwrapped<I16F16>;
     /// assert_eq!(Unwr::from_num(-1).dist(Unwr::from_num(4)), Unwr::from_num(5));
@@ -1034,6 +1184,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// type Unwr = Unwrapped<I16F16>;
     /// let _overflow = Unwr::MIN.dist(Unwr::ZERO);
@@ -1053,6 +1206,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let three = Unwrapped(I16F16::from_num(3));
     /// let four = Unwrapped(I16F16::from_num(4));
@@ -1078,6 +1234,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I8F24, Unwrapped};
     /// let quarter = Unwrapped(I8F24::from_num(0.25));
     /// assert_eq!(quarter.recip(), Unwrapped(I8F24::from_num(4)));
@@ -1086,6 +1245,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I8F24, Unwrapped};
     /// let frac_1_512 = Unwrapped(I8F24::ONE / 512);
     /// let _overflow = frac_1_512.recip();
@@ -1111,6 +1273,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let half = Unwrapped(I16F16::from_num(0.5));
     /// let three = Unwrapped(I16F16::from_num(3));
@@ -1124,6 +1289,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let one = Unwrapped(I16F16::ONE);
     /// let max = Unwrapped(I16F16::MAX);
@@ -1150,6 +1318,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let mut acc = Unwrapped(I16F16::from_num(3));
     /// acc.mul_acc(Unwrapped(I16F16::from_num(4)), Unwrapped(I16F16::from_num(0.5)));
@@ -1159,6 +1330,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let mut acc = Unwrapped(I16F16::MAX);
     /// acc.mul_acc(Unwrapped(I16F16::MAX), Unwrapped(I16F16::from_num(3)));
@@ -1182,6 +1356,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let num = Unwrapped(I16F16::from_num(7.5));
     /// let den = Unwrapped(I16F16::from_num(2));
@@ -1191,6 +1368,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let quarter = Unwrapped(I16F16::from_num(0.25));
     /// let _overflow = Unwrapped(I16F16::MAX).div_euclid(quarter);
@@ -1216,6 +1396,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let num = Unwrapped(I16F16::from_num(7.5));
     /// let den = Unwrapped(I16F16::from_num(2));
@@ -1243,6 +1426,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let num = Unwrapped(I16F16::from_num(7.5));
     /// assert_eq!(num.div_euclid_int(2), Unwrapped(I16F16::from_num(3)));
@@ -1251,6 +1437,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let min = Unwrapped(I16F16::MIN);
     /// let _overflow = min.div_euclid_int(-1);
@@ -1276,6 +1465,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let num = Unwrapped(I16F16::from_num(7.5));
     /// assert_eq!(num.rem_euclid_int(2), Unwrapped(I16F16::from_num(1.5)));
@@ -1285,6 +1477,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I8F8, Unwrapped};
     /// let num = Unwrapped(I8F8::from_num(-7.5));
     /// // -128 ≤ Fix < 128, so the answer 192.5 overflows
@@ -1310,6 +1505,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// type Unwr = Unwrapped<I16F16>;
     /// assert_eq!(Unwr::from_num(0.5).lerp(Unwr::ZERO, Unwr::MAX), Unwr::MAX / 2);
@@ -1318,6 +1516,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// type Unwr = Unwrapped<I16F16>;
     /// let _overflow = Unwr::from_num(1.5).lerp(Unwr::ZERO, Unwr::MAX);
@@ -1341,6 +1542,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// type Unwr = Unwrapped<I16F16>;
     /// assert_eq!(
@@ -1352,6 +1556,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because `start`&nbsp;=&nbsp;`end`.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// type Unwr = Unwrapped<I16F16>;
     /// let two = Unwr::from_num(2);
@@ -1361,6 +1568,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// type Unwr = Unwrapped<I16F16>;
     /// let _overflow = Unwr::MAX.inv_lerp(Unwr::ZERO, Unwr::from_num(0.5));
@@ -1384,6 +1594,9 @@ impl<F: FixedSigned> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I4F4, Unwrapped};
     /// assert_eq!(Unwrapped(I4F4::from_num(-3)).signed_bits(), 7);      // “_101.0000”
     /// assert_eq!(Unwrapped(I4F4::from_num(-1)).signed_bits(), 5);      // “___1.0000”
@@ -1405,6 +1618,9 @@ impl<F: FixedSigned> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert!(Unwrapped(I16F16::from_num(4.3)).is_positive());
     /// assert!(!Unwrapped(I16F16::ZERO).is_positive());
@@ -1422,6 +1638,9 @@ impl<F: FixedSigned> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert!(!Unwrapped(I16F16::from_num(4.3)).is_negative());
     /// assert!(!Unwrapped(I16F16::ZERO).is_negative());
@@ -1448,6 +1667,9 @@ impl<F: FixedSigned> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert_eq!(Unwrapped(I16F16::from_num(-5)).abs(), Unwrapped(I16F16::from_num(5)));
     /// ```
@@ -1455,6 +1677,9 @@ impl<F: FixedSigned> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let _overflow = Unwrapped(I16F16::MIN).abs();
     /// ```
@@ -1481,6 +1706,9 @@ impl<F: FixedSigned> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// assert_eq!(Unwrapped(<I16F16>::from_num(-3.9)).signum(), Unwrapped(I16F16::from_num(-1)));
     /// assert_eq!(Unwrapped(<I16F16>::ZERO).signum(), Unwrapped(I16F16::from_num(0)));
@@ -1490,6 +1718,9 @@ impl<F: FixedSigned> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I1F31, Unwrapped};
     /// let _overflow = Unwrapped(<I1F31>::from_num(0.5)).signum();
     /// ```
@@ -1510,6 +1741,9 @@ impl<F: FixedUnsigned> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::U4F4, Unwrapped};
     /// assert_eq!(Unwrapped(U4F4::from_num(0)).significant_bits(), 0);      // “____.____”
     /// assert_eq!(Unwrapped(U4F4::from_num(0.0625)).significant_bits(), 1); // “____.___1”
@@ -1530,6 +1764,9 @@ impl<F: FixedUnsigned> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::U16F16, Unwrapped};
     /// assert!(Unwrapped(U16F16::from_num(0.5)).is_power_of_two());
     /// assert!(Unwrapped(U16F16::from_num(4)).is_power_of_two());
@@ -1551,6 +1788,9 @@ impl<F: FixedUnsigned> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::U16F16, Unwrapped};
     /// type T = Unwrapped<U16F16>;
     /// assert_eq!(T::from_bits(0b11_0010).highest_one(), T::from_bits(0b10_0000));
@@ -1577,6 +1817,9 @@ impl<F: FixedUnsigned> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::U16F16, Unwrapped};
     /// type T = Unwrapped<U16F16>;
     /// assert_eq!(T::from_bits(0b11_0010).next_power_of_two(), T::from_bits(0b100_0000));
@@ -1588,6 +1831,9 @@ impl<F: FixedUnsigned> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::U16F16, Unwrapped};
     /// let _overflow = Unwrapped(U16F16::MAX).next_power_of_two();
     /// ```

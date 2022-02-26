@@ -39,6 +39,9 @@ use core::{
 /// # Examples
 ///
 /// ```rust
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::{types::I16F16, Wrapping};
 /// let max = Wrapping(I16F16::MAX);
 /// let delta = Wrapping(I16F16::DELTA);
@@ -57,6 +60,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(Wrapping::<I16F16>::ZERO, Wrapping(I16F16::ZERO));
     /// ```
@@ -70,6 +76,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(Wrapping::<I16F16>::DELTA, Wrapping(I16F16::DELTA));
     /// ```
@@ -83,6 +92,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(Wrapping::<I16F16>::MIN, Wrapping(I16F16::MIN));
     /// ```
@@ -96,6 +108,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(Wrapping::<I16F16>::MAX, Wrapping(I16F16::MAX));
     /// ```
@@ -109,6 +124,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Wrapping,
@@ -126,6 +144,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(Wrapping::<I16F16>::INT_BITS, I16F16::INT_BITS);
     /// ```
@@ -139,6 +160,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(Wrapping::<I16F16>::FRAC_BITS, I16F16::FRAC_BITS);
     /// ```
@@ -153,6 +177,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(Wrapping::<I16F16>::from_bits(0x1C), Wrapping(I16F16::from_bits(0x1C)));
     /// ```
@@ -170,6 +197,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let w = Wrapping(I16F16::from_bits(0x1C));
     /// assert_eq!(w.to_bits(), 0x1C);
@@ -188,6 +218,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let w = Wrapping(I16F16::from_bits(0x1234_5678));
     /// if cfg!(target_endian = "big") {
@@ -210,6 +243,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let w = Wrapping(I16F16::from_bits(0x1234_5678));
     /// if cfg!(target_endian = "little") {
@@ -231,6 +267,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let w = Wrapping(I16F16::from_bits(0x1234_5678));
     /// if cfg!(target_endian = "big") {
@@ -253,6 +292,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let w = Wrapping(I16F16::from_bits(0x1234_5678));
     /// if cfg!(target_endian = "little") {
@@ -275,6 +317,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let w = Wrapping(I16F16::from_bits(0x1234_5678));
     /// let swapped = Wrapping(I16F16::from_bits(0x7856_3412));
@@ -296,6 +341,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let bytes = [0x12, 0x34, 0x56, 0x78];
     /// assert_eq!(
@@ -318,6 +366,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let bytes = [0x78, 0x56, 0x34, 0x12];
     /// assert_eq!(
@@ -340,6 +391,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let bytes = if cfg!(target_endian = "big") {
     ///     [0x12, 0x34, 0x56, 0x78]
@@ -365,6 +419,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(
     ///     Wrapping::<I16F16>::from_bits(0x1234_5678).to_be_bytes(),
@@ -385,6 +442,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(
     ///     Wrapping::<I16F16>::from_bits(0x1234_5678).to_le_bytes(),
@@ -405,6 +465,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let bytes = if cfg!(target_endian = "big") {
     ///     [0x12, 0x34, 0x56, 0x78]
@@ -449,6 +512,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I4F4, I16F16},
     ///     Wrapping,
@@ -503,6 +569,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, I2F6, I4F4},
     ///     Wrapping,
@@ -539,6 +608,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I8F8, Wrapping};
     /// let check = Wrapping(I8F8::from_bits(0b1110001 << (8 - 1)));
     /// assert_eq!(Wrapping::<I8F8>::from_str_binary("101100111000.1"), Ok(check));
@@ -560,6 +632,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I8F8, Wrapping};
     /// let check = Wrapping(I8F8::from_bits(0o1654 << (8 - 3)));
     /// assert_eq!(Wrapping::<I8F8>::from_str_octal("7165.4"), Ok(check));
@@ -581,6 +656,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I8F8, Wrapping};
     /// let check = Wrapping(I8F8::from_bits(0xFFE));
     /// assert_eq!(Wrapping::<I8F8>::from_str_hex("C0F.FE"), Ok(check));
@@ -605,6 +683,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(Wrapping(I16F16::from_num(12.25)).int(), Wrapping(I16F16::from_num(12)));
     /// assert_eq!(Wrapping(I16F16::from_num(-12.25)).int(), Wrapping(I16F16::from_num(-13)));
@@ -632,6 +713,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(Wrapping(I16F16::from_num(12.25)).frac(), Wrapping(I16F16::from_num(0.25)));
     /// assert_eq!(Wrapping(I16F16::from_num(-12.25)).frac(), Wrapping(I16F16::from_num(0.75)));
@@ -653,6 +737,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let three = Wrapping(I16F16::from_num(3));
     /// assert_eq!(Wrapping(I16F16::from_num(3.9)).round_to_zero(), three);
@@ -674,6 +761,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let two_half = Wrapping(I16F16::from_num(5) / 2);
     /// assert_eq!(two_half.ceil(), Wrapping(I16F16::from_num(3)));
@@ -698,6 +788,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I0F32, I16F16},
     ///     Wrapping,
@@ -722,6 +815,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let two_half = Wrapping(I16F16::from_num(5) / 2);
     /// assert_eq!(two_half.round(), Wrapping(I16F16::from_num(3)));
@@ -745,6 +841,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let two_half = Wrapping(I16F16::from_num(2.5));
     /// assert_eq!(two_half.round_ties_to_even(), Wrapping(I16F16::from_num(2)));
@@ -767,6 +866,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let w = Wrapping(I16F16::from_bits(0x00FF_FF00));
     /// assert_eq!(w.count_ones(), w.0.count_ones());
@@ -785,6 +887,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let w = Wrapping(I16F16::from_bits(0x00FF_FF00));
     /// assert_eq!(w.count_zeros(), w.0.count_zeros());
@@ -802,6 +907,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::U16F16, Wrapping};
     /// let w = Wrapping(U16F16::from_bits(0xFF00_00FF));
     /// assert_eq!(w.leading_ones(), w.0.leading_ones());
@@ -820,6 +928,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let w = Wrapping(I16F16::from_bits(0x00FF_FF00));
     /// assert_eq!(w.leading_zeros(), w.0.leading_zeros());
@@ -838,6 +949,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::U16F16, Wrapping};
     /// let w = Wrapping(U16F16::from_bits(0xFF00_00FF));
     /// assert_eq!(w.trailing_ones(), w.0.trailing_ones());
@@ -856,6 +970,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let w = Wrapping(I16F16::from_bits(0x00FF_FF00));
     /// assert_eq!(w.trailing_zeros(), w.0.trailing_zeros());
@@ -899,6 +1016,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let i = I16F16::from_bits(0x1234_5678);
     /// assert_eq!(Wrapping(i).reverse_bits(), Wrapping(i.reverse_bits()));
@@ -917,6 +1037,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let i = I16F16::from_bits(0x00FF_FF00);
     /// assert_eq!(Wrapping(i).rotate_left(12), Wrapping(i.rotate_left(12)));
@@ -935,6 +1058,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let i = I16F16::from_bits(0x00FF_FF00);
     /// assert_eq!(Wrapping(i).rotate_right(12), Wrapping(i.rotate_right(12)));
@@ -953,6 +1079,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert!(Wrapping(I16F16::ZERO).is_zero());
     /// assert!(!Wrapping(I16F16::from_num(4.3)).is_zero());
@@ -971,6 +1100,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// type Wr = Wrapping<I16F16>;
     /// assert_eq!(Wr::from_num(-1).dist(Wr::from_num(4)), Wr::from_num(5));
@@ -991,6 +1123,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let three = Wrapping(I16F16::from_num(3));
     /// let four = Wrapping(I16F16::from_num(4));
@@ -1016,6 +1151,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I8F24, Wrapping};
     /// let quarter = Wrapping(I8F24::from_num(0.25));
     /// let frac_1_512 = Wrapping(I8F24::ONE / 512);
@@ -1038,6 +1176,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let half = Wrapping(I16F16::from_num(0.5));
     /// let three = Wrapping(I16F16::from_num(3));
@@ -1062,6 +1203,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let mut acc = Wrapping(I16F16::from_num(3));
     /// acc.mul_acc(Wrapping(I16F16::from_num(4)), Wrapping(I16F16::from_num(0.5)));
@@ -1090,6 +1234,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let num = Wrapping(I16F16::from_num(7.5));
     /// let den = Wrapping(I16F16::from_num(2));
@@ -1116,6 +1263,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let num = Wrapping(I16F16::from_num(7.5));
     /// let den = Wrapping(I16F16::from_num(2));
@@ -1142,6 +1292,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let num = Wrapping(I16F16::from_num(7.5));
     /// assert_eq!(num.div_euclid_int(2), Wrapping(I16F16::from_num(3)));
@@ -1168,6 +1321,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let num = Wrapping(I16F16::from_num(7.5));
     /// assert_eq!(num.rem_euclid_int(2), Wrapping(I16F16::from_num(1.5)));
@@ -1188,6 +1344,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// type Wr = Wrapping<I16F16>;
     /// assert_eq!(Wr::from_num(0.5).lerp(Wr::ZERO, Wr::MAX), Wr::MAX / 2);
@@ -1208,6 +1367,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// type Wr = Wrapping<I16F16>;
     /// assert_eq!(
@@ -1234,6 +1396,9 @@ impl<F: FixedSigned> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I4F4, Wrapping};
     /// assert_eq!(Wrapping(I4F4::from_num(-3)).signed_bits(), 7);      // “_101.0000”
     /// assert_eq!(Wrapping(I4F4::from_num(-1)).signed_bits(), 5);      // “___1.0000”
@@ -1255,6 +1420,9 @@ impl<F: FixedSigned> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert!(Wrapping(I16F16::from_num(4.3)).is_positive());
     /// assert!(!Wrapping(I16F16::ZERO).is_positive());
@@ -1272,6 +1440,9 @@ impl<F: FixedSigned> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert!(!Wrapping(I16F16::from_num(4.3)).is_negative());
     /// assert!(!Wrapping(I16F16::ZERO).is_negative());
@@ -1293,6 +1464,9 @@ impl<F: FixedSigned> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// assert_eq!(Wrapping(I16F16::from_num(-5)).abs(), Wrapping(I16F16::from_num(5)));
     /// assert_eq!(Wrapping(I16F16::MIN).abs(), Wrapping(I16F16::MIN));
@@ -1326,6 +1500,9 @@ impl<F: FixedSigned> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I0F32, I1F31, I16F16},
     ///     Wrapping,
@@ -1357,6 +1534,9 @@ impl<F: FixedUnsigned> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::U4F4, Wrapping};
     /// assert_eq!(Wrapping(U4F4::from_num(0)).significant_bits(), 0);      // “____.____”
     /// assert_eq!(Wrapping(U4F4::from_num(0.0625)).significant_bits(), 1); // “____.___1”
@@ -1377,6 +1557,9 @@ impl<F: FixedUnsigned> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::U16F16, Wrapping};
     /// assert!(Wrapping(U16F16::from_num(0.5)).is_power_of_two());
     /// assert!(Wrapping(U16F16::from_num(4)).is_power_of_two());
@@ -1398,6 +1581,9 @@ impl<F: FixedUnsigned> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::U16F16, Wrapping};
     /// type T = Wrapping<U16F16>;
     /// assert_eq!(T::from_bits(0b11_0010).highest_one(), T::from_bits(0b10_0000));
@@ -1422,6 +1608,9 @@ impl<F: FixedUnsigned> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::U16F16, Wrapping};
     /// type T = Wrapping<U16F16>;
     /// assert_eq!(T::from_bits(0b11_0010).next_power_of_two(), T::from_bits(0b100_0000));

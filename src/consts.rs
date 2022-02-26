@@ -22,6 +22,9 @@ number, and are rounded down at that precision.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{consts, types::I4F28};
 let tau = I4F28::from_num(consts::TAU);
 println!("τ = 2π with eight binary places is {:.8b}", tau);

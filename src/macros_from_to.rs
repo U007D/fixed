@@ -44,6 +44,9 @@ it panics; if wrapping is required use [`wrapping_from_num`] instead.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{types::I16F16, "#, $s_fixed, "};
 type Fix = ", $s_fixed, "<4>;
 
@@ -109,6 +112,9 @@ it panics; if wrapping is required use [`wrapping_to_num`] instead.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{types::I30F2, "#, $s_fixed, "};
 type Fix = ", $s_fixed, "<4>;
 
@@ -172,6 +178,9 @@ The other number can be:
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{types::I16F16, "#, $s_fixed, "};
 type Fix = ", $s_fixed, "<4>;
 
@@ -238,6 +247,9 @@ The other number can be:
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{types::I16F16, "#, $s_fixed, "};
 type Fix = ", $s_fixed, "<4>;
 
@@ -306,6 +318,9 @@ This method panics if the value is a floating-point [NaN].
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{types::I16F16, "#, $s_fixed, "};
 type Fix = ", $s_fixed, "<4>;
 
@@ -371,6 +386,9 @@ The other number can be:
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{types::I16F16, "#, $s_fixed, "};
 type Fix = ", $s_fixed, "<4>;
 
@@ -436,6 +454,9 @@ For floating-point numbers, panics if the value is not [finite].
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{types::I16F16, "#, $s_fixed, "};
 type Fix = ", $s_fixed, "<4>;
 
@@ -493,6 +514,9 @@ The other number can be:
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{types::I16F16, "#, $s_fixed, "};
 type Fix = ", $s_fixed, "<4>;
 
@@ -560,6 +584,9 @@ For floating-point numbers, also panics if the value is not [finite].
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{types::I16F16, "#, $s_fixed, "};
 type Fix = ", $s_fixed, "<4>;
 
@@ -571,6 +598,9 @@ assert_eq!(Fix::unwrapped_from_num(src), Fix::from_bits(0b111 << (4 - 2)));
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let too_large = ", $s_fixed, "::<0>::from_bits(0b1101 << (", $s_nbits, " - 7));
@@ -617,6 +647,9 @@ Panics if the value does not fit.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{types::I16F16, "#, $s_fixed, "};
 type Fix = ", $s_fixed, "<4>;
 
@@ -629,6 +662,9 @@ assert_eq!(src.unwrapped_to_num::<I16F16>(), expected);
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 type TooFewIntBits = ", $s_fixed, "<6>;
@@ -676,6 +712,9 @@ For floating-point numbers, panics if the value is not [finite].
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{types::I16F16, "#, $s_fixed, "};
 type Fix = ", $s_fixed, "<4>;
 
@@ -737,6 +776,9 @@ The other number can be:
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{types::I16F16, "#, $s_fixed, "};
 type Fix = ", $s_fixed, "<4>;
 
@@ -787,6 +829,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, r#"<4>;
 // 1.75 is 1.11 in binary
@@ -816,6 +861,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, r#"<4>;
 // 1.75 is 1.11 in binary, 1.6 in octal
@@ -845,6 +893,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, r#"<4>;
 // 1.75 is 1.11 in binary, 1.C in hexadecimal
@@ -875,6 +926,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 ",
             if_signed_unsigned!(
                 $Signedness,
@@ -904,6 +958,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 ",
             if_signed_unsigned!(
                 $Signedness,
@@ -933,6 +990,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 ",
             if_signed_unsigned!(
                 $Signedness,
@@ -962,6 +1022,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 ",
             if_signed_unsigned!(
                 $Signedness,
@@ -991,6 +1054,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 ",
             if_signed_unsigned!(
                 $Signedness,
@@ -1022,6 +1088,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 ",
             if_signed_unsigned!(
                 $Signedness,
@@ -1053,6 +1122,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 ",
             if_signed_unsigned!(
                 $Signedness,
@@ -1084,6 +1156,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 ",
             if_signed_unsigned!(
                 $Signedness,
@@ -1118,6 +1193,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 ",
             if_signed_unsigned!(
                 $Signedness,
@@ -1154,6 +1232,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 ",
             if_signed_unsigned!(
                 $Signedness,
@@ -1190,6 +1271,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 ",
             if_signed_unsigned!(
                 $Signedness,
@@ -1226,6 +1310,9 @@ Rounding is to the nearest, with ties rounded to even.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 ",
             if_signed_unsigned!(
                 $Signedness,

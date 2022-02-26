@@ -24,6 +24,9 @@ These types are used for `where` constraints.
 /// # Examples
 ///
 /// ```rust
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::types::extra::{If, True};
 /// fn foo<const U: u32>()
 /// where
@@ -38,6 +41,9 @@ These types are used for `where` constraints.
 /// This would fail to compile because the constraint is not met:
 ///
 /// ```rust,compile_fail
+/// #![feature(generic_const_exprs)]
+/// # #![allow(incomplete_features)]
+///
 /// use fixed::types::extra::{If, True};
 /// fn foo<const U: u32>()
 /// where

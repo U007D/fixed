@@ -40,6 +40,9 @@ macro_rules! fixed_const {
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", $s_nbits, ">;
 assert_eq!(Fix::LOG10_2, Fix::from_num(consts::LOG10_2));
@@ -83,6 +86,9 @@ fixed-point numbers with less than 1 integer bit.
             "# Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
@@ -99,6 +105,9 @@ representable value with ", $s_nbits, " fractional bits and 0 integer
 bits is <&nbsp;0.5.
 
 ```rust,compile_fail
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", $s_nbits, ">;
 let _ = Fix::LN_2;
@@ -162,6 +171,9 @@ These constants are not representable in ",
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m2, $s_nbits_m1),
@@ -178,6 +190,9 @@ representable value with ",
             " is <&nbsp;1.
 
 ```rust,compile_fail
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
@@ -195,6 +210,9 @@ let _ = Fix::LOG2_E;
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE, Fix::from_num(1));
@@ -254,6 +272,9 @@ These constants are not representable in ",
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m3, $s_nbits_m2),
@@ -270,6 +291,9 @@ representable value with ",
             " is <&nbsp;2.
 
 ```rust,compile_fail
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m2, $s_nbits_m1),
@@ -313,6 +337,9 @@ These constants are not representable in ",
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m4, $s_nbits_m3),
@@ -329,6 +356,9 @@ representable value with ",
             " integer bits is <&nbsp;4.
 
 ```rust,compile_fail
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<",
             if_signed_unsigned!($Signedness, $s_nbits_m3, $s_nbits_m2),

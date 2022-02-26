@@ -504,6 +504,9 @@ An error which can be returned when parsing a fixed-point number.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{types::I16F16, ParseFixedError};
 // This string is not a fixed-point number.
 let s = "something completely different (_!_!_)";

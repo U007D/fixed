@@ -32,6 +32,9 @@ macro_rules! fixed_no_frac {
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ZERO, Fix::from_bits(0));
@@ -49,6 +52,9 @@ If the number has <i>f</i>&nbsp;=&nbsp;`FRAC` fractional bits, then
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::DELTA, Fix::from_bits(1));
@@ -76,6 +82,9 @@ then the minimum is &minus;2<sup>", $s_nbits_m1, "</sup>/2<sup><i>f</i></sup>."
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::MIN, Fix::from_bits(", $s_inner, "::MIN));
@@ -95,6 +104,9 @@ If the number has <i>f</i>&nbsp;=&nbsp;`FRAC` fractional bits, then the maximum 
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::MAX, Fix::from_bits(", $s_inner, "::MAX));
@@ -112,6 +124,9 @@ assert_eq!(Fix::MAX, Fix::from_bits(", $s_inner, "::MAX));
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert!(", if_signed_unsigned!($Signedness, "", "!"), "Fix::IS_SIGNED);
@@ -134,6 +149,9 @@ Both `INT_BITS` and [`FRAC_BITS`] can be negative.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<6>;
 assert_eq!(Fix::INT_BITS, ", $s_nbits, " - 6);
@@ -160,6 +178,9 @@ Both [`INT_BITS`] and `FRAC_BITS` can be negative.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<6>;
 assert_eq!(Fix::FRAC_BITS, 6);
@@ -178,6 +199,9 @@ representation identical to the given integer.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 // 0010.0000 == 2
@@ -197,6 +221,9 @@ identical to the given fixed-point number.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 // 2 is 0010.0000
@@ -215,6 +242,9 @@ assert_eq!(Fix::from_num(2).to_bits(), 0b10_0000);
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(", $bytes_val, ");
@@ -237,6 +267,9 @@ if cfg!(target_endian = \"big\") {
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(", $bytes_val, ");
@@ -259,6 +292,9 @@ if cfg!(target_endian = \"little\") {
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(", $bytes_val, ");
@@ -282,6 +318,9 @@ if cfg!(target_endian = \"big\") {
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(", $bytes_val, ");
@@ -305,6 +344,9 @@ if cfg!(target_endian = \"little\") {
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(", $bytes_val, ");
@@ -326,6 +368,9 @@ as a byte array in big endian.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(
@@ -347,6 +392,9 @@ as a byte array in little endian.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(
@@ -368,6 +416,9 @@ as a byte array in native endian.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(
@@ -393,6 +444,9 @@ number as a byte array in big-endian byte order.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let val = Fix::from_bits(", $bytes_val, ");
@@ -415,6 +469,9 @@ number as a byte array in little-endian byte order.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let val = Fix::from_bits(", $bytes_val, ");
@@ -437,6 +494,9 @@ number as a byte array in native byte order.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let val = Fix::from_bits(", $bytes_val, ");
@@ -463,6 +523,9 @@ representation.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(0b11_0010);
@@ -483,6 +546,9 @@ representation.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(!0b11_0010);
@@ -502,6 +568,9 @@ representation.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let all_ones = !Fix::ZERO;
@@ -522,6 +591,9 @@ representation.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(0b10_0000);
@@ -541,6 +613,9 @@ representation.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(0b101_1111);
@@ -560,6 +635,9 @@ representation.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let f = Fix::from_bits(0b10_0000);
@@ -580,6 +658,9 @@ assert_eq!(f.trailing_zeros(), 5);
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(0).significant_bits(), 0);      // “____.____”
@@ -606,6 +687,9 @@ numbers, and an initial zero for non-negative numbers.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(-3).signed_bits(), 7);      // “_101.0000”
@@ -635,6 +719,9 @@ assert_eq!(Fix::from_num(3).signed_bits(), 7);       // “_011.0000”
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let bits = ", $bytes_val, "_", $s_inner, ";
@@ -656,6 +743,9 @@ truncated bits to the right end.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let bits: ", $s_inner, " = (0b111 << (", $s_nbits, " - 3)) | 0b1010;
@@ -678,6 +768,9 @@ truncated bits to the left end.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let bits: ", $s_inner, " = 0b1010111;
@@ -699,6 +792,9 @@ assert_eq!(Fix::from_bits(bits).rotate_right(3), Fix::from_bits(rot));
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert!(Fix::ZERO.is_zero());
@@ -719,6 +815,9 @@ assert!(!Fix::from_num(5).is_zero());
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert!(Fix::from_num(5).is_positive());
@@ -738,6 +837,9 @@ assert!(!Fix::from_num(-5).is_positive());
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert!(!Fix::from_num(5).is_negative());
@@ -761,6 +863,9 @@ assert!(Fix::from_num(-5).is_negative());
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 // 3/8 is 0.0110
@@ -793,6 +898,9 @@ have <i>f</i>&nbsp;+&nbsp;<i>g</i> fractional bits and ", $s_nbits_2,
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 // decimal: 1.25 × 1.0625 = 1.328_125
 // binary: 1.01 × 1.0001 == 1.010101
@@ -848,6 +956,9 @@ Panics if the divisor is zero",
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{", $s_fixed, ", ", $s_double, "};
 // decimal: 4.625 / 0.03125 = 148
 // binary: 100.101 / 0.00001 == 10010100
@@ -863,6 +974,9 @@ assert_eq!(ans, 148);
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MIN.wide_div(-Fix::DELTA);
@@ -908,6 +1022,9 @@ instead.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(
@@ -956,6 +1073,9 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(7.5).rem_euclid(Fix::from_num(2)), Fix::from_num(1.5));
@@ -989,6 +1109,9 @@ assert_eq!(Fix::from_num(7.5).rem_euclid(Fix::from_num(2)), Fix::from_num(1.5));
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let five = Fix::from_num(5);
@@ -1011,6 +1134,9 @@ without any wrapping or panicking.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{", $s_fixed, ", ", $s_ufixed, "};
 type Fix = ", $s_fixed, "<4>;
 type UFix = ", $s_ufixed, "<4>;
@@ -1044,6 +1170,9 @@ required use [`wrapping_dist`] instead.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE.dist(Fix::from_num(5)), Fix::from_num(4));
@@ -1072,6 +1201,9 @@ The distance is the absolute value of the difference.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::{", $s_fixed, ", ", $s_ufixed, "};
 type Fix = ", $s_fixed, "<4>;
 type UFix = ", $s_ufixed, "<4>;
@@ -1105,6 +1237,9 @@ The distance is the absolute value of the difference.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE.dist(Fix::from_num(5)), Fix::from_num(4));
@@ -1128,6 +1263,9 @@ assert_eq!(Fix::ONE.dist(Fix::from_num(5)), Fix::from_num(4));
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).mean(Fix::from_num(4)), Fix::from_num(3.5));
@@ -1173,6 +1311,9 @@ if wrapping is required use [`wrapping_inv_lerp`] instead.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let start = Fix::from_num(2);
@@ -1223,6 +1364,9 @@ that is ≤&nbsp;`self`.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_bits(0b11_0010).highest_one(), Fix::from_bits(0b10_0000));
@@ -1259,6 +1403,9 @@ future it panics; if this is not desirable use
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_bits(0b11_0010).next_power_of_two(), Fix::from_bits(0b100_0000));
@@ -1293,6 +1440,9 @@ This method will be deprecated when the `!` operator and the
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 const A: Fix = Fix::from_bits(0x3E);
@@ -1323,6 +1473,9 @@ This method will be deprecated when the `&` operator and the
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 const A: Fix = Fix::from_bits(0x3E);
@@ -1354,6 +1507,9 @@ This method will be deprecated when the `|` operator and the
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 const A: Fix = Fix::from_bits(0x3E);
@@ -1385,6 +1541,9 @@ This method will be deprecated when the `^` operator and the
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 const A: Fix = Fix::from_bits(0x3E);
@@ -1414,6 +1573,9 @@ assert_eq!(A_BITXOR_B, A ^ B);
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 ",
@@ -1442,6 +1604,9 @@ assert_eq!(Fix::from_num(5).checked_neg(), None);",
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::MAX - Fix::ONE).checked_add(Fix::ONE), Some(Fix::MAX));
@@ -1464,6 +1629,9 @@ assert_eq!(Fix::MAX.checked_add(Fix::ONE), None);
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::MIN + Fix::ONE).checked_sub(Fix::ONE), Some(Fix::MIN));
@@ -1487,6 +1655,9 @@ the divisor is zero.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(1.5).checked_rem(Fix::ONE), Some(Fix::from_num(0.5)));
@@ -1529,6 +1700,9 @@ these cases this method returns the correct result without overflow.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(
@@ -1575,6 +1749,9 @@ product, or [`None`] on overflow.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::MAX.checked_mul_int(1), Some(Fix::MAX));
@@ -1604,6 +1781,9 @@ assert_eq!(Fix::MAX.checked_mul_int(2), None);
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::MAX.checked_div_int(1), Some(Fix::MAX));
@@ -1633,6 +1813,9 @@ remainder, or [`None`] if the divisor is zero.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let num = Fix::from_num(7.5);
@@ -1670,6 +1853,9 @@ or [`None`] if `rhs`&nbsp;≥&nbsp;", $s_nbits, ".
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::ONE / 2).checked_shl(3), Some(Fix::from_num(4)));
@@ -1693,6 +1879,9 @@ or [`None`] if `rhs`&nbsp;≥&nbsp;", $s_nbits, ".
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(4).checked_shr(3), Some(Fix::ONE / 2));
@@ -1719,6 +1908,9 @@ Overflow can only occur when trying to find the absolute value of the minimum va
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(-5).checked_abs(), Some(Fix::from_num(5)));
@@ -1752,6 +1944,9 @@ The distance is the absolute value of the difference.
                 "# Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE.checked_dist(Fix::from_num(5)), Some(Fix::from_num(4)));
@@ -1796,6 +1991,9 @@ This is 0 when `self`&nbsp;=&nbsp;`start`, and 1 when `self`&nbsp;=&nbsp;`end`.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let two = Fix::from_num(2);
@@ -1835,6 +2033,9 @@ assert_eq!(Fix::MAX.checked_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5)), None);
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 // 3/8 is 0.0110
@@ -1869,6 +2070,9 @@ assert!(Fix::MAX.checked_next_power_of_two().is_none());
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 ",
@@ -1904,6 +2108,9 @@ assert_eq!(Fix::from_num(5).saturating_neg(), Fix::ZERO);",
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).saturating_add(Fix::from_num(2)), Fix::from_num(5));
@@ -1930,6 +2137,9 @@ assert_eq!(Fix::MAX.saturating_add(Fix::ONE), Fix::MAX);
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 ",
@@ -1980,6 +2190,9 @@ these cases this method returns the correct result without overflow.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(
@@ -2037,6 +2250,9 @@ assert_eq!(Fix::MAX.saturating_mul_add(Fix::from_num(1.5), -Fix::MAX), half_max)
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).saturating_mul_int(2), Fix::from_num(6));
@@ -2071,6 +2287,9 @@ Overflow can only occur when trying to find the absolute value of the minimum va
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(-5).saturating_abs(), Fix::from_num(5));
@@ -2105,6 +2324,9 @@ The distance is the absolute value of the difference.
                 "# Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE.saturating_dist(Fix::from_num(5)), Fix::from_num(4));
@@ -2152,6 +2374,9 @@ Panics when `start`&nbsp;=&nbsp;`end`.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let two = Fix::from_num(2);
@@ -2207,6 +2432,9 @@ assert_eq!(Fix::MAX.saturating_inv_lerp::<4>(Fix::from_num(0.5), Fix::ZERO), Fix
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 ",
@@ -2235,6 +2463,9 @@ assert_eq!(Fix::from_num(5).wrapping_neg(), Fix::from_bits(neg_five_bits));",
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let one_minus_delta = Fix::ONE - Fix::DELTA;
@@ -2257,6 +2488,9 @@ assert_eq!(Fix::MAX.wrapping_add(Fix::ONE), ",
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let one_minus_delta = Fix::ONE - Fix::DELTA;
@@ -2288,6 +2522,9 @@ The `mul` parameter can have a fixed-point type like
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(
@@ -2326,6 +2563,9 @@ assert_eq!(Fix::MAX.wrapping_mul_add(Fix::from_num(3), Fix::MAX), wrapped);
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).wrapping_mul_int(2), Fix::from_num(6));
@@ -2360,6 +2600,9 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 // 1.5 is binary 1.1
@@ -2387,6 +2630,9 @@ then shifts and returns the number.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::ONE / 2).wrapping_shl(3), Fix::from_num(4));
@@ -2407,6 +2653,9 @@ then shifts and returns the number.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::from_num(4)).wrapping_shr(3), Fix::ONE / 2);
@@ -2430,6 +2679,9 @@ Overflow can only occur when trying to find the absolute value of the minimum va
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(-5).wrapping_abs(), Fix::from_num(5));
@@ -2461,6 +2713,9 @@ The distance is the absolute value of the difference.
                 "# Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE.wrapping_dist(Fix::from_num(5)), Fix::from_num(4));
@@ -2502,6 +2757,9 @@ Panics when `start`&nbsp;=&nbsp;`end`.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let two = Fix::from_num(2);
@@ -2541,6 +2799,9 @@ wrapping to 0 if the next power of two is too large to represent.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 // 3/8 is 0.0110
@@ -2580,6 +2841,9 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 ",
@@ -2592,6 +2856,9 @@ type Fix = ", $s_fixed, "<4>;
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MIN.unwrapped_neg();",
@@ -2603,6 +2870,9 @@ let _overflow = Fix::MIN.unwrapped_neg();",
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::from_num(5).unwrapped_neg();",
@@ -2632,6 +2902,9 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).unwrapped_add(Fix::from_num(2)), Fix::from_num(5));
@@ -2640,6 +2913,9 @@ assert_eq!(Fix::from_num(3).unwrapped_add(Fix::from_num(2)), Fix::from_num(5));
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_add(Fix::DELTA);
@@ -2666,6 +2942,9 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 ",
@@ -2681,6 +2960,9 @@ type Fix = ", $s_fixed, "<4>;
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MIN.unwrapped_sub(Fix::DELTA);
@@ -2707,6 +2989,9 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(1.5).unwrapped_rem(Fix::ONE), Fix::from_num(0.5));
@@ -2715,6 +3000,9 @@ assert_eq!(Fix::from_num(1.5).unwrapped_rem(Fix::ONE), Fix::from_num(0.5));
 The following panics because the divisor is zero.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _divisor_is_zero = Fix::from_num(1.5).unwrapped_rem(Fix::ZERO);
@@ -2758,6 +3046,9 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(
@@ -2776,6 +3067,9 @@ assert_eq!(Fix::MAX.unwrapped_mul_add(Fix::from_num(1.5), -Fix::MAX), Fix::MAX /
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_mul_add(Fix::ONE, Fix::DELTA);
@@ -2806,6 +3100,9 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).unwrapped_mul_int(2), Fix::from_num(6));
@@ -2814,6 +3111,9 @@ assert_eq!(Fix::from_num(3).unwrapped_mul_int(2), Fix::from_num(6));
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_mul_int(4);
@@ -2855,6 +3155,9 @@ Panics if the divisor is zero",
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 // 1.5 is binary 1.1
@@ -2865,6 +3168,9 @@ assert_eq!(Fix::from_num(3).unwrapped_div_int(2), one_point_5);
 The following panics because the divisor is zero.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _divisor_is_zero = Fix::from_num(3).unwrapped_div_int(0);
@@ -2876,6 +3182,9 @@ let _divisor_is_zero = Fix::from_num(3).unwrapped_div_int(0);
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MIN.unwrapped_div_int(-1);
@@ -2898,6 +3207,9 @@ remainder, panicking if the divisor is zero.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let num = Fix::from_num(7.5);
@@ -2907,6 +3219,9 @@ assert_eq!(num.unwrapped_rem_euclid(Fix::from_num(2)), Fix::from_num(1.5));
 The following panics because the divisor is zero.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _divisor_is_zero = Fix::from_num(3).unwrapped_rem_euclid(Fix::ZERO);
@@ -2930,6 +3245,9 @@ Panics if `rhs`&nbsp;≥&nbsp;", $s_nbits, ".
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::ONE / 2).unwrapped_shl(3), Fix::from_num(4));
@@ -2938,6 +3256,9 @@ assert_eq!((Fix::ONE / 2).unwrapped_shl(3), Fix::from_num(4));
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::ONE.unwrapped_shl(", $s_nbits, ");
@@ -2964,6 +3285,9 @@ Panics if `rhs`&nbsp;≥&nbsp;", $s_nbits, ".
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::from_num(4)).unwrapped_shr(3), Fix::ONE / 2);
@@ -2972,6 +3296,9 @@ assert_eq!((Fix::from_num(4)).unwrapped_shr(3), Fix::ONE / 2);
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::ONE.unwrapped_shr(", $s_nbits, ");
@@ -3002,6 +3329,9 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(-5).unwrapped_abs(), Fix::from_num(5));
@@ -3010,6 +3340,9 @@ assert_eq!(Fix::from_num(-5).unwrapped_abs(), Fix::from_num(5));
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MIN.unwrapped_abs();
@@ -3047,6 +3380,9 @@ Panics if the result does not fit.",
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE.unwrapped_dist(Fix::from_num(5)), Fix::from_num(4));
@@ -3064,6 +3400,9 @@ assert_eq!(Fix::ONE.unwrapped_dist(Fix::from_num(5)), Fix::from_num(4));
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MIN.unwrapped_dist(Fix::ZERO);
@@ -3102,6 +3441,9 @@ Panics when `start`&nbsp;=&nbsp;`end` or when the results overflows.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let two = Fix::from_num(2);
@@ -3112,6 +3454,9 @@ assert_eq!(Fix::from_num(3).unwrapped_inv_lerp::<4>(two, four), 0.5);
 The following panics because `start`&nbsp;=&nbsp;`end`.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let two = Fix::from_num(2);
@@ -3121,6 +3466,9 @@ let _zero_range = two.unwrapped_inv_lerp::<4>(two, two);
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5));
@@ -3159,6 +3507,9 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 // 3/8 is 0.0110
@@ -3171,6 +3522,9 @@ assert_eq!(three_eights.unwrapped_next_power_of_two(), half);
 The following panics because of overflow.
 
 ```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_next_power_of_two();
@@ -3205,6 +3559,9 @@ an overflow has occurred. On overflow, the wrapped value is returned.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 ",
@@ -3236,6 +3593,9 @@ overflow has occurred. On overflow, the wrapped value is returned.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let one_minus_delta = Fix::ONE - Fix::DELTA;
@@ -3262,6 +3622,9 @@ overflow has occurred. On overflow, the wrapped value is returned.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let one_minus_delta = Fix::ONE - Fix::DELTA;
@@ -3306,6 +3669,9 @@ these cases this method returns the correct result without overflow.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(
@@ -3361,6 +3727,9 @@ overflow has occurred. On overflow, the wrapped value is returned.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(3).overflowing_mul_int(2), (Fix::from_num(6), false));
@@ -3396,6 +3765,9 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 // 1.5 is binary 1.1
@@ -3427,6 +3799,9 @@ On overflow `rhs` is wrapped before the shift operation.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::ONE / 2).overflowing_shl(3), (Fix::from_num(4), false));
@@ -3451,6 +3826,9 @@ On overflow `rhs` is wrapped before the shift operation.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!((Fix::from_num(4)).overflowing_shr(3), (Fix::ONE / 2, false));
@@ -3479,6 +3857,9 @@ Overflow can only occur when trying to find the absolute value of the minimum va
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(-5).overflowing_abs(), (Fix::from_num(5), false));
@@ -3510,6 +3891,9 @@ The distance is the absolute value of the difference.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(
@@ -3569,6 +3953,9 @@ Panics when `start`&nbsp;=&nbsp;`end`.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let two = Fix::from_num(2);
