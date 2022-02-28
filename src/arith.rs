@@ -238,7 +238,7 @@ macro_rules! shift_all {
 
 macro_rules! fixed_arith {
     (
-        $Fixed:ident($Inner:ty, $nbits:expr, $NonZeroInner:ident),
+        $Fixed:ident($Inner:ident, $nbits:expr, $NonZeroInner:ident),
         $Signedness:tt
     ) => {
         if_signed! {
@@ -255,7 +255,7 @@ macro_rules! fixed_arith {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn mul(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                let (ans, overflow) = overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC);
+                let (ans, overflow) = $Inner::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC);
                 debug_assert!(!overflow, "overflow");
                 Self::from_bits(ans)
             }
@@ -266,7 +266,8 @@ macro_rules! fixed_arith {
         impl<const FRAC: i32, const RHS_FRAC: i32> MulAssign<$Fixed<RHS_FRAC>> for $Fixed<FRAC> {
             #[inline]
             fn mul_assign(&mut self, rhs: $Fixed<RHS_FRAC>) {
-                let (ans, overflow) = overflowing_mul(self.to_bits(), rhs.to_bits(), RHS_FRAC);
+                let (ans, overflow) =
+                    $Inner::overflowing_mul(self.to_bits(), rhs.to_bits(), RHS_FRAC);
                 debug_assert!(!overflow, "overflow");
                 *self = Self::from_bits(ans);
             }
@@ -275,7 +276,8 @@ macro_rules! fixed_arith {
         impl<const FRAC: i32, const RHS_FRAC: i32> MulAssign<&$Fixed<RHS_FRAC>> for $Fixed<FRAC> {
             #[inline]
             fn mul_assign(&mut self, rhs: &$Fixed<RHS_FRAC>) {
-                let (ans, overflow) = overflowing_mul(self.to_bits(), rhs.to_bits(), RHS_FRAC);
+                let (ans, overflow) =
+                    $Inner::overflowing_mul(self.to_bits(), rhs.to_bits(), RHS_FRAC);
                 debug_assert!(!overflow, "overflow");
                 *self = Self::from_bits(ans);
             }
@@ -648,16 +650,10 @@ fixed_arith! { FixedI64(i64, 64, NonZeroI64), Signed }
 fixed_arith! { FixedI128(i128, 128, NonZeroI128), Signed }
 
 pub(crate) trait OverflowingMulDiv: Sized {
-    fn overflowing_mul(self, rhs: Self, frac_nbits: i32) -> (Self, bool);
     // -NBITS <= frac_nbits <= 2 * NBITS
     fn overflowing_mul_add(self, mul: Self, add: Self, frac_nbits: i32) -> (Self, bool);
     // 0 <= frac_nbits <= NBITS
     fn overflowing_div(self, rhs: Self, frac_nbits: u32) -> (Self, bool);
-}
-
-#[inline]
-pub(crate) fn overflowing_mul<O: OverflowingMulDiv>(lhs: O, rhs: O, frac_nbits: i32) -> (O, bool) {
-    lhs.overflowing_mul(rhs, frac_nbits)
 }
 
 #[inline]
@@ -676,15 +672,19 @@ pub(crate) fn overflowing_div<O: OverflowingMulDiv>(lhs: O, rhs: O, frac_nbits: 
 }
 
 macro_rules! mul_div_widen {
-    ($Single:ty, $Double:ty, $Signedness:tt, $Unsigned:ty) => {
-        impl OverflowingMulDiv for $Single {
+    ($Single:ident, $Double:ty, $Signedness:tt, $Unsigned:ty) => {
+        pub mod $Single {
             #[inline]
-            fn overflowing_mul(self, rhs: $Single, frac_nbits: i32) -> ($Single, bool) {
+            pub const fn overflowing_mul(
+                lhs: $Single,
+                rhs: $Single,
+                frac_nbits: i32,
+            ) -> ($Single, bool) {
                 const BITS: i32 = <$Single>::BITS as i32;
                 const BITS2: i32 = <$Double>::BITS as i32;
 
                 if frac_nbits <= 0 {
-                    let (prod, overflow1) = self.overflowing_mul(rhs);
+                    let (prod, overflow1) = lhs.overflowing_mul(rhs);
                     if frac_nbits <= -BITS {
                         (0, overflow1 || prod != 0)
                     } else {
@@ -695,21 +695,23 @@ macro_rules! mul_div_widen {
                 } else if frac_nbits >= BITS2 {
                     let val = if_signed_unsigned!(
                         $Signedness,
-                        if (self < 0) != (rhs < 0) { -1 } else { 0 },
+                        if (lhs < 0) != (rhs < 0) { -1 } else { 0 },
                         0,
                     );
                     (val, false)
                 } else {
-                    let lhs2 = <$Double>::from(self);
-                    let rhs2 = <$Double>::from(rhs);
+                    let lhs2 = lhs as $Double;
+                    let rhs2 = rhs as $Double;
                     let prod2 = lhs2 * rhs2;
                     let shifted2 = prod2 >> frac_nbits;
                     let shifted = shifted2 as $Single;
-                    let overflow = <$Double>::from(shifted) != shifted2;
+                    let overflow = (shifted as $Double) != shifted2;
                     (shifted, overflow)
                 }
             }
+        }
 
+        impl OverflowingMulDiv for $Single {
             #[inline]
             fn overflowing_mul_add(
                 self,
@@ -780,11 +782,11 @@ mul_div_widen! { i16, i32, Signed, u16 }
 mul_div_widen! { i32, i64, Signed, u32 }
 mul_div_widen! { i64, i128, Signed, u64 }
 
-impl OverflowingMulDiv for u128 {
+pub mod u128 {
     #[inline]
-    fn overflowing_mul(self, rhs: u128, frac_nbits: i32) -> (u128, bool) {
+    pub const fn overflowing_mul(lhs: u128, rhs: u128, frac_nbits: i32) -> (u128, bool) {
         if frac_nbits <= 0 {
-            let (prod, overflow1) = self.overflowing_mul(rhs);
+            let (prod, overflow1) = lhs.overflowing_mul(rhs);
             if frac_nbits <= -128 {
                 (0, overflow1 || prod != 0)
             } else {
@@ -795,7 +797,7 @@ impl OverflowingMulDiv for u128 {
         } else if frac_nbits >= 256 {
             (0, false)
         } else {
-            let prod = int256::wide_mul_u128(self, rhs);
+            let prod = crate::int256::wide_mul_u128(lhs, rhs);
             if frac_nbits >= 128 {
                 (prod.hi >> (frac_nbits - 128), false)
             } else if frac_nbits == 0 {
@@ -807,7 +809,9 @@ impl OverflowingMulDiv for u128 {
             }
         }
     }
+}
 
+impl OverflowingMulDiv for u128 {
     #[inline]
     fn overflowing_mul_add(self, mul: u128, add: u128, mut frac_nbits: i32) -> (u128, bool) {
         // l * r + a
@@ -849,11 +853,11 @@ impl OverflowingMulDiv for u128 {
     }
 }
 
-impl OverflowingMulDiv for i128 {
+pub mod i128 {
     #[inline]
-    fn overflowing_mul(self, rhs: i128, frac_nbits: i32) -> (i128, bool) {
+    pub const fn overflowing_mul(lhs: i128, rhs: i128, frac_nbits: i32) -> (i128, bool) {
         if frac_nbits <= 0 {
-            let (prod, overflow1) = self.overflowing_mul(rhs);
+            let (prod, overflow1) = lhs.overflowing_mul(rhs);
             if frac_nbits <= -128 {
                 (0, overflow1 || prod != 0)
             } else {
@@ -862,10 +866,10 @@ impl OverflowingMulDiv for i128 {
                 (shifted, overflow1 || overflow2)
             }
         } else if frac_nbits >= 256 {
-            let val = if (self < 0) != (rhs < 0) { -1 } else { 0 };
+            let val = if (lhs < 0) != (rhs < 0) { -1 } else { 0 };
             (val, false)
         } else {
-            let prod = int256::wide_mul_i128(self, rhs);
+            let prod = crate::int256::wide_mul_i128(lhs, rhs);
             if frac_nbits >= 128 {
                 (prod.hi >> (frac_nbits - 128), false)
             } else if frac_nbits == 0 {
@@ -878,7 +882,9 @@ impl OverflowingMulDiv for i128 {
             }
         }
     }
+}
 
+impl OverflowingMulDiv for i128 {
     #[inline]
     fn overflowing_mul_add(self, mul: i128, add: i128, mut frac_nbits: i32) -> (i128, bool) {
         // l * r + a

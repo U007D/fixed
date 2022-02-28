@@ -5,6 +5,23 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
+Version 2.0.0-alpha.2 (unreleased)
+==================================
+
+  * The following methods are now `const` functions:
+      * [`wide_mul`][f-wim-2-0a2], [`wide_div`][f-wd-2-0a2],
+      * [`checked_mul`][f-cm-2-0a2], [`saturating_mul`][f-sm-2-0a2],
+        [`wrapping_mul`][f-wm-2-0a2], [`unwrapped_mul`][f-um-2-0a2],
+        [`overflowing_mul`][f-om-2-0a2],
+
+[f-cm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul
+[f-om-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_mul
+[f-sm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_mul
+[f-um-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_mul
+[f-wd-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_div
+[f-wim-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_mul
+[f-wm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_mul
+
 Version 2.0.0-alpha.1 (2022-02-26)
 ==================================
 
@@ -15,10 +32,10 @@ Version 2.0.0-alpha.1 (2022-02-26)
   * The deprecated optional features `az` and `f16` were removed. These features
     had no effect, as the functionality they enabled is now always enabled.
   * The `INT_NBITS` and `FRAC_NBITS` associated constants were replaced with
-    [`INT_BITS`][f-ib-2-0] and [`FRAC_BITS`][f-fb-2-0] which can be negative.
+    [`INT_BITS`][f-ib-2-0a1] and [`FRAC_BITS`][f-fb-2-0a1] which can be negative.
 
-[f-fb-2-0]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
-[f-ib-2-0]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
+[f-fb-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
+[f-ib-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
 
 Version 1.13.0 (2022-02-22)
