@@ -1649,6 +1649,31 @@ assert_eq!(Fix::MIN.checked_sub(Fix::ONE), None);
             }
 
             comment! {
+                "Checked multiplication. Returns the product, or [`None`] on overflow.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::MAX.checked_mul(Fix::ONE), Some(Fix::MAX));
+assert_eq!(Fix::MAX.checked_mul(Fix::from_num(2)), None);
+```
+";
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub fn checked_mul(self, rhs: $Fixed<FRAC>) -> Option<$Fixed<FRAC>> {
+                    match arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC) {
+                        (ans, false) => Some(Self::from_bits(ans)),
+                        (_, true) => None,
+                    }
+                }
+            }
+
+            comment! {
                 "Checked remainder. Returns the remainder, or [`None`] if
 the divisor is zero.
 
@@ -2172,6 +2197,37 @@ assert_eq!(Fix::ZERO.saturating_sub(Fix::ONE), Fix::ZERO);",
             }
 
             comment! {
+                "Saturating multiplication. Returns the product, saturating on overflow.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::from_num(3).saturating_mul(Fix::from_num(2)), Fix::from_num(6));
+assert_eq!(Fix::MAX.saturating_mul(Fix::from_num(2)), Fix::MAX);
+```
+";
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub fn saturating_mul(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                    match arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC) {
+                        (ans, false) => Self::from_bits(ans),
+                        (_, true) => {
+                            if (self < 0) != (rhs < 0) {
+                                Self::MIN
+                            } else {
+                                Self::MAX
+                            }
+                        }
+                    }
+                }
+            }
+
+            comment! {
                 "Saturating multiply and add.
 Returns `self` × `mul` + `add`, saturating on overflow.
 
@@ -2509,6 +2565,30 @@ assert_eq!(Fix::ZERO",
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub const fn wrapping_sub(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
                     Self::from_bits(self.to_bits().wrapping_sub(rhs.to_bits()))
+                }
+            }
+
+            comment! {
+                "Wrapping multiplication. Returns the product, wrapping on overflow.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::from_num(3).wrapping_mul(Fix::from_num(2)), Fix::from_num(6));
+let wrapped = Fix::from_bits(!0 << 2);
+assert_eq!(Fix::MAX.wrapping_mul(Fix::from_num(4)), wrapped);
+```
+";
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub fn wrapping_mul(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, _) = arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC);
+                    Self::from_bits(ans)
                 }
             }
 
@@ -2976,6 +3056,43 @@ let _overflow = Fix::MIN.unwrapped_sub(Fix::DELTA);
                         Some(s) => s,
                         None => panic!("overflow"),
                     }
+                }
+            }
+
+            comment! {
+                "Unwrapped multiplication. Returns the product, panicking on overflow.
+
+# Panics
+
+Panics if the result does not fit.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::from_num(3).unwrapped_mul(Fix::from_num(2)), Fix::from_num(6));
+```
+
+The following panics because of overflow.
+
+```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+let _overflow = Fix::MAX.unwrapped_mul(Fix::from_num(4));
+```
+";
+                #[inline]
+                #[track_caller]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub fn unwrapped_mul(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                    self.checked_mul(rhs).expect("overflow")
                 }
             }
 
@@ -3644,6 +3761,34 @@ assert_eq!(Fix::ZERO",
                 pub const fn overflowing_sub(self, rhs: $Fixed<FRAC>) -> ($Fixed<FRAC>, bool) {
                     let (ans, o) = self.to_bits().overflowing_sub(rhs.to_bits());
                     (Self::from_bits(ans), o)
+                }
+            }
+
+            comment! {
+                "Overflowing multiplication.
+
+Returns a [tuple] of the product and a [`bool`] indicating whether an
+overflow has occurred. On overflow, the wrapped value is returned.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::from_num(3).overflowing_mul(Fix::from_num(2)), (Fix::from_num(6), false));
+let wrapped = Fix::from_bits(!0 << 2);
+assert_eq!(Fix::MAX.overflowing_mul(Fix::from_num(4)), (wrapped, true));
+```
+";
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub fn overflowing_mul(self, rhs: $Fixed<FRAC>) -> ($Fixed<FRAC>, bool) {
+                    let (ans, overflow) =
+                        arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC);
+                    (Self::from_bits(ans), overflow)
                 }
             }
 

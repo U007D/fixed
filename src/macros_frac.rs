@@ -548,31 +548,6 @@ assert_eq!(ZeroIntBits::from_num(-0.5).checked_signum(), None);
             }
 
             comment! {
-                "Checked multiplication. Returns the product, or [`None`] on overflow.
-
-# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::MAX.checked_mul(Fix::ONE), Some(Fix::MAX));
-assert_eq!(Fix::MAX.checked_mul(Fix::from_num(2)), None);
-```
-";
-                #[inline]
-                #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn checked_mul(self, rhs: $Fixed<FRAC>) -> Option<$Fixed<FRAC>> {
-                    match arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC as u32) {
-                        (ans, false) => Some(Self::from_bits(ans)),
-                        (_, true) => None,
-                    }
-                }
-            }
-
-            comment! {
                 "Checked division. Returns the quotient, or [`None`] if
 the divisor is zero or on overflow.
 
@@ -983,37 +958,6 @@ assert_eq!(ZeroIntBits::from_num(-0.5).saturating_signum(), ZeroIntBits::MIN);
             }
 
             comment! {
-                "Saturating multiplication. Returns the product, saturating on overflow.
-
-# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::from_num(3).saturating_mul(Fix::from_num(2)), Fix::from_num(6));
-assert_eq!(Fix::MAX.saturating_mul(Fix::from_num(2)), Fix::MAX);
-```
-";
-                #[inline]
-                #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn saturating_mul(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                    match arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC as u32) {
-                        (ans, false) => Self::from_bits(ans),
-                        (_, true) => {
-                            if (self < 0) != (rhs < 0) {
-                                Self::MIN
-                            } else {
-                                Self::MAX
-                            }
-                        }
-                    }
-                }
-            }
-
-            comment! {
                 "Saturating division. Returns the quotient, saturating on overflow.
 
 # Panics
@@ -1397,31 +1341,6 @@ assert_eq!(ZeroIntBits::from_num(-0.5).wrapping_signum(), 0);
             }
 
             comment! {
-                "Wrapping multiplication. Returns the product, wrapping on overflow.
-
-# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::from_num(3).wrapping_mul(Fix::from_num(2)), Fix::from_num(6));
-let wrapped = Fix::from_bits(!0 << 2);
-assert_eq!(Fix::MAX.wrapping_mul(Fix::from_num(4)), wrapped);
-```
-";
-                #[inline]
-                #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn wrapping_mul(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                    let (ans, _) =
-                        arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC as u32);
-                    Self::from_bits(ans)
-                }
-            }
-
-            comment! {
                 "Wrapping division. Returns the quotient, wrapping on overflow.
 
 # Panics
@@ -1721,43 +1640,6 @@ let _overflow = OneIntBit::from_num(0.5).unwrapped_signum();
                     pub fn unwrapped_signum(self) -> $Fixed<FRAC> {
                         self.checked_signum().expect("overflow")
                     }
-                }
-            }
-
-            comment! {
-                "Unwrapped multiplication. Returns the product, panicking on overflow.
-
-# Panics
-
-Panics if the result does not fit.
-
-# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::from_num(3).unwrapped_mul(Fix::from_num(2)), Fix::from_num(6));
-```
-
-The following panics because of overflow.
-
-```rust,should_panic
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-let _overflow = Fix::MAX.unwrapped_mul(Fix::from_num(4));
-```
-";
-                #[inline]
-                #[track_caller]
-                #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn unwrapped_mul(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                    self.checked_mul(rhs).expect("overflow")
                 }
             }
 
@@ -2202,34 +2084,6 @@ assert_eq!(ZeroIntBits::from_num(-0.5).overflowing_signum(), (ZeroIntBits::ZERO,
                             Ordering::Less => Self::overflowing_from_num(-1),
                         }
                     }
-                }
-            }
-
-            comment! {
-                "Overflowing multiplication.
-
-Returns a [tuple] of the product and a [`bool`] indicating whether an
-overflow has occurred. On overflow, the wrapped value is returned.
-
-# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::from_num(3).overflowing_mul(Fix::from_num(2)), (Fix::from_num(6), false));
-let wrapped = Fix::from_bits(!0 << 2);
-assert_eq!(Fix::MAX.overflowing_mul(Fix::from_num(4)), (wrapped, true));
-```
-";
-                #[inline]
-                #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn overflowing_mul(self, rhs: $Fixed<FRAC>) -> ($Fixed<FRAC>, bool) {
-                    let (ans, overflow) =
-                        arith::overflowing_mul(self.to_bits(), rhs.to_bits(), FRAC as u32);
-                    (Self::from_bits(ans), overflow)
                 }
             }
 

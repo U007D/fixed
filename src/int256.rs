@@ -307,21 +307,6 @@ pub fn overflowing_shl_u256_into_u128(a: U256, sh: u32) -> (u128, bool) {
     }
 }
 
-#[inline]
-pub fn overflowing_shl_i256_into_i128(a: I256, sh: u32) -> (i128, bool) {
-    if sh == 128 {
-        (a.hi, false)
-    } else if sh == 0 {
-        let ans = a.lo as i128;
-        (ans, a.hi != ans >> 127)
-    } else {
-        let lo = (a.lo >> sh) as i128;
-        let hi = a.hi << (128 - sh);
-        let ans = lo | hi;
-        (ans, a.hi >> sh != ans >> 127)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
