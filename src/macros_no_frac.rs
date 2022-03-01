@@ -740,6 +740,66 @@ assert_eq!(Fix::from_num(3).signed_bits(), 7);       // “_011.0000”
             }
 
             comment! {
+                "Integer base-2 logarithm, rounded down.
+
+# Panics
+
+Panics if the fixed-point number is ", if_signed_unsigned!($Signedness, "≤&nbsp;0", "zero"), ".
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::from_num(4).int_log2(), 2);
+assert_eq!(Fix::from_num(3.9375).int_log2(), 1);
+assert_eq!(Fix::from_num(0.25).int_log2(), -2);
+assert_eq!(Fix::from_num(0.1875).int_log2(), -3);
+```
+";
+                #[inline]
+                pub const fn int_log2(self) -> i32 {
+                    match self.checked_int_log2() {
+                        Some(ans) => ans,
+                        None => panic!("log of non-positive number"),
+                    }
+                }
+            }
+
+            comment! {
+                "Checked integer base-2 logarithm, rounded down.
+Returns the logarithm or [`None`] if the fixed-point number is
+", if_signed_unsigned!($Signedness, "≤&nbsp;0", "zero"), ".
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::ZERO.checked_int_log2(), None);
+assert_eq!(Fix::from_num(4).checked_int_log2(), Some(2));
+assert_eq!(Fix::from_num(3.9375).checked_int_log2(), Some(1));
+assert_eq!(Fix::from_num(0.25).checked_int_log2(), Some(-2));
+assert_eq!(Fix::from_num(0.1875).checked_int_log2(), Some(-3));
+```
+";
+                #[inline]
+                pub const fn checked_int_log2(self) -> Option<i32> {
+                    if self.to_bits() <= 0 {
+                        None
+                    } else {
+                        Self::INT_BITS.checked_add(-1 - self.leading_zeros() as i32)
+                    }
+                }
+            }
+
+            comment! {
                 "Reverses the order of the bits of the fixed-point number.
 
 # Examples

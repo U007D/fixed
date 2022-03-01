@@ -30,33 +30,6 @@ macro_rules! fixed_frac {
             fixed_from_to! { $Fixed[$s_fixed]($Inner[$s_inner], $s_nbits), $Signedness }
 
             comment! {
-                "Integer base-2 logarithm, rounded down.
-
-# Panics
-
-Panics if the fixed-point number is ", if_signed_unsigned!($Signedness, "≤&nbsp;0", "zero"), ".
-
-# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::from_num(4).int_log2(), 2);
-assert_eq!(Fix::from_num(3.9375).int_log2(), 1);
-assert_eq!(Fix::from_num(0.25).int_log2(), -2);
-assert_eq!(Fix::from_num(0.1875).int_log2(), -3);
-```
-";
-                #[inline]
-                pub fn int_log2(self) -> i32 {
-                    self.checked_int_log2().expect("log of non-positive number")
-                }
-            }
-
-            comment! {
                 "Integer base-10 logarithm, rounded down.
 
 # Panics
@@ -77,37 +50,10 @@ assert_eq!(", $s_fixed, "::<6>::from_num(0.09375).int_log10(), -2);
 ```
 ";
                 #[inline]
-                pub fn int_log10(self) -> i32 {
-                    self.checked_int_log10().expect("log of non-positive number")
-                }
-            }
-
-            comment! {
-                "Checked integer base-2 logarithm, rounded down.
-Returns the logarithm or [`None`] if the fixed-point number is
-", if_signed_unsigned!($Signedness, "≤&nbsp;0", "zero"), ".
-
-# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::ZERO.checked_int_log2(), None);
-assert_eq!(Fix::from_num(4).checked_int_log2(), Some(2));
-assert_eq!(Fix::from_num(3.9375).checked_int_log2(), Some(1));
-assert_eq!(Fix::from_num(0.25).checked_int_log2(), Some(-2));
-assert_eq!(Fix::from_num(0.1875).checked_int_log2(), Some(-3));
-```
-";
-                #[inline]
-                pub fn checked_int_log2(self) -> Option<i32> {
-                    if self <= 0 {
-                        None
-                    } else {
-                        Some(Self::INT_BITS - 1 - self.leading_zeros() as i32)
+                pub const fn int_log10(self) -> i32 {
+                    match self.checked_int_log10() {
+                        Some(ans) => ans,
+                        None => panic!("log of non-positive number"),
                     }
                 }
             }
@@ -132,8 +78,8 @@ assert_eq!(", $s_fixed, "::<6>::from_num(0.09375).checked_int_log10(), Some(-2))
 ```
 ";
                 #[inline]
-                pub fn checked_int_log10(self) -> Option<i32> {
-                    if self <= 0 {
+                pub const fn checked_int_log10(self) -> Option<i32> {
+                    if self.to_bits() <= 0 {
                         return None;
                     }
                     // Use unsigned representation because we use all bits in fractional part.

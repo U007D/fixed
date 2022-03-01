@@ -121,6 +121,8 @@ The conversions supported cover the following cases.
         [`wrapping_round_ties_to_even`][f-wrtte-2-0a2],
         [`unwrapped_round_ties_to_even`][f-urtte-2-0a2],
         [`overflowing_round_ties_to_even`][f-ortte-2-0a2],
+      * [`int_log2`][f-il2-2-0a2], [`checked_int_log2`][f-cil2-2-0a2],
+        [`int_log10`][f-il10-2-0a2], [`checked_int_log2`][f-cil10-2-0a2]
       * [`wide_mul`][f-wim-2-0a2], [`wide_div`][f-wd-2-0a2],
       * [`checked_mul`][f-cm-2-0a2], [`saturating_mul`][f-sm-2-0a2],
         [`wrapping_mul`][f-wm-2-0a2], [`unwrapped_mul`][f-um-2-0a2],
@@ -136,6 +138,8 @@ The conversions supported cover the following cases.
 [f-c-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.ceil
 [f-cc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_ceil
 [f-cf-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_floor
+[f-cil10-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_int_log10
+[f-cil2-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_int_log2
 [f-cm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul
 [f-cma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul_add
 [f-cr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_round
@@ -144,6 +148,8 @@ The conversions supported cover the following cases.
 [f-f-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.floor
 [f-fr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.frac
 [f-i-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.int
+[f-il10-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.int_log10
+[f-il2-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.int_log2
 [f-ma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.mul_add
 [f-oc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_ceil
 [f-of-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_floor
