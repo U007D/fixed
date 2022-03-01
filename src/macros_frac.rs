@@ -404,7 +404,7 @@ assert_eq!(acc, Fix::MAX / 2);
                     If<{ (0 <= A_FRAC) & (A_FRAC <= $nbits) }>: True,
                     If<{ (0 <= B_FRAC) & (B_FRAC <= $nbits) }>: True,
                 {
-                    let (ans, overflow) = arith::overflowing_mul_add(
+                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         a.to_bits(),
                         b.to_bits(),
                         self.to_bits(),
@@ -569,7 +569,8 @@ assert_eq!(Fix::MAX.checked_div(Fix::ONE / 2), None);
                     if rhs.to_bits() == 0 {
                         return None;
                     }
-                    match arith::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32) {
+                    match arith::$Inner::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32)
+                    {
                         (ans, false) => Some(Self::from_bits(ans)),
                         (_, true) => None,
                     }
@@ -713,7 +714,7 @@ assert_eq!(acc, Fix::MAX / 2);
                     If<{ (0 <= A_FRAC) & (A_FRAC <= $nbits) }>: True,
                     If<{ (0 <= B_FRAC) & (B_FRAC <= $nbits) }>: True,
                 {
-                    let (ans, overflow) = arith::overflowing_mul_add(
+                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         a.to_bits(),
                         b.to_bits(),
                         self.to_bits(),
@@ -980,7 +981,8 @@ assert_eq!(Fix::MAX.saturating_div(one_half), Fix::MAX);
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub fn saturating_div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                    match arith::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32) {
+                    match arith::$Inner::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32)
+                    {
                         (ans, false) => Self::from_bits(ans),
                         (_, true) => {
                             if (self < 0) != (rhs < 0) {
@@ -1174,7 +1176,7 @@ assert_eq!(acc, Fix::MAX / 2);
                     If<{ (0 <= A_FRAC) & (A_FRAC <= $nbits) }>: True,
                     If<{ (0 <= B_FRAC) & (B_FRAC <= $nbits) }>: True,
                 {
-                    let (ans, overflow) = arith::overflowing_mul_add(
+                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         a.to_bits(),
                         b.to_bits(),
                         self.to_bits(),
@@ -1366,7 +1368,7 @@ assert_eq!(Fix::MAX.wrapping_div(quarter), wrapped);
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub fn wrapping_div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
                     let (ans, _) =
-                        arith::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32);
+                        arith::$Inner::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32);
                     Self::from_bits(ans)
                 }
             }
@@ -1503,7 +1505,7 @@ assert_eq!(acc, Fix::MAX.wrapping_mul_int(4));
                     If<{ (0 <= A_FRAC) & (A_FRAC <= $nbits) }>: True,
                     If<{ (0 <= B_FRAC) & (B_FRAC <= $nbits) }>: True,
                 {
-                    let (ans, _) = arith::overflowing_mul_add(
+                    let (ans, _) = arith::$Inner::overflowing_mul_add(
                         a.to_bits(),
                         b.to_bits(),
                         self.to_bits(),
@@ -1821,7 +1823,7 @@ acc.unwrapped_mul_acc(Fix::MAX, Fix::ONE);
                     If<{ (0 <= A_FRAC) & (A_FRAC <= $nbits) }>: True,
                     If<{ (0 <= B_FRAC) & (B_FRAC <= $nbits) }>: True,
                 {
-                    let (ans, overflow) = arith::overflowing_mul_add(
+                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         a.to_bits(),
                         b.to_bits(),
                         self.to_bits(),
@@ -2116,7 +2118,7 @@ assert_eq!(Fix::MAX.overflowing_div(quarter), (wrapped, true));
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub fn overflowing_div(self, rhs: $Fixed<FRAC>) -> ($Fixed<FRAC>, bool) {
                     let (ans, overflow) =
-                        arith::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32);
+                        arith::$Inner::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32);
                     (Self::from_bits(ans), overflow)
                 }
             }
@@ -2349,7 +2351,7 @@ assert_eq!(acc, Fix::MAX / 2);
                     If<{ (0 <= A_FRAC) & (A_FRAC <= $nbits) }>: True,
                     If<{ (0 <= B_FRAC) & (B_FRAC <= $nbits) }>: True,
                 {
-                    let (ans, overflow) = arith::overflowing_mul_add(
+                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         a.to_bits(),
                         b.to_bits(),
                         self.to_bits(),

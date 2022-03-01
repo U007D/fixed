@@ -1052,7 +1052,7 @@ assert_eq!(Fix::MAX.mul_add(Fix::from_num(1.5), -Fix::MAX), Fix::MAX / 2);
                 where
                     If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
                 {
-                    let (ans, overflow) = arith::overflowing_mul_add(
+                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         self.to_bits(),
                         mul.to_bits(),
                         add.to_bits(),
@@ -1755,7 +1755,7 @@ assert_eq!(Fix::MAX.checked_mul_add(Fix::from_num(1.5), -Fix::MAX), Some(Fix::MA
                 where
                     If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
                 {
-                    match arith::overflowing_mul_add(
+                    match arith::$Inner::overflowing_mul_add(
                         self.to_bits(),
                         mul.to_bits(),
                         add.to_bits(),
@@ -2281,7 +2281,7 @@ assert_eq!(Fix::MAX.saturating_mul_add(Fix::from_num(1.5), -Fix::MAX), half_max)
                 where
                     If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
                 {
-                    match arith::overflowing_mul_add(
+                    match arith::$Inner::overflowing_mul_add(
                         self.to_bits(),
                         mul.to_bits(),
                         add.to_bits(),
@@ -2632,7 +2632,7 @@ assert_eq!(Fix::MAX.wrapping_mul_add(Fix::from_num(3), Fix::MAX), wrapped);
                 where
                     If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
                 {
-                    let (ans, _) = arith::overflowing_mul_add(
+                    let (ans, _) = arith::$Inner::overflowing_mul_add(
                         self.to_bits(),
                         mul.to_bits(),
                         add.to_bits(),
@@ -3861,7 +3861,7 @@ assert_eq!(
                 where
                     If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
                 {
-                    let (ans, overflow) = arith::overflowing_mul_add(
+                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         self.to_bits(),
                         mul.to_bits(),
                         add.to_bits(),
