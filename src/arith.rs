@@ -689,7 +689,7 @@ macro_rules! mul_div_widen {
             }
 
             #[inline]
-            pub fn overflowing_mul_add(
+            pub const fn overflowing_mul_add(
                 m1: $Single,
                 m2: $Single,
                 add: $Single,
@@ -728,12 +728,12 @@ macro_rules! mul_div_widen {
                     }
                 }
 
-                let m1_2 = <$Double>::from(m1);
-                let m2_2 = <$Double>::from(m2);
+                let m1_2 = m1 as $Double;
+                let m2_2 = m2 as $Double;
                 let prod2 = m1_2 * m2_2;
                 let (prod2, overflow2) = if frac_nbits < 0 {
                     frac_nbits += NBITS;
-                    prod2.overflowing_mul(<$Double>::from(<$Unsigned>::MAX) + 1)
+                    prod2.overflowing_mul((<$Unsigned>::MAX as $Double) + 1)
                 } else if frac_nbits > NBITS {
                     frac_nbits -= NBITS;
                     (prod2 >> NBITS, false)
@@ -820,7 +820,12 @@ pub mod u128 {
     }
 
     #[inline]
-    pub fn overflowing_mul_add(m1: u128, m2: u128, add: u128, mut frac_nbits: i32) -> (u128, bool) {
+    pub const fn overflowing_mul_add(
+        m1: u128,
+        m2: u128,
+        add: u128,
+        mut frac_nbits: i32,
+    ) -> (u128, bool) {
         // If frac_nbits <= -128, any non-zero product will overflow becuase
         // using an 8-bit analogy, the shifted product would be at least 0x100.
         if frac_nbits <= -128 {
@@ -904,7 +909,12 @@ pub mod i128 {
     }
 
     #[inline]
-    pub fn overflowing_mul_add(m1: i128, m2: i128, add: i128, mut frac_nbits: i32) -> (i128, bool) {
+    pub const fn overflowing_mul_add(
+        m1: i128,
+        m2: i128,
+        add: i128,
+        mut frac_nbits: i32,
+    ) -> (i128, bool) {
         // If frac_nbits <= -128, any non-zero product will overflow becuase
         // using an 8-bit analogy, the shifted product would be at least -0x100
         // or 0x100. -0x100 + 0x7f = -0x81, and 0x100 + -0x80 = 0x80, and -0x81

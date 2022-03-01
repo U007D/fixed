@@ -109,14 +109,24 @@ The conversions supported cover the following cases.
       * [`checked_mul`][f-cm-2-0a2], [`saturating_mul`][f-sm-2-0a2],
         [`wrapping_mul`][f-wm-2-0a2], [`unwrapped_mul`][f-um-2-0a2],
         [`overflowing_mul`][f-om-2-0a2],
+      * [`mul_add`][f-ma-2-0a2], [`checked_mul_add`][f-cma-2-0a2],
+        [`saturating_mul_add`][f-sma-2-0a2], [`wrapping_mul_add`][f-wma-2-0a2],
+        [`unwrapped_mul_add`][f-uma-2-0a2],
+        [`overflowing_mul_add`][f-oma-2-0a2],
 
 [f-cm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul
+[f-cma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul_add
+[f-ma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.mul_add
 [f-om-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_mul
+[f-oma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_mul_add
 [f-sm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_mul
+[f-sma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_mul_add
 [f-um-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_mul
+[f-uma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_mul_add
 [f-wd-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_div
 [f-wim-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_mul
 [f-wm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_mul
+[f-wma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_mul_add
 
 ### Version 2.0.0-alpha.1 news (2022-02-26)
 
@@ -127,10 +137,10 @@ The conversions supported cover the following cases.
   * The deprecated optional features `az` and `f16` were removed. These features
     had no effect, as the functionality they enabled is now always enabled.
   * The `INT_NBITS` and `FRAC_NBITS` associated constants were replaced with
-    [`INT_BITS`][f-ib-2-0a] and [`FRAC_BITS`][f-fb-2-0a] which can be negative.
+    [`INT_BITS`][f-ib-2-0a1] and [`FRAC_BITS`][f-fb-2-0a1] which can be negative.
 
-[f-fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
-[f-ib-2-0a]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
+[f-fb-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
+[f-ib-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
 
 ### Version 1.13.0 news (2022-02-22)

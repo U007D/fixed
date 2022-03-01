@@ -1044,14 +1044,11 @@ assert_eq!(Fix::MAX.mul_add(Fix::from_num(1.5), -Fix::MAX), Fix::MAX / 2);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn mul_add<const MUL_FRAC: i32>(
+                pub const fn mul_add<const MUL_FRAC: i32>(
                     self,
                     mul: $Fixed<MUL_FRAC>,
                     add: $Fixed<FRAC>,
-                ) -> $Fixed<FRAC>
-                where
-                    If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
-                {
+                ) -> $Fixed<FRAC> {
                     let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         self.to_bits(),
                         mul.to_bits(),
@@ -1747,14 +1744,11 @@ assert_eq!(Fix::MAX.checked_mul_add(Fix::from_num(1.5), -Fix::MAX), Some(Fix::MA
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn checked_mul_add<const MUL_FRAC: i32>(
+                pub const fn checked_mul_add<const MUL_FRAC: i32>(
                     self,
                     mul: $Fixed<MUL_FRAC>,
                     add: $Fixed<FRAC>,
-                ) -> Option<$Fixed<FRAC>>
-                where
-                    If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
-                {
+                ) -> Option<$Fixed<FRAC>> {
                     match arith::$Inner::overflowing_mul_add(
                         self.to_bits(),
                         mul.to_bits(),
@@ -2273,14 +2267,11 @@ assert_eq!(Fix::MAX.saturating_mul_add(Fix::from_num(1.5), -Fix::MAX), half_max)
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn saturating_mul_add<const MUL_FRAC: i32>(
+                pub const fn saturating_mul_add<const MUL_FRAC: i32>(
                     self,
                     mul: $Fixed<MUL_FRAC>,
                     add: $Fixed<FRAC>,
-                ) -> $Fixed<FRAC>
-                where
-                    If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
-                {
+                ) -> $Fixed<FRAC> {
                     match arith::$Inner::overflowing_mul_add(
                         self.to_bits(),
                         mul.to_bits(),
@@ -2624,14 +2615,11 @@ assert_eq!(Fix::MAX.wrapping_mul_add(Fix::from_num(3), Fix::MAX), wrapped);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn wrapping_mul_add<const MUL_FRAC: i32>(
+                pub const fn wrapping_mul_add<const MUL_FRAC: i32>(
                     self,
                     mul: $Fixed<MUL_FRAC>,
                     add: $Fixed<FRAC>,
-                ) -> $Fixed<FRAC>
-                where
-                    If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
-                {
+                ) -> $Fixed<FRAC> {
                     let (ans, _) = arith::$Inner::overflowing_mul_add(
                         self.to_bits(),
                         mul.to_bits(),
@@ -3203,15 +3191,15 @@ let _overflow = Fix::MAX.unwrapped_mul_add(Fix::ONE, Fix::DELTA);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn unwrapped_mul_add<const MUL_FRAC: i32>(
+                pub const fn unwrapped_mul_add<const MUL_FRAC: i32>(
                     self,
                     mul: $Fixed<MUL_FRAC>,
                     add: $Fixed<FRAC>,
-                ) -> $Fixed<FRAC>
-                where
-                    If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
-                {
-                    self.checked_mul_add(mul, add).expect("overflow")
+                ) -> $Fixed<FRAC> {
+                    match self.checked_mul_add(mul, add) {
+                        Some(ans) => ans,
+                        None => panic!("overflow"),
+                    }
                 }
             }
 
@@ -3853,14 +3841,11 @@ assert_eq!(
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn overflowing_mul_add<const MUL_FRAC: i32>(
+                pub const fn overflowing_mul_add<const MUL_FRAC: i32>(
                     self,
                     mul: $Fixed<MUL_FRAC>,
                     add: $Fixed<FRAC>,
-                ) -> ($Fixed<FRAC>, bool)
-                where
-                    If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
-                {
+                ) -> ($Fixed<FRAC>, bool) {
                     let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         self.to_bits(),
                         mul.to_bits(),

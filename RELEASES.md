@@ -13,14 +13,24 @@ Version 2.0.0-alpha.2 (unreleased)
       * [`checked_mul`][f-cm-2-0a2], [`saturating_mul`][f-sm-2-0a2],
         [`wrapping_mul`][f-wm-2-0a2], [`unwrapped_mul`][f-um-2-0a2],
         [`overflowing_mul`][f-om-2-0a2],
+      * [`mul_add`][f-ma-2-0a2], [`checked_mul_add`][f-cma-2-0a2],
+        [`saturating_mul_add`][f-sma-2-0a2], [`wrapping_mul_add`][f-wma-2-0a2],
+        [`unwrapped_mul_add`][f-uma-2-0a2],
+        [`overflowing_mul_add`][f-oma-2-0a2],
 
 [f-cm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul
+[f-cma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul_add
+[f-ma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.mul_add
 [f-om-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_mul
+[f-oma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_mul_add
 [f-sm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_mul
+[f-sma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_mul_add
 [f-um-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_mul
+[f-uma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_mul_add
 [f-wd-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_div
 [f-wim-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_mul
 [f-wm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_mul
+[f-wma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_mul_add
 
 Version 2.0.0-alpha.1 (2022-02-26)
 ==================================

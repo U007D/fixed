@@ -186,7 +186,7 @@ pub fn shl_u256_max_128(a: U256, sh: u32) -> U256 {
 }
 
 #[inline]
-pub fn shl_i256_max_128(a: I256, sh: u32) -> I256 {
+pub const fn shl_i256_max_128(a: I256, sh: u32) -> I256 {
     if sh == 0 {
         a
     } else if sh == 128 {
@@ -295,7 +295,7 @@ pub fn div_rem_i256_i128(n: I256, d: i128) -> (I256, i128) {
 }
 
 #[inline]
-pub fn overflowing_shl_u256_into_u128(a: U256, sh: u32) -> (u128, bool) {
+pub const fn overflowing_shl_u256_into_u128(a: U256, sh: u32) -> (u128, bool) {
     if sh == 128 {
         (a.hi, false)
     } else if sh == 0 {
