@@ -148,49 +148,6 @@ assert_eq!(", $s_fixed, "::<6>::from_num(0.09375).checked_int_log10(), Some(-2))
                 }
             }
 
-            if_signed! {
-                $Signedness;
-                comment! {
-                    "Returns a number representing the sign of `self`.
-
-# Panics
-
-When debug assertions are enabled, this method panics
-  * if the value is positive and the fixed-point number has zero
-    or one integer bits such that it cannot hold the value 1.
-  * if the value is negative and the fixed-point number has zero
-    integer bits, such that it cannot hold the value &minus;1.
-
-When debug assertions are not enabled, the wrapped value can be
-returned in those cases, but it is not considered a breaking change if
-in the future it panics; using this method when 1 and &minus;1 cannot be
-represented is almost certainly a bug.
-
-# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::from_num(5).signum(), 1);
-assert_eq!(Fix::ZERO.signum(), 0);
-assert_eq!(Fix::from_num(-5).signum(), -1);
-```
-";
-                    #[inline]
-                    #[must_use]
-                    pub fn signum(self) -> $Fixed<FRAC> {
-                        match self.to_bits().cmp(&0) {
-                            Ordering::Equal => Self::ZERO,
-                            Ordering::Greater => Self::from_num(1),
-                            Ordering::Less => Self::from_num(-1),
-                        }
-                    }
-                }
-            }
-
             comment! {
                 "Returns the reciprocal (inverse) of the fixed-point number, 1/`self`.
 
@@ -418,48 +375,6 @@ assert_eq!(Fix::from_num(2.0).lerp(start, end), 5);
                     );
                     debug_assert!(!overflow, "overflow");
                     $Fixed::from_bits(ans)
-                }
-            }
-
-            if_signed! {
-                $Signedness;
-                comment! {
-                    "Checked signum. Returns a number representing the
-sign of `self`, or [`None`] on overflow.
-
-Overflow can only occur
-  * if the value is positive and the fixed-point number has zero
-    or one integer bits such that it cannot hold the value 1.
-  * if the value is negative and the fixed-point number has zero
-    integer bits, such that it cannot hold the value &minus;1.
-
-# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::from_num(5).checked_signum(), Some(Fix::ONE));
-assert_eq!(Fix::ZERO.checked_signum(), Some(Fix::ZERO));
-assert_eq!(Fix::from_num(-5).checked_signum(), Some(Fix::from_num(-1)));
-
-type OneIntBit = ", $s_fixed, "<", $s_nbits_m1, ">;
-type ZeroIntBits = ", $s_fixed, "<", $s_nbits, ">;
-assert_eq!(OneIntBit::from_num(0.5).checked_signum(), None);
-assert_eq!(ZeroIntBits::from_num(0.25).checked_signum(), None);
-assert_eq!(ZeroIntBits::from_num(-0.5).checked_signum(), None);
-```
-";
-                    #[inline]
-                    pub fn checked_signum(self) -> Option<$Fixed<FRAC>> {
-                        match self.to_bits().cmp(&0) {
-                            Ordering::Equal => Some(Self::ZERO),
-                            Ordering::Greater => Self::checked_from_num(1),
-                            Ordering::Less => Self::checked_from_num(-1),
-                        }
-                    }
                 }
             }
 
@@ -750,49 +665,6 @@ assert_eq!(Fix::from_num(1.5).checked_lerp(Fix::ZERO, Fix::MAX), None);
                 }
             }
 
-            if_signed! {
-                $Signedness;
-                comment! {
-                    "Saturating signum. Returns a number representing
-the sign of `self`, saturating on overflow.
-
-Overflow can only occur
-  * if the value is positive and the fixed-point number has zero
-    or one integer bits such that it cannot hold the value 1.
-  * if the value is negative and the fixed-point number has zero
-    integer bits, such that it cannot hold the value &minus;1.
-
-# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::from_num(5).saturating_signum(), 1);
-assert_eq!(Fix::ZERO.saturating_signum(), 0);
-assert_eq!(Fix::from_num(-5).saturating_signum(), -1);
-
-type OneIntBit = ", $s_fixed, "<", $s_nbits_m1, ">;
-type ZeroIntBits = ", $s_fixed, "<", $s_nbits, ">;
-assert_eq!(OneIntBit::from_num(0.5).saturating_signum(), OneIntBit::MAX);
-assert_eq!(ZeroIntBits::from_num(0.25).saturating_signum(), ZeroIntBits::MAX);
-assert_eq!(ZeroIntBits::from_num(-0.5).saturating_signum(), ZeroIntBits::MIN);
-```
-";
-                    #[inline]
-                    #[must_use]
-                    pub fn saturating_signum(self) -> $Fixed<FRAC> {
-                        match self.to_bits().cmp(&0) {
-                            Ordering::Equal => Self::ZERO,
-                            Ordering::Greater => Self::saturating_from_num(1),
-                            Ordering::Less => Self::saturating_from_num(-1),
-                        }
-                    }
-                }
-            }
-
             comment! {
                 "Saturating division. Returns the quotient, saturating on overflow.
 
@@ -1058,49 +930,6 @@ assert_eq!(Fix::from_num(3.0).saturating_lerp(Fix::MAX, Fix::ZERO), Fix::MIN);
                 }
             }
 
-            if_signed! {
-                $Signedness;
-                comment! {
-                    "Wrapping signum. Returns a number representing
-the sign of `self`, wrapping on overflow.
-
-Overflow can only occur
-  * if the value is positive and the fixed-point number has zero
-    or one integer bits such that it cannot hold the value 1.
-  * if the value is negative and the fixed-point number has zero
-    integer bits, such that it cannot hold the value &minus;1.
-
-# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::from_num(5).wrapping_signum(), 1);
-assert_eq!(Fix::ZERO.wrapping_signum(), 0);
-assert_eq!(Fix::from_num(-5).wrapping_signum(), -1);
-
-type OneIntBit = ", $s_fixed, "<", $s_nbits_m1, ">;
-type ZeroIntBits = ", $s_fixed, "<", $s_nbits, ">;
-assert_eq!(OneIntBit::from_num(0.5).wrapping_signum(), -1);
-assert_eq!(ZeroIntBits::from_num(0.25).wrapping_signum(), 0);
-assert_eq!(ZeroIntBits::from_num(-0.5).wrapping_signum(), 0);
-```
-";
-                    #[inline]
-                    #[must_use]
-                    pub fn wrapping_signum(self) -> $Fixed<FRAC> {
-                        match self.to_bits().cmp(&0) {
-                            Ordering::Equal => Self::ZERO,
-                            Ordering::Greater => Self::wrapping_from_num(1),
-                            Ordering::Less => Self::wrapping_from_num(-1),
-                        }
-                    }
-                }
-            }
-
             comment! {
                 "Wrapping division. Returns the quotient, wrapping on overflow.
 
@@ -1308,55 +1137,6 @@ assert_eq!(
                     let (bits, _) =
                         lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC as u32);
                     $Fixed::from_bits(bits)
-                }
-            }
-
-            if_signed! {
-                $Signedness;
-                comment! {
-                    "Unwrapped signum. Returns a number representing
-the sign of `self`, panicking on overflow.
-
-Overflow can only occur
-  * if the value is positive and the fixed-point number has zero
-    or one integer bits such that it cannot hold the value 1.
-  * if the value is negative and the fixed-point number has zero
-    integer bits, such that it cannot hold the value &minus;1.
-
-# Panics
-
-Panics if the result does not fit.
-
-# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::from_num(5).unwrapped_signum(), 1);
-assert_eq!(Fix::ZERO.unwrapped_signum(), 0);
-assert_eq!(Fix::from_num(-5).unwrapped_signum(), -1);
-```
-
-The following panics because of overflow.
-
-```rust,should_panic
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type OneIntBit = ", $s_fixed, "<", $s_nbits_m1, ">;
-let _overflow = OneIntBit::from_num(0.5).unwrapped_signum();
-```
-";
-                    #[inline]
-                    #[track_caller]
-                    #[must_use]
-                    pub fn unwrapped_signum(self) -> $Fixed<FRAC> {
-                        self.checked_signum().expect("overflow")
-                    }
                 }
             }
 
@@ -1679,50 +1459,6 @@ let _overflow = Fix::from_num(1.5).unwrapped_lerp(Fix::ZERO, Fix::MAX);
                     match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC as u32) {
                         (bits, false) => $Fixed::from_bits(bits),
                         (_, true) => panic!("overflow"),
-                    }
-                }
-            }
-
-            if_signed! {
-                $Signedness;
-                comment! {
-                    "Overflowing signum.
-
-Returns a [tuple] of the signum and a [`bool`] indicating whether an
-overflow has occurred. On overflow, the wrapped value is returned.
-
-Overflow can only occur
-  * if the value is positive and the fixed-point number has zero
-    or one integer bits such that it cannot hold the value 1.
-  * if the value is negative and the fixed-point number has zero
-    integer bits, such that it cannot hold the value &minus;1.
-
-# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::from_num(5).overflowing_signum(), (Fix::ONE, false));
-assert_eq!(Fix::ZERO.overflowing_signum(), (Fix::ZERO, false));
-assert_eq!(Fix::from_num(-5).overflowing_signum(), (Fix::from_num(-1), false));
-
-type OneIntBit = ", $s_fixed, "<", $s_nbits_m1, ">;
-type ZeroIntBits = ", $s_fixed, "<", $s_nbits, ">;
-assert_eq!(OneIntBit::from_num(0.5).overflowing_signum(), (OneIntBit::from_num(-1), true));
-assert_eq!(ZeroIntBits::from_num(0.25).overflowing_signum(), (ZeroIntBits::ZERO, true));
-assert_eq!(ZeroIntBits::from_num(-0.5).overflowing_signum(), (ZeroIntBits::ZERO, true));
-```
-";
-                    #[inline]
-                    pub fn overflowing_signum(self) -> ($Fixed<FRAC>, bool) {
-                        match self.to_bits().cmp(&0) {
-                            Ordering::Equal => (Self::ZERO, false),
-                            Ordering::Greater => Self::overflowing_from_num(1),
-                            Ordering::Less => Self::overflowing_from_num(-1),
-                        }
                     }
                 }
             }

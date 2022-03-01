@@ -682,7 +682,7 @@ fixed_cmp_prim! { FixedU128(128, u128) }
 #[cfg(test)]
 mod tests {
     use crate::*;
-    use core::f32;
+    use core::cmp::Ordering;
 
     #[test]
     fn cmp_signed() {

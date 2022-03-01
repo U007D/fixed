@@ -351,7 +351,6 @@ use crate::{
 };
 pub use crate::{from_str::ParseFixedError, unwrapped::Unwrapped, wrapping::Wrapping};
 use core::{
-    cmp::Ordering,
     hash::{Hash, Hasher},
     mem,
 };

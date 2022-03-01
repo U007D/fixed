@@ -1313,6 +1313,44 @@ assert_eq!(Fix::MIN.unsigned_dist(Fix::MAX), UFix::MAX);
                         $UFixed::from_bits(d as $UInner)
                     }
                 }
+
+                comment! {
+                    "Returns a number representing the sign of `self`.
+
+# Panics
+
+When debug assertions are enabled, this method panics
+  * if the value is positive and the fixed-point number has zero
+    or one integer bits such that it cannot hold the value 1.
+  * if the value is negative and the fixed-point number has zero
+    integer bits, such that it cannot hold the value &minus;1.
+
+When debug assertions are not enabled, the wrapped value can be
+returned in those cases, but it is not considered a breaking change if
+in the future it panics; using this method when 1 and &minus;1 cannot be
+represented is almost certainly a bug.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::from_num(5).signum(), 1);
+assert_eq!(Fix::ZERO.signum(), 0);
+assert_eq!(Fix::from_num(-5).signum(), -1);
+```
+";
+                    #[inline]
+                    #[must_use]
+                    pub const fn signum(self) -> $Fixed<FRAC> {
+                        let (ans, overflow) = self.overflowing_signum();
+                        debug_assert!(!overflow, "overflow");
+                        ans
+                    }
+                }
             }
 
             if_unsigned! {
@@ -2164,6 +2202,47 @@ assert_eq!(Fix::ONE.checked_dist(Fix::from_num(5)), Some(Fix::from_num(4)));
                 }
             }
 
+            if_signed! {
+                $Signedness;
+                comment! {
+                    "Checked signum. Returns a number representing the
+sign of `self`, or [`None`] on overflow.
+
+Overflow can only occur
+  * if the value is positive and the fixed-point number has zero
+    or one integer bits such that it cannot hold the value 1.
+  * if the value is negative and the fixed-point number has zero
+    integer bits, such that it cannot hold the value &minus;1.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::from_num(5).checked_signum(), Some(Fix::ONE));
+assert_eq!(Fix::ZERO.checked_signum(), Some(Fix::ZERO));
+assert_eq!(Fix::from_num(-5).checked_signum(), Some(Fix::from_num(-1)));
+
+type OneIntBit = ", $s_fixed, "<", $s_nbits_m1, ">;
+type ZeroIntBits = ", $s_fixed, "<", $s_nbits, ">;
+assert_eq!(OneIntBit::from_num(0.5).checked_signum(), None);
+assert_eq!(ZeroIntBits::from_num(0.25).checked_signum(), None);
+assert_eq!(ZeroIntBits::from_num(-0.5).checked_signum(), None);
+```
+";
+                    #[inline]
+                    pub const fn checked_signum(self) -> Option<$Fixed<FRAC>> {
+                        match self.overflowing_signum() {
+                            (ans, false) => Some(ans),
+                            (_, true) => None,
+                        }
+                    }
+                }
+            }
+
             comment! {
                 "Checked inverse linear interpolation between `start` and `end`.
 Returns [`None`] on overflow or when `start`&nbsp;=&nbsp;`end`.
@@ -2647,6 +2726,58 @@ assert_eq!(Fix::ONE.saturating_dist(Fix::from_num(5)), Fix::from_num(4));
                 }
             }
 
+            if_signed! {
+                $Signedness;
+                comment! {
+                    "Saturating signum. Returns a number representing
+the sign of `self`, saturating on overflow.
+
+Overflow can only occur
+  * if the value is positive and the fixed-point number has zero
+    or one integer bits such that it cannot hold the value 1.
+  * if the value is negative and the fixed-point number has zero
+    integer bits, such that it cannot hold the value &minus;1.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::from_num(5).saturating_signum(), 1);
+assert_eq!(Fix::ZERO.saturating_signum(), 0);
+assert_eq!(Fix::from_num(-5).saturating_signum(), -1);
+
+type OneIntBit = ", $s_fixed, "<", $s_nbits_m1, ">;
+type ZeroIntBits = ", $s_fixed, "<", $s_nbits, ">;
+assert_eq!(OneIntBit::from_num(0.5).saturating_signum(), OneIntBit::MAX);
+assert_eq!(ZeroIntBits::from_num(0.25).saturating_signum(), ZeroIntBits::MAX);
+assert_eq!(ZeroIntBits::from_num(-0.5).saturating_signum(), ZeroIntBits::MIN);
+```
+";
+                    #[inline]
+                    #[must_use]
+                    pub const fn saturating_signum(self) -> $Fixed<FRAC> {
+                        match self.overflowing_signum() {
+                            (ans, false) => ans,
+                            (_, true) => {
+                                if_signed_unsigned!(
+                                    $Signedness,
+                                    if self.is_negative() {
+                                        $Fixed::MIN
+                                    } else {
+                                        $Fixed::MAX
+                                    },
+                                    $Fixed::MAX,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
             comment! {
                 "Inverse linear interpolation between `start` and `end`,
 saturating on overflow.
@@ -3089,6 +3220,45 @@ assert_eq!(Fix::ONE.wrapping_dist(Fix::from_num(5)), Fix::from_num(4));
                         self.overflowing_dist(other).0,
                         self.dist(other),
                     )
+                }
+            }
+
+            if_signed! {
+                $Signedness;
+                comment! {
+                    "Wrapping signum. Returns a number representing
+the sign of `self`, wrapping on overflow.
+
+Overflow can only occur
+  * if the value is positive and the fixed-point number has zero
+    or one integer bits such that it cannot hold the value 1.
+  * if the value is negative and the fixed-point number has zero
+    integer bits, such that it cannot hold the value &minus;1.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::from_num(5).wrapping_signum(), 1);
+assert_eq!(Fix::ZERO.wrapping_signum(), 0);
+assert_eq!(Fix::from_num(-5).wrapping_signum(), -1);
+
+type OneIntBit = ", $s_fixed, "<", $s_nbits_m1, ">;
+type ZeroIntBits = ", $s_fixed, "<", $s_nbits, ">;
+assert_eq!(OneIntBit::from_num(0.5).wrapping_signum(), -1);
+assert_eq!(ZeroIntBits::from_num(0.25).wrapping_signum(), 0);
+assert_eq!(ZeroIntBits::from_num(-0.5).wrapping_signum(), 0);
+```
+";
+                    #[inline]
+                    #[must_use]
+                    pub const fn wrapping_signum(self) -> $Fixed<FRAC> {
+                        self.overflowing_signum().0
+                    }
                 }
             }
 
@@ -3889,6 +4059,57 @@ let _overflow = Fix::MIN.unwrapped_dist(Fix::ZERO);
                 }
             }
 
+            if_signed! {
+                $Signedness;
+                comment! {
+                    "Unwrapped signum. Returns a number representing
+the sign of `self`, panicking on overflow.
+
+Overflow can only occur
+  * if the value is positive and the fixed-point number has zero
+    or one integer bits such that it cannot hold the value 1.
+  * if the value is negative and the fixed-point number has zero
+    integer bits, such that it cannot hold the value &minus;1.
+
+# Panics
+
+Panics if the result does not fit.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::from_num(5).unwrapped_signum(), 1);
+assert_eq!(Fix::ZERO.unwrapped_signum(), 0);
+assert_eq!(Fix::from_num(-5).unwrapped_signum(), -1);
+```
+
+The following panics because of overflow.
+
+```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type OneIntBit = ", $s_fixed, "<", $s_nbits_m1, ">;
+let _overflow = OneIntBit::from_num(0.5).unwrapped_signum();
+```
+";
+                    #[inline]
+                    #[track_caller]
+                    #[must_use]
+                    pub const fn unwrapped_signum(self) -> $Fixed<FRAC> {
+                        let (ans, overflow) = self.overflowing_signum();
+                        assert!(!overflow, "overflow");
+                        ans
+                    }
+                }
+            }
+
             comment! {
                 "Inverse linear interpolation between `start` and `end`,
 panicking on overflow.
@@ -4481,6 +4702,72 @@ assert_eq!(
                     if_unsigned! {
                         $Signedness;
                         (self.dist(other), false)
+                    }
+                }
+            }
+
+            if_signed! {
+                $Signedness;
+                comment! {
+                    "Overflowing signum.
+
+Returns a [tuple] of the signum and a [`bool`] indicating whether an
+overflow has occurred. On overflow, the wrapped value is returned.
+
+Overflow can only occur
+  * if the value is positive and the fixed-point number has zero
+    or one integer bits such that it cannot hold the value 1.
+  * if the value is negative and the fixed-point number has zero
+    integer bits, such that it cannot hold the value &minus;1.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::from_num(5).overflowing_signum(), (Fix::ONE, false));
+assert_eq!(Fix::ZERO.overflowing_signum(), (Fix::ZERO, false));
+assert_eq!(Fix::from_num(-5).overflowing_signum(), (Fix::from_num(-1), false));
+
+type OneIntBit = ", $s_fixed, "<", $s_nbits_m1, ">;
+type ZeroIntBits = ", $s_fixed, "<", $s_nbits, ">;
+assert_eq!(OneIntBit::from_num(0.5).overflowing_signum(), (OneIntBit::from_num(-1), true));
+assert_eq!(ZeroIntBits::from_num(0.25).overflowing_signum(), (ZeroIntBits::ZERO, true));
+assert_eq!(ZeroIntBits::from_num(-0.5).overflowing_signum(), (ZeroIntBits::ZERO, true));
+```
+";
+                    #[inline]
+                    pub const fn overflowing_signum(self) -> ($Fixed<FRAC>, bool) {
+                        if self.to_bits() == 0 {
+                            return ($Fixed::ZERO, false);
+                        }
+
+                        if_signed_unsigned!(
+                            $Signedness,
+
+                            if self.to_bits() < 0 {
+                                if FRAC >= $nbits {
+                                    ($Fixed::ZERO, true)
+                                } else if FRAC <= 0 {
+                                    ($Fixed::from_bits(-1), false)
+                                } else {
+                                    ($Fixed::from_bits(-1 << FRAC), false)
+                                }
+                            } else if FRAC >= $nbits || FRAC < 0 {
+                                ($Fixed::ZERO, true)
+                            } else {
+                                ($Fixed::from_bits(1 << FRAC), FRAC == $nbits - 1)
+                            },
+
+                            if FRAC >= $nbits || FRAC < 0 {
+                                ($Fixed::ZERO, true)
+                            } else {
+                                ($Fixed::from_bits(1 << FRAC), false)
+                            },
+                        )
                     }
                 }
             }
