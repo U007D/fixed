@@ -688,25 +688,54 @@ macro_rules! mul_div_widen {
                 }
             }
 
-            // -NBITS <= frac_nbits <= 2 * NBITS
             #[inline]
             pub fn overflowing_mul_add(
-                lhs: $Single,
-                mul: $Single,
+                m1: $Single,
+                m2: $Single,
                 add: $Single,
                 mut frac_nbits: i32,
             ) -> ($Single, bool) {
                 const NBITS: i32 = <$Single>::BITS as i32;
-                let lhs2 = <$Double>::from(lhs);
-                let mul2 = <$Double>::from(mul);
-                let prod2 = lhs2 * mul2;
+                const NBITS2: i32 = <$Double>::BITS as i32;
+
+                // If frac_nbits <= -NBITS, any non-zero product will overflow
+                // becuase using an 8-bit analogy,
+                //   * for signed, the shifted product would be at least -0x100
+                //     or 0x100. -0x100 + 0x7f = -0x81, and 0x100 + -0x80 =
+                //     0x80, and -0x81 and 0x80 are both still overflowing.
+                //   * for unsigned, the shifted product would be at least
+                //     0x100.
+                if frac_nbits <= -128 {
+                    return (add, m1 != 0 && m2 != 0);
+                }
+
+                if_signed! {
+                    $Signedness;
+                    // If frac_nbits >= NBITS2 - 1, the only shifted products possible are -1 and 0.
+                    if frac_nbits >= NBITS2 - 1 {
+                        if m1 != 0 && m2 != 0 && (m1.is_negative() != m2.is_negative()) {
+                            return add.overflowing_sub(1);
+                        } else {
+                            return (add, false);
+                        }
+                    }
+                }
+                if_unsigned! {
+                    $Signedness;
+                    // If frac_nbits >= NBITS2, the only shifted product possible is 0.
+                    if frac_nbits >= NBITS2 {
+                        return (add, false);
+                    }
+                }
+
+                let m1_2 = <$Double>::from(m1);
+                let m2_2 = <$Double>::from(m2);
+                let prod2 = m1_2 * m2_2;
                 let (prod2, overflow2) = if frac_nbits < 0 {
                     frac_nbits += NBITS;
-                    debug_assert!(frac_nbits >= 0);
                     prod2.overflowing_mul(<$Double>::from(<$Unsigned>::MAX) + 1)
                 } else if frac_nbits > NBITS {
                     frac_nbits -= NBITS;
-                    debug_assert!(frac_nbits <= NBITS);
                     (prod2 >> NBITS, false)
                 } else {
                     (prod2, false)
@@ -790,10 +819,19 @@ pub mod u128 {
         }
     }
 
-    // -NBITS <= frac_nbits <= 2 * NBITS
     #[inline]
     pub fn overflowing_mul_add(m1: u128, m2: u128, add: u128, mut frac_nbits: i32) -> (u128, bool) {
-        // l * r + a
+        // If frac_nbits <= -128, any non-zero product will overflow becuase
+        // using an 8-bit analogy, the shifted product would be at least 0x100.
+        if frac_nbits <= -128 {
+            return (add, m1 != 0 && m2 != 0);
+        }
+
+        // If frac_nbits >= 256, the only shifted product possible is 0.
+        if frac_nbits >= 256 {
+            return (add, false);
+        }
+
         let mut prod = int256::wide_mul_u128(m1, m2);
 
         let mut overflow1 = false;
@@ -865,22 +903,35 @@ pub mod i128 {
         }
     }
 
-    // -NBITS <= frac_nbits <= 2 * NBITS
     #[inline]
     pub fn overflowing_mul_add(m1: i128, m2: i128, add: i128, mut frac_nbits: i32) -> (i128, bool) {
-        // l * r + a
+        // If frac_nbits <= -128, any non-zero product will overflow becuase
+        // using an 8-bit analogy, the shifted product would be at least -0x100
+        // or 0x100. -0x100 + 0x7f = -0x81, and 0x100 + -0x80 = 0x80, and -0x81
+        // and 0x80 are both still overflowing.
+        if frac_nbits <= -128 {
+            return (add, m1 != 0 && m2 != 0);
+        }
+
+        // If frac_nbits >= 255, the only shifted products possible are -1 and 0.
+        if frac_nbits >= 255 {
+            if m1 != 0 && m2 != 0 && (m1.is_negative() != m2.is_negative()) {
+                return add.overflowing_sub(1);
+            } else {
+                return (add, false);
+            }
+        }
+
         let mut prod = int256::wide_mul_i128(m1, m2);
 
         let mut overflow1 = false;
         if frac_nbits < 0 {
             frac_nbits += 128;
-            debug_assert!(frac_nbits >= 0);
             overflow1 = prod.hi != (prod.lo as i128) >> 127;
             prod.hi = prod.lo as i128;
             prod.lo = 0;
         } else if frac_nbits > 128 {
             frac_nbits -= 128;
-            debug_assert!(frac_nbits <= 128);
             prod.lo = prod.hi as u128;
             prod.hi >>= 127;
         }
