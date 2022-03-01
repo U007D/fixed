@@ -977,6 +977,17 @@ pub mod i128 {
     }
 }
 
+pub const fn saturating_add_sub_i32(a: i32, b: i32, c: i32) -> i32 {
+    let sum = a as i64 + b as i64 - c as i64;
+    if sum < i32::MIN as i64 {
+        i32::MIN
+    } else if sum > i32::MAX as i64 {
+        i32::MAX
+    } else {
+        sum as i32
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{arith, *};
