@@ -192,6 +192,30 @@ assert_eq!(Fix::FRAC_BITS, 6);
                 pub const FRAC_BITS: i32 = FRAC;
             }
 
+            // some other useful constants for internal use:
+
+            const INT_MASK: $Inner = if FRAC <= 0 {
+                !0
+            } else if FRAC >= $Inner::BITS as i32 {
+                0
+            } else {
+                !0 << FRAC
+            };
+
+            const FRAC_MASK: $Inner = !Self::INT_MASK;
+
+            const INT_LSB: $Inner = if FRAC < 0 {
+                0
+            } else {
+                Self::INT_MASK ^ (Self::INT_MASK << 1)
+            };
+
+            const FRAC_MSB: $Inner = if FRAC > $Inner::BITS as i32 {
+                0
+            } else {
+                Self::FRAC_MASK ^ ((Self::FRAC_MASK as $UInner) >> 1) as $Inner
+            };
+
             comment! {
                 "Creates a fixed-point number that has a bitwise
 representation identical to the given integer.
@@ -515,6 +539,8 @@ assert_eq!(
                     self.to_bits().to_ne_bytes()
                 }
             }
+
+            fixed_round! { $Fixed[$s_fixed]($s_nbits), $Signedness }
 
             comment! {
                 "Returns the number of ones in the binary

@@ -105,6 +105,22 @@ The conversions supported cover the following cases.
 ### Version 2.0.0-alpha.2 news (unreleased)
 
   * The following methods are now `const` functions:
+      * [`int`][f-i-2-0a2], [`frac`][f-fr-2-0a2], [`round_to_zero`][f-rtz-2-0a2]
+      * [`ceil`][f-c-2-0a2], [`checked_ceil`][f-cc-2-0a2],
+        [`saturating_ceil`][f-sc-2-0a2], [`wrapping_ceil`][f-wc-2-0a2],
+        [`unwrapped_ceil`][f-uc-2-0a2], [`overflowing_ceil`][f-oc-2-0a2],
+      * [`floor`][f-f-2-0a2], [`checked_floor`][f-cf-2-0a2],
+        [`saturating_floor`][f-sf-2-0a2], [`wrapping_floor`][f-wf-2-0a2],
+        [`unwrapped_floor`][f-uf-2-0a2], [`overflowing_floor`][f-of-2-0a2],
+      * [`round`][f-r-2-0a2], [`checked_round`][f-cr-2-0a2],
+        [`saturating_round`][f-sr-2-0a2], [`wrapping_round`][f-wr-2-0a2],
+        [`unwrapped_round`][f-ur-2-0a2], [`overflowing_round`][f-or-2-0a2],
+      * [`round_ties_to_even`][f-rtte-2-0a2],
+        [`checked_round_ties_to_even`][f-crtte-2-0a2],
+        [`saturating_round_ties_to_even`][f-srtte-2-0a2],
+        [`wrapping_round_ties_to_even`][f-wrtte-2-0a2],
+        [`unwrapped_round_ties_to_even`][f-urtte-2-0a2],
+        [`overflowing_round_ties_to_even`][f-ortte-2-0a2],
       * [`wide_mul`][f-wim-2-0a2], [`wide_div`][f-wd-2-0a2],
       * [`checked_mul`][f-cm-2-0a2], [`saturating_mul`][f-sm-2-0a2],
         [`wrapping_mul`][f-wm-2-0a2], [`unwrapped_mul`][f-um-2-0a2],
@@ -114,19 +130,46 @@ The conversions supported cover the following cases.
         [`unwrapped_mul_add`][f-uma-2-0a2],
         [`overflowing_mul_add`][f-oma-2-0a2],
 
+[f-c-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.ceil
+[f-cc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_ceil
+[f-cf-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_floor
 [f-cm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul
 [f-cma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul_add
+[f-cr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_round
+[f-crtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_round_ties_to_even
+[f-f-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.floor
+[f-fr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.frac
+[f-i-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.int
 [f-ma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.mul_add
+[f-oc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_ceil
+[f-of-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_floor
 [f-om-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_mul
 [f-oma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_mul_add
+[f-or-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_round
+[f-ortte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_round_ties_to_even
+[f-r-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.round
+[f-rtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.round_ties_to_even
+[f-rtz-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.round_to_zero
+[f-sc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_ceil
+[f-sf-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_floor
 [f-sm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_mul
 [f-sma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_mul_add
+[f-sr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_round
+[f-srtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_round_ties_to_even
+[f-uc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_ceil
+[f-uf-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_floor
 [f-um-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_mul
 [f-uma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_mul_add
+[f-ur-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_round
+[f-urtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_round_ties_to_even
+[f-wc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_ceil
 [f-wd-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_div
+[f-wf-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_floor
 [f-wim-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_mul
 [f-wm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_mul
 [f-wma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_mul_add
+[f-wr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_round
+[f-wrtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_round_ties_to_even
 
 ### Version 2.0.0-alpha.1 news (2022-02-26)
 

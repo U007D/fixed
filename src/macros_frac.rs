@@ -27,22 +27,7 @@ macro_rules! fixed_frac {
         where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
-
-            // some other useful constants for internal use:
-
-            const INT_MASK: $Inner =
-                !0 << (Self::FRAC_BITS / 2) << (Self::FRAC_BITS - Self::FRAC_BITS / 2);
-            const FRAC_MASK: $Inner = !Self::INT_MASK;
-
-            // 0 when FRAC_BITS = 0
-            const INT_LSB: $Inner = Self::INT_MASK ^ (Self::INT_MASK << 1);
-
-            // 0 when INT_BITS = 0
-            const FRAC_MSB: $Inner =
-                Self::FRAC_MASK ^ ((Self::FRAC_MASK as $UInner) >> 1) as $Inner;
-
             fixed_from_to! { $Fixed[$s_fixed]($Inner[$s_inner], $s_nbits), $Signedness }
-            fixed_round! { $Fixed[$s_fixed]($s_nbits), $Signedness }
 
             comment! {
                 "Integer base-2 logarithm, rounded down.
