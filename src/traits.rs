@@ -18,13 +18,14 @@ Traits for conversions and for generic use of fixed-point numbers.
 */
 
 use crate::{
-    helpers::{Sealed, Widest},
+    helpers::Sealed,
     types::extra::{If, True},
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8, ParseFixedError,
 };
 #[cfg(feature = "arbitrary")]
 use arbitrary::Arbitrary;
+use az::OverflowingCast;
 #[cfg(feature = "borsh")]
 use borsh::{BorshDeserialize, BorshSerialize};
 use bytemuck::{self, Pod, TransparentWrapper};
@@ -601,7 +602,20 @@ where
     /// const DELTA_BITS: <I16F16 as Fixed>::Bits = I16F16::DELTA.to_bits();
     /// assert_eq!(DELTA_BITS, 1i32);
     /// ```
-    type Bits;
+    type Bits: Ord
+        + TryFrom<i8>
+        + Shl<u32, Output = Self::Bits>
+        + Shr<u32, Output = Self::Bits>
+        + OverflowingCast<i8>
+        + OverflowingCast<i16>
+        + OverflowingCast<i32>
+        + OverflowingCast<i64>
+        + OverflowingCast<i128>
+        + OverflowingCast<u8>
+        + OverflowingCast<u16>
+        + OverflowingCast<u32>
+        + OverflowingCast<u64>
+        + OverflowingCast<u128>;
 
     /// The non-zero wrapped version of [`Bits`].
     ///
@@ -3743,10 +3757,7 @@ macro_rules! impl_fixed {
             }
         }
 
-        impl<const FRAC: i32> FromFixed for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> FromFixed for $Fixed<FRAC> {
             /// Converts a fixed-point number.
             ///
             /// Any extra fractional bits are discarded, which rounds towards &minus;∞.
@@ -3763,7 +3774,7 @@ macro_rules! impl_fixed {
             /// [`wrapping_from_fixed`]: FromFixed::wrapping_from_fixed
             #[inline]
             fn from_fixed<F: Fixed>(src: F) -> Self {
-                let (wrapped, overflow) = FromFixed::overflowing_from_fixed(src);
+                let (wrapped, overflow) = $Fixed::fixed_from_bits(src.to_bits(), F::FRAC_BITS);
                 debug_assert!(!overflow, "{} overflows", src);
                 let _ = overflow;
                 wrapped
@@ -3774,7 +3785,7 @@ macro_rules! impl_fixed {
             /// Any extra fractional bits are discarded, which rounds towards &minus;∞.
             #[inline]
             fn checked_from_fixed<F: Fixed>(src: F) -> Option<Self> {
-                match FromFixed::overflowing_from_fixed(src) {
+                match $Fixed::fixed_from_bits(src.to_bits(), F::FRAC_BITS) {
                     (_, true) => None,
                     (wrapped, false) => Some(wrapped),
                 }
@@ -3785,30 +3796,20 @@ macro_rules! impl_fixed {
             /// Any extra fractional bits are discarded, which rounds towards &minus;∞.
             #[inline]
             fn saturating_from_fixed<F: Fixed>(src: F) -> Self {
-                let conv =
-                    src.private_to_fixed_helper(Self::FRAC_BITS as u32, Self::INT_BITS as u32);
-                if conv.overflow {
-                    return if src < 0 { Self::MIN } else { Self::MAX };
+                match $Fixed::fixed_from_bits(src.to_bits(), F::FRAC_BITS) {
+                    (wrapped, false) => wrapped,
+                    (_, true) => {
+                        let src_bits_zero = match F::Bits::try_from(0i8) {
+                            Ok(zero) => zero,
+                            Err(_) => unreachable!(),
+                        };
+                        if src.to_bits() < src_bits_zero {
+                            $Fixed::MIN
+                        } else {
+                            $Fixed::MAX
+                        }
+                    }
                 }
-                let bits = if_signed_unsigned!(
-                    $Signedness,
-                    match conv.bits {
-                        Widest::Unsigned(bits) => {
-                            if (bits as $Bits) < 0 {
-                                return Self::MAX;
-                            }
-                            bits as $Bits
-                        }
-                        Widest::Negative(bits) => bits as $Bits,
-                    },
-                    match conv.bits {
-                        Widest::Unsigned(bits) => bits as $Bits,
-                        Widest::Negative(_) => {
-                            return Self::MIN;
-                        }
-                    },
-                );
-                Self::from_bits(bits)
             }
 
             /// Converts a fixed-point number, wrapping if it does not fit.
@@ -3816,7 +3817,7 @@ macro_rules! impl_fixed {
             /// Any extra fractional bits are discarded, which rounds towards &minus;∞.
             #[inline]
             fn wrapping_from_fixed<F: Fixed>(src: F) -> Self {
-                let (wrapped, _) = FromFixed::overflowing_from_fixed(src);
+                let (wrapped, _) = $Fixed::fixed_from_bits(src.to_bits(), F::FRAC_BITS);
                 wrapped
             }
 
@@ -3829,29 +3830,7 @@ macro_rules! impl_fixed {
             /// Any extra fractional bits are discarded, which rounds towards &minus;∞.
             #[inline]
             fn overflowing_from_fixed<F: Fixed>(src: F) -> (Self, bool) {
-                let conv =
-                    src.private_to_fixed_helper(Self::FRAC_BITS as u32, Self::INT_BITS as u32);
-                let mut new_overflow = false;
-                let bits = if_signed_unsigned!(
-                    $Signedness,
-                    match conv.bits {
-                        Widest::Unsigned(bits) => {
-                            if (bits as $Bits) < 0 {
-                                new_overflow = true;
-                            }
-                            bits as $Bits
-                        }
-                        Widest::Negative(bits) => bits as $Bits,
-                    },
-                    match conv.bits {
-                        Widest::Unsigned(bits) => bits as $Bits,
-                        Widest::Negative(bits) => {
-                            new_overflow = true;
-                            bits as $Bits
-                        }
-                    },
-                );
-                (Self::from_bits(bits), conv.overflow || new_overflow)
+                $Fixed::fixed_from_bits(src.to_bits(), F::FRAC_BITS)
             }
 
             /// Converts a fixed-point number, panicking if it does not fit.
@@ -3864,7 +3843,7 @@ macro_rules! impl_fixed {
             /// assertions are not enabled.
             #[inline]
             fn unwrapped_from_fixed<F: Fixed>(src: F) -> Self {
-                match FromFixed::overflowing_from_fixed(src) {
+                match $Fixed::fixed_from_bits(src.to_bits(), F::FRAC_BITS) {
                     (val, false) => val,
                     (_, true) => panic!("overflow"),
                 }

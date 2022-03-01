@@ -320,6 +320,7 @@ mod cmp;
 pub mod consts;
 mod convert;
 mod debug_hex;
+mod fixed_from_bits;
 mod display;
 mod float_helper;
 mod from_str;
