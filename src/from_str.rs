@@ -886,7 +886,7 @@ impl_from_str! {
 mod tests {
     use crate::{
         from_str::*,
-        traits::{Fixed, ToFixed},
+        traits::{Fixed, FixedStrict, ToFixed},
         types::*,
     };
     use std::{
@@ -1138,7 +1138,7 @@ mod tests {
 
     fn assert_ok<F>(s: &str, radix: u32, bits: F::Bits, overflow: bool)
     where
-        F: Fixed + FromStrRadix<Err = ParseFixedError>,
+        F: FixedStrict + FromStrRadix<Err = ParseFixedError>,
         F::Bits: Eq + Debug,
     {
         match F::overflowing_from_str_radix(s, radix) {

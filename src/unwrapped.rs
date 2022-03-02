@@ -15,7 +15,7 @@
 
 use crate::{
     from_str::ParseFixedError,
-    traits::{Fixed, FixedSigned, FixedUnsigned, FromFixed, ToFixed},
+    traits::{Fixed, FixedSigned, FixedStrict, FixedUnsigned, FromFixed, ToFixed},
     types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
@@ -613,75 +613,6 @@ impl<F: Fixed> Unwrapped<F> {
         Dst::unwrapped_from_fixed(self.0)
     }
 
-    /// Parses a string slice containing binary digits to return a fixed-point number.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[from\_str\_binary][FixedI32::from_str_binary]</code>
-    /// and
-    /// <code>FixedU32::[from\_str\_binary][FixedU32::from_str_binary]</code>.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// #![feature(generic_const_exprs)]
-    /// # #![allow(incomplete_features)]
-    ///
-    /// use fixed::{types::I8F8, Unwrapped};
-    /// let check = Unwrapped(I8F8::from_bits(0b1110001 << (8 - 1)));
-    /// assert_eq!(Unwrapped::<I8F8>::from_str_binary("111000.1"), Ok(check));
-    /// ```
-    #[inline]
-    pub fn from_str_binary(src: &str) -> Result<Unwrapped<F>, ParseFixedError> {
-        F::from_str_binary(src).map(Unwrapped)
-    }
-
-    /// Parses a string slice containing octal digits to return a fixed-point number.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[from\_str\_octal][FixedI32::from_str_octal]</code> and
-    /// <code>FixedU32::[from\_str\_octal][FixedU32::from_str_octal]</code>.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// #![feature(generic_const_exprs)]
-    /// # #![allow(incomplete_features)]
-    ///
-    /// use fixed::{types::I8F8, Unwrapped};
-    /// let check = Unwrapped(I8F8::from_bits(0o1654 << (8 - 3)));
-    /// assert_eq!(Unwrapped::<I8F8>::from_str_octal("165.4"), Ok(check));
-    /// ```
-    #[inline]
-    pub fn from_str_octal(src: &str) -> Result<Unwrapped<F>, ParseFixedError> {
-        F::from_str_octal(src).map(Unwrapped)
-    }
-
-    /// Parses a string slice containing hexadecimal digits to return a fixed-point number.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also <code>FixedI32::[from\_str\_hex][FixedI32::from_str_hex]</code>
-    /// and <code>FixedU32::[from\_str\_hex][FixedU32::from_str_hex]</code>.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// #![feature(generic_const_exprs)]
-    /// # #![allow(incomplete_features)]
-    ///
-    /// use fixed::{types::I8F8, Unwrapped};
-    /// let check = Unwrapped(I8F8::from_bits(0xFFE));
-    /// assert_eq!(Unwrapped::<I8F8>::from_str_hex("F.FE"), Ok(check));
-    /// ```
-    #[inline]
-    pub fn from_str_hex(src: &str) -> Result<Unwrapped<F>, ParseFixedError> {
-        F::from_str_hex(src).map(Unwrapped)
-    }
-
     /// Returns the integer part.
     ///
     /// Note that since the numbers are stored in two’s complement,
@@ -1063,20 +994,6 @@ impl<F: Fixed> Unwrapped<F> {
         self.0.int_log2()
     }
 
-    /// Integer base-10 logarithm, rounded down.
-    ///
-    /// See also <code>FixedI32::[int\_log10][FixedI32::int_log10]</code> and
-    /// <code>FixedU32::[int\_log10][FixedU32::int_log10]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the fixed-point number is ≤&nbsp;0.
-    #[inline]
-    #[track_caller]
-    pub fn int_log10(self) -> i32 {
-        self.0.int_log10()
-    }
-
     /// Reverses the order of the bits of the fixed-point number.
     ///
     /// See also <code>FixedI32::[reverse\_bits][FixedI32::reverse_bits]</code>
@@ -1221,44 +1138,6 @@ impl<F: Fixed> Unwrapped<F> {
         Unwrapped(self.0.mean(other.0))
     }
 
-    /// Returns the reciprocal (inverse), 1/`self`.
-    ///
-    /// See also
-    /// <code>FixedI32::[unwrapped\_recip][FixedI32::unwrapped_recip]</code> and
-    /// <code>FixedU32::[unwrapped\_recip][FixedU32::unwrapped_recip]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `self` is zero or on overflow.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// #![feature(generic_const_exprs)]
-    /// # #![allow(incomplete_features)]
-    ///
-    /// use fixed::{types::I8F24, Unwrapped};
-    /// let quarter = Unwrapped(I8F24::from_num(0.25));
-    /// assert_eq!(quarter.recip(), Unwrapped(I8F24::from_num(4)));
-    /// ```
-    ///
-    /// The following panics because of overflow.
-    ///
-    /// ```rust,should_panic
-    /// #![feature(generic_const_exprs)]
-    /// # #![allow(incomplete_features)]
-    ///
-    /// use fixed::{types::I8F24, Unwrapped};
-    /// let frac_1_512 = Unwrapped(I8F24::ONE / 512);
-    /// let _overflow = frac_1_512.recip();
-    /// ```
-    #[inline]
-    #[track_caller]
-    #[must_use]
-    pub fn recip(self) -> Unwrapped<F> {
-        Unwrapped(self.0.unwrapped_recip())
-    }
-
     /// Multiply and add. Returns `self` × `mul` + `add`.
     ///
     /// See also
@@ -1342,6 +1221,159 @@ impl<F: Fixed> Unwrapped<F> {
         self.0.unwrapped_mul_acc(a.0, b.0);
     }
 
+    /// Remainder for Euclidean division.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_rem\_euclid][FixedI32::unwrapped_rem_euclid]</code>
+    /// and
+    /// <code>FixedU32::[unwrapped\_rem\_euclid][FixedU32::unwrapped_rem_euclid]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I16F16, Unwrapped};
+    /// let num = Unwrapped(I16F16::from_num(7.5));
+    /// let den = Unwrapped(I16F16::from_num(2));
+    /// assert_eq!(num.rem_euclid(den), Unwrapped(I16F16::from_num(1.5)));
+    /// assert_eq!((-num).rem_euclid(den), Unwrapped(I16F16::from_num(0.5)));
+    /// ```
+    #[inline]
+    #[track_caller]
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    pub fn rem_euclid(self, divisor: Unwrapped<F>) -> Unwrapped<F> {
+        Unwrapped(self.0.unwrapped_rem_euclid(divisor.0))
+    }
+}
+
+impl<F: FixedStrict> Unwrapped<F> {
+    /// Parses a string slice containing binary digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[from\_str\_binary][FixedI32::from_str_binary]</code>
+    /// and
+    /// <code>FixedU32::[from\_str\_binary][FixedU32::from_str_binary]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F8, Unwrapped};
+    /// let check = Unwrapped(I8F8::from_bits(0b1110001 << (8 - 1)));
+    /// assert_eq!(Unwrapped::<I8F8>::from_str_binary("111000.1"), Ok(check));
+    /// ```
+    #[inline]
+    pub fn from_str_binary(src: &str) -> Result<Unwrapped<F>, ParseFixedError> {
+        F::from_str_binary(src).map(Unwrapped)
+    }
+
+    /// Parses a string slice containing octal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[from\_str\_octal][FixedI32::from_str_octal]</code> and
+    /// <code>FixedU32::[from\_str\_octal][FixedU32::from_str_octal]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F8, Unwrapped};
+    /// let check = Unwrapped(I8F8::from_bits(0o1654 << (8 - 3)));
+    /// assert_eq!(Unwrapped::<I8F8>::from_str_octal("165.4"), Ok(check));
+    /// ```
+    #[inline]
+    pub fn from_str_octal(src: &str) -> Result<Unwrapped<F>, ParseFixedError> {
+        F::from_str_octal(src).map(Unwrapped)
+    }
+
+    /// Parses a string slice containing hexadecimal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also <code>FixedI32::[from\_str\_hex][FixedI32::from_str_hex]</code>
+    /// and <code>FixedU32::[from\_str\_hex][FixedU32::from_str_hex]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F8, Unwrapped};
+    /// let check = Unwrapped(I8F8::from_bits(0xFFE));
+    /// assert_eq!(Unwrapped::<I8F8>::from_str_hex("F.FE"), Ok(check));
+    /// ```
+    #[inline]
+    pub fn from_str_hex(src: &str) -> Result<Unwrapped<F>, ParseFixedError> {
+        F::from_str_hex(src).map(Unwrapped)
+    }
+
+    /// Integer base-10 logarithm, rounded down.
+    ///
+    /// See also <code>FixedI32::[int\_log10][FixedI32::int_log10]</code> and
+    /// <code>FixedU32::[int\_log10][FixedU32::int_log10]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the fixed-point number is ≤&nbsp;0.
+    #[inline]
+    #[track_caller]
+    pub fn int_log10(self) -> i32 {
+        self.0.int_log10()
+    }
+
+    /// Returns the reciprocal (inverse), 1/`self`.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_recip][FixedI32::unwrapped_recip]</code> and
+    /// <code>FixedU32::[unwrapped\_recip][FixedU32::unwrapped_recip]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `self` is zero or on overflow.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F24, Unwrapped};
+    /// let quarter = Unwrapped(I8F24::from_num(0.25));
+    /// assert_eq!(quarter.recip(), Unwrapped(I8F24::from_num(4)));
+    /// ```
+    ///
+    /// The following panics because of overflow.
+    ///
+    /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F24, Unwrapped};
+    /// let frac_1_512 = Unwrapped(I8F24::ONE / 512);
+    /// let _overflow = frac_1_512.recip();
+    /// ```
+    #[inline]
+    #[track_caller]
+    #[must_use]
+    pub fn recip(self) -> Unwrapped<F> {
+        Unwrapped(self.0.unwrapped_recip())
+    }
+
     /// Euclidean division.
     ///
     /// See also
@@ -1380,36 +1412,6 @@ impl<F: Fixed> Unwrapped<F> {
     #[must_use = "this returns the result of the operation, without modifying the original"]
     pub fn div_euclid(self, divisor: Unwrapped<F>) -> Unwrapped<F> {
         Unwrapped(self.0.unwrapped_div_euclid(divisor.0))
-    }
-
-    /// Remainder for Euclidean division.
-    ///
-    /// See also
-    /// <code>FixedI32::[unwrapped\_rem\_euclid][FixedI32::unwrapped_rem_euclid]</code>
-    /// and
-    /// <code>FixedU32::[unwrapped\_rem\_euclid][FixedU32::unwrapped_rem_euclid]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// #![feature(generic_const_exprs)]
-    /// # #![allow(incomplete_features)]
-    ///
-    /// use fixed::{types::I16F16, Unwrapped};
-    /// let num = Unwrapped(I16F16::from_num(7.5));
-    /// let den = Unwrapped(I16F16::from_num(2));
-    /// assert_eq!(num.rem_euclid(den), Unwrapped(I16F16::from_num(1.5)));
-    /// assert_eq!((-num).rem_euclid(den), Unwrapped(I16F16::from_num(0.5)));
-    /// ```
-    #[inline]
-    #[track_caller]
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    pub fn rem_euclid(self, divisor: Unwrapped<F>) -> Unwrapped<F> {
-        Unwrapped(self.0.unwrapped_rem_euclid(divisor.0))
     }
 
     /// Euclidean division by an integer.
@@ -1845,14 +1847,14 @@ impl<F: FixedUnsigned> Unwrapped<F> {
     }
 }
 
-impl<F: Fixed> Display for Unwrapped<F> {
+impl<F: FixedStrict> Display for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Display::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> Debug for Unwrapped<F> {
+impl<F: FixedStrict> Debug for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Debug::fmt(&self.0, f)
@@ -1867,7 +1869,7 @@ impl<F: Fixed> From<F> for Unwrapped<F> {
     }
 }
 
-impl<F: Fixed> FromStr for Unwrapped<F> {
+impl<F: FixedStrict> FromStr for Unwrapped<F> {
     type Err = ParseFixedError;
     /// Parses a string slice containing decimal digits to return a fixed-point number.
     ///
@@ -1879,8 +1881,8 @@ impl<F: Fixed> FromStr for Unwrapped<F> {
 }
 
 macro_rules! op {
-    ($unwrapped:ident, $Op:ident $op:ident, $OpAssign:ident $op_assign:ident) => {
-        impl<F: Fixed> $Op<Unwrapped<F>> for Unwrapped<F> {
+    ($Trait:ident, $unwrapped:ident, $Op:ident $op:ident, $OpAssign:ident $op_assign:ident) => {
+        impl<F: $Trait> $Op<Unwrapped<F>> for Unwrapped<F> {
             type Output = Unwrapped<F>;
             #[inline]
             #[track_caller]
@@ -1888,7 +1890,7 @@ macro_rules! op {
                 Unwrapped((self.0).$unwrapped(other.0))
             }
         }
-        impl<F: Fixed> $Op<Unwrapped<F>> for &Unwrapped<F> {
+        impl<F: $Trait> $Op<Unwrapped<F>> for &Unwrapped<F> {
             type Output = Unwrapped<F>;
             #[inline]
             #[track_caller]
@@ -1896,7 +1898,7 @@ macro_rules! op {
                 Unwrapped((self.0).$unwrapped(other.0))
             }
         }
-        impl<F: Fixed> $Op<&Unwrapped<F>> for Unwrapped<F> {
+        impl<F: $Trait> $Op<&Unwrapped<F>> for Unwrapped<F> {
             type Output = Unwrapped<F>;
             #[inline]
             #[track_caller]
@@ -1904,7 +1906,7 @@ macro_rules! op {
                 Unwrapped((self.0).$unwrapped(other.0))
             }
         }
-        impl<F: Fixed> $Op<&Unwrapped<F>> for &Unwrapped<F> {
+        impl<F: $Trait> $Op<&Unwrapped<F>> for &Unwrapped<F> {
             type Output = Unwrapped<F>;
             #[inline]
             #[track_caller]
@@ -1912,28 +1914,28 @@ macro_rules! op {
                 Unwrapped((self.0).$unwrapped(other.0))
             }
         }
-        impl<F: Fixed> $OpAssign<Unwrapped<F>> for Unwrapped<F> {
+        impl<F: $Trait> $OpAssign<Unwrapped<F>> for Unwrapped<F> {
             #[inline]
             #[track_caller]
             fn $op_assign(&mut self, other: Unwrapped<F>) {
                 self.0 = (self.0).$unwrapped(other.0);
             }
         }
-        impl<F: Fixed> $OpAssign<&Unwrapped<F>> for Unwrapped<F> {
+        impl<F: $Trait> $OpAssign<&Unwrapped<F>> for Unwrapped<F> {
             #[inline]
             #[track_caller]
             fn $op_assign(&mut self, other: &Unwrapped<F>) {
                 self.0 = (self.0).$unwrapped(other.0);
             }
         }
-        impl<F: Fixed> $OpAssign<F> for Unwrapped<F> {
+        impl<F: $Trait> $OpAssign<F> for Unwrapped<F> {
             #[inline]
             #[track_caller]
             fn $op_assign(&mut self, other: F) {
                 self.0 = (self.0).$unwrapped(other);
             }
         }
-        impl<F: Fixed> $OpAssign<&F> for Unwrapped<F> {
+        impl<F: $Trait> $OpAssign<&F> for Unwrapped<F> {
             #[inline]
             #[track_caller]
             fn $op_assign(&mut self, other: &F) {
@@ -2131,11 +2133,11 @@ impl<F: Fixed> Neg for &Unwrapped<F> {
         Unwrapped((self.0).unwrapped_neg())
     }
 }
-op! { unwrapped_add, Add add, AddAssign add_assign }
-op! { unwrapped_sub, Sub sub, SubAssign sub_assign }
-op! { unwrapped_mul, Mul mul, MulAssign mul_assign }
-op! { unwrapped_div, Div div, DivAssign div_assign }
-op! { unwrapped_rem, Rem rem, RemAssign rem_assign }
+op! { Fixed, unwrapped_add, Add add, AddAssign add_assign }
+op! { Fixed, unwrapped_sub, Sub sub, SubAssign sub_assign }
+op! { Fixed, unwrapped_mul, Mul mul, MulAssign mul_assign }
+op! { FixedStrict, unwrapped_div, Div div, DivAssign div_assign }
+op! { Fixed, unwrapped_rem, Rem rem, RemAssign rem_assign }
 
 impl<F> Not for Unwrapped<F>
 where

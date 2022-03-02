@@ -282,7 +282,7 @@ pub const CATALAN: U0F128 = U0F128::from_bits(0xEA7C_B89F_409A_E845_2158_22E3_7D
 mod tests {
     use crate::{
         consts::*,
-        traits::{Fixed, FromFixed},
+        traits::{FixedStrict, FromFixed},
     };
     use core::{convert::TryFrom, f32, f64};
 
@@ -504,7 +504,7 @@ mod tests {
         );
     }
 
-    fn compare_parse<F: Fixed>(f: F, s: &str)
+    fn compare_parse<F: FixedStrict>(f: F, s: &str)
     where
         F::Bits: TryFrom<u8>,
     {

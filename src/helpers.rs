@@ -14,10 +14,8 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
-    int_helper,
-    types::extra::{If, True},
-    FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
-    FixedU8,
+    int_helper, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
+    FixedU64, FixedU8,
 };
 use core::cmp::Ordering;
 
@@ -56,10 +54,7 @@ pub trait Sealed: Copy {
 }
 macro_rules! impl_sealed {
     ($Fixed:ident($nbits:expr, $Signedness:tt, $Inner:ident)) => {
-        impl<const FRAC: i32> Sealed for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> Sealed for $Fixed<FRAC> {
             #[inline]
             fn private_to_fixed_helper(
                 self,

@@ -287,6 +287,7 @@ impl_int_equiv! { u32, FixedU32 }
 impl_int_equiv! { u64, FixedU64 }
 impl_int_equiv! { u128, FixedU128 }
 
+// TODO: fix for unconstrained Fixed, as currently assumed FixedStrict
 macro_rules! impl_float {
     ($Float:ident, $link:expr, $overflows_fmt:expr, $overflows_filt:expr) => {
         impl FromFixed for $Float {

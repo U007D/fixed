@@ -15,7 +15,7 @@
 
 use crate::{
     from_str::ParseFixedError,
-    traits::{Fixed, FixedSigned, FixedUnsigned, FromFixed, ToFixed},
+    traits::{Fixed, FixedSigned, FixedStrict, FixedUnsigned, FromFixed, ToFixed},
     types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
@@ -596,78 +596,6 @@ impl<F: Fixed> Wrapping<F> {
         Dst::wrapping_from_fixed(self.0)
     }
 
-    /// Parses a string slice containing binary digits to return a fixed-point number.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_from\_str\_binary][FixedI32::wrapping_from_str_binary]</code>
-    /// and
-    /// <code>FixedU32::[wrapping\_from\_str\_binary][FixedU32::wrapping_from_str_binary]</code>.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// #![feature(generic_const_exprs)]
-    /// # #![allow(incomplete_features)]
-    ///
-    /// use fixed::{types::I8F8, Wrapping};
-    /// let check = Wrapping(I8F8::from_bits(0b1110001 << (8 - 1)));
-    /// assert_eq!(Wrapping::<I8F8>::from_str_binary("101100111000.1"), Ok(check));
-    /// ```
-    #[inline]
-    pub fn from_str_binary(src: &str) -> Result<Wrapping<F>, ParseFixedError> {
-        F::wrapping_from_str_binary(src).map(Wrapping)
-    }
-
-    /// Parses a string slice containing octal digits to return a fixed-point number.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_from\_str\_octal][FixedI32::wrapping_from_str_octal]</code>
-    /// and
-    /// <code>FixedU32::[wrapping\_from\_str\_octal][FixedU32::wrapping_from_str_octal]</code>.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// #![feature(generic_const_exprs)]
-    /// # #![allow(incomplete_features)]
-    ///
-    /// use fixed::{types::I8F8, Wrapping};
-    /// let check = Wrapping(I8F8::from_bits(0o1654 << (8 - 3)));
-    /// assert_eq!(Wrapping::<I8F8>::from_str_octal("7165.4"), Ok(check));
-    /// ```
-    #[inline]
-    pub fn from_str_octal(src: &str) -> Result<Wrapping<F>, ParseFixedError> {
-        F::wrapping_from_str_octal(src).map(Wrapping)
-    }
-
-    /// Parses a string slice containing hexadecimal digits to return a fixed-point number.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_from\_str\_hex][FixedI32::wrapping_from_str_hex]</code>
-    /// and
-    /// <code>FixedU32::[wrapping\_from\_str\_hex][FixedU32::wrapping_from_str_hex]</code>.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// #![feature(generic_const_exprs)]
-    /// # #![allow(incomplete_features)]
-    ///
-    /// use fixed::{types::I8F8, Wrapping};
-    /// let check = Wrapping(I8F8::from_bits(0xFFE));
-    /// assert_eq!(Wrapping::<I8F8>::from_str_hex("C0F.FE"), Ok(check));
-    /// ```
-    #[inline]
-    pub fn from_str_hex(src: &str) -> Result<Wrapping<F>, ParseFixedError> {
-        F::wrapping_from_str_hex(src).map(Wrapping)
-    }
-
     /// Returns the integer part.
     ///
     /// Note that since the numbers are stored in two’s complement,
@@ -995,19 +923,6 @@ impl<F: Fixed> Wrapping<F> {
         self.0.int_log2()
     }
 
-    /// Integer base-10 logarithm, rounded down.
-    ///
-    /// See also <code>FixedI32::[int\_log10][FixedI32::int_log10]</code> and
-    /// <code>FixedU32::[int\_log10][FixedU32::int_log10]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the fixed-point number is ≤&nbsp;0.
-    #[inline]
-    pub fn int_log10(self) -> i32 {
-        self.0.int_log10()
-    }
-
     /// Reverses the order of the bits of the fixed-point number.
     ///
     /// See also <code>FixedI32::[reverse\_bits][FixedI32::reverse_bits]</code>
@@ -1138,34 +1053,6 @@ impl<F: Fixed> Wrapping<F> {
         Wrapping(self.0.mean(other.0))
     }
 
-    /// Returns the reciprocal (inverse), 1/`self`.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_recip][FixedI32::wrapping_recip]</code> and
-    /// <code>FixedU32::[wrapping\_recip][FixedU32::wrapping_recip]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `self` is zero.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// #![feature(generic_const_exprs)]
-    /// # #![allow(incomplete_features)]
-    ///
-    /// use fixed::{types::I8F24, Wrapping};
-    /// let quarter = Wrapping(I8F24::from_num(0.25));
-    /// let frac_1_512 = Wrapping(I8F24::ONE / 512);
-    /// assert_eq!(quarter.recip(), Wrapping(I8F24::from_num(4)));
-    /// assert_eq!(frac_1_512.recip(), Wrapping(I8F24::ZERO));
-    /// ```
-    #[inline]
-    #[must_use]
-    pub fn recip(self) -> Wrapping<F> {
-        Wrapping(self.0.wrapping_recip())
-    }
-
     /// Multiply and add. Returns `self` × `mul` + `add`.
     ///
     /// See also
@@ -1220,6 +1107,148 @@ impl<F: Fixed> Wrapping<F> {
         self.0.wrapping_mul_acc(a.0, b.0);
     }
 
+    /// Remainder for Euclidean division.
+    ///
+    /// See also <code>FixedI32::[rem\_euclid][FixedI32::rem_euclid]</code> and
+    /// <code>FixedU32::[rem\_euclid][FixedU32::rem_euclid]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I16F16, Wrapping};
+    /// let num = Wrapping(I16F16::from_num(7.5));
+    /// let den = Wrapping(I16F16::from_num(2));
+    /// assert_eq!(num.rem_euclid(den), Wrapping(I16F16::from_num(1.5)));
+    /// assert_eq!((-num).rem_euclid(den), Wrapping(I16F16::from_num(0.5)));
+    /// ```
+    #[inline]
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    pub fn rem_euclid(self, divisor: Wrapping<F>) -> Wrapping<F> {
+        Wrapping(self.0.rem_euclid(divisor.0))
+    }
+}
+
+impl<F: FixedStrict> Wrapping<F> {
+    /// Parses a string slice containing binary digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_str\_binary][FixedI32::wrapping_from_str_binary]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_str\_binary][FixedU32::wrapping_from_str_binary]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F8, Wrapping};
+    /// let check = Wrapping(I8F8::from_bits(0b1110001 << (8 - 1)));
+    /// assert_eq!(Wrapping::<I8F8>::from_str_binary("101100111000.1"), Ok(check));
+    /// ```
+    #[inline]
+    pub fn from_str_binary(src: &str) -> Result<Wrapping<F>, ParseFixedError> {
+        F::wrapping_from_str_binary(src).map(Wrapping)
+    }
+
+    /// Parses a string slice containing octal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_str\_octal][FixedI32::wrapping_from_str_octal]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_str\_octal][FixedU32::wrapping_from_str_octal]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F8, Wrapping};
+    /// let check = Wrapping(I8F8::from_bits(0o1654 << (8 - 3)));
+    /// assert_eq!(Wrapping::<I8F8>::from_str_octal("7165.4"), Ok(check));
+    /// ```
+    #[inline]
+    pub fn from_str_octal(src: &str) -> Result<Wrapping<F>, ParseFixedError> {
+        F::wrapping_from_str_octal(src).map(Wrapping)
+    }
+
+    /// Parses a string slice containing hexadecimal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_str\_hex][FixedI32::wrapping_from_str_hex]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_str\_hex][FixedU32::wrapping_from_str_hex]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F8, Wrapping};
+    /// let check = Wrapping(I8F8::from_bits(0xFFE));
+    /// assert_eq!(Wrapping::<I8F8>::from_str_hex("C0F.FE"), Ok(check));
+    /// ```
+    #[inline]
+    pub fn from_str_hex(src: &str) -> Result<Wrapping<F>, ParseFixedError> {
+        F::wrapping_from_str_hex(src).map(Wrapping)
+    }
+
+    /// Integer base-10 logarithm, rounded down.
+    ///
+    /// See also <code>FixedI32::[int\_log10][FixedI32::int_log10]</code> and
+    /// <code>FixedU32::[int\_log10][FixedU32::int_log10]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the fixed-point number is ≤&nbsp;0.
+    #[inline]
+    pub fn int_log10(self) -> i32 {
+        self.0.int_log10()
+    }
+
+    /// Returns the reciprocal (inverse), 1/`self`.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_recip][FixedI32::wrapping_recip]</code> and
+    /// <code>FixedU32::[wrapping\_recip][FixedU32::wrapping_recip]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `self` is zero.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F24, Wrapping};
+    /// let quarter = Wrapping(I8F24::from_num(0.25));
+    /// let frac_1_512 = Wrapping(I8F24::ONE / 512);
+    /// assert_eq!(quarter.recip(), Wrapping(I8F24::from_num(4)));
+    /// assert_eq!(frac_1_512.recip(), Wrapping(I8F24::ZERO));
+    /// ```
+    #[inline]
+    #[must_use]
+    pub fn recip(self) -> Wrapping<F> {
+        Wrapping(self.0.wrapping_recip())
+    }
+
     /// Euclidean division.
     ///
     /// See also
@@ -1249,33 +1278,6 @@ impl<F: Fixed> Wrapping<F> {
     #[must_use = "this returns the result of the operation, without modifying the original"]
     pub fn div_euclid(self, divisor: Wrapping<F>) -> Wrapping<F> {
         Wrapping(self.0.wrapping_div_euclid(divisor.0))
-    }
-
-    /// Remainder for Euclidean division.
-    ///
-    /// See also <code>FixedI32::[rem\_euclid][FixedI32::rem_euclid]</code> and
-    /// <code>FixedU32::[rem\_euclid][FixedU32::rem_euclid]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// #![feature(generic_const_exprs)]
-    /// # #![allow(incomplete_features)]
-    ///
-    /// use fixed::{types::I16F16, Wrapping};
-    /// let num = Wrapping(I16F16::from_num(7.5));
-    /// let den = Wrapping(I16F16::from_num(2));
-    /// assert_eq!(num.rem_euclid(den), Wrapping(I16F16::from_num(1.5)));
-    /// assert_eq!((-num).rem_euclid(den), Wrapping(I16F16::from_num(0.5)));
-    /// ```
-    #[inline]
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    pub fn rem_euclid(self, divisor: Wrapping<F>) -> Wrapping<F> {
-        Wrapping(self.0.rem_euclid(divisor.0))
     }
 
     /// Euclidean division by an integer.
@@ -1627,14 +1629,14 @@ impl<F: FixedUnsigned> Wrapping<F> {
     }
 }
 
-impl<F: Fixed> Display for Wrapping<F> {
+impl<F: FixedStrict> Display for Wrapping<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Display::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> Debug for Wrapping<F> {
+impl<F: FixedStrict> Debug for Wrapping<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Debug::fmt(&self.0, f)
@@ -1649,7 +1651,7 @@ impl<F: Fixed> From<F> for Wrapping<F> {
     }
 }
 
-impl<F: Fixed> FromStr for Wrapping<F> {
+impl<F: FixedStrict> FromStr for Wrapping<F> {
     type Err = ParseFixedError;
     /// Parses a string slice containing decimal digits to return a fixed-point number.
     ///
@@ -1661,54 +1663,54 @@ impl<F: Fixed> FromStr for Wrapping<F> {
 }
 
 macro_rules! op {
-    ($wrapping:ident, $Op:ident $op:ident, $OpAssign:ident $op_assign:ident) => {
-        impl<F: Fixed> $Op<Wrapping<F>> for Wrapping<F> {
+    ($Trait:ident, $wrapping:ident, $Op:ident $op:ident, $OpAssign:ident $op_assign:ident) => {
+        impl<F: $Trait> $Op<Wrapping<F>> for Wrapping<F> {
             type Output = Wrapping<F>;
             #[inline]
             fn $op(self, other: Wrapping<F>) -> Wrapping<F> {
                 Wrapping((self.0).$wrapping(other.0))
             }
         }
-        impl<F: Fixed> $Op<Wrapping<F>> for &Wrapping<F> {
+        impl<F: $Trait> $Op<Wrapping<F>> for &Wrapping<F> {
             type Output = Wrapping<F>;
             #[inline]
             fn $op(self, other: Wrapping<F>) -> Wrapping<F> {
                 Wrapping((self.0).$wrapping(other.0))
             }
         }
-        impl<F: Fixed> $Op<&Wrapping<F>> for Wrapping<F> {
+        impl<F: $Trait> $Op<&Wrapping<F>> for Wrapping<F> {
             type Output = Wrapping<F>;
             #[inline]
             fn $op(self, other: &Wrapping<F>) -> Wrapping<F> {
                 Wrapping((self.0).$wrapping(other.0))
             }
         }
-        impl<F: Fixed> $Op<&Wrapping<F>> for &Wrapping<F> {
+        impl<F: $Trait> $Op<&Wrapping<F>> for &Wrapping<F> {
             type Output = Wrapping<F>;
             #[inline]
             fn $op(self, other: &Wrapping<F>) -> Wrapping<F> {
                 Wrapping((self.0).$wrapping(other.0))
             }
         }
-        impl<F: Fixed> $OpAssign<Wrapping<F>> for Wrapping<F> {
+        impl<F: $Trait> $OpAssign<Wrapping<F>> for Wrapping<F> {
             #[inline]
             fn $op_assign(&mut self, other: Wrapping<F>) {
                 self.0 = (self.0).$wrapping(other.0);
             }
         }
-        impl<F: Fixed> $OpAssign<&Wrapping<F>> for Wrapping<F> {
+        impl<F: $Trait> $OpAssign<&Wrapping<F>> for Wrapping<F> {
             #[inline]
             fn $op_assign(&mut self, other: &Wrapping<F>) {
                 self.0 = (self.0).$wrapping(other.0);
             }
         }
-        impl<F: Fixed> $OpAssign<F> for Wrapping<F> {
+        impl<F: $Trait> $OpAssign<F> for Wrapping<F> {
             #[inline]
             fn $op_assign(&mut self, other: F) {
                 self.0 = (self.0).$wrapping(other);
             }
         }
-        impl<F: Fixed> $OpAssign<&F> for Wrapping<F> {
+        impl<F: $Trait> $OpAssign<&F> for Wrapping<F> {
             #[inline]
             fn $op_assign(&mut self, other: &F) {
                 self.0 = (self.0).$wrapping(*other);
@@ -1885,11 +1887,11 @@ impl<F: Fixed> Neg for &Wrapping<F> {
         Wrapping((self.0).wrapping_neg())
     }
 }
-op! { wrapping_add, Add add, AddAssign add_assign }
-op! { wrapping_sub, Sub sub, SubAssign sub_assign }
-op! { wrapping_mul, Mul mul, MulAssign mul_assign }
-op! { wrapping_div, Div div, DivAssign div_assign }
-op! { rem, Rem rem, RemAssign rem_assign }
+op! { Fixed, wrapping_add, Add add, AddAssign add_assign }
+op! { Fixed, wrapping_sub, Sub sub, SubAssign sub_assign }
+op! { Fixed, wrapping_mul, Mul mul, MulAssign mul_assign }
+op! { FixedStrict, wrapping_div, Div div, DivAssign div_assign }
+op! { Fixed, rem, Rem rem, RemAssign rem_assign }
 
 impl<F> Not for Wrapping<F>
 where

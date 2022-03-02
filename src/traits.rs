@@ -559,19 +559,13 @@ pub trait Fixed
 where
     Self: Default + Hash + Ord,
     Self: Pod + TransparentWrapper<<Self as Fixed>::Bits>,
-    Self: Debug + Display + Binary + Octal + LowerHex + UpperHex,
-    Self: FromStr<Err = ParseFixedError>,
     Self: FromFixed + ToFixed,
     Self: Add<Output = Self> + AddAssign,
     Self: Sub<Output = Self> + SubAssign,
     Self: Mul<Output = Self> + MulAssign,
-    Self: Div<Output = Self> + DivAssign,
     Self: Rem<Output = Self> + RemAssign,
     Self: Mul<<Self as Fixed>::Bits, Output = Self> + MulAssign<<Self as Fixed>::Bits>,
     Self: Div<<Self as Fixed>::Bits, Output = Self> + DivAssign<<Self as Fixed>::Bits>,
-    Self: Rem<<Self as Fixed>::Bits, Output = Self> + RemAssign<<Self as Fixed>::Bits>,
-    Self: Rem<<Self as Fixed>::NonZeroBits, Output = Self>,
-    Self: RemAssign<<Self as Fixed>::NonZeroBits>,
     Self: Not<Output = Self>,
     Self: BitAnd<Output = Self> + BitAndAssign,
     Self: BitOr<Output = Self> + BitOrAssign,
@@ -586,7 +580,6 @@ where
     Self: PartialOrd<f16> + PartialOrd<bf16>,
     Self: PartialOrd<f32> + PartialOrd<f64>,
     Self: PartialOrd<F128Bits>,
-    Self: FixedOptionalFeatures,
     Self: Sealed,
 {
     /// The primitive integer underlying type.
@@ -1116,181 +1109,6 @@ where
     /// <code>FixedU32::[overflowing\_to\_num][FixedU32::overflowing_to_num]</code>.
     fn overflowing_to_num<Dst: FromFixed>(self) -> (Dst, bool);
 
-    /// Parses a string slice containing binary digits to return a fixed-point number.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[from\_str\_binary][FixedI32::from_str_binary]</code>
-    /// and
-    /// <code>FixedU32::[from\_str\_binary][FixedU32::from_str_binary]</code>.
-    fn from_str_binary(src: &str) -> Result<Self, ParseFixedError>;
-
-    /// Parses a string slice containing octal digits to return a fixed-point number.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[from\_str\_octal][FixedI32::from_str_octal]</code> and
-    /// <code>FixedU32::[from\_str\_octal][FixedU32::from_str_octal]</code>.
-    fn from_str_octal(src: &str) -> Result<Self, ParseFixedError>;
-
-    /// Parses a string slice containing hexadecimal digits to return a fixed-point number.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also <code>FixedI32::[from\_str\_hex][FixedI32::from_str_hex]</code>
-    /// and <code>FixedU32::[from\_str\_hex][FixedU32::from_str_hex]</code>.
-    fn from_str_hex(src: &str) -> Result<Self, ParseFixedError>;
-
-    /// Parses a string slice containing decimal digits to return a
-    /// fixed-point number, saturating on overflow.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[saturating\_from\_str][FixedI32::saturating_from_str]</code>
-    /// and
-    /// <code>FixedU32::[saturating\_from\_str][FixedU32::saturating_from_str]</code>.
-    fn saturating_from_str(src: &str) -> Result<Self, ParseFixedError>;
-
-    /// Parses a string slice containing binary digits to return a
-    /// fixed-point number, saturating on overflow.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[saturating\_from\_str\_binary][FixedI32::saturating_from_str_binary]</code>
-    /// and
-    /// <code>FixedU32::[saturating\_from\_str\_binary][FixedU32::saturating_from_str_binary]</code>.
-    fn saturating_from_str_binary(src: &str) -> Result<Self, ParseFixedError>;
-
-    /// Parses a string slice containing octal digits to return a
-    /// fixed-point number, saturating on overflow.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[saturating\_from\_str\_octal][FixedI32::saturating_from_str_octal]</code>
-    /// and
-    /// <code>FixedU32::[saturating\_from\_str\_octal][FixedU32::saturating_from_str_octal]</code>.
-    fn saturating_from_str_octal(src: &str) -> Result<Self, ParseFixedError>;
-
-    /// Parses a string slice containing hexadecimal digits to return a
-    /// fixed-point number, saturating on overflow.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[saturating\_from\_str\_hex][FixedI32::saturating_from_str_hex]</code>
-    /// and
-    /// <code>FixedU32::[saturating\_from\_str\_hex][FixedU32::saturating_from_str_hex]</code>.
-    fn saturating_from_str_hex(src: &str) -> Result<Self, ParseFixedError>;
-
-    /// Parses a string slice containing decimal digits to return a
-    /// fixed-point number, wrapping on overflow.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_from\_str][FixedI32::wrapping_from_str]</code>
-    /// and
-    /// <code>FixedU32::[wrapping\_from\_str][FixedU32::wrapping_from_str]</code>.
-    fn wrapping_from_str(src: &str) -> Result<Self, ParseFixedError>;
-
-    /// Parses a string slice containing binary digits to return a
-    /// fixed-point number, wrapping on overflow.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_from\_str\_binary][FixedI32::wrapping_from_str_binary]</code>
-    /// and
-    /// <code>FixedU32::[wrapping\_from\_str\_binary][FixedU32::wrapping_from_str_binary]</code>.
-    fn wrapping_from_str_binary(src: &str) -> Result<Self, ParseFixedError>;
-
-    /// Parses a string slice containing octal digits to return a
-    /// fixed-point number, wrapping on overflow.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_from\_str\_octal][FixedI32::wrapping_from_str_octal]</code>
-    /// and
-    /// <code>FixedU32::[wrapping\_from\_str\_octal][FixedU32::wrapping_from_str_octal]</code>.
-    fn wrapping_from_str_octal(src: &str) -> Result<Self, ParseFixedError>;
-
-    /// Parses a string slice containing hexadecimal digits to return a
-    /// fixed-point number, wrapping on overflow.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_from\_str\_hex][FixedI32::wrapping_from_str_hex]</code>
-    /// and
-    /// <code>FixedU32::[wrapping\_from\_str\_hex][FixedU32::wrapping_from_str_hex]</code>.
-    fn wrapping_from_str_hex(src: &str) -> Result<Self, ParseFixedError>;
-
-    /// Parses a string slice containing decimal digits to return a
-    /// fixed-point number.
-    ///
-    /// Returns a [tuple] of the fixed-point number and a [`bool`],
-    /// indicating whether an overflow has occurred. On overflow, the
-    /// wrapped value is returned.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[overflowing\_from\_str][FixedI32::overflowing_from_str]</code>
-    /// and
-    /// <code>FixedU32::[overflowing\_from\_str][FixedU32::overflowing_from_str]</code>.
-    fn overflowing_from_str(src: &str) -> Result<(Self, bool), ParseFixedError>;
-
-    /// Parses a string slice containing binary digits to return a
-    /// fixed-point number.
-    ///
-    /// Returns a [tuple] of the fixed-point number and a [`bool`],
-    /// indicating whether an overflow has occurred. On overflow, the
-    /// wrapped value is returned.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[overflowing\_from\_str\_binary][FixedI32::overflowing_from_str_binary]</code>
-    /// and
-    /// <code>FixedU32::[overflowing\_from\_str\_binary][FixedU32::overflowing_from_str_binary]</code>.
-    fn overflowing_from_str_binary(src: &str) -> Result<(Self, bool), ParseFixedError>;
-
-    /// Parses a string slice containing octal digits to return a
-    /// fixed-point number.
-    ///
-    /// Returns a [tuple] of the fixed-point number and a [`bool`],
-    /// indicating whether an overflow has occurred. On overflow, the
-    /// wrapped value is returned.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[overflowing\_from\_str\_octal][FixedI32::overflowing_from_str_octal]</code>
-    /// and
-    /// <code>FixedU32::[overflowing\_from\_str\_octal][FixedU32::overflowing_from_str_octal]</code>.
-    fn overflowing_from_str_octal(src: &str) -> Result<(Self, bool), ParseFixedError>;
-
-    /// Parses a string slice containing hexadecimal digits to return a
-    /// fixed-point number.
-    ///
-    /// Returns a [tuple] of the fixed-point number and a [`bool`],
-    /// indicating whether an overflow has occurred. On overflow, the
-    /// wrapped value is returned.
-    ///
-    /// Rounding is to the nearest, with ties rounded to even.
-    ///
-    /// See also
-    /// <code>FixedI32::[overflowing\_from\_str\_hex][FixedI32::overflowing_from_str_hex]</code>
-    /// and
-    /// <code>FixedU32::[overflowing\_from\_str\_hex][FixedU32::overflowing_from_str_hex]</code>.
-    fn overflowing_from_str_hex(src: &str) -> Result<(Self, bool), ParseFixedError>;
-
     /// Returns the integer part.
     ///
     /// See also <code>FixedI32::[int][FixedI32::int]</code> and
@@ -1608,16 +1426,6 @@ where
     /// Panics if the fixed-point number is ≤&nbsp;0.
     fn int_log2(self) -> i32;
 
-    /// Integer base-10 logarithm, rounded down.
-    ///
-    /// See also <code>FixedI32::[int\_log10][FixedI32::int_log10]</code> and
-    /// <code>FixedU32::[int\_log10][FixedU32::int_log10]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the fixed-point number is ≤&nbsp;0.
-    fn int_log10(self) -> i32;
-
     /// Checked integer base-2 logarithm, rounded down. Returns the
     /// logarithm or [`None`] if the fixed-point number is ≤&nbsp;0.
     ///
@@ -1626,15 +1434,6 @@ where
     /// and
     /// <code>FixedU32::[checked\_int\_log2][FixedU32::checked_int_log2]</code>.
     fn checked_int_log2(self) -> Option<i32>;
-
-    /// Checked integer base-10 logarithm, rounded down. Returns the
-    /// logarithm or [`None`] if the fixed-point number is ≤&nbsp;0.
-    ///
-    /// See also
-    /// <code>FixedI32::[checked\_int\_log10][FixedI32::checked_int_log10]</code>
-    /// and
-    /// <code>FixedU32::[checked\_int\_log10][FixedU32::checked_int_log10]</code>.
-    fn checked_int_log10(self) -> Option<i32>;
 
     /// Reverses the order of the bits of the fixed-point number.
     ///
@@ -1678,17 +1477,6 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn mean(self, other: Self) -> Self;
 
-    /// Returns the reciprocal.
-    ///
-    /// See also <code>FixedI32::[recip][FixedI32::recip]</code> and
-    /// <code>FixedU32::[recip][FixedU32::recip]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `self` is zero.
-    #[must_use]
-    fn recip(self) -> Self;
-
     /// Multiply and add. Returns `self` × `mul` + `add`.
     ///
     /// Note that the inherent [`mul_add`] method is more flexible
@@ -1715,17 +1503,6 @@ where
     /// <code>FixedU32::[mul\_acc][FixedU32::mul_acc]</code>.
     fn mul_acc(&mut self, a: Self, b: Self);
 
-    /// Euclidean division by an integer.
-    ///
-    /// See also <code>FixedI32::[div\_euclid][FixedI32::div_euclid]</code> and
-    /// <code>FixedU32::[div\_euclid][FixedU32::div_euclid]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero or if the division results in overflow.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn div_euclid(self, rhs: Self) -> Self;
-
     /// Remainder for Euclidean division.
     ///
     /// See also <code>FixedI32::[rem\_euclid][FixedI32::rem_euclid]</code> and
@@ -1736,44 +1513,6 @@ where
     /// Panics if the divisor is zero.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn rem_euclid(self, rhs: Self) -> Self;
-
-    /// Euclidean division by an integer.
-    ///
-    /// See also
-    /// <code>FixedI32::[div\_euclid\_int][FixedI32::div_euclid_int]</code> and
-    /// <code>FixedU32::[div\_euclid\_int][FixedU32::div_euclid_int]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero or if the division results in overflow.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn div_euclid_int(self, rhs: Self::Bits) -> Self;
-
-    /// Remainder for Euclidean division by an integer.
-    ///
-    /// See also
-    /// <code>FixedI32::[rem\_euclid\_int][FixedI32::rem_euclid_int]</code> and
-    /// <code>FixedU32::[rem\_euclid\_int][FixedU32::rem_euclid_int]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero or if the division results in overflow.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn rem_euclid_int(self, rhs: Self::Bits) -> Self;
-
-    /// Linear interpolation between `start` and `end`.
-    ///
-    /// See also <code>FixedI32::[lerp][FixedI32::lerp]</code> and
-    /// <code>FixedU32::[lerp][FixedU32::lerp]</code>.
-    #[must_use]
-    fn lerp(self, start: Self, end: Self) -> Self;
-
-    /// Inverse linear interpolation between `start` and `end`.
-    ///
-    /// See also <code>FixedI32::[inv\_lerp][FixedI32::inv_lerp]</code> and
-    /// <code>FixedU32::[inv\_lerp][FixedU32::inv_lerp]</code>.
-    #[must_use]
-    fn inv_lerp(self, start: Self, end: Self) -> Self;
 
     /// Checked negation. Returns the negated value, or [`None`] on overflow.
     ///
@@ -1802,14 +1541,6 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn checked_mul(self, rhs: Self) -> Option<Self>;
 
-    /// Checked division. Returns the quotient, or [`None`] if the
-    /// divisor is zero or on overflow.
-    ///
-    /// See also <code>FixedI32::[checked\_div][FixedI32::checked_div]</code>
-    /// and <code>FixedU32::[checked\_div][FixedU32::checked_div]</code>.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn checked_div(self, rhs: Self) -> Option<Self>;
-
     /// Checked remainder. Returns the remainder, or [`None`] if the
     /// divisor is zero.
     ///
@@ -1817,14 +1548,6 @@ where
     /// and <code>FixedU32::[checked\_rem][FixedU32::checked_rem]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn checked_rem(self, rhs: Self) -> Option<Self>;
-
-    /// Checked reciprocal. Returns the reciprocal, or [`None`] if
-    /// `self` is zero or on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[checked\_recip][FixedI32::checked_recip]</code> and
-    /// <code>FixedU32::[checked\_recip][FixedU32::checked_recip]</code>.
-    fn checked_recip(self) -> Option<Self>;
 
     /// Checked multiply and add. Returns `self` × `mul` + `add`, or [`None`] on overflow.
     ///
@@ -1844,17 +1567,6 @@ where
     /// <code>FixedU32::[checked\_mul\_acc][FixedU32::checked_mul_acc]</code>.
     #[must_use = "this `Option` may be a `None` variant indicating overflow, which should be handled"]
     fn checked_mul_acc(&mut self, a: Self, b: Self) -> Option<()>;
-
-    /// Checked remainder for Euclidean division. Returns the
-    /// remainder, or [`None`] if the divisor is zero or the division
-    /// results in overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[checked\_div\_euclid][FixedI32::checked_div_euclid]</code>
-    /// and
-    /// <code>FixedU32::[checked\_div\_euclid][FixedU32::checked_div_euclid]</code>.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn checked_div_euclid(self, rhs: Self) -> Option<Self>;
 
     /// Checked remainder for Euclidean division. Returns the
     /// remainder, or [`None`] if the divisor is zero.
@@ -1887,39 +1599,6 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn checked_div_int(self, rhs: Self::Bits) -> Option<Self>;
 
-    /// Checked fixed-point remainder for division by an integer.
-    /// Returns the remainder, or [`None`] if the divisor is zero or
-    /// if the division results in overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[checked\_rem\_int][FixedI32::checked_rem_int]</code>
-    /// and
-    /// <code>FixedU32::[checked\_rem\_int][FixedU32::checked_rem_int]</code>.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn checked_rem_int(self, rhs: Self::Bits) -> Option<Self>;
-
-    /// Checked Euclidean division by an integer. Returns the
-    /// quotient, or [`None`] if the divisor is zero or if the
-    /// division results in overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[checked\_div\_euclid\_int][FixedI32::checked_div_euclid_int]</code>
-    /// and
-    /// <code>FixedU32::[checked\_div\_euclid\_int][FixedU32::checked_div_euclid_int]</code>.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn checked_div_euclid_int(self, rhs: Self::Bits) -> Option<Self>;
-
-    /// Checked remainder for Euclidean division by an integer.
-    /// Returns the remainder, or [`None`] if the divisor is zero or
-    /// if the remainder results in overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[checked\_rem\_euclid\_int][FixedI32::checked_rem_euclid_int]</code>
-    /// and
-    /// <code>FixedU32::[checked\_rem\_euclid\_int][FixedU32::checked_rem_euclid_int]</code>.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn checked_rem_euclid_int(self, rhs: Self::Bits) -> Option<Self>;
-
     /// Checked shift left. Returns the shifted number, or [`None`] if
     /// `rhs`&nbsp;≥ the number of bits.
     ///
@@ -1943,22 +1622,6 @@ where
     /// and <code>FixedU32::[checked\_dist][FixedU32::checked_dist]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn checked_dist(self, other: Self) -> Option<Self>;
-
-    /// Checked linear interpolation between `start` and `end`. Returns [`None`]
-    /// on overflow.
-    ///
-    /// See also <code>FixedI32::[checked\_lerp][FixedI32::checked_lerp]</code>
-    /// and <code>FixedU32::[checked\_lerp][FixedU32::checked_lerp]</code>.
-    fn checked_lerp(self, start: Self, end: Self) -> Option<Self>;
-
-    /// Checked inverse linear interpolation between `start` and `end`. Returns
-    /// [`None`] when `start`&nbsp;=&nbsp;`end` or on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[checked\_inv\_lerp][FixedI32::checked_inv_lerp]</code>
-    /// and
-    /// <code>FixedU32::[checked\_inv\_lerp][FixedU32::checked_inv_lerp]</code>.
-    fn checked_inv_lerp(self, start: Self, end: Self) -> Option<Self>;
 
     /// Saturated negation. Returns the negated value, saturating on overflow.
     ///
@@ -1992,31 +1655,6 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn saturating_mul(self, rhs: Self) -> Self;
 
-    /// Saturating division. Returns the quotient, saturating on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[saturating\_div][FixedI32::saturating_div]</code> and
-    /// <code>FixedU32::[saturating\_div][FixedU32::saturating_div]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn saturating_div(self, rhs: Self) -> Self;
-
-    /// Saturating reciprocal.
-    ///
-    /// See also
-    /// <code>FixedI32::[saturating\_recip][FixedI32::saturating_recip]</code>
-    /// and
-    /// <code>FixedU32::[saturating\_recip][FixedU32::saturating_recip]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `self` is zero.
-    #[must_use]
-    fn saturating_recip(self) -> Self;
-
     /// Saturating multiply and add. Returns `self` × `mul` + `add`, saturating on overflow.
     ///
     /// See also
@@ -2034,19 +1672,6 @@ where
     /// <code>FixedU32::[saturating\_mul\_acc][FixedU32::saturating_mul_acc]</code>.
     fn saturating_mul_acc(&mut self, a: Self, b: Self);
 
-    /// Saturating Euclidean division. Returns the quotient, saturating on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[saturating\_div\_euclid][FixedI32::saturating_div_euclid]</code>
-    /// and
-    /// <code>FixedU32::[saturating\_div\_euclid][FixedU32::saturating_div_euclid]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn saturating_div_euclid(self, rhs: Self) -> Self;
-
     /// Saturating multiplication by an integer. Returns the product, saturating on overflow.
     ///
     /// See also
@@ -2056,34 +1681,6 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn saturating_mul_int(self, rhs: Self::Bits) -> Self;
 
-    /// Saturating Euclidean division by an integer. Returns the
-    /// quotient, saturating on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[saturating\_div\_euclid\_int][FixedI32::saturating_div_euclid_int]</code>
-    /// and
-    /// <code>FixedU32::[saturating\_div\_euclid\_int][FixedU32::saturating_div_euclid_int]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn saturating_div_euclid_int(self, rhs: Self::Bits) -> Self;
-
-    /// Saturating remainder for Euclidean division by an integer.
-    /// Returns the remainder, saturating on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[saturating\_rem\_euclid\_int][FixedI32::saturating_rem_euclid_int]</code>
-    /// and
-    /// <code>FixedU32::[saturating\_rem\_euclid\_int][FixedU32::saturating_rem_euclid_int]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn saturating_rem_euclid_int(self, rhs: Self::Bits) -> Self;
-
     /// Saturating distance. Returns the distance from `self` to `other`,
     /// saturating on overflow.
     ///
@@ -2092,23 +1689,6 @@ where
     /// <code>FixedU32::[saturating\_dist][FixedU32::saturating_dist]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn saturating_dist(self, other: Self) -> Self;
-
-    /// Linear interpolation between `start` and `end`, saturating on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[saturating\_lerp][FixedI32::saturating_lerp]</code> and
-    /// <code>FixedU32::[saturating\_lerp][FixedU32::saturating_lerp]</code>.
-    #[must_use]
-    fn saturating_lerp(self, start: Self, end: Self) -> Self;
-
-    /// Inverse linear interpolation between `start` and `end`, saturating on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[saturating\_inv\_lerp][FixedI32::saturating_inv_lerp]</code>
-    /// and
-    /// <code>FixedU32::[saturating\_inv\_lerp][FixedU32::saturating_inv_lerp]</code>.
-    #[must_use]
-    fn saturating_inv_lerp(self, start: Self, end: Self) -> Self;
 
     /// Wrapping negation. Returns the negated value, wrapping on overflow.
     ///
@@ -2138,29 +1718,6 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn wrapping_mul(self, rhs: Self) -> Self;
 
-    /// Wrapping division. Returns the quotient, wrapping on overflow.
-    ///
-    /// See also <code>FixedI32::[wrapping\_div][FixedI32::wrapping_div]</code>
-    /// and <code>FixedU32::[wrapping\_div][FixedU32::wrapping_div]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn wrapping_div(self, rhs: Self) -> Self;
-
-    /// Wrapping reciprocal.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_recip][FixedI32::wrapping_recip]</code> and
-    /// <code>FixedU32::[wrapping\_recip][FixedU32::wrapping_recip]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `self` is zero.
-    #[must_use]
-    fn wrapping_recip(self) -> Self;
-
     /// Wrapping multiply and add. Returns `self` × `mul` + `add`, wrapping on overflow.
     ///
     /// See also
@@ -2177,19 +1734,6 @@ where
     /// and
     /// <code>FixedU32::[wrapping\_mul\_acc][FixedU32::wrapping_mul_acc]</code>.
     fn wrapping_mul_acc(&mut self, a: Self, b: Self);
-
-    /// Wrapping Euclidean division. Returns the quotient, wrapping on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_div\_euclid][FixedI32::wrapping_div_euclid]</code>
-    /// and
-    /// <code>FixedU32::[wrapping\_div\_euclid][FixedU32::wrapping_div_euclid]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn wrapping_div_euclid(self, rhs: Self) -> Self;
 
     /// Wrapping multiplication by an integer. Returns the product, wrapping on overflow.
     ///
@@ -2215,36 +1759,6 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn wrapping_div_int(self, rhs: Self::Bits) -> Self;
 
-    /// Wrapping Euclidean division by an integer. Returns the
-    /// quotient, wrapping on overflow.
-    ///
-    /// Overflow can only occur when dividing the minimum value by &minus;1.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_div\_euclid\_int][FixedI32::wrapping_div_euclid_int]</code>
-    /// and
-    /// <code>FixedU32::[wrapping\_div\_euclid\_int][FixedU32::wrapping_div_euclid_int]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn wrapping_div_euclid_int(self, rhs: Self::Bits) -> Self;
-
-    /// Wrapping remainder for Euclidean division by an integer.
-    /// Returns the remainder, wrapping on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_rem\_euclid\_int][FixedI32::wrapping_rem_euclid_int]</code>
-    /// and
-    /// <code>FixedU32::[wrapping\_rem\_euclid\_int][FixedU32::wrapping_rem_euclid_int]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn wrapping_rem_euclid_int(self, rhs: Self::Bits) -> Self;
-
     /// Wrapping shift left. Wraps `rhs` if `rhs`&nbsp;≥ the number of
     /// bits, then shifts and returns the number.
     ///
@@ -2269,24 +1783,6 @@ where
     /// <code>FixedU32::[wrapping\_dist][FixedU32::wrapping_dist]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn wrapping_dist(self, other: Self) -> Self;
-
-    /// Linear interpolation between `start` and `end`, wrapping on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_lerp][FixedI32::wrapping_lerp]</code> and
-    /// <code>FixedU32::[wrapping\_lerp][FixedU32::wrapping_lerp]</code>.
-    #[must_use]
-    fn wrapping_lerp(self, start: Self, end: Self) -> Self;
-
-    /// Inverse linear interpolation between `start` and `end`, wrapping on
-    /// overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[wrapping\_inv\_lerp][FixedI32::wrapping_inv_lerp]</code>
-    /// and
-    /// <code>FixedU32::[wrapping\_inv\_lerp][FixedU32::wrapping_inv_lerp]</code>.
-    #[must_use]
-    fn wrapping_inv_lerp(self, start: Self, end: Self) -> Self;
 
     /// Unwrapped negation. Returns the negated value, panicking on overflow.
     ///
@@ -2340,19 +1836,6 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn unwrapped_mul(self, rhs: Self) -> Self;
 
-    /// Unwrapped division. Returns the quotient, panicking on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[unwrapped\_div][FixedI32::unwrapped_div]</code> and
-    /// <code>FixedU32::[unwrapped\_div][FixedU32::unwrapped_div]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero or if the result does not fit.
-    #[track_caller]
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn unwrapped_div(self, rhs: Self) -> Self;
-
     /// Unwrapped remainder. Returns the quotient, panicking if the divisor is zero.
     ///
     /// See also
@@ -2365,19 +1848,6 @@ where
     #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn unwrapped_rem(self, rhs: Self) -> Self;
-
-    /// Unwrapped reciprocal. Returns reciprocal, panicking on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[unwrapped\_recip][FixedI32::unwrapped_recip]</code> and
-    /// <code>FixedU32::[unwrapped\_recip][FixedU32::unwrapped_recip]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `self` is zero or on overflow.
-    #[track_caller]
-    #[must_use]
-    fn unwrapped_recip(self) -> Self;
 
     /// Unwrapped multiply and add. Returns `self` × `mul` + `add`, panicking on overflow.
     ///
@@ -2405,20 +1875,6 @@ where
     /// Panics if the result does not fit.
     #[track_caller]
     fn unwrapped_mul_acc(&mut self, a: Self, b: Self);
-
-    /// Unwrapped Euclidean division. Returns the quotient, panicking on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[unwrapped\_div\_euclid][FixedI32::unwrapped_div_euclid]</code>
-    /// and
-    /// <code>FixedU32::[unwrapped\_div\_euclid][FixedU32::unwrapped_div_euclid]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero or if the result does not fit.
-    #[track_caller]
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn unwrapped_div_euclid(self, rhs: Self) -> Self;
 
     /// Unwrapped remainder for Euclidean division. Returns the
     /// remainder, panicking if the divisor is zero.
@@ -2465,53 +1921,6 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn unwrapped_div_int(self, rhs: Self::Bits) -> Self;
 
-    /// Unwrapped remainder for division by an integer. Returns the
-    /// remainder, panicking if the divisor is zero.
-    ///
-    /// See also
-    /// <code>FixedI32::[unwrapped\_rem\_int][FixedI32::unwrapped_rem_int]</code>
-    /// and
-    /// <code>FixedU32::[unwrapped\_rem\_int][FixedU32::unwrapped_rem_int]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    #[track_caller]
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn unwrapped_rem_int(self, rhs: Self::Bits) -> Self;
-
-    /// Unwrapped Euclidean division by an integer. Returns the
-    /// quotient, panicking on overflow.
-    ///
-    /// Overflow can only occur when dividing the minimum value by &minus;1.
-    ///
-    /// See also
-    /// <code>FixedI32::[unwrapped\_div\_euclid\_int][FixedI32::unwrapped_div_euclid_int]</code>
-    /// and
-    /// <code>FixedU32::[unwrapped\_div\_euclid\_int][FixedU32::unwrapped_div_euclid_int]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero or if the result does not fit.
-    #[track_caller]
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn unwrapped_div_euclid_int(self, rhs: Self::Bits) -> Self;
-
-    /// Unwrapped remainder for Euclidean division by an integer.
-    /// Returns the remainder, panicking on overflow.
-    ///
-    /// See also
-    /// <code>FixedI32::[unwrapped\_rem\_euclid\_int][FixedI32::unwrapped_rem_euclid_int]</code>
-    /// and
-    /// <code>FixedU32::[unwrapped\_rem\_euclid\_int][FixedU32::unwrapped_rem_euclid_int]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero or if the result does not fit.
-    #[track_caller]
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn unwrapped_rem_euclid_int(self, rhs: Self::Bits) -> Self;
-
     /// Unwrapped shift left. Panics if `rhs`&nbsp;≥ the number of bits.
     ///
     /// See also
@@ -2550,31 +1959,6 @@ where
     /// <code>FixedU32::[unwrapped\_dist][FixedU32::unwrapped_dist]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn unwrapped_dist(self, other: Self) -> Self;
-
-    /// Linear interpolation between `start` and `end`, panicking on overflow.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the result does not fit.
-    ///
-    /// See also
-    /// <code>FixedI32::[unwrapped\_lerp][FixedI32::unwrapped_lerp]</code> and
-    /// <code>FixedU32::[unwrapped\_lerp][FixedU32::unwrapped_lerp]</code>.
-    #[must_use]
-    fn unwrapped_lerp(self, start: Self, end: Self) -> Self;
-
-    /// Inverse linear interpolation between `start` and `end`, panicking on overflow.
-    ///
-    /// # Panics
-    ///
-    /// Panics when `start`&nbsp;=&nbsp;`end` or when the results overflows.
-    ///
-    /// See also
-    /// <code>FixedI32::[unwrapped\_inv\_lerp][FixedI32::unwrapped_inv_lerp]</code>
-    /// and
-    /// <code>FixedU32::[unwrapped\_inv\_lerp][FixedU32::unwrapped_inv_lerp]</code>.
-    #[must_use]
-    fn unwrapped_inv_lerp(self, start: Self, end: Self) -> Self;
 
     /// Overflowing negation.
     ///
@@ -2623,38 +2007,6 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn overflowing_mul(self, rhs: Self) -> (Self, bool);
 
-    /// Overflowing division.
-    ///
-    /// Returns a [tuple] of the quotient and a [`bool`], indicating
-    /// whether an overflow has occurred. On overflow, the wrapped
-    /// value is returned.
-    ///
-    /// See also
-    /// <code>FixedI32::[overflowing\_div][FixedI32::overflowing_div]</code> and
-    /// <code>FixedU32::[overflowing\_div][FixedU32::overflowing_div]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn overflowing_div(self, rhs: Self) -> (Self, bool);
-
-    /// Overflowing reciprocal.
-    ///
-    /// Returns a [tuple] of the reciprocal of `self` and a [`bool`],
-    /// indicating whether an overflow has occurred. On overflow, the
-    /// wrapped value is returned.
-    ///
-    /// See also
-    /// <code>FixedI32::[overflowing\_recip][FixedI32::overflowing_recip]</code>
-    /// and
-    /// <code>FixedU32::[overflowing\_recip][FixedU32::overflowing_recip]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `self` is zero.
-    fn overflowing_recip(self) -> (Self, bool);
-
     /// Overflowing multiply  and add.
     ///
     /// Returns a [tuple] of `self` × `mul` + `add` and a [`bool`],
@@ -2677,23 +2029,6 @@ where
     /// <code>FixedU32::[overflowing\_mul\_acc][FixedU32::overflowing_mul_acc]</code>.
     #[must_use = "this returns whether overflow occurs; use `wrapping_mul_acc` if the flag is not needed"]
     fn overflowing_mul_acc(&mut self, a: Self, b: Self) -> bool;
-
-    /// Overflowing Euclidean division.
-    ///
-    /// Returns a [tuple] of the quotient and a [`bool`], indicating
-    /// whether an overflow has occurred. On overflow, the wrapped
-    /// value is returned.
-    ///
-    /// See also
-    /// <code>FixedI32::[overflowing\_div\_euclid][FixedI32::overflowing_div_euclid]</code>
-    /// and
-    /// <code>FixedU32::[overflowing\_div\_euclid][FixedU32::overflowing_div_euclid]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn overflowing_div_euclid(self, rhs: Self) -> (Self, bool);
 
     /// Overflowing multiplication by an integer.
     ///
@@ -2724,40 +2059,6 @@ where
     /// Panics if the divisor is zero.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn overflowing_div_int(self, rhs: Self::Bits) -> (Self, bool);
-
-    /// Overflowing Euclidean division by an integer.
-    ///
-    /// Returns a [tuple] of the quotient and a [`bool`], indicating
-    /// whether an overflow has occurred. On overflow, the wrapped
-    /// value is returned.
-    ///
-    /// See also
-    /// <code>FixedI32::[overflowing\_div\_euclid\_int][FixedI32::overflowing_div_euclid_int]</code>
-    /// and
-    /// <code>FixedU32::[overflowing\_div\_euclid\_int][FixedU32::overflowing_div_euclid_int]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn overflowing_div_euclid_int(self, rhs: Self::Bits) -> (Self, bool);
-
-    /// Overflowing remainder for Euclidean division by an integer.
-    ///
-    /// Returns a [tuple] of the remainder and a [`bool`], indicating
-    /// whether an overflow has occurred. On overflow, the wrapped
-    /// value is returned.
-    ///
-    /// See also
-    /// <code>FixedI32::[overflowing\_rem\_euclid\_int][FixedI32::overflowing_rem_euclid_int]</code>
-    /// and
-    /// <code>FixedU32::[overflowing\_rem\_euclid\_int][FixedU32::overflowing_rem_euclid_int]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the divisor is zero.
-    #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn overflowing_rem_euclid_int(self, rhs: Self::Bits) -> (Self, bool);
 
     /// Overflowing shift left.
     ///
@@ -2795,6 +2096,716 @@ where
     /// <code>FixedU32::[overflowing\_dist][FixedU32::overflowing_dist]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn overflowing_dist(self, other: Self) -> (Self, bool);
+}
+
+/// This trait provides methods common to fixed-point numbers where the number
+/// of fractional bits is from zero to the total number of bits.
+///
+/// This trait is sealed and cannot be implemented for more types; it
+/// is implemented for [`FixedI8`], [`FixedI16`], [`FixedI32`],
+/// [`FixedI64`], [`FixedI128`], [`FixedU8`], [`FixedU16`],
+/// [`FixedU32`], [`FixedU64`], and [`FixedU128`].
+pub trait FixedStrict: Fixed
+where
+    Self: Debug + Display + Binary + Octal + LowerHex + UpperHex,
+    Self: FromStr<Err = ParseFixedError>,
+    Self: Div<Output = Self> + DivAssign,
+    Self: Rem<<Self as Fixed>::Bits, Output = Self> + RemAssign<<Self as Fixed>::Bits>,
+    Self: Rem<<Self as Fixed>::NonZeroBits, Output = Self>,
+    Self: RemAssign<<Self as Fixed>::NonZeroBits>,
+    Self: FixedOptionalFeatures,
+{
+    /// Parses a string slice containing binary digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[from\_str\_binary][FixedI32::from_str_binary]</code>
+    /// and
+    /// <code>FixedU32::[from\_str\_binary][FixedU32::from_str_binary]</code>.
+    fn from_str_binary(src: &str) -> Result<Self, ParseFixedError>;
+
+    /// Parses a string slice containing octal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[from\_str\_octal][FixedI32::from_str_octal]</code> and
+    /// <code>FixedU32::[from\_str\_octal][FixedU32::from_str_octal]</code>.
+    fn from_str_octal(src: &str) -> Result<Self, ParseFixedError>;
+
+    /// Parses a string slice containing hexadecimal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also <code>FixedI32::[from\_str\_hex][FixedI32::from_str_hex]</code>
+    /// and <code>FixedU32::[from\_str\_hex][FixedU32::from_str_hex]</code>.
+    fn from_str_hex(src: &str) -> Result<Self, ParseFixedError>;
+
+    /// Parses a string slice containing decimal digits to return a
+    /// fixed-point number, saturating on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_from\_str][FixedI32::saturating_from_str]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_from\_str][FixedU32::saturating_from_str]</code>.
+    fn saturating_from_str(src: &str) -> Result<Self, ParseFixedError>;
+
+    /// Parses a string slice containing binary digits to return a
+    /// fixed-point number, saturating on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_from\_str\_binary][FixedI32::saturating_from_str_binary]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_from\_str\_binary][FixedU32::saturating_from_str_binary]</code>.
+    fn saturating_from_str_binary(src: &str) -> Result<Self, ParseFixedError>;
+
+    /// Parses a string slice containing octal digits to return a
+    /// fixed-point number, saturating on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_from\_str\_octal][FixedI32::saturating_from_str_octal]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_from\_str\_octal][FixedU32::saturating_from_str_octal]</code>.
+    fn saturating_from_str_octal(src: &str) -> Result<Self, ParseFixedError>;
+
+    /// Parses a string slice containing hexadecimal digits to return a
+    /// fixed-point number, saturating on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_from\_str\_hex][FixedI32::saturating_from_str_hex]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_from\_str\_hex][FixedU32::saturating_from_str_hex]</code>.
+    fn saturating_from_str_hex(src: &str) -> Result<Self, ParseFixedError>;
+
+    /// Parses a string slice containing decimal digits to return a
+    /// fixed-point number, wrapping on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_str][FixedI32::wrapping_from_str]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_str][FixedU32::wrapping_from_str]</code>.
+    fn wrapping_from_str(src: &str) -> Result<Self, ParseFixedError>;
+
+    /// Parses a string slice containing binary digits to return a
+    /// fixed-point number, wrapping on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_str\_binary][FixedI32::wrapping_from_str_binary]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_str\_binary][FixedU32::wrapping_from_str_binary]</code>.
+    fn wrapping_from_str_binary(src: &str) -> Result<Self, ParseFixedError>;
+
+    /// Parses a string slice containing octal digits to return a
+    /// fixed-point number, wrapping on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_str\_octal][FixedI32::wrapping_from_str_octal]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_str\_octal][FixedU32::wrapping_from_str_octal]</code>.
+    fn wrapping_from_str_octal(src: &str) -> Result<Self, ParseFixedError>;
+
+    /// Parses a string slice containing hexadecimal digits to return a
+    /// fixed-point number, wrapping on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_str\_hex][FixedI32::wrapping_from_str_hex]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_str\_hex][FixedU32::wrapping_from_str_hex]</code>.
+    fn wrapping_from_str_hex(src: &str) -> Result<Self, ParseFixedError>;
+
+    /// Parses a string slice containing decimal digits to return a
+    /// fixed-point number.
+    ///
+    /// Returns a [tuple] of the fixed-point number and a [`bool`],
+    /// indicating whether an overflow has occurred. On overflow, the
+    /// wrapped value is returned.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_from\_str][FixedI32::overflowing_from_str]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_from\_str][FixedU32::overflowing_from_str]</code>.
+    fn overflowing_from_str(src: &str) -> Result<(Self, bool), ParseFixedError>;
+
+    /// Parses a string slice containing binary digits to return a
+    /// fixed-point number.
+    ///
+    /// Returns a [tuple] of the fixed-point number and a [`bool`],
+    /// indicating whether an overflow has occurred. On overflow, the
+    /// wrapped value is returned.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_from\_str\_binary][FixedI32::overflowing_from_str_binary]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_from\_str\_binary][FixedU32::overflowing_from_str_binary]</code>.
+    fn overflowing_from_str_binary(src: &str) -> Result<(Self, bool), ParseFixedError>;
+
+    /// Parses a string slice containing octal digits to return a
+    /// fixed-point number.
+    ///
+    /// Returns a [tuple] of the fixed-point number and a [`bool`],
+    /// indicating whether an overflow has occurred. On overflow, the
+    /// wrapped value is returned.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_from\_str\_octal][FixedI32::overflowing_from_str_octal]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_from\_str\_octal][FixedU32::overflowing_from_str_octal]</code>.
+    fn overflowing_from_str_octal(src: &str) -> Result<(Self, bool), ParseFixedError>;
+
+    /// Parses a string slice containing hexadecimal digits to return a
+    /// fixed-point number.
+    ///
+    /// Returns a [tuple] of the fixed-point number and a [`bool`],
+    /// indicating whether an overflow has occurred. On overflow, the
+    /// wrapped value is returned.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_from\_str\_hex][FixedI32::overflowing_from_str_hex]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_from\_str\_hex][FixedU32::overflowing_from_str_hex]</code>.
+    fn overflowing_from_str_hex(src: &str) -> Result<(Self, bool), ParseFixedError>;
+
+    /// Integer base-10 logarithm, rounded down.
+    ///
+    /// See also <code>FixedI32::[int\_log10][FixedI32::int_log10]</code> and
+    /// <code>FixedU32::[int\_log10][FixedU32::int_log10]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the fixed-point number is ≤&nbsp;0.
+    fn int_log10(self) -> i32;
+
+    /// Checked integer base-10 logarithm, rounded down. Returns the
+    /// logarithm or [`None`] if the fixed-point number is ≤&nbsp;0.
+    ///
+    /// See also
+    /// <code>FixedI32::[checked\_int\_log10][FixedI32::checked_int_log10]</code>
+    /// and
+    /// <code>FixedU32::[checked\_int\_log10][FixedU32::checked_int_log10]</code>.
+    fn checked_int_log10(self) -> Option<i32>;
+
+    /// Returns the reciprocal.
+    ///
+    /// See also <code>FixedI32::[recip][FixedI32::recip]</code> and
+    /// <code>FixedU32::[recip][FixedU32::recip]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `self` is zero.
+    #[must_use]
+    fn recip(self) -> Self;
+
+    /// Euclidean division by an integer.
+    ///
+    /// See also <code>FixedI32::[div\_euclid][FixedI32::div_euclid]</code> and
+    /// <code>FixedU32::[div\_euclid][FixedU32::div_euclid]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero or if the division results in overflow.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn div_euclid(self, rhs: Self) -> Self;
+
+    /// Euclidean division by an integer.
+    ///
+    /// See also
+    /// <code>FixedI32::[div\_euclid\_int][FixedI32::div_euclid_int]</code> and
+    /// <code>FixedU32::[div\_euclid\_int][FixedU32::div_euclid_int]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero or if the division results in overflow.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn div_euclid_int(self, rhs: Self::Bits) -> Self;
+
+    /// Remainder for Euclidean division by an integer.
+    ///
+    /// See also
+    /// <code>FixedI32::[rem\_euclid\_int][FixedI32::rem_euclid_int]</code> and
+    /// <code>FixedU32::[rem\_euclid\_int][FixedU32::rem_euclid_int]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero or if the division results in overflow.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn rem_euclid_int(self, rhs: Self::Bits) -> Self;
+
+    /// Linear interpolation between `start` and `end`.
+    ///
+    /// See also <code>FixedI32::[lerp][FixedI32::lerp]</code> and
+    /// <code>FixedU32::[lerp][FixedU32::lerp]</code>.
+    #[must_use]
+    fn lerp(self, start: Self, end: Self) -> Self;
+
+    /// Overflowing division.
+    ///
+    /// Returns a [tuple] of the quotient and a [`bool`], indicating
+    /// whether an overflow has occurred. On overflow, the wrapped
+    /// value is returned.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_div][FixedI32::overflowing_div]</code> and
+    /// <code>FixedU32::[overflowing\_div][FixedU32::overflowing_div]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn overflowing_div(self, rhs: Self) -> (Self, bool);
+
+    /// Overflowing reciprocal.
+    ///
+    /// Returns a [tuple] of the reciprocal of `self` and a [`bool`],
+    /// indicating whether an overflow has occurred. On overflow, the
+    /// wrapped value is returned.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_recip][FixedI32::overflowing_recip]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_recip][FixedU32::overflowing_recip]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `self` is zero.
+    fn overflowing_recip(self) -> (Self, bool);
+
+    /// Overflowing Euclidean division.
+    ///
+    /// Returns a [tuple] of the quotient and a [`bool`], indicating
+    /// whether an overflow has occurred. On overflow, the wrapped
+    /// value is returned.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_div\_euclid][FixedI32::overflowing_div_euclid]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_div\_euclid][FixedU32::overflowing_div_euclid]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn overflowing_div_euclid(self, rhs: Self) -> (Self, bool);
+
+    /// Inverse linear interpolation between `start` and `end`.
+    ///
+    /// See also <code>FixedI32::[inv\_lerp][FixedI32::inv_lerp]</code> and
+    /// <code>FixedU32::[inv\_lerp][FixedU32::inv_lerp]</code>.
+    #[must_use]
+    fn inv_lerp(self, start: Self, end: Self) -> Self;
+
+    /// Checked division. Returns the quotient, or [`None`] if the
+    /// divisor is zero or on overflow.
+    ///
+    /// See also <code>FixedI32::[checked\_div][FixedI32::checked_div]</code>
+    /// and <code>FixedU32::[checked\_div][FixedU32::checked_div]</code>.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn checked_div(self, rhs: Self) -> Option<Self>;
+
+    /// Checked reciprocal. Returns the reciprocal, or [`None`] if
+    /// `self` is zero or on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[checked\_recip][FixedI32::checked_recip]</code> and
+    /// <code>FixedU32::[checked\_recip][FixedU32::checked_recip]</code>.
+    fn checked_recip(self) -> Option<Self>;
+
+    /// Checked remainder for Euclidean division. Returns the
+    /// remainder, or [`None`] if the divisor is zero or the division
+    /// results in overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[checked\_div\_euclid][FixedI32::checked_div_euclid]</code>
+    /// and
+    /// <code>FixedU32::[checked\_div\_euclid][FixedU32::checked_div_euclid]</code>.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn checked_div_euclid(self, rhs: Self) -> Option<Self>;
+
+    /// Checked fixed-point remainder for division by an integer.
+    /// Returns the remainder, or [`None`] if the divisor is zero or
+    /// if the division results in overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[checked\_rem\_int][FixedI32::checked_rem_int]</code>
+    /// and
+    /// <code>FixedU32::[checked\_rem\_int][FixedU32::checked_rem_int]</code>.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn checked_rem_int(self, rhs: Self::Bits) -> Option<Self>;
+
+    /// Checked Euclidean division by an integer. Returns the
+    /// quotient, or [`None`] if the divisor is zero or if the
+    /// division results in overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[checked\_div\_euclid\_int][FixedI32::checked_div_euclid_int]</code>
+    /// and
+    /// <code>FixedU32::[checked\_div\_euclid\_int][FixedU32::checked_div_euclid_int]</code>.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn checked_div_euclid_int(self, rhs: Self::Bits) -> Option<Self>;
+
+    /// Checked remainder for Euclidean division by an integer.
+    /// Returns the remainder, or [`None`] if the divisor is zero or
+    /// if the remainder results in overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[checked\_rem\_euclid\_int][FixedI32::checked_rem_euclid_int]</code>
+    /// and
+    /// <code>FixedU32::[checked\_rem\_euclid\_int][FixedU32::checked_rem_euclid_int]</code>.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn checked_rem_euclid_int(self, rhs: Self::Bits) -> Option<Self>;
+
+    /// Checked linear interpolation between `start` and `end`. Returns [`None`]
+    /// on overflow.
+    ///
+    /// See also <code>FixedI32::[checked\_lerp][FixedI32::checked_lerp]</code>
+    /// and <code>FixedU32::[checked\_lerp][FixedU32::checked_lerp]</code>.
+    fn checked_lerp(self, start: Self, end: Self) -> Option<Self>;
+
+    /// Checked inverse linear interpolation between `start` and `end`. Returns
+    /// [`None`] when `start`&nbsp;=&nbsp;`end` or on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[checked\_inv\_lerp][FixedI32::checked_inv_lerp]</code>
+    /// and
+    /// <code>FixedU32::[checked\_inv\_lerp][FixedU32::checked_inv_lerp]</code>.
+    fn checked_inv_lerp(self, start: Self, end: Self) -> Option<Self>;
+
+    /// Saturating division. Returns the quotient, saturating on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_div][FixedI32::saturating_div]</code> and
+    /// <code>FixedU32::[saturating\_div][FixedU32::saturating_div]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn saturating_div(self, rhs: Self) -> Self;
+
+    /// Saturating reciprocal.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_recip][FixedI32::saturating_recip]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_recip][FixedU32::saturating_recip]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `self` is zero.
+    #[must_use]
+    fn saturating_recip(self) -> Self;
+
+    /// Saturating Euclidean division. Returns the quotient, saturating on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_div\_euclid][FixedI32::saturating_div_euclid]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_div\_euclid][FixedU32::saturating_div_euclid]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn saturating_div_euclid(self, rhs: Self) -> Self;
+
+    /// Saturating Euclidean division by an integer. Returns the
+    /// quotient, saturating on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_div\_euclid\_int][FixedI32::saturating_div_euclid_int]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_div\_euclid\_int][FixedU32::saturating_div_euclid_int]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn saturating_div_euclid_int(self, rhs: Self::Bits) -> Self;
+
+    /// Saturating remainder for Euclidean division by an integer.
+    /// Returns the remainder, saturating on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_rem\_euclid\_int][FixedI32::saturating_rem_euclid_int]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_rem\_euclid\_int][FixedU32::saturating_rem_euclid_int]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn saturating_rem_euclid_int(self, rhs: Self::Bits) -> Self;
+
+    /// Linear interpolation between `start` and `end`, saturating on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_lerp][FixedI32::saturating_lerp]</code> and
+    /// <code>FixedU32::[saturating\_lerp][FixedU32::saturating_lerp]</code>.
+    #[must_use]
+    fn saturating_lerp(self, start: Self, end: Self) -> Self;
+
+    /// Inverse linear interpolation between `start` and `end`, saturating on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_inv\_lerp][FixedI32::saturating_inv_lerp]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_inv\_lerp][FixedU32::saturating_inv_lerp]</code>.
+    #[must_use]
+    fn saturating_inv_lerp(self, start: Self, end: Self) -> Self;
+
+    /// Wrapping division. Returns the quotient, wrapping on overflow.
+    ///
+    /// See also <code>FixedI32::[wrapping\_div][FixedI32::wrapping_div]</code>
+    /// and <code>FixedU32::[wrapping\_div][FixedU32::wrapping_div]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn wrapping_div(self, rhs: Self) -> Self;
+
+    /// Wrapping reciprocal.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_recip][FixedI32::wrapping_recip]</code> and
+    /// <code>FixedU32::[wrapping\_recip][FixedU32::wrapping_recip]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `self` is zero.
+    #[must_use]
+    fn wrapping_recip(self) -> Self;
+
+    /// Wrapping Euclidean division. Returns the quotient, wrapping on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_div\_euclid][FixedI32::wrapping_div_euclid]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_div\_euclid][FixedU32::wrapping_div_euclid]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn wrapping_div_euclid(self, rhs: Self) -> Self;
+
+    /// Wrapping Euclidean division by an integer. Returns the
+    /// quotient, wrapping on overflow.
+    ///
+    /// Overflow can only occur when dividing the minimum value by &minus;1.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_div\_euclid\_int][FixedI32::wrapping_div_euclid_int]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_div\_euclid\_int][FixedU32::wrapping_div_euclid_int]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn wrapping_div_euclid_int(self, rhs: Self::Bits) -> Self;
+
+    /// Wrapping remainder for Euclidean division by an integer.
+    /// Returns the remainder, wrapping on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_rem\_euclid\_int][FixedI32::wrapping_rem_euclid_int]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_rem\_euclid\_int][FixedU32::wrapping_rem_euclid_int]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn wrapping_rem_euclid_int(self, rhs: Self::Bits) -> Self;
+
+    /// Linear interpolation between `start` and `end`, wrapping on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_lerp][FixedI32::wrapping_lerp]</code> and
+    /// <code>FixedU32::[wrapping\_lerp][FixedU32::wrapping_lerp]</code>.
+    #[must_use]
+    fn wrapping_lerp(self, start: Self, end: Self) -> Self;
+
+    /// Inverse linear interpolation between `start` and `end`, wrapping on
+    /// overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_inv\_lerp][FixedI32::wrapping_inv_lerp]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_inv\_lerp][FixedU32::wrapping_inv_lerp]</code>.
+    #[must_use]
+    fn wrapping_inv_lerp(self, start: Self, end: Self) -> Self;
+
+    /// Unwrapped division. Returns the quotient, panicking on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_div][FixedI32::unwrapped_div]</code> and
+    /// <code>FixedU32::[unwrapped\_div][FixedU32::unwrapped_div]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero or if the result does not fit.
+    #[track_caller]
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn unwrapped_div(self, rhs: Self) -> Self;
+
+    /// Unwrapped reciprocal. Returns reciprocal, panicking on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_recip][FixedI32::unwrapped_recip]</code> and
+    /// <code>FixedU32::[unwrapped\_recip][FixedU32::unwrapped_recip]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `self` is zero or on overflow.
+    #[track_caller]
+    #[must_use]
+    fn unwrapped_recip(self) -> Self;
+
+    /// Unwrapped Euclidean division. Returns the quotient, panicking on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_div\_euclid][FixedI32::unwrapped_div_euclid]</code>
+    /// and
+    /// <code>FixedU32::[unwrapped\_div\_euclid][FixedU32::unwrapped_div_euclid]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero or if the result does not fit.
+    #[track_caller]
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn unwrapped_div_euclid(self, rhs: Self) -> Self;
+
+    /// Unwrapped remainder for division by an integer. Returns the
+    /// remainder, panicking if the divisor is zero.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_rem\_int][FixedI32::unwrapped_rem_int]</code>
+    /// and
+    /// <code>FixedU32::[unwrapped\_rem\_int][FixedU32::unwrapped_rem_int]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[track_caller]
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn unwrapped_rem_int(self, rhs: Self::Bits) -> Self;
+
+    /// Unwrapped Euclidean division by an integer. Returns the
+    /// quotient, panicking on overflow.
+    ///
+    /// Overflow can only occur when dividing the minimum value by &minus;1.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_div\_euclid\_int][FixedI32::unwrapped_div_euclid_int]</code>
+    /// and
+    /// <code>FixedU32::[unwrapped\_div\_euclid\_int][FixedU32::unwrapped_div_euclid_int]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero or if the result does not fit.
+    #[track_caller]
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn unwrapped_div_euclid_int(self, rhs: Self::Bits) -> Self;
+
+    /// Unwrapped remainder for Euclidean division by an integer.
+    /// Returns the remainder, panicking on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_rem\_euclid\_int][FixedI32::unwrapped_rem_euclid_int]</code>
+    /// and
+    /// <code>FixedU32::[unwrapped\_rem\_euclid\_int][FixedU32::unwrapped_rem_euclid_int]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero or if the result does not fit.
+    #[track_caller]
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn unwrapped_rem_euclid_int(self, rhs: Self::Bits) -> Self;
+
+    /// Linear interpolation between `start` and `end`, panicking on overflow.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the result does not fit.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_lerp][FixedI32::unwrapped_lerp]</code> and
+    /// <code>FixedU32::[unwrapped\_lerp][FixedU32::unwrapped_lerp]</code>.
+    #[must_use]
+    fn unwrapped_lerp(self, start: Self, end: Self) -> Self;
+
+    /// Inverse linear interpolation between `start` and `end`, panicking on overflow.
+    ///
+    /// # Panics
+    ///
+    /// Panics when `start`&nbsp;=&nbsp;`end` or when the results overflows.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_inv\_lerp][FixedI32::unwrapped_inv_lerp]</code>
+    /// and
+    /// <code>FixedU32::[unwrapped\_inv\_lerp][FixedU32::unwrapped_inv_lerp]</code>.
+    #[must_use]
+    fn unwrapped_inv_lerp(self, start: Self, end: Self) -> Self;
+
+    /// Overflowing Euclidean division by an integer.
+    ///
+    /// Returns a [tuple] of the quotient and a [`bool`], indicating
+    /// whether an overflow has occurred. On overflow, the wrapped
+    /// value is returned.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_div\_euclid\_int][FixedI32::overflowing_div_euclid_int]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_div\_euclid\_int][FixedU32::overflowing_div_euclid_int]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn overflowing_div_euclid_int(self, rhs: Self::Bits) -> (Self, bool);
+
+    /// Overflowing remainder for Euclidean division by an integer.
+    ///
+    /// Returns a [tuple] of the remainder and a [`bool`], indicating
+    /// whether an overflow has occurred. On overflow, the wrapped
+    /// value is returned.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_rem\_euclid\_int][FixedI32::overflowing_rem_euclid_int]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_rem\_euclid\_int][FixedU32::overflowing_rem_euclid_int]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn overflowing_rem_euclid_int(self, rhs: Self::Bits) -> (Self, bool);
 
     /// Overflowing linear interpolation between `start` and `end`.
     ///
@@ -3528,10 +3539,7 @@ macro_rules! impl_fixed {
         {
         }
 
-        impl<const FRAC: i32> Fixed for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> Fixed for $Fixed<FRAC> {
             type Bits = $Bits;
             type NonZeroBits = $NonZeroBits;
             type Bytes = [u8; mem::size_of::<$Bits>()];
@@ -3569,6 +3577,112 @@ macro_rules! impl_fixed {
             trait_delegate! { fn unwrapped_to_num<Dst: FromFixed>(self) -> Dst }
             trait_delegate! { fn overflowing_from_num<Src: ToFixed>(val: Src) -> (Self, bool) }
             trait_delegate! { fn overflowing_to_num<Dst: FromFixed>(self) -> (Dst, bool) }
+            trait_delegate! { fn int(self) -> Self }
+            trait_delegate! { fn frac(self) -> Self }
+            trait_delegate! { fn ceil(self) -> Self }
+            trait_delegate! { fn floor(self) -> Self }
+            trait_delegate! { fn round_to_zero(self) -> Self }
+            trait_delegate! { fn round(self) -> Self }
+            trait_delegate! { fn round_ties_to_even(self) -> Self }
+            trait_delegate! { fn checked_ceil(self) -> Option<Self> }
+            trait_delegate! { fn checked_floor(self) -> Option<Self> }
+            trait_delegate! { fn checked_round(self) -> Option<Self> }
+            trait_delegate! { fn checked_round_ties_to_even(self) -> Option<Self> }
+            trait_delegate! { fn saturating_ceil(self) -> Self }
+            trait_delegate! { fn saturating_floor(self) -> Self }
+            trait_delegate! { fn saturating_round(self) -> Self }
+            trait_delegate! { fn saturating_round_ties_to_even(self) -> Self }
+            trait_delegate! { fn wrapping_ceil(self) -> Self }
+            trait_delegate! { fn wrapping_floor(self) -> Self }
+            trait_delegate! { fn wrapping_round(self) -> Self }
+            trait_delegate! { fn wrapping_round_ties_to_even(self) -> Self }
+            trait_delegate! { fn unwrapped_ceil(self) -> Self }
+            trait_delegate! { fn unwrapped_floor(self) -> Self }
+            trait_delegate! { fn unwrapped_round(self) -> Self }
+            trait_delegate! { fn unwrapped_round_ties_to_even(self) -> Self }
+            trait_delegate! { fn overflowing_ceil(self) -> (Self, bool) }
+            trait_delegate! { fn overflowing_floor(self) -> (Self, bool) }
+            trait_delegate! { fn overflowing_round(self) -> (Self, bool) }
+            trait_delegate! { fn overflowing_round_ties_to_even(self) -> (Self, bool) }
+            trait_delegate! { fn count_ones(self) -> u32 }
+            trait_delegate! { fn count_zeros(self) -> u32 }
+            trait_delegate! { fn leading_ones(self) -> u32 }
+            trait_delegate! { fn leading_zeros(self) -> u32 }
+            trait_delegate! { fn trailing_ones(self) -> u32 }
+            trait_delegate! { fn trailing_zeros(self) -> u32 }
+            trait_delegate! { fn int_log2(self) -> i32 }
+            trait_delegate! { fn checked_int_log2(self) -> Option<i32> }
+            trait_delegate! { fn reverse_bits(self) -> Self }
+            trait_delegate! { fn rotate_left(self, n: u32) -> Self }
+            trait_delegate! { fn rotate_right(self, n: u32) -> Self }
+            trait_delegate! { fn is_zero(self) -> bool }
+            trait_delegate! { fn dist(self, other: Self) -> Self }
+            trait_delegate! { fn mean(self, other: Self) -> Self }
+            trait_delegate! { fn mul_add(self, mul: Self, add: Self) -> Self }
+            trait_delegate! { fn mul_acc(&mut self, a: Self, b: Self) }
+            trait_delegate! { fn rem_euclid(self, rhs: Self) -> Self }
+            trait_delegate! { fn checked_neg(self) -> Option<Self> }
+            trait_delegate! { fn checked_add(self, rhs: Self) -> Option<Self> }
+            trait_delegate! { fn checked_sub(self, rhs: Self) -> Option<Self> }
+            trait_delegate! { fn checked_mul(self, rhs: Self) -> Option<Self> }
+            trait_delegate! { fn checked_rem(self, rhs: Self) -> Option<Self> }
+            trait_delegate! { fn checked_mul_add(self, mul: Self, add: Self) -> Option<Self> }
+            trait_delegate! { fn checked_mul_acc(&mut self, a: Self, b: Self) -> Option<()> }
+            trait_delegate! { fn checked_rem_euclid(self, rhs: Self) -> Option<Self> }
+            trait_delegate! { fn checked_mul_int(self, rhs: Self::Bits) -> Option<Self> }
+            trait_delegate! { fn checked_div_int(self, rhs: Self::Bits) -> Option<Self> }
+            trait_delegate! { fn checked_shl(self, rhs: u32) -> Option<Self> }
+            trait_delegate! { fn checked_shr(self, rhs: u32) -> Option<Self> }
+            trait_delegate! { fn checked_dist(self, other: Self) -> Option<Self> }
+            trait_delegate! { fn saturating_neg(self) -> Self }
+            trait_delegate! { fn saturating_add(self, rhs: Self) -> Self }
+            trait_delegate! { fn saturating_sub(self, rhs: Self) -> Self }
+            trait_delegate! { fn saturating_mul(self, rhs: Self) -> Self }
+            trait_delegate! { fn saturating_mul_add(self, mul: Self, add: Self) -> Self }
+            trait_delegate! { fn saturating_mul_acc(&mut self, a: Self, b: Self) }
+            trait_delegate! { fn saturating_mul_int(self, rhs: Self::Bits) -> Self }
+            trait_delegate! { fn saturating_dist(self, other: Self) -> Self }
+            trait_delegate! { fn wrapping_neg(self) -> Self }
+            trait_delegate! { fn wrapping_add(self, rhs: Self) -> Self }
+            trait_delegate! { fn wrapping_sub(self, rhs: Self) -> Self }
+            trait_delegate! { fn wrapping_mul(self, rhs: Self) -> Self }
+            trait_delegate! { fn wrapping_mul_add(self, mul: Self, add: Self) -> Self }
+            trait_delegate! { fn wrapping_mul_acc(&mut self, a: Self, b: Self) }
+            trait_delegate! { fn wrapping_mul_int(self, rhs: Self::Bits) -> Self }
+            trait_delegate! { fn wrapping_div_int(self, rhs: Self::Bits) -> Self }
+            trait_delegate! { fn wrapping_shl(self, rhs: u32) -> Self }
+            trait_delegate! { fn wrapping_shr(self, rhs: u32) -> Self }
+            trait_delegate! { fn wrapping_dist(self, other: Self) -> Self }
+            trait_delegate! { fn unwrapped_neg(self) -> Self }
+            trait_delegate! { fn unwrapped_add(self, rhs: Self) -> Self }
+            trait_delegate! { fn unwrapped_sub(self, rhs: Self) -> Self }
+            trait_delegate! { fn unwrapped_mul(self, rhs: Self) -> Self }
+            trait_delegate! { fn unwrapped_rem(self, rhs: Self) -> Self }
+            trait_delegate! { fn unwrapped_mul_add(self, mul: Self, add: Self) -> Self }
+            trait_delegate! { fn unwrapped_mul_acc(&mut self, a: Self, b: Self) }
+            trait_delegate! { fn unwrapped_rem_euclid(self, rhs: Self) -> Self }
+            trait_delegate! { fn unwrapped_mul_int(self, rhs: Self::Bits) -> Self }
+            trait_delegate! { fn unwrapped_div_int(self, rhs: Self::Bits) -> Self }
+            trait_delegate! { fn unwrapped_shl(self, rhs: u32) -> Self }
+            trait_delegate! { fn unwrapped_shr(self, rhs: u32) -> Self }
+            trait_delegate! { fn unwrapped_dist(self, other: Self) -> Self }
+            trait_delegate! { fn overflowing_neg(self) -> (Self, bool) }
+            trait_delegate! { fn overflowing_add(self, rhs: Self) -> (Self, bool) }
+            trait_delegate! { fn overflowing_sub(self, rhs: Self) -> (Self, bool) }
+            trait_delegate! { fn overflowing_mul(self, rhs: Self) -> (Self, bool) }
+            trait_delegate! { fn overflowing_mul_add(self, mul: Self, add: Self) -> (Self, bool) }
+            trait_delegate! { fn overflowing_mul_acc(&mut self, a: Self, b: Self) -> bool }
+            trait_delegate! { fn overflowing_mul_int(self, rhs: Self::Bits) -> (Self, bool) }
+            trait_delegate! { fn overflowing_div_int(self, rhs: Self::Bits) -> (Self, bool) }
+            trait_delegate! { fn overflowing_shl(self, rhs: u32) -> (Self, bool) }
+            trait_delegate! { fn overflowing_shr(self, rhs: u32) -> (Self, bool) }
+            trait_delegate! { fn overflowing_dist(self, other: Self) -> (Self, bool) }
+        }
+
+        impl<const FRAC: i32> FixedStrict for $Fixed<FRAC>
+        where
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
+        {
             trait_delegate! { fn from_str_binary(src: &str) -> Result<Self, ParseFixedError> }
             trait_delegate! { fn from_str_octal(src: &str) -> Result<Self, ParseFixedError> }
             trait_delegate! { fn from_str_hex(src: &str) -> Result<Self, ParseFixedError> }
@@ -3608,152 +3722,88 @@ macro_rules! impl_fixed {
             trait_delegate! {
                 fn overflowing_from_str_hex(src: &str) -> Result<(Self, bool), ParseFixedError>
             }
-            trait_delegate! { fn int(self) -> Self }
-            trait_delegate! { fn frac(self) -> Self }
-            trait_delegate! { fn ceil(self) -> Self }
-            trait_delegate! { fn floor(self) -> Self }
-            trait_delegate! { fn round_to_zero(self) -> Self }
-            trait_delegate! { fn round(self) -> Self }
-            trait_delegate! { fn round_ties_to_even(self) -> Self }
-            trait_delegate! { fn checked_ceil(self) -> Option<Self> }
-            trait_delegate! { fn checked_floor(self) -> Option<Self> }
-            trait_delegate! { fn checked_round(self) -> Option<Self> }
-            trait_delegate! { fn checked_round_ties_to_even(self) -> Option<Self> }
-            trait_delegate! { fn saturating_ceil(self) -> Self }
-            trait_delegate! { fn saturating_floor(self) -> Self }
-            trait_delegate! { fn saturating_round(self) -> Self }
-            trait_delegate! { fn saturating_round_ties_to_even(self) -> Self }
-            trait_delegate! { fn wrapping_ceil(self) -> Self }
-            trait_delegate! { fn wrapping_floor(self) -> Self }
-            trait_delegate! { fn wrapping_round(self) -> Self }
-            trait_delegate! { fn wrapping_round_ties_to_even(self) -> Self }
-            trait_delegate! { fn unwrapped_ceil(self) -> Self }
-            trait_delegate! { fn unwrapped_floor(self) -> Self }
-            trait_delegate! { fn unwrapped_round(self) -> Self }
-            trait_delegate! { fn unwrapped_round_ties_to_even(self) -> Self }
-            trait_delegate! { fn overflowing_ceil(self) -> (Self, bool) }
-            trait_delegate! { fn overflowing_floor(self) -> (Self, bool) }
-            trait_delegate! { fn overflowing_round(self) -> (Self, bool) }
-            trait_delegate! { fn overflowing_round_ties_to_even(self) -> (Self, bool) }
-            trait_delegate! { fn count_ones(self) -> u32 }
-            trait_delegate! { fn count_zeros(self) -> u32 }
-            trait_delegate! { fn leading_ones(self) -> u32 }
-            trait_delegate! { fn leading_zeros(self) -> u32 }
-            trait_delegate! { fn trailing_ones(self) -> u32 }
-            trait_delegate! { fn trailing_zeros(self) -> u32 }
-            trait_delegate! { fn int_log2(self) -> i32 }
             trait_delegate! { fn int_log10(self) -> i32 }
-            trait_delegate! { fn checked_int_log2(self) -> Option<i32> }
             trait_delegate! { fn checked_int_log10(self) -> Option<i32> }
-            trait_delegate! { fn reverse_bits(self) -> Self }
-            trait_delegate! { fn rotate_left(self, n: u32) -> Self }
-            trait_delegate! { fn rotate_right(self, n: u32) -> Self }
-            trait_delegate! { fn is_zero(self) -> bool }
-            trait_delegate! { fn dist(self, other: Self) -> Self }
-            trait_delegate! { fn mean(self, other: Self) -> Self }
             trait_delegate! { fn recip(self) -> Self }
-            trait_delegate! { fn mul_add(self, mul: Self, add: Self) -> Self }
-            trait_delegate! { fn mul_acc(&mut self, a: Self, b: Self) }
             trait_delegate! { fn div_euclid(self, rhs: Self) -> Self }
-            trait_delegate! { fn rem_euclid(self, rhs: Self) -> Self }
             trait_delegate! { fn div_euclid_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn rem_euclid_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn inv_lerp(self, start: Self, end: Self) -> Self }
-            trait_delegate! { fn checked_neg(self) -> Option<Self> }
-            trait_delegate! { fn checked_add(self, rhs: Self) -> Option<Self> }
-            trait_delegate! { fn checked_sub(self, rhs: Self) -> Option<Self> }
-            trait_delegate! { fn checked_mul(self, rhs: Self) -> Option<Self> }
             trait_delegate! { fn checked_div(self, rhs: Self) -> Option<Self> }
-            trait_delegate! { fn checked_rem(self, rhs: Self) -> Option<Self> }
             trait_delegate! { fn checked_recip(self) -> Option<Self> }
-            trait_delegate! { fn checked_mul_add(self, mul: Self, add: Self) -> Option<Self> }
-            trait_delegate! { fn checked_mul_acc(&mut self, a: Self, b: Self) -> Option<()> }
             trait_delegate! { fn checked_div_euclid(self, rhs: Self) -> Option<Self> }
-            trait_delegate! { fn checked_rem_euclid(self, rhs: Self) -> Option<Self> }
-            trait_delegate! { fn checked_mul_int(self, rhs: Self::Bits) -> Option<Self> }
-            trait_delegate! { fn checked_div_int(self, rhs: Self::Bits) -> Option<Self> }
             trait_delegate! { fn checked_rem_int(self, rhs: Self::Bits) -> Option<Self> }
             trait_delegate! { fn checked_div_euclid_int(self, rhs: Self::Bits) -> Option<Self> }
             trait_delegate! { fn checked_rem_euclid_int(self, rhs: Self::Bits) -> Option<Self> }
-            trait_delegate! { fn checked_shl(self, rhs: u32) -> Option<Self> }
-            trait_delegate! { fn checked_shr(self, rhs: u32) -> Option<Self> }
-            trait_delegate! { fn checked_dist(self, other: Self) -> Option<Self> }
             trait_delegate! { fn checked_lerp(self, start: Self, end: Self) -> Option<Self> }
             trait_delegate! { fn checked_inv_lerp(self, start: Self, end: Self) -> Option<Self> }
-            trait_delegate! { fn saturating_neg(self) -> Self }
-            trait_delegate! { fn saturating_add(self, rhs: Self) -> Self }
-            trait_delegate! { fn saturating_sub(self, rhs: Self) -> Self }
-            trait_delegate! { fn saturating_mul(self, rhs: Self) -> Self }
             trait_delegate! { fn saturating_div(self, rhs: Self) -> Self }
             trait_delegate! { fn saturating_recip(self) -> Self }
-            trait_delegate! { fn saturating_mul_add(self, mul: Self, add: Self) -> Self }
-            trait_delegate! { fn saturating_mul_acc(&mut self, a: Self, b: Self) }
             trait_delegate! { fn saturating_div_euclid(self, rhs: Self) -> Self }
-            trait_delegate! { fn saturating_mul_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn saturating_div_euclid_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn saturating_rem_euclid_int(self, rhs: Self::Bits) -> Self }
-            trait_delegate! { fn saturating_dist(self, other: Self) -> Self }
             trait_delegate! { fn saturating_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn saturating_inv_lerp(self, start: Self, end: Self) -> Self }
-            trait_delegate! { fn wrapping_neg(self) -> Self }
-            trait_delegate! { fn wrapping_add(self, rhs: Self) -> Self }
-            trait_delegate! { fn wrapping_sub(self, rhs: Self) -> Self }
-            trait_delegate! { fn wrapping_mul(self, rhs: Self) -> Self }
             trait_delegate! { fn wrapping_div(self, rhs: Self) -> Self }
             trait_delegate! { fn wrapping_recip(self) -> Self }
-            trait_delegate! { fn wrapping_mul_add(self, mul: Self, add: Self) -> Self }
-            trait_delegate! { fn wrapping_mul_acc(&mut self, a: Self, b: Self) }
             trait_delegate! { fn wrapping_div_euclid(self, rhs: Self) -> Self }
-            trait_delegate! { fn wrapping_mul_int(self, rhs: Self::Bits) -> Self }
-            trait_delegate! { fn wrapping_div_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn wrapping_div_euclid_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn wrapping_rem_euclid_int(self, rhs: Self::Bits) -> Self }
-            trait_delegate! { fn wrapping_shl(self, rhs: u32) -> Self }
-            trait_delegate! { fn wrapping_shr(self, rhs: u32) -> Self }
-            trait_delegate! { fn wrapping_dist(self, other: Self) -> Self }
             trait_delegate! { fn wrapping_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn wrapping_inv_lerp(self, start: Self, end: Self) -> Self }
-            trait_delegate! { fn unwrapped_neg(self) -> Self }
-            trait_delegate! { fn unwrapped_add(self, rhs: Self) -> Self }
-            trait_delegate! { fn unwrapped_sub(self, rhs: Self) -> Self }
-            trait_delegate! { fn unwrapped_mul(self, rhs: Self) -> Self }
             trait_delegate! { fn unwrapped_div(self, rhs: Self) -> Self }
-            trait_delegate! { fn unwrapped_rem(self, rhs: Self) -> Self }
             trait_delegate! { fn unwrapped_recip(self) -> Self }
-            trait_delegate! { fn unwrapped_mul_add(self, mul: Self, add: Self) -> Self }
-            trait_delegate! { fn unwrapped_mul_acc(&mut self, a: Self, b: Self) }
             trait_delegate! { fn unwrapped_div_euclid(self, rhs: Self) -> Self }
-            trait_delegate! { fn unwrapped_rem_euclid(self, rhs: Self) -> Self }
-            trait_delegate! { fn unwrapped_mul_int(self, rhs: Self::Bits) -> Self }
-            trait_delegate! { fn unwrapped_div_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn unwrapped_rem_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn unwrapped_div_euclid_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn unwrapped_rem_euclid_int(self, rhs: Self::Bits) -> Self }
-            trait_delegate! { fn unwrapped_shl(self, rhs: u32) -> Self }
-            trait_delegate! { fn unwrapped_shr(self, rhs: u32) -> Self }
-            trait_delegate! { fn unwrapped_dist(self, other: Self) -> Self }
             trait_delegate! { fn unwrapped_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn unwrapped_inv_lerp(self, start: Self, end: Self) -> Self }
-            trait_delegate! { fn overflowing_neg(self) -> (Self, bool) }
-            trait_delegate! { fn overflowing_add(self, rhs: Self) -> (Self, bool) }
-            trait_delegate! { fn overflowing_sub(self, rhs: Self) -> (Self, bool) }
-            trait_delegate! { fn overflowing_mul(self, rhs: Self) -> (Self, bool) }
             trait_delegate! { fn overflowing_div(self, rhs: Self) -> (Self, bool) }
             trait_delegate! { fn overflowing_recip(self) -> (Self, bool) }
-            trait_delegate! { fn overflowing_mul_add(self, mul: Self, add: Self) -> (Self, bool) }
-            trait_delegate! { fn overflowing_mul_acc(&mut self, a: Self, b: Self) -> bool }
             trait_delegate! { fn overflowing_div_euclid(self, rhs: Self) -> (Self, bool) }
-            trait_delegate! { fn overflowing_mul_int(self, rhs: Self::Bits) -> (Self, bool) }
-            trait_delegate! { fn overflowing_div_int(self, rhs: Self::Bits) -> (Self, bool) }
             trait_delegate! { fn overflowing_div_euclid_int(self, rhs: Self::Bits) -> (Self, bool) }
             trait_delegate! { fn overflowing_rem_euclid_int(self, rhs: Self::Bits) -> (Self, bool) }
-            trait_delegate! { fn overflowing_shl(self, rhs: u32) -> (Self, bool) }
-            trait_delegate! { fn overflowing_shr(self, rhs: u32) -> (Self, bool) }
-            trait_delegate! { fn overflowing_dist(self, other: Self) -> (Self, bool) }
             trait_delegate! { fn overflowing_lerp(self, start: Self, end: Self) -> (Self, bool) }
             trait_delegate! {
                 fn overflowing_inv_lerp(self, start: Self, end: Self) -> (Self, bool)
+            }
+        }
+
+        if_signed! {
+            $Signedness;
+            impl<const FRAC: i32> FixedSigned for $Fixed<FRAC> {
+                trait_delegate! { fn signed_bits(self) -> u32 }
+                trait_delegate! { fn abs(self) -> Self }
+                trait_delegate! { fn unsigned_abs(self) -> Self::Unsigned }
+                trait_delegate! { fn unsigned_dist(self, other: Self) -> Self::Unsigned }
+                trait_delegate! { fn signum(self) -> Self }
+                trait_delegate! { fn checked_abs(self) -> Option<Self> }
+                trait_delegate! { fn checked_signum(self) -> Option<Self> }
+                trait_delegate! { fn saturating_abs(self) -> Self }
+                trait_delegate! { fn saturating_signum(self) -> Self }
+                trait_delegate! { fn wrapping_abs(self) -> Self }
+                trait_delegate! { fn wrapping_signum(self) -> Self }
+                trait_delegate! { fn unwrapped_abs(self) -> Self }
+                trait_delegate! { fn unwrapped_signum(self) -> Self }
+                trait_delegate! { fn overflowing_abs(self) -> (Self, bool) }
+                trait_delegate! { fn overflowing_signum(self) -> (Self, bool) }
+                trait_delegate! { fn is_positive(self) -> bool }
+                trait_delegate! { fn is_negative(self) -> bool }
+            }
+        }
+
+        if_unsigned! {
+            $Signedness;
+            impl<const FRAC: i32> FixedUnsigned for $Fixed<FRAC> {
+                trait_delegate! { fn significant_bits(self) -> u32 }
+                trait_delegate! { fn is_power_of_two(self) -> bool }
+                trait_delegate! { fn highest_one(self) -> Self }
+                trait_delegate! { fn next_power_of_two(self) -> Self }
+                trait_delegate! { fn checked_next_power_of_two(self) -> Option<Self> }
+                trait_delegate! { fn wrapping_next_power_of_two(self) -> Self }
+                trait_delegate! { fn unwrapped_next_power_of_two(self) -> Self }
             }
         }
 
@@ -3775,7 +3825,7 @@ macro_rules! impl_fixed {
             #[inline]
             fn from_fixed<F: Fixed>(src: F) -> Self {
                 let (wrapped, overflow) = $Fixed::fixed_from_bits(src.to_bits(), F::FRAC_BITS);
-                debug_assert!(!overflow, "{} overflows", src);
+                debug_assert!(!overflow, "overflow");
                 let _ = overflow;
                 wrapped
             }
@@ -3850,10 +3900,7 @@ macro_rules! impl_fixed {
             }
         }
 
-        impl<const FRAC: i32> ToFixed for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> ToFixed for $Fixed<FRAC> {
             /// Converts a fixed-point number.
             ///
             /// Any extra fractional bits are discarded, which rounds towards &minus;∞.
@@ -3919,48 +3966,6 @@ macro_rules! impl_fixed {
             #[inline]
             fn unwrapped_to_fixed<F: Fixed>(self) -> F {
                 FromFixed::unwrapped_from_fixed(self)
-            }
-        }
-
-        if_signed! {
-            $Signedness;
-            impl<const FRAC: i32> FixedSigned for $Fixed<FRAC>
-            where
-                If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-            {
-                trait_delegate! { fn signed_bits(self) -> u32 }
-                trait_delegate! { fn abs(self) -> Self }
-                trait_delegate! { fn unsigned_abs(self) -> Self::Unsigned }
-                trait_delegate! { fn unsigned_dist(self, other: Self) -> Self::Unsigned }
-                trait_delegate! { fn signum(self) -> Self }
-                trait_delegate! { fn checked_abs(self) -> Option<Self> }
-                trait_delegate! { fn checked_signum(self) -> Option<Self> }
-                trait_delegate! { fn saturating_abs(self) -> Self }
-                trait_delegate! { fn saturating_signum(self) -> Self }
-                trait_delegate! { fn wrapping_abs(self) -> Self }
-                trait_delegate! { fn wrapping_signum(self) -> Self }
-                trait_delegate! { fn unwrapped_abs(self) -> Self }
-                trait_delegate! { fn unwrapped_signum(self) -> Self }
-                trait_delegate! { fn overflowing_abs(self) -> (Self, bool) }
-                trait_delegate! { fn overflowing_signum(self) -> (Self, bool) }
-                trait_delegate! { fn is_positive(self) -> bool }
-                trait_delegate! { fn is_negative(self) -> bool }
-            }
-        }
-
-        if_unsigned! {
-            $Signedness;
-            impl<const FRAC: i32> FixedUnsigned for $Fixed<FRAC>
-            where
-                If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-            {
-                trait_delegate! { fn significant_bits(self) -> u32 }
-                trait_delegate! { fn is_power_of_two(self) -> bool }
-                trait_delegate! { fn highest_one(self) -> Self }
-                trait_delegate! { fn next_power_of_two(self) -> Self }
-                trait_delegate! { fn checked_next_power_of_two(self) -> Option<Self> }
-                trait_delegate! { fn wrapping_next_power_of_two(self) -> Self }
-                trait_delegate! { fn unwrapped_next_power_of_two(self) -> Self }
             }
         }
     };

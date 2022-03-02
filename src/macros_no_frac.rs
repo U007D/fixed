@@ -540,6 +540,7 @@ assert_eq!(
                 }
             }
 
+            fixed_from_to! { $Fixed[$s_fixed]($Inner[$s_inner], $s_nbits), $Signedness }
             fixed_round! { $Fixed[$s_fixed]($s_nbits), $Signedness }
 
             comment! {
