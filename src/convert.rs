@@ -22,104 +22,452 @@ use crate::{
 use core::convert::TryFrom;
 use half::{bf16, f16};
 
-macro_rules! convert {
-    (
-        ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
-    ) => {
-        impl<const SRC_FRAC: i32, const DST_FRAC: i32> From<$SrcU<SRC_FRAC>> for $DstU<DST_FRAC>
-        where
-            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ SRC_FRAC <= DST_FRAC }>: True,
-            If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
-        {
-            /// Converts a fixed-point number.
+macro_rules! i_f_equivalent {
+    ($Int:ident, $Fixed:ident) => {
+        impl From<$Int> for $Fixed<0> {
+            /// Converts an integer to a fixed-point number.
             ///
-            /// This conversion never fails (infallible) and does not
-            /// lose any precision (lossless).
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
             #[inline]
-            fn from(src: $SrcU<SRC_FRAC>) -> Self {
-                let unshifted = Self::from_bits(src.to_bits().into()).to_bits();
-                let shift = DST_FRAC - SRC_FRAC;
-                Self::from_bits(unshifted << shift)
+            fn from(src: $Int) -> Self {
+                Self::from_bits(src)
             }
         }
 
-        impl<const SRC_FRAC: i32, const DST_FRAC: i32> From<$SrcI<SRC_FRAC>> for $DstI<DST_FRAC>
-        where
-            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ SRC_FRAC <= DST_FRAC }>: True,
-            If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
-        {
-            /// Converts a fixed-point number.
+        impl From<$Fixed<0>> for $Int {
+            /// Converts a fixed-point number to an integer.
             ///
-            /// This conversion never fails (infallible) and does not
-            /// lose any precision (lossless).
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
             #[inline]
-            fn from(src: $SrcI<SRC_FRAC>) -> Self {
-                let unshifted = Self::from_bits(src.to_bits().into()).to_bits();
-                let shift = DST_FRAC - SRC_FRAC;
-                Self::from_bits(unshifted << shift)
-            }
-        }
-
-        impl<const SRC_FRAC: i32, const DST_FRAC: i32> From<$SrcU<SRC_FRAC>> for $DstI<DST_FRAC>
-        where
-            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ SRC_FRAC <= DST_FRAC }>: True,
-            If<{ $nbits_src - SRC_FRAC < $nbits_dst - DST_FRAC }>: True,
-        {
-            /// Converts a fixed-point number.
-            ///
-            /// This conversion never fails (infallible) and does not
-            /// lose any precision (lossless).
-            #[inline]
-            fn from(src: $SrcU<SRC_FRAC>) -> Self {
-                let unshifted = Self::from_bits(src.to_bits().into()).to_bits();
-                let shift = DST_FRAC - SRC_FRAC;
-                Self::from_bits(unshifted << shift)
+            fn from(src: $Fixed<0>) -> Self {
+                src.to_bits()
             }
         }
     };
 }
 
-macro_rules! convert_lossless {
-    (($Src:ident, $nbits_src:expr) -> ($Dst:ident, $nbits_dst:expr)) => {
-        // lossless because Src::FRAC_BITS <= Dst::FRAC_BITS
+i_f_equivalent! { i8, FixedI8 }
+i_f_equivalent! { i16, FixedI16 }
+i_f_equivalent! { i32, FixedI32 }
+i_f_equivalent! { i64, FixedI64 }
+i_f_equivalent! { i128, FixedI128 }
+i_f_equivalent! { u8, FixedU8 }
+i_f_equivalent! { u16, FixedU16 }
+i_f_equivalent! { u32, FixedU32 }
+i_f_equivalent! { u64, FixedU64 }
+i_f_equivalent! { u128, FixedU128 }
+
+impl From<FixedI16<0>> for isize {
+    /// Converts a fixed-point number to an integer.
+    ///
+    /// This conversion never fails (infallible) and does not lose any
+    /// precision (lossless).
+    #[inline]
+    fn from(src: FixedI16<0>) -> Self {
+        src.to_bits().into()
+    }
+}
+
+impl From<FixedU16<0>> for usize {
+    /// Converts a fixed-point number to an integer.
+    ///
+    /// This conversion never fails (infallible) and does not lose any
+    /// precision (lossless).
+    #[inline]
+    fn from(src: FixedU16<0>) -> Self {
+        src.to_bits().into()
+    }
+}
+
+macro_rules! fixed_from_fixed {
+    (
+        ($SrcU:ident, $SrcI:ident, $nbits_src:expr) ->
+            ($DstU:ident, $DstI:ident, $DstInnerU:ident, $DstInnerI:ident, $nbits_dst:expr)
+    ) => {
+        impl<const SRC_FRAC: i32, const DST_FRAC: i32> From<$SrcU<SRC_FRAC>> for $DstU<DST_FRAC>
+        where
+            If<{ SRC_FRAC <= DST_FRAC }>: True,
+            If<{ DST_FRAC.saturating_sub(SRC_FRAC) <= $nbits_dst - $nbits_src }>: True,
+        {
+            /// Converts a fixed-point number.
+            ///
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
+            #[inline]
+            fn from(src: $SrcU<SRC_FRAC>) -> Self {
+                let unshifted = $DstInnerU::from(src.to_bits());
+                let shift = DST_FRAC.saturating_sub(SRC_FRAC);
+                $DstU::from_bits(unshifted << shift)
+            }
+        }
+
+        impl<const SRC_FRAC: i32, const DST_FRAC: i32> From<$SrcI<SRC_FRAC>> for $DstI<DST_FRAC>
+        where
+            If<{ SRC_FRAC <= DST_FRAC }>: True,
+            If<{ DST_FRAC.saturating_sub(SRC_FRAC) <= $nbits_dst - $nbits_src }>: True,
+        {
+            /// Converts a fixed-point number.
+            ///
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
+            #[inline]
+            fn from(src: $SrcI<SRC_FRAC>) -> Self {
+                let unshifted = $DstInnerI::from(src.to_bits());
+                let shift = DST_FRAC - SRC_FRAC;
+                $DstI::from_bits(unshifted << shift)
+            }
+        }
+
+        impl<const SRC_FRAC: i32, const DST_FRAC: i32> From<$SrcU<SRC_FRAC>> for $DstI<DST_FRAC>
+        where
+            If<{ SRC_FRAC <= DST_FRAC }>: True,
+            If<{ DST_FRAC.saturating_sub(SRC_FRAC) < $nbits_dst - $nbits_src }>: True,
+        {
+            /// Converts a fixed-point number.
+            ///
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
+            #[inline]
+            fn from(src: $SrcU<SRC_FRAC>) -> Self {
+                let unshifted = $DstInnerI::from(src.to_bits());
+                let shift = DST_FRAC - SRC_FRAC;
+                $DstI::from_bits(unshifted << shift)
+            }
+        }
+    };
+}
+
+fixed_from_fixed! { (FixedU8, FixedI8, 8) -> (FixedU16, FixedI16, u16, i16, 16) }
+fixed_from_fixed! { (FixedU8, FixedI8, 8) -> (FixedU32, FixedI32, u32, i32, 32) }
+fixed_from_fixed! { (FixedU8, FixedI8, 8) -> (FixedU64, FixedI64, u64, i64, 64) }
+fixed_from_fixed! { (FixedU8, FixedI8, 8) -> (FixedU128, FixedI128, u128, i128, 128) }
+
+fixed_from_fixed! { (FixedU16, FixedI16, 16) -> (FixedU32, FixedI32, u32, i32, 32) }
+fixed_from_fixed! { (FixedU16, FixedI16, 16) -> (FixedU64, FixedI64, u64, i64, 64) }
+fixed_from_fixed! { (FixedU16, FixedI16, 16) -> (FixedU128, FixedI128, u128, i128, 128) }
+
+fixed_from_fixed! { (FixedU32, FixedI32, 32) -> (FixedU64, FixedI64, u64, i64, 64) }
+fixed_from_fixed! { (FixedU32, FixedI32, 32) -> (FixedU128, FixedI128, u128, i128, 128) }
+
+fixed_from_fixed! { (FixedU64, FixedI64, 64) -> (FixedU128, FixedI128, u128, i128, 128) }
+
+macro_rules! int_from_fixed {
+    (
+        ($SrcU:ident, $SrcI:ident, $nbits_src:expr) ->
+            ($DstU:ident, $DstI:ident, $nbits_dst:expr)
+    ) => {
+        impl<const FRAC: i32> From<$SrcU<FRAC>> for $DstU
+        where
+            If<{ ($nbits_src - $nbits_dst <= FRAC) & (FRAC <= 0) }>: True,
+        {
+            /// Converts a fixed-point number to an integer.
+            ///
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
+            #[inline]
+            fn from(src: $SrcU<FRAC>) -> Self {
+                let unshifted = $DstU::from(src.to_bits());
+                let shift = FRAC.saturating_neg();
+                unshifted << shift
+            }
+        }
+
+        impl<const FRAC: i32> From<$SrcI<FRAC>> for $DstI
+        where
+            If<{ ($nbits_src - $nbits_dst <= FRAC) & (FRAC <= 0) }>: True,
+        {
+            /// Converts a fixed-point number to an integer.
+            ///
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
+            #[inline]
+            fn from(src: $SrcI<FRAC>) -> Self {
+                let unshifted = $DstI::from(src.to_bits());
+                let shift = FRAC.saturating_neg();
+                unshifted << shift
+            }
+        }
+
+        impl<const FRAC: i32> From<$SrcU<FRAC>> for $DstI
+        where
+            If<{ ($nbits_src - $nbits_dst < FRAC) & (FRAC <= 0) }>: True,
+        {
+            /// Converts a fixed-point number to an integer.
+            ///
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
+            #[inline]
+            fn from(src: $SrcU<FRAC>) -> Self {
+                let unshifted = $DstI::from(src.to_bits());
+                let shift = FRAC.saturating_neg();
+                unshifted << shift
+            }
+        }
+    };
+}
+
+int_from_fixed! { (FixedU8, FixedI8, 8) -> (u16, i16, 16) }
+int_from_fixed! { (FixedU8, FixedI8, 8) -> (u32, i32, 32) }
+int_from_fixed! { (FixedU8, FixedI8, 8) -> (u64, i64, 64) }
+int_from_fixed! { (FixedU8, FixedI8, 8) -> (u128, i128, 128) }
+int_from_fixed! { (FixedU8, FixedI8, 8) -> (usize, isize, 16) }
+
+int_from_fixed! { (FixedU16, FixedI16, 16) -> (u32, i32, 32) }
+int_from_fixed! { (FixedU16, FixedI16, 16) -> (u64, i64, 64) }
+int_from_fixed! { (FixedU16, FixedI16, 16) -> (u128, i128, 128) }
+
+int_from_fixed! { (FixedU32, FixedI32, 32) -> (u64, i64, 64) }
+int_from_fixed! { (FixedU32, FixedI32, 32) -> (u128, i128, 128) }
+
+int_from_fixed! { (FixedU64, FixedI64, 64) -> (u128, i128, 128) }
+
+macro_rules! fixed_from_int {
+    (
+        ($SrcU:ident, $SrcI:ident, $nbits_src:expr) ->
+            ($DstU:ident, $DstI:ident, $DstInnerU:ident, $DstInnerI:ident, $nbits_dst:expr)
+    ) => {
+        impl<const FRAC: i32> From<$SrcU> for $DstU<FRAC>
+        where
+            If<{ (0 <= FRAC) & (FRAC <= $nbits_dst - $nbits_src) }>: True,
+        {
+            /// Converts an integer to a fixed-point number.
+            ///
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
+            #[inline]
+            fn from(src: $SrcU) -> Self {
+                let unshifted = $DstInnerU::from(src);
+                let shift = FRAC;
+                $DstU::from_bits(unshifted << shift)
+            }
+        }
+
+        impl<const FRAC: i32> From<$SrcI> for $DstI<FRAC>
+        where
+            If<{ (0 <= FRAC) & (FRAC <= $nbits_dst - $nbits_src) }>: True,
+        {
+            /// Converts an integer to a fixed-point number.
+            ///
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
+            #[inline]
+            fn from(src: $SrcI) -> Self {
+                let unshifted = $DstInnerI::from(src);
+                let shift = FRAC;
+                $DstI::from_bits(unshifted << shift)
+            }
+        }
+
+        impl<const FRAC: i32> From<$SrcU> for $DstI<FRAC>
+        where
+            If<{ (0 <= FRAC) & (FRAC < $nbits_dst - $nbits_src) }>: True,
+        {
+            /// Converts an integer to a fixed-point number.
+            ///
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
+            #[inline]
+            fn from(src: $SrcU) -> Self {
+                let unshifted = $DstInnerI::from(src);
+                let shift = FRAC;
+                $DstI::from_bits(unshifted << shift)
+            }
+        }
+    };
+}
+
+fixed_from_int! { (u8, i8, 8) -> (FixedU16, FixedI16, u16, i16, 16) }
+fixed_from_int! { (u8, i8, 8) -> (FixedU32, FixedI32, u32, i32, 32) }
+fixed_from_int! { (u8, i8, 8) -> (FixedU64, FixedI64, u64, i64, 64) }
+fixed_from_int! { (u8, i8, 8) -> (FixedU128, FixedI128, u128, i128, 128) }
+
+fixed_from_int! { (u16, i16, 16) -> (FixedU32, FixedI32, u32, i32, 32) }
+fixed_from_int! { (u16, i16, 16) -> (FixedU64, FixedI64, u64, i64, 64) }
+fixed_from_int! { (u16, i16, 16) -> (FixedU128, FixedI128, u128, i128, 128) }
+
+fixed_from_int! { (u32, i32, 32) -> (FixedU64, FixedI64, u64, i64, 64) }
+fixed_from_int! { (u32, i32, 32) -> (FixedU128, FixedI128, u128, i128, 128) }
+
+fixed_from_int! { (u64, i64, 64) -> (FixedU128, FixedI128, u128, i128, 128) }
+
+macro_rules! fixed_from_bool {
+    (
+        bool -> ($DstU:ident, $DstI:ident, $DstInnerU:ident, $DstInnerI:ident, $nbits_dst:expr)
+    ) => {
+        impl<const FRAC: i32> From<bool> for $DstU<FRAC>
+        where
+            If<{ (0 <= FRAC) & (FRAC < $nbits_dst) }>: True,
+        {
+            /// Converts a Boolean value to a fixed-point number.
+            ///
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
+            #[inline]
+            fn from(src: bool) -> Self {
+                let unshifted = $DstInnerU::from(src);
+                let shift = FRAC;
+                $DstU::from_bits(unshifted << shift)
+            }
+        }
+
+        impl<const FRAC: i32> From<bool> for $DstI<FRAC>
+        where
+            If<{ (0 <= FRAC) & (FRAC < $nbits_dst - 1) }>: True,
+        {
+            /// Converts a Boolean value to a fixed-point number.
+            ///
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
+            #[inline]
+            fn from(src: bool) -> Self {
+                let unshifted = $DstInnerI::from(src);
+                let shift = FRAC;
+                $DstI::from_bits(unshifted << shift)
+            }
+        }
+    };
+}
+
+fixed_from_bool! { bool -> (FixedU8, FixedI8, u8, i8, 8) }
+fixed_from_bool! { bool -> (FixedU16, FixedI16, u16, i16, 16) }
+fixed_from_bool! { bool -> (FixedU32, FixedI32, u32, i32, 32) }
+fixed_from_bool! { bool -> (FixedU64, FixedI64, u64, i64, 64) }
+fixed_from_bool! { bool -> (FixedU128, FixedI128, u128, i128, 128) }
+
+macro_rules! fallible_fixed_from_fixed {
+    ($Src:ident -> $Dst:ident) => {
         impl<const SRC_FRAC: i32, const DST_FRAC: i32> LosslessTryFrom<$Src<SRC_FRAC>>
             for $Dst<DST_FRAC>
         where
-            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
             If<{ SRC_FRAC <= DST_FRAC }>: True,
         {
             /// Converts a fixed-point number.
             ///
-            /// This conversion may fail (fallible) but does not lose
-            /// precision (lossless).
+            /// This conversion may fail (fallible) but does not lose precision
+            /// (lossless).
             #[inline]
             fn lossless_try_from(src: $Src<SRC_FRAC>) -> Option<Self> {
                 Self::checked_from_fixed(src)
             }
         }
     };
-    ($Src:ident, $nbits_src:expr) => {
-        convert_lossless! { ($Src, $nbits_src) -> (FixedI8, 8) }
-        convert_lossless! { ($Src, $nbits_src) -> (FixedI16, 16) }
-        convert_lossless! { ($Src, $nbits_src) -> (FixedI32, 32) }
-        convert_lossless! { ($Src, $nbits_src) -> (FixedI64, 64) }
-        convert_lossless! { ($Src, $nbits_src) -> (FixedI128, 128) }
-        convert_lossless! { ($Src, $nbits_src) -> (FixedU8, 8) }
-        convert_lossless! { ($Src, $nbits_src) -> (FixedU16, 16) }
-        convert_lossless! { ($Src, $nbits_src) -> (FixedU32, 32) }
-        convert_lossless! { ($Src, $nbits_src) -> (FixedU64, 64) }
-        convert_lossless! { ($Src, $nbits_src) -> (FixedU128, 128) }
+    ($Src:ident) => {
+        fallible_fixed_from_fixed! { $Src -> FixedI8 }
+        fallible_fixed_from_fixed! { $Src -> FixedI16 }
+        fallible_fixed_from_fixed! { $Src -> FixedI32 }
+        fallible_fixed_from_fixed! { $Src -> FixedI64 }
+        fallible_fixed_from_fixed! { $Src -> FixedI128 }
+        fallible_fixed_from_fixed! { $Src -> FixedU8 }
+        fallible_fixed_from_fixed! { $Src -> FixedU16 }
+        fallible_fixed_from_fixed! { $Src -> FixedU32 }
+        fallible_fixed_from_fixed! { $Src -> FixedU64 }
+        fallible_fixed_from_fixed! { $Src -> FixedU128 }
     };
 }
 
-macro_rules! convert_lossy {
+fallible_fixed_from_fixed! { FixedI8 }
+fallible_fixed_from_fixed! { FixedI16 }
+fallible_fixed_from_fixed! { FixedI32 }
+fallible_fixed_from_fixed! { FixedI64 }
+fallible_fixed_from_fixed! { FixedI128 }
+fallible_fixed_from_fixed! { FixedU8 }
+fallible_fixed_from_fixed! { FixedU16 }
+fallible_fixed_from_fixed! { FixedU32 }
+fallible_fixed_from_fixed! { FixedU64 }
+fallible_fixed_from_fixed! { FixedU128 }
+
+macro_rules! fallible_int_from_fixed {
+    ($Src:ident -> $Dst:ident) => {
+        impl<const FRAC: i32> LosslessTryFrom<$Src<FRAC>> for $Dst
+        where
+            If<{ FRAC <= 0 }>: True,
+        {
+            /// Converts a fixed-point number to an integer.
+            ///
+            /// This conversion may fail (fallible) but cannot lose precision
+            /// (lossless).
+            #[inline]
+            fn lossless_try_from(src: $Src<FRAC>) -> Option<Self> {
+                FromFixed::checked_from_fixed(src)
+            }
+        }
+    };
+
+    ($Src:ident) => {
+        fallible_int_from_fixed! { $Src -> i8 }
+        fallible_int_from_fixed! { $Src -> i16 }
+        fallible_int_from_fixed! { $Src -> i32 }
+        fallible_int_from_fixed! { $Src -> i64 }
+        fallible_int_from_fixed! { $Src -> i128 }
+        fallible_int_from_fixed! { $Src -> isize }
+        fallible_int_from_fixed! { $Src -> u8 }
+        fallible_int_from_fixed! { $Src -> u16 }
+        fallible_int_from_fixed! { $Src -> u32 }
+        fallible_int_from_fixed! { $Src -> u64 }
+        fallible_int_from_fixed! { $Src -> u128 }
+        fallible_int_from_fixed! { $Src -> usize }
+    };
+}
+
+fallible_int_from_fixed! { FixedI8 }
+fallible_int_from_fixed! { FixedI16 }
+fallible_int_from_fixed! { FixedI32 }
+fallible_int_from_fixed! { FixedI64 }
+fallible_int_from_fixed! { FixedI128 }
+fallible_int_from_fixed! { FixedU8 }
+fallible_int_from_fixed! { FixedU16 }
+fallible_int_from_fixed! { FixedU32 }
+fallible_int_from_fixed! { FixedU64 }
+fallible_int_from_fixed! { FixedU128 }
+
+macro_rules! fallible_fixed_from_int {
+    ($Src:ident -> $Dst:ident) => {
+        impl<const FRAC: i32> LosslessTryFrom<$Src> for $Dst<FRAC>
+        where
+            If<{ FRAC >= 0 }>: True,
+        {
+            /// Converts a fixed-point number to an integer.
+            ///
+            /// This conversion may fail (fallible) but cannot lose precision
+            /// (lossless).
+            #[inline]
+            fn lossless_try_from(src: $Src) -> Option<Self> {
+                ToFixed::checked_to_fixed(src)
+            }
+        }
+    };
+
+    ($Src:ident) => {
+        fallible_fixed_from_int! { $Src -> FixedI8 }
+        fallible_fixed_from_int! { $Src -> FixedI16 }
+        fallible_fixed_from_int! { $Src -> FixedI32 }
+        fallible_fixed_from_int! { $Src -> FixedI64 }
+        fallible_fixed_from_int! { $Src -> FixedI128 }
+        fallible_fixed_from_int! { $Src -> FixedU8 }
+        fallible_fixed_from_int! { $Src -> FixedU16 }
+        fallible_fixed_from_int! { $Src -> FixedU32 }
+        fallible_fixed_from_int! { $Src -> FixedU64 }
+        fallible_fixed_from_int! { $Src -> FixedU128 }
+    };
+}
+
+fallible_fixed_from_int! { bool }
+fallible_fixed_from_int! { i8 }
+fallible_fixed_from_int! { i16 }
+fallible_fixed_from_int! { i32 }
+fallible_fixed_from_int! { i64 }
+fallible_fixed_from_int! { i128 }
+fallible_fixed_from_int! { isize }
+fallible_fixed_from_int! { u8 }
+fallible_fixed_from_int! { u16 }
+fallible_fixed_from_int! { u32 }
+fallible_fixed_from_int! { u64 }
+fallible_fixed_from_int! { u128 }
+fallible_fixed_from_int! { usize }
+
+macro_rules! lossy_fixed_from_fixed {
     (
         ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
@@ -127,19 +475,17 @@ macro_rules! convert_lossy {
         impl<const SRC_FRAC: i32, const DST_FRAC: i32> LossyFrom<$SrcU<SRC_FRAC>>
             for $DstU<DST_FRAC>
         where
-            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
+            If<{ DST_FRAC.saturating_sub(SRC_FRAC) <= $nbits_dst - $nbits_src }>: True,
         {
             /// Converts a fixed-point number.
             ///
-            /// This conversion never fails (infallible) but may lose
-            /// precision (lossy). Any fractional bits in the source
-            /// that cannot be represented in the destination are
-            /// discarded, which rounds towards &minus;∞.
+            /// This conversion never fails (infallible) but may lose precision
+            /// (lossy). Any low-significance bits in the source that cannot be
+            /// represented in the destination are discarded, which rounds
+            /// towards &minus;∞.
             #[inline]
             fn lossy_from(src: $SrcU<SRC_FRAC>) -> Self {
-                src.to_num()
+                Self::from_fixed(src)
             }
         }
 
@@ -147,19 +493,17 @@ macro_rules! convert_lossy {
         impl<const SRC_FRAC: i32, const DST_FRAC: i32> LossyFrom<$SrcI<SRC_FRAC>>
             for $DstI<DST_FRAC>
         where
-            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ $nbits_src - SRC_FRAC <= $nbits_dst - DST_FRAC }>: True,
+            If<{ DST_FRAC.saturating_sub(SRC_FRAC) <= $nbits_dst - $nbits_src }>: True,
         {
             /// Converts a fixed-point number.
             ///
-            /// This conversion never fails (infallible) but may lose
-            /// precision (lossy). Any fractional bits in the source
-            /// that cannot be represented in the destination are
-            /// discarded, which rounds towards &minus;∞.
+            /// This conversion never fails (infallible) but may lose precision
+            /// (lossy). Any low-significance bits in the source that cannot be
+            /// represented in the destination are discarded, which rounds
+            /// towards &minus;∞.
             #[inline]
             fn lossy_from(src: $SrcI<SRC_FRAC>) -> Self {
-                src.to_num()
+                Self::from_fixed(src)
             }
         }
 
@@ -167,606 +511,370 @@ macro_rules! convert_lossy {
         impl<const SRC_FRAC: i32, const DST_FRAC: i32> LossyFrom<$SrcU<SRC_FRAC>>
             for $DstI<DST_FRAC>
         where
-            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ $nbits_src - SRC_FRAC < $nbits_dst - DST_FRAC }>: True,
+            If<{ DST_FRAC.saturating_sub(SRC_FRAC) < $nbits_dst - $nbits_src }>: True,
         {
             /// Converts a fixed-point number.
             ///
-            /// This conversion never fails (infallible) but may lose
-            /// precision (lossy). Any fractional bits in the source
-            /// that cannot be represented in the destination are
-            /// discarded, which rounds towards &minus;∞.
+            /// This conversion never fails (infallible) but may lose precision
+            /// (lossy). Any low-significance bits in the source that cannot be
+            /// represented in the destination are discarded, which rounds
+            /// towards &minus;∞.
             #[inline]
             fn lossy_from(src: $SrcU<SRC_FRAC>) -> Self {
-                src.to_num()
+                Self::from_fixed(src)
             }
         }
     };
     ($SrcU:ident, $SrcI:ident, $nbits_src:expr) => {
-        convert_lossy! { ($SrcU, $SrcI, $nbits_src) -> (FixedU8, FixedI8, 8) }
-        convert_lossy! { ($SrcU, $SrcI, $nbits_src) -> (FixedU16, FixedI16, 16) }
-        convert_lossy! { ($SrcU, $SrcI, $nbits_src) -> (FixedU32, FixedI32, 32) }
-        convert_lossy! { ($SrcU, $SrcI, $nbits_src) -> (FixedU64, FixedI64, 64) }
-        convert_lossy! { ($SrcU, $SrcI, $nbits_src) -> (FixedU128, FixedI128, 128) }
+        lossy_fixed_from_fixed! { ($SrcU, $SrcI, $nbits_src) -> (FixedU8, FixedI8, 8) }
+        lossy_fixed_from_fixed! { ($SrcU, $SrcI, $nbits_src) -> (FixedU16, FixedI16, 16) }
+        lossy_fixed_from_fixed! { ($SrcU, $SrcI, $nbits_src) -> (FixedU32, FixedI32, 32) }
+        lossy_fixed_from_fixed! { ($SrcU, $SrcI, $nbits_src) -> (FixedU64, FixedI64, 64) }
+        lossy_fixed_from_fixed! { ($SrcU, $SrcI, $nbits_src) -> (FixedU128, FixedI128, 128) }
     };
 }
 
-convert! { (FixedU8, FixedI8, 8) -> (FixedU16, FixedI16, 16) }
-convert! { (FixedU8, FixedI8, 8) -> (FixedU32, FixedI32, 32) }
-convert! { (FixedU8, FixedI8, 8) -> (FixedU64, FixedI64, 64) }
-convert! { (FixedU8, FixedI8, 8) -> (FixedU128, FixedI128, 128) }
+lossy_fixed_from_fixed! { FixedU8, FixedI8, 8 }
+lossy_fixed_from_fixed! { FixedU16, FixedI16, 16 }
+lossy_fixed_from_fixed! { FixedU32, FixedI32, 32 }
+lossy_fixed_from_fixed! { FixedU64, FixedI64, 64 }
+lossy_fixed_from_fixed! { FixedU128, FixedI128, 128 }
 
-convert! { (FixedU16, FixedI16, 16) -> (FixedU32, FixedI32, 32) }
-convert! { (FixedU16, FixedI16, 16) -> (FixedU64, FixedI64, 64) }
-convert! { (FixedU16, FixedI16, 16) -> (FixedU128, FixedI128, 128) }
-
-convert! { (FixedU32, FixedI32, 32) -> (FixedU64, FixedI64, 64) }
-convert! { (FixedU32, FixedI32, 32) -> (FixedU128, FixedI128, 128) }
-
-convert! { (FixedU64, FixedI64, 64) -> (FixedU128, FixedI128, 128) }
-
-convert_lossless! { FixedI8, 8 }
-convert_lossless! { FixedI16, 16 }
-convert_lossless! { FixedI32, 32 }
-convert_lossless! { FixedI64, 64 }
-convert_lossless! { FixedI128, 128 }
-convert_lossless! { FixedU8, 8 }
-convert_lossless! { FixedU16, 16 }
-convert_lossless! { FixedU32, 32 }
-convert_lossless! { FixedU64, 64 }
-convert_lossless! { FixedU128, 128 }
-
-convert_lossy! { FixedU8, FixedI8, 8 }
-convert_lossy! { FixedU16, FixedI16, 16 }
-convert_lossy! { FixedU32, FixedI32, 32 }
-convert_lossy! { FixedU64, FixedI64, 64 }
-convert_lossy! { FixedU128, FixedI128, 128 }
-
-macro_rules! int_to_fixed {
-    ($Src:ident, $Dst:ident, $nbits:expr) => {
-        impl<const FRAC: i32> LosslessTryFrom<$Src> for $Dst<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
-            /// Converts an integer to a fixed-point number.
-            ///
-            /// This conversion may fail (fallible) but cannot lose
-            /// any fractional bits (lossless).
-            #[inline]
-            fn lossless_try_from(src: $Src) -> Option<Self> {
-                src.checked_to_fixed()
-            }
-        }
-    };
-
-    ($Src:ident $(, $Dst:ty)?) => {
-        $(impl From<$Src> for $Dst {
-            /// Converts an integer to a fixed-point number.
-            ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits (lossless).
-            #[inline]
-            fn from(src: $Src) -> Self {
-                Self::from_bits(src)
-            }
-        })?
-
-        int_to_fixed! { $Src, FixedI8, 8 }
-        int_to_fixed! { $Src, FixedI16, 16 }
-        int_to_fixed! { $Src, FixedI32, 32 }
-        int_to_fixed! { $Src, FixedI64, 64 }
-        int_to_fixed! { $Src, FixedI128, 128 }
-        int_to_fixed! { $Src, FixedU8, 8 }
-        int_to_fixed! { $Src, FixedU16, 16 }
-        int_to_fixed! { $Src, FixedU32, 32 }
-        int_to_fixed! { $Src, FixedU64, 64 }
-        int_to_fixed! { $Src, FixedU128, 128 }
-
-        $(impl LossyFrom<$Src> for $Dst {
-            /// Converts an integer to a fixed-point number.
-            ///
-            /// This conversion never fails (infallible) and actually
-            /// does not lose any precision (lossless).
-            #[inline]
-            fn lossy_from(src: $Src) -> Self {
-                Self::from_bits(src)
-            }
-        })?
-    };
-}
-
-int_to_fixed! { bool }
-int_to_fixed! { i8, FixedI8<0> }
-int_to_fixed! { i16, FixedI16<0> }
-int_to_fixed! { i32, FixedI32<0> }
-int_to_fixed! { i64, FixedI64<0> }
-int_to_fixed! { i128, FixedI128<0> }
-int_to_fixed! { isize }
-int_to_fixed! { u8, FixedU8<0> }
-int_to_fixed! { u16, FixedU16<0> }
-int_to_fixed! { u32, FixedU32<0> }
-int_to_fixed! { u64, FixedU64<0> }
-int_to_fixed! { u128, FixedU128<0> }
-int_to_fixed! { usize }
-
-macro_rules! int_to_wider_fixed {
+macro_rules! lossy_int_from_fixed {
     (
         ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
     ) => {
-        impl<const DST_FRAC: i32> From<$SrcU> for $DstU<DST_FRAC>
+        // unsigned -> unsigned, infallible because Src::INT_BITS <= Dst::INT_BITS
+        impl<const FRAC: i32> LossyFrom<$SrcU<FRAC>> for $DstU
         where
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ $nbits_src <= $nbits_dst - DST_FRAC }>: True,
+            If<{ $nbits_src - $nbits_dst <= FRAC }>: True,
         {
-            /// Converts an integer to a fixed-point number.
+            /// Converts a fixed-point number to an integer.
             ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits, so it is actually lossless.
+            /// This conversion never fails (infallible) but may lose precision
+            /// (lossy). Any low-significance bits in the source that cannot be
+            /// represented in the destination are discarded, which rounds
+            /// towards &minus;∞.
             #[inline]
-            fn from(src: $SrcU) -> Self {
-                let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = DST_FRAC;
-                Self::from_bits(unshifted << shift)
+            fn lossy_from(src: $SrcU<FRAC>) -> Self {
+                FromFixed::from_fixed(src)
             }
         }
 
-        impl<const DST_FRAC: i32> From<$SrcI> for $DstI<DST_FRAC>
+        // signed -> signed, infallible because Src::INT_BITS <= Dst::INT_BITS
+        impl<const FRAC: i32> LossyFrom<$SrcI<FRAC>> for $DstI
         where
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ $nbits_src <= $nbits_dst - DST_FRAC }>: True,
+            If<{ $nbits_src - $nbits_dst <= FRAC }>: True,
         {
-            /// Converts an integer to a fixed-point number.
+            /// Converts a fixed-point number to an integer.
             ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits, so it is actually lossless.
+            /// This conversion never fails (infallible) but may lose precision
+            /// (lossy). Any low-significance bits in the source that cannot be
+            /// represented in the destination are discarded, which rounds
+            /// towards &minus;∞.
             #[inline]
-            fn from(src: $SrcI) -> Self {
-                let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = DST_FRAC;
-                Self::from_bits(unshifted << shift)
+            fn lossy_from(src: $SrcI<FRAC>) -> Self {
+                FromFixed::from_fixed(src)
             }
         }
 
-        impl<const DST_FRAC: i32> From<$SrcU> for $DstI<DST_FRAC>
+        // signed -> signed, infallible because Src::INT_BITS <= Dst::INT_BITS - 1
+        impl<const FRAC: i32> LossyFrom<$SrcU<FRAC>> for $DstI
         where
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ $nbits_src < $nbits_dst - DST_FRAC }>: True,
+            If<{ $nbits_src - $nbits_dst < FRAC }>: True,
         {
-            /// Converts an integer to a fixed-point number.
+            /// Converts a fixed-point number to an integer.
             ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits, so it is actually lossless.
+            /// This conversion never fails (infallible) but may lose precision
+            /// (lossy). Any low-significance bits in the source that cannot be
+            /// represented in the destination are discarded, which rounds
+            /// towards &minus;∞.
             #[inline]
-            fn from(src: $SrcU) -> Self {
-                let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = DST_FRAC;
-                Self::from_bits(unshifted << shift)
+            fn lossy_from(src: $SrcU<FRAC>) -> Self {
+                FromFixed::from_fixed(src)
             }
         }
+    };
+    ($SrcU:ident, $SrcI:ident, $nbits_src:expr) => {
+        lossy_int_from_fixed! { ($SrcU, $SrcI, $nbits_src) -> (u8, i8, 8) }
+        lossy_int_from_fixed! { ($SrcU, $SrcI, $nbits_src) -> (u16, i16, 16) }
+        lossy_int_from_fixed! { ($SrcU, $SrcI, $nbits_src) -> (u32, i32, 32) }
+        lossy_int_from_fixed! { ($SrcU, $SrcI, $nbits_src) -> (u64, i64, 64) }
+        lossy_int_from_fixed! { ($SrcU, $SrcI, $nbits_src) -> (u128, i128, 128) }
+        lossy_int_from_fixed! { ($SrcU, $SrcI, $nbits_src) -> (usize, isize, 16) }
+    };
+}
 
-        impl<const DST_FRAC: i32> LossyFrom<$SrcU> for $DstU<DST_FRAC>
+lossy_int_from_fixed! { FixedU8, FixedI8, 8 }
+lossy_int_from_fixed! { FixedU16, FixedI16, 16 }
+lossy_int_from_fixed! { FixedU32, FixedI32, 32 }
+lossy_int_from_fixed! { FixedU64, FixedI64, 64 }
+lossy_int_from_fixed! { FixedU128, FixedI128, 128 }
+
+macro_rules! lossy_fixed_from_int {
+    (
+        ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
+    ) => {
+        // unsigned -> unsigned, infallible because Src::INT_BITS <= Dst::INT_BITS
+        impl<const FRAC: i32> LossyFrom<$SrcU> for $DstU<FRAC>
         where
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ $nbits_src <= $nbits_dst - DST_FRAC }>: True,
+            If<{ FRAC <= $nbits_dst - $nbits_src }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits, so it is actually lossless.
+            /// This conversion never fails (infallible) but may lose precision
+            /// (lossy). Any low-significance bits in the source that cannot be
+            /// represented in the destination are discarded, which rounds
+            /// towards &minus;∞.
             #[inline]
             fn lossy_from(src: $SrcU) -> Self {
-                src.into()
+                ToFixed::to_fixed(src)
             }
         }
 
-        impl<const DST_FRAC: i32> LossyFrom<$SrcI> for $DstI<DST_FRAC>
+        // signed -> signed, infallible because Src::INT_BITS <= Dst::INT_BITS
+        impl<const FRAC: i32> LossyFrom<$SrcI> for $DstI<FRAC>
         where
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ $nbits_src <= $nbits_dst - DST_FRAC }>: True,
+            If<{ FRAC <= $nbits_dst - $nbits_src }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits, so it is actually lossless.
+            /// This conversion never fails (infallible) but may lose precision
+            /// (lossy). Any low-significance bits in the source that cannot be
+            /// represented in the destination are discarded, which rounds
+            /// towards &minus;∞.
             #[inline]
             fn lossy_from(src: $SrcI) -> Self {
-                src.into()
+                ToFixed::to_fixed(src)
             }
         }
 
-        impl<const DST_FRAC: i32> LossyFrom<$SrcU> for $DstI<DST_FRAC>
+        // signed -> signed, infallible because Src::INT_BITS <= Dst::INT_BITS - 1
+        impl<const FRAC: i32> LossyFrom<$SrcU> for $DstI<FRAC>
         where
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ $nbits_src < $nbits_dst - DST_FRAC }>: True,
+            If<{ FRAC < $nbits_dst - $nbits_src }>: True,
         {
             /// Converts an integer to a fixed-point number.
             ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits, so it is actually lossless.
+            /// This conversion never fails (infallible) but may lose precision
+            /// (lossy). Any low-significance bits in the source that cannot be
+            /// represented in the destination are discarded, which rounds
+            /// towards &minus;∞.
             #[inline]
             fn lossy_from(src: $SrcU) -> Self {
-                src.into()
-            }
-        }
-    };
-}
-
-int_to_wider_fixed! { (u8, i8, 8) -> (FixedU16, FixedI16, 16) }
-int_to_wider_fixed! { (u8, i8, 8) -> (FixedU32, FixedI32, 32) }
-int_to_wider_fixed! { (u8, i8, 8) -> (FixedU64, FixedI64, 64) }
-int_to_wider_fixed! { (u8, i8, 8) -> (FixedU128, FixedI128, 128) }
-int_to_wider_fixed! { (u16, i16, 16) -> (FixedU32, FixedI32, 32) }
-int_to_wider_fixed! { (u16, i16, 16) -> (FixedU64, FixedI64, 64) }
-int_to_wider_fixed! { (u16, i16, 16) -> (FixedU128, FixedI128, 128) }
-int_to_wider_fixed! { (u32, i32, 32) -> (FixedU64, FixedI64, 64) }
-int_to_wider_fixed! { (u32, i32, 32) -> (FixedU128, FixedI128, 128) }
-int_to_wider_fixed! { (u64, i64, 64) -> (FixedU128, FixedI128, 128) }
-
-macro_rules! bool_to_fixed {
-    ($DstU:ident, $DstI:ident, $nbits_dst:expr) => {
-        impl<const DST_FRAC: i32> From<bool> for $DstU<DST_FRAC>
-        where
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ 1 <= $nbits_dst - DST_FRAC }>: True,
-        {
-            /// Converts a [`bool`] to a fixed-point number.
-            ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits (lossless).
-            #[inline]
-            fn from(src: bool) -> Self {
-                let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = DST_FRAC;
-                Self::from_bits(unshifted << shift)
-            }
-        }
-
-        impl<const DST_FRAC: i32> From<bool> for $DstI<DST_FRAC>
-        where
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ 1 < $nbits_dst - DST_FRAC }>: True,
-        {
-            /// Converts a [`bool`] to a fixed-point number.
-            ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits (lossless).
-            #[inline]
-            fn from(src: bool) -> Self {
-                let unshifted = Self::from_bits(src.into()).to_bits();
-                let shift = DST_FRAC;
-                Self::from_bits(unshifted << shift)
-            }
-        }
-
-        impl<const DST_FRAC: i32> LossyFrom<bool> for $DstU<DST_FRAC>
-        where
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ 1 <= $nbits_dst - DST_FRAC }>: True,
-        {
-            /// Converts a [`bool`] to a fixed-point number.
-            ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits, so it is actually lossless.
-            #[inline]
-            fn lossy_from(src: bool) -> Self {
-                src.into()
-            }
-        }
-
-        impl<const DST_FRAC: i32> LossyFrom<bool> for $DstI<DST_FRAC>
-        where
-            If<{ (0 <= DST_FRAC) & (DST_FRAC <= $nbits_dst) }>: True,
-            If<{ 1 < $nbits_dst - DST_FRAC }>: True,
-        {
-            /// Converts a [`bool`] to a fixed-point number.
-            ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits, so it is actually lossless.
-            #[inline]
-            fn lossy_from(src: bool) -> Self {
-                src.into()
-            }
-        }
-    };
-}
-
-bool_to_fixed! { FixedU8, FixedI8, 8 }
-bool_to_fixed! { FixedU16, FixedI16, 16 }
-bool_to_fixed! { FixedU32, FixedI32, 32 }
-bool_to_fixed! { FixedU64, FixedI64, 64 }
-bool_to_fixed! { FixedU128, FixedI128, 128 }
-
-macro_rules! fixed_to_int {
-    (($SrcU:ident, $SrcI:ident) -> ($DstU:ident, $DstI:ident)) => {
-        impl From<$SrcU<0>> for $DstU {
-            /// Converts a fixed-point number with no fractional bits to an integer.
-            ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits (lossless).
-            #[inline]
-            fn from(src: $SrcU<0>) -> Self {
-                src.to_bits().into()
-            }
-        }
-
-        impl From<$SrcI<0>> for $DstI {
-            /// Converts a fixed-point number with no fractional bits to an integer.
-            ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits (lossless).
-            #[inline]
-            fn from(src: $SrcI<0>) -> Self {
-                src.to_bits().into()
-            }
-        }
-    };
-    (($SrcU:ident, $SrcI:ident) -> wider ($DstU:ident, $DstI:ident)) => {
-        fixed_to_int! { ($SrcU, $SrcI) -> ($DstU, $DstI) }
-
-        impl From<$SrcU<0>> for $DstI {
-            /// Converts a fixed-point number with no fractional bits to an integer.
-            ///
-            /// This conversion never fails (infallible) and cannot
-            /// lose any fractional bits (lossless).
-            #[inline]
-            fn from(src: $SrcU<0>) -> Self {
-                src.to_bits().into()
-            }
-        }
-    };
-}
-
-fixed_to_int! { (FixedU8, FixedI8) -> (u8, i8) }
-fixed_to_int! { (FixedU8, FixedI8) -> wider (u16, i16) }
-fixed_to_int! { (FixedU8, FixedI8) -> wider (u32, i32) }
-fixed_to_int! { (FixedU8, FixedI8) -> wider (u64, i64) }
-fixed_to_int! { (FixedU8, FixedI8) -> wider (u128, i128) }
-fixed_to_int! { (FixedU8, FixedI8) -> wider (usize, isize) }
-
-fixed_to_int! { (FixedU16, FixedI16) -> (u16, i16) }
-fixed_to_int! { (FixedU16, FixedI16) -> wider (u32, i32) }
-fixed_to_int! { (FixedU16, FixedI16) -> wider (u64, i64) }
-fixed_to_int! { (FixedU16, FixedI16) -> wider (u128, i128) }
-fixed_to_int! { (FixedU16, FixedI16) -> (usize, isize) }
-
-fixed_to_int! { (FixedU32, FixedI32) -> (u32, i32) }
-fixed_to_int! { (FixedU32, FixedI32) -> wider (u64, i64) }
-fixed_to_int! { (FixedU32, FixedI32) -> wider (u128, i128) }
-
-fixed_to_int! { (FixedU64, FixedI64) -> (u64, i64) }
-fixed_to_int! { (FixedU64, FixedI64) -> wider (u128, i128) }
-
-fixed_to_int! { (FixedU128, FixedI128) -> (u128, i128) }
-
-macro_rules! fixed_to_int_lossless {
-    ($Src:ty, $Dst:ident) => {
-        impl LosslessTryFrom<$Src> for $Dst {
-            /// Converts a fixed-point number to an integer.
-            ///
-            /// This conversion may fail (fallible) but cannot lose
-            /// any fractional bits (lossless).
-            #[inline]
-            fn lossless_try_from(src: $Src) -> Option<Self> {
-                $Dst::checked_from_fixed(src)
-            }
-        }
-    };
-
-    ($Src:ty) => {
-        fixed_to_int_lossless! { $Src, i8 }
-        fixed_to_int_lossless! { $Src, i16 }
-        fixed_to_int_lossless! { $Src, i32 }
-        fixed_to_int_lossless! { $Src, i64 }
-        fixed_to_int_lossless! { $Src, i128 }
-        fixed_to_int_lossless! { $Src, isize }
-        fixed_to_int_lossless! { $Src, u8 }
-        fixed_to_int_lossless! { $Src, u16 }
-        fixed_to_int_lossless! { $Src, u32 }
-        fixed_to_int_lossless! { $Src, u64 }
-        fixed_to_int_lossless! { $Src, u128 }
-        fixed_to_int_lossless! { $Src, usize }
-    };
-}
-
-fixed_to_int_lossless! { FixedI8<0>}
-fixed_to_int_lossless! { FixedI16<0>}
-fixed_to_int_lossless! { FixedI32<0>}
-fixed_to_int_lossless! { FixedI64<0>}
-fixed_to_int_lossless! { FixedI128<0>}
-fixed_to_int_lossless! { FixedU8<0>}
-fixed_to_int_lossless! { FixedU16<0>}
-fixed_to_int_lossless! { FixedU32<0>}
-fixed_to_int_lossless! { FixedU64<0>}
-fixed_to_int_lossless! { FixedU128<0>}
-
-macro_rules! fixed_to_int_lossy {
-    (
-        ($SrcU:ident, $SrcI:ident, $nbits_src:expr) -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
-    ) => {
-        impl<const SRC_FRAC: i32> LossyFrom<$SrcU<SRC_FRAC>> for $DstU
-        where
-            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
-            If<{ $nbits_src - SRC_FRAC <= $nbits_dst }>: True,
-        {
-            /// Converts a fixed-point number to an integer.
-            ///
-            /// This conversion never fails (infallible) but may lose
-            /// precision (lossy). Any fractional bits in the source
-            /// are discarded, which rounds towards &minus;∞.
-            #[inline]
-            fn lossy_from(src: $SrcU<SRC_FRAC>) -> Self {
-                src.to_num()
-            }
-        }
-
-        impl<const SRC_FRAC: i32> LossyFrom<$SrcI<SRC_FRAC>> for $DstI
-        where
-            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
-            If<{ $nbits_src - SRC_FRAC <= $nbits_dst }>: True,
-        {
-            /// Converts a fixed-point number to an integer.
-            ///
-            /// This conversion never fails (infallible) but may lose
-            /// precision (lossy). Any fractional bits in the source
-            /// are discarded, which rounds towards &minus;∞.
-            #[inline]
-            fn lossy_from(src: $SrcI<SRC_FRAC>) -> Self {
-                src.to_num()
-            }
-        }
-
-        impl<const SRC_FRAC: i32> LossyFrom<$SrcU<SRC_FRAC>> for $DstI
-        where
-            If<{ (0 <= SRC_FRAC) & (SRC_FRAC <= $nbits_src) }>: True,
-            If<{ $nbits_src - SRC_FRAC < $nbits_dst }>: True,
-        {
-            /// Converts a fixed-point number to an integer.
-            ///
-            /// This conversion never fails (infallible) but may lose
-            /// precision (lossy). Any fractional bits in the source
-            /// are discarded, which rounds towards &minus;∞.
-            #[inline]
-            fn lossy_from(src: $SrcU<SRC_FRAC>) -> Self {
-                src.to_num()
+                ToFixed::to_fixed(src)
             }
         }
     };
     ($SrcU:ident, $SrcI:ident, $nbits_src:expr) => {
-        fixed_to_int_lossy! { ($SrcU, $SrcI, $nbits_src) -> (u8, i8, 8) }
-        fixed_to_int_lossy! { ($SrcU, $SrcI, $nbits_src) -> (u16, i16, 16) }
-        fixed_to_int_lossy! { ($SrcU, $SrcI, $nbits_src) -> (u32, i32, 32) }
-        fixed_to_int_lossy! { ($SrcU, $SrcI, $nbits_src) -> (u64, i64, 64) }
-        fixed_to_int_lossy! { ($SrcU, $SrcI, $nbits_src) -> (u128, i128, 128) }
-        fixed_to_int_lossy! { ($SrcU, $SrcI, $nbits_src) -> (usize, isize, 16) }
+        lossy_fixed_from_int! { ($SrcU, $SrcI, $nbits_src) -> (FixedU8, FixedI8, 8) }
+        lossy_fixed_from_int! { ($SrcU, $SrcI, $nbits_src) -> (FixedU16, FixedI16, 16) }
+        lossy_fixed_from_int! { ($SrcU, $SrcI, $nbits_src) -> (FixedU32, FixedI32, 32) }
+        lossy_fixed_from_int! { ($SrcU, $SrcI, $nbits_src) -> (FixedU64, FixedI64, 64) }
+        lossy_fixed_from_int! { ($SrcU, $SrcI, $nbits_src) -> (FixedU128, FixedI128, 128) }
     };
 }
 
-fixed_to_int_lossy! { FixedU8, FixedI8, 8 }
-fixed_to_int_lossy! { FixedU16, FixedI16, 16 }
-fixed_to_int_lossy! { FixedU32, FixedI32, 32 }
-fixed_to_int_lossy! { FixedU64, FixedI64, 64 }
-fixed_to_int_lossy! { FixedU128, FixedI128, 128 }
+lossy_fixed_from_int! { u8, i8, 8 }
+lossy_fixed_from_int! { u16, i16, 16 }
+lossy_fixed_from_int! { u32, i32, 32 }
+lossy_fixed_from_int! { u64, i64, 64 }
+lossy_fixed_from_int! { u128, i128, 128 }
+
+macro_rules! lossy_fixed_from_bool {
+    (
+        bool -> ($DstU:ident, $DstI:ident, $nbits_dst:expr)
+    ) => {
+        impl<const FRAC: i32> LossyFrom<bool> for $DstU<FRAC>
+        where
+            If<{ FRAC < $nbits_dst }>: True,
+        {
+            /// Converts a Boolean value to a fixed-point number.
+            ///
+            /// This conversion never fails (infallible) but may lose precision
+            /// (lossy). Any low-significance bits in the source that cannot be
+            /// represented in the destination are discarded, which rounds
+            /// towards &minus;∞.
+            #[inline]
+            fn lossy_from(src: bool) -> Self {
+                ToFixed::to_fixed(src)
+            }
+        }
+
+        impl<const FRAC: i32> LossyFrom<bool> for $DstI<FRAC>
+        where
+            If<{ FRAC < $nbits_dst - 1 }>: True,
+        {
+            /// Converts a Boolean value to a fixed-point number.
+            ///
+            /// This conversion never fails (infallible) but may lose precision
+            /// (lossy). Any low-significance bits in the source that cannot be
+            /// represented in the destination are discarded, which rounds
+            /// towards &minus;∞.
+            #[inline]
+            fn lossy_from(src: bool) -> Self {
+                ToFixed::to_fixed(src)
+            }
+        }
+    };
+}
+
+lossy_fixed_from_bool! { bool -> (FixedU8, FixedI8, 8) }
+lossy_fixed_from_bool! { bool -> (FixedU16, FixedI16, 16) }
+lossy_fixed_from_bool! { bool -> (FixedU32, FixedI32, 32) }
+lossy_fixed_from_bool! { bool -> (FixedU64, FixedI64, 64) }
+lossy_fixed_from_bool! { bool -> (FixedU128, FixedI128, 128) }
 
 // f16 has minimum subnormal == 2 ^ -(14 + 10) => 24 fractional bits
 // bf16 has minimum subnormal == 2 ^ -(126 + 7) => 133 fractional bits
 // f32 has minimum subnormal == 2 ^ -(126 + 23) => 149 fractional bits
 // f64 has minimum subnormal == 2 ^ -(1022 + 52) => 1074 fractional bits
-//
-// The only lossless float to fixed possible is from f16 to
+// F128Bits has minimum subnormal == 2 ^ -(16382 + 112) => 16494 fractional bits
+
+// f16 has maximum normal < 2 * 2 ^ 15 => 16 integer bits
+// bf16 has maximum normal < 2 * 2 ^ 127 => 128 integer bits
+// f32 has maximum normal < 2 * 2 ^ 127 => 128 integer bits
+// f64 has maximum normal < 2 * 2 ^ 1023 => 1024 integer bits
+// F128Bits has maximum normal < 2 * 2 ^ 16383 => 16384 integer bits
+
+macro_rules! float_from_fixed {
+    (
+        ($Src:ident, $nbits_src:expr) ->
+            ($Dst:ident, $nbits_dst:expr, $dst_frac:expr, $dst_int:expr)
+    ) => {
+        impl<const FRAC: i32> From<$Src<FRAC>> for $Dst
+        where
+            If<{ ($nbits_src - $dst_int <= FRAC) & (FRAC <= $dst_frac) }>: True,
+        {
+            /// Converts a fixed-point number to a floating-point number.
+            ///
+            /// This conversion never fails (infallible) and does not lose any
+            /// precision (lossless).
+            #[inline]
+            fn from(src: $Src<FRAC>) -> Self {
+                FromFixed::from_fixed(src)
+            }
+        }
+    };
+    (
+        ($SrcU:ident, $SrcI:ident, $nbits_src:expr) ->
+            ($Dst:ident, $nbits_dst:expr, $dst_frac:expr, $dst_int:expr)
+    ) => {
+        float_from_fixed! { ($SrcU, $nbits_src) -> ($Dst, $nbits_dst, $dst_frac, $dst_int) }
+        float_from_fixed! { ($SrcI, $nbits_src) -> ($Dst, $nbits_dst, $dst_frac, $dst_int) }
+    };
+}
+
+float_from_fixed! { (FixedU8, FixedI8, 8) -> (f16, 11, 24, 16) }
+float_from_fixed! { (FixedU8, FixedI8, 8) -> (f32, 24, 149, 128) }
+float_from_fixed! { (FixedU8, FixedI8, 8) -> (f64, 53, 1074, 1024) }
+float_from_fixed! { (FixedU8, FixedI8, 8) -> (F128Bits, 113, 16494, 16384) }
+
+float_from_fixed! { (FixedU16, FixedI16, 16) -> (f32, 24, 149, 128) }
+float_from_fixed! { (FixedU16, FixedI16, 16) -> (f64, 53, 1074, 1024) }
+float_from_fixed! { (FixedU16, FixedI16, 16) -> (F128Bits, 113, 16494, 16384) }
+
+float_from_fixed! { (FixedU32, FixedI32, 32) -> (f64, 53, 1074, 1024) }
+float_from_fixed! { (FixedU32, FixedI32, 32) -> (F128Bits, 113, 16494, 16384) }
+
+float_from_fixed! { (FixedU64, FixedI64, 64) -> (F128Bits, 113, 16494, 16384) }
+
+macro_rules! fallible_float_from_fixed {
+    (
+        $Src:ident -> $Dst:ident
+    ) => {
+        impl<const FRAC: i32> LosslessTryFrom<$Src<FRAC>> for $Dst {
+            /// Converts a fixed-point number to a floating-point number.
+            ///
+            /// This conversion may fail (fallible) but cannot lose precision
+            /// (lossless). As a consequency, ∞ are &minus;∞ are never returned,
+            /// as they would lose precision.
+            #[inline]
+            fn lossless_try_from(src: $Src<FRAC>) -> Option<Self> {
+                let ret: Self = FromFixed::from_fixed(src);
+                if ret.is_finite() {
+                    Some(ret)
+                } else {
+                    None
+                }
+            }
+        }
+    };
+    (($SrcU:ident, $SrcI:ident) -> $Dst:ident) => {
+        fallible_float_from_fixed! { $SrcU -> $Dst }
+        fallible_float_from_fixed! { $SrcI -> $Dst }
+    };
+}
+
+fallible_float_from_fixed! { (FixedU8, FixedI8) -> f16 }
+fallible_float_from_fixed! { (FixedU8, FixedI8) -> f32 }
+fallible_float_from_fixed! { (FixedU8, FixedI8) -> f64 }
+fallible_float_from_fixed! { (FixedU8, FixedI8) -> F128Bits }
+
+fallible_float_from_fixed! { (FixedU16, FixedI16) -> f32 }
+fallible_float_from_fixed! { (FixedU16, FixedI16) -> f64 }
+fallible_float_from_fixed! { (FixedU16, FixedI16) -> F128Bits }
+
+fallible_float_from_fixed! { (FixedU32, FixedI32) -> f64 }
+fallible_float_from_fixed! { (FixedU32, FixedI32) -> F128Bits }
+
+fallible_float_from_fixed! { (FixedU64, FixedI64) -> F128Bits }
+
+// The only lossless float to fixed possible is from f16 to signed
 // fixed-point numbers with 24 or more fractional bits.
-macro_rules! float_to_fixed {
-    ($Src:ident, $Dst:ident, $nbits:expr) => {
+macro_rules! fallible_fixed_from_float {
+    ($Src:ident -> ($Dst:ident, $nbits:expr)) => {
         impl<const FRAC: i32> LosslessTryFrom<$Src> for $Dst<FRAC>
         where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-            If<{ FRAC >= 24 }>: True,
+            If<{ 24 <= FRAC }>: True,
         {
             /// Converts a floating-point number to a fixed-point
             /// number.
             ///
-            /// This conversion may fail (fallible) but cannot lose
-            /// any fractional bits (lossless).
+            /// This conversion may fail (fallible) but does not lose precision
+            /// (lossless).
             #[inline]
             fn lossless_try_from(src: $Src) -> Option<Self> {
-                src.checked_to_fixed()
+                ToFixed::checked_to_fixed(src)
             }
         }
     };
 }
-float_to_fixed! { f16, FixedI32, 32 }
-float_to_fixed! { f16, FixedI64, 64 }
-float_to_fixed! { f16, FixedI128, 128 }
+fallible_fixed_from_float! { f16 -> (FixedI32, 32) }
+fallible_fixed_from_float! { f16 -> (FixedI64, 64) }
+fallible_fixed_from_float! { f16 -> (FixedI128, 128) }
 
-macro_rules! fixed_to_float {
-    ($Fixed:ident($nbits:expr) -> $Float:ident) => {
-        impl<const FRAC: i32> From<$Fixed<FRAC>> for $Float
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+macro_rules! lossy_float_from_fixed {
+    ($Src:ident -> $Dst:ident) => {
+        impl<const FRAC: i32> LossyFrom<$Src<FRAC>> for $Dst {
             /// Converts a fixed-point number to a floating-point number.
             ///
-            /// This conversion never fails (infallible) and does not
-            /// lose any precision (lossless).
+            /// This conversion never fails (infallible) but may lose precision
+            /// (lossy). Rounding is to the nearest, with ties rounded to even.
             #[inline]
-            fn from(src: $Fixed<FRAC>) -> $Float {
-                $Float::from_fixed(src)
+            fn lossy_from(src: $Src<FRAC>) -> Self {
+                FromFixed::from_fixed(src)
             }
         }
-
-        impl<const FRAC: i32> LosslessTryFrom<$Fixed<FRAC>> for $Float
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
-            /// Converts a fixed-point number to a floating-point number.
-            ///
-            /// This conversion actually never fails (infallible) but
-            /// does not lose any precision (lossless).
-            #[inline]
-            fn lossless_try_from(src: $Fixed<FRAC>) -> Option<$Float> {
-                Some($Float::from_fixed(src))
-            }
-        }
+    };
+    (($SrcU:ident, $SrcI:ident) -> $Dst:ident) => {
+        lossy_float_from_fixed! { $SrcU -> $Dst }
+        lossy_float_from_fixed! { $SrcI -> $Dst }
+    };
+    ($SrcU:ident, $SrcI:ident) => {
+        lossy_float_from_fixed! { ($SrcU, $SrcI) -> f16 }
+        lossy_float_from_fixed! { ($SrcU, $SrcI) -> bf16 }
+        lossy_float_from_fixed! { ($SrcU, $SrcI) -> f32 }
+        lossy_float_from_fixed! { ($SrcU, $SrcI) -> f64 }
+        lossy_float_from_fixed! { ($SrcU, $SrcI) -> F128Bits }
     };
 }
 
-fixed_to_float! { FixedI8(8) -> f16 }
-fixed_to_float! { FixedU8(8) -> f16 }
-fixed_to_float! { FixedI8(8) -> f32 }
-fixed_to_float! { FixedI16(16) -> f32 }
-fixed_to_float! { FixedU8(8) -> f32 }
-fixed_to_float! { FixedU16(16) -> f32 }
-fixed_to_float! { FixedI8(8) -> f64 }
-fixed_to_float! { FixedI16(16) -> f64 }
-fixed_to_float! { FixedI32(32) -> f64 }
-fixed_to_float! { FixedU8(8) -> f64 }
-fixed_to_float! { FixedU16(16) -> f64 }
-fixed_to_float! { FixedU32(32) -> f64 }
-fixed_to_float! { FixedI8(8) -> F128Bits }
-fixed_to_float! { FixedI16(16) -> F128Bits }
-fixed_to_float! { FixedI32(32) -> F128Bits }
-fixed_to_float! { FixedI64(64) -> F128Bits }
-fixed_to_float! { FixedU8(8) -> F128Bits }
-fixed_to_float! { FixedU16(16) -> F128Bits }
-fixed_to_float! { FixedU32(32) -> F128Bits }
-fixed_to_float! { FixedU64(64) -> F128Bits }
-
-macro_rules! fixed_to_float_lossy {
-    ($Fixed:ident($nbits:expr) -> $Float:ident) => {
-        impl<const FRAC: i32> LossyFrom<$Fixed<FRAC>> for $Float
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
-            /// Converts a fixed-point number to a floating-point number.
-            ///
-            /// This conversion never fails (infallible) but may lose
-            /// precision (lossy). Rounding is to the nearest, with
-            /// ties rounded to even.
-            #[inline]
-            fn lossy_from(src: $Fixed<FRAC>) -> $Float {
-                src.to_num()
-            }
-        }
-    };
-    ($Fixed:ident($nbits:expr)) => {
-        fixed_to_float_lossy! { $Fixed($nbits) -> f16 }
-        fixed_to_float_lossy! { $Fixed($nbits) -> bf16 }
-        fixed_to_float_lossy! { $Fixed($nbits) -> f32 }
-        fixed_to_float_lossy! { $Fixed($nbits) -> f64 }
-        fixed_to_float_lossy! { $Fixed($nbits) -> F128Bits }
-    };
-}
-
-fixed_to_float_lossy! { FixedI8(8) }
-fixed_to_float_lossy! { FixedI16(16) }
-fixed_to_float_lossy! { FixedI32(32) }
-fixed_to_float_lossy! { FixedI64(64) }
-fixed_to_float_lossy! { FixedI128(128) }
-fixed_to_float_lossy! { FixedU8(8) }
-fixed_to_float_lossy! { FixedU16(16) }
-fixed_to_float_lossy! { FixedU32(32) }
-fixed_to_float_lossy! { FixedU64(64) }
-fixed_to_float_lossy! { FixedU128(128) }
+lossy_float_from_fixed! { FixedU8, FixedI8 }
+lossy_float_from_fixed! { FixedU16, FixedI16 }
+lossy_float_from_fixed! { FixedU32, FixedI32 }
+lossy_float_from_fixed! { FixedU64, FixedI64 }
+lossy_float_from_fixed! { FixedU128, FixedI128 }
 
 macro_rules! int_to_float_lossy_lossless {
     ($Int:ident as $IntAs:ident, $IntFixed:ident -> $($Lossy:ident)*; $($Lossless:ident)*) => {

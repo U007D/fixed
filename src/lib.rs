@@ -303,8 +303,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
 #![feature(generic_const_exprs)]
 #![allow(incomplete_features)]
-// TODO: https://github.com/rust-lang/rust/issues/94293
-#![allow(const_evaluatable_unchecked)]
 
 #[cfg(all(not(feature = "std"), test))]
 extern crate std;
@@ -687,6 +685,12 @@ impl F128Bits {
     #[inline]
     pub(crate) fn from_bits(bits: u128) -> F128Bits {
         F128Bits(bits)
+    }
+
+    #[inline]
+    pub(crate) fn is_finite(self) -> bool {
+        const EXP_MASK: u128 = (1u128 << 127) - (1u128 << 112);
+        (self.to_bits() & EXP_MASK) != EXP_MASK
     }
 }
 
