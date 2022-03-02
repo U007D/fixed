@@ -14,8 +14,8 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
-    FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
-    FixedU64, FixedU8,
+    FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
+    FixedU8,
 };
 use az::OverflowingCast;
 use core::{
