@@ -469,11 +469,26 @@ macro_rules! impl_fmt {
             }
         }
 
-        impl<const FRAC: i32> Debug for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> Debug for $Fixed<FRAC> {
             fn fmt(&self, f: &mut Formatter) -> FmtResult {
+                if FRAC < 0 || FRAC > $nbits {
+                    match debug_hex::is_debug_hex(f) {
+                        IsDebugHex::Lower => {
+                            f.write_fmt(format_args!("(0x{:x} ", self.to_bits()))?;
+                        }
+                        IsDebugHex::Upper => {
+                            f.write_fmt(format_args!("(0x{:X} ", self.to_bits()))?;
+                        }
+                        IsDebugHex::No => {
+                            f.write_fmt(format_args!("({} ", self.to_bits()))?;
+                        }
+                    }
+                    return if FRAC < 0 {
+                        f.write_fmt(format_args!("<< {})", FRAC.wrapping_neg() as u32))
+                    } else {
+                        f.write_fmt(format_args!(">> {})", FRAC))
+                    };
+                }
                 let neg_abs = int_helper::$Inner::neg_abs(self.to_bits());
                 match debug_hex::is_debug_hex(f) {
                     IsDebugHex::Lower => {

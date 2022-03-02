@@ -557,7 +557,7 @@ depending on the crate’s [optional features], and should not be used directly.
 /// [`TryFrom`]: core::convert::TryFrom
 pub trait Fixed
 where
-    Self: Default + Hash + Ord,
+    Self: Debug + Default + Hash + Ord,
     Self: Pod + TransparentWrapper<<Self as Fixed>::Bits>,
     Self: FromFixed + ToFixed,
     Self: Add<Output = Self> + AddAssign,
@@ -2107,7 +2107,7 @@ where
 /// [`FixedU32`], [`FixedU64`], and [`FixedU128`].
 pub trait FixedStrict: Fixed
 where
-    Self: Debug + Display + Binary + Octal + LowerHex + UpperHex,
+    Self: Display + Binary + Octal + LowerHex + UpperHex,
     Self: FromStr<Err = ParseFixedError>,
     Self: Div<Output = Self> + DivAssign,
     Self: Rem<<Self as Fixed>::Bits, Output = Self> + RemAssign<<Self as Fixed>::Bits>,
