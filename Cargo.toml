@@ -31,7 +31,7 @@ std = []
 # num-traits
 
 [dependencies]
-az = "1.1"
+az = "1.2"
 bytemuck = "1.2"
 half = "1.6"
 
