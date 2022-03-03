@@ -719,11 +719,24 @@ macro_rules! const_fixed_from_int {
         const $NAME: $Fixed = <$Fixed>::from_bits({
             // Coerce type.
             let int = <$Fixed>::from_bits($int).to_bits();
-            // Divide shift into two parts for cases where $Fixed cannot represent 1.
             let frac_nbits = <$Fixed>::FRAC_BITS;
-            let one_a = <$Fixed>::DELTA.to_bits() << (frac_nbits / 2);
-            let one_b = <$Fixed>::DELTA.to_bits() << (frac_nbits - frac_nbits / 2);
-            int * one_a * one_b
+            let nbits = frac_nbits + <$Fixed>::INT_BITS;
+            if frac_nbits <= -nbits {
+                int >> (nbits / 2) >> (nbits / 2)
+            } else if frac_nbits <= 0 {
+                int >> -frac_nbits
+            } else if frac_nbits >= nbits {
+                if int != 0 {
+                    panic!("overflow");
+                }
+                0
+            } else {
+                let shifted = int << frac_nbits;
+                if (shifted >> frac_nbits) != int {
+                    panic!("overflow");
+                }
+                shifted
+            }
         });
     )* };
 }
