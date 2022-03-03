@@ -547,7 +547,7 @@ macro_rules! fixed_cmp_float {
         impl<const FRAC: i32> PartialEq<$Float> for $Fix<FRAC> {
             #[inline]
             fn eq(&self, rhs: &$Float) -> bool {
-                use float_helper::$Float::CmpKind;
+                use float_helper::$Float::Kind;
                 let (lhs_neg, lhs_abs) = int_helper::$Inner::neg_abs(self.to_bits());
                 let lhs = Value {
                     neg: lhs_neg,
@@ -555,8 +555,8 @@ macro_rules! fixed_cmp_float {
                     bits: $Inner::BITS,
                     frac_bits: FRAC,
                 };
-                let (rhs_neg, rhs_abs, rhs_frac) = match float_helper::$Float::cmp_kind(*rhs) {
-                    CmpKind::Finite {
+                let (rhs_neg, rhs_abs, rhs_frac) = match float_helper::$Float::kind(*rhs) {
+                    Kind::Finite {
                         neg,
                         abs,
                         frac_bits,
@@ -584,7 +584,7 @@ macro_rules! fixed_cmp_float {
         impl<const FRAC: i32> PartialOrd<$Float> for $Fix<FRAC> {
             #[inline]
             fn partial_cmp(&self, rhs: &$Float) -> Option<Ordering> {
-                use float_helper::$Float::CmpKind;
+                use float_helper::$Float::Kind;
                 let (lhs_neg, lhs_abs) = int_helper::$Inner::neg_abs(self.to_bits());
                 let lhs = Value {
                     neg: lhs_neg,
@@ -592,20 +592,20 @@ macro_rules! fixed_cmp_float {
                     bits: $Inner::BITS,
                     frac_bits: FRAC,
                 };
-                let (rhs_neg, rhs_abs, rhs_frac) = match float_helper::$Float::cmp_kind(*rhs) {
-                    CmpKind::Finite {
+                let (rhs_neg, rhs_abs, rhs_frac) = match float_helper::$Float::kind(*rhs) {
+                    Kind::Finite {
                         neg,
                         abs,
                         frac_bits,
                     } => (neg, abs, frac_bits),
-                    CmpKind::Infinite { neg } => {
+                    Kind::Infinite { neg } => {
                         return if neg {
                             Some(Ordering::Greater)
                         } else {
                             Some(Ordering::Less)
                         };
                     }
-                    CmpKind::NaN => return None,
+                    Kind::NaN => return None,
                 };
                 let rhs = Value {
                     neg: rhs_neg,

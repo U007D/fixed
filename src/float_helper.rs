@@ -34,20 +34,20 @@ macro_rules! make_helper {
 
             // zero is NOT negative, that is zero is represented as
             // Kind::Finite { neg: false, abs: 0, frac_bits: 0 },
-            pub enum CmpKind {
+            pub enum Kind {
                 NaN,
                 Infinite { neg: bool },
                 Finite { neg: bool, abs: $Bits, frac_bits: i32 },
             }
 
             #[inline]
-            pub fn cmp_kind(val: $Float) -> CmpKind {
+            pub fn kind(val: $Float) -> Kind {
                 let (neg, exp, mut mantissa) = parts(val);
                 if exp > EXP_MAX {
                     if mantissa == 0 {
-                        return CmpKind::Infinite { neg };
+                        return Kind::Infinite { neg };
                     } else {
-                        return CmpKind::NaN;
+                        return Kind::NaN;
                     };
                 }
                 // if not subnormal, add implicit bit
@@ -55,13 +55,13 @@ macro_rules! make_helper {
                     mantissa |= 1 << (PREC - 1);
                 }
                 if mantissa == 0 {
-                    return CmpKind::Finite {
+                    return Kind::Finite {
                         neg: false,
                         abs: 0,
                         frac_bits: 0,
                     };
                 }
-                CmpKind::Finite {
+                Kind::Finite {
                     neg,
                     abs: mantissa,
                     frac_bits: PREC as i32 - 1 - exp,
