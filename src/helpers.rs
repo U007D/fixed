@@ -14,8 +14,8 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
-    int_helper, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
-    FixedU64, FixedU8,
+    FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
+    FixedU8,
 };
 use core::cmp::Ordering;
 
@@ -42,60 +42,11 @@ pub enum FloatKind {
 }
 
 pub trait Sealed: Copy {
-    fn private_to_fixed_helper(self, dst_frac_nbits: u32, dst_int_nbits: u32) -> ToFixedHelper;
-    fn private_saturating_from_float_helper(src: FromFloatHelper) -> Self;
     fn private_overflowing_from_float_helper(src: FromFloatHelper) -> (Self, bool);
 }
 macro_rules! impl_sealed {
     ($Fixed:ident($nbits:expr, $Signedness:tt, $Inner:ident)) => {
         impl<const FRAC: i32> Sealed for $Fixed<FRAC> {
-            #[inline]
-            fn private_to_fixed_helper(
-                self,
-                dst_frac_nbits: u32,
-                dst_int_nbits: u32,
-            ) -> ToFixedHelper {
-                int_helper::$Inner::to_fixed_helper(
-                    self.to_bits(),
-                    FRAC,
-                    dst_frac_nbits,
-                    dst_int_nbits,
-                )
-            }
-            #[inline]
-            fn private_saturating_from_float_helper(src: FromFloatHelper) -> Self {
-                let neg = match src.kind {
-                    FloatKind::NaN => panic!("NaN"),
-                    FloatKind::Infinite { neg } => neg,
-                    FloatKind::Finite { neg, .. } => neg,
-                };
-                let saturated = if neg { Self::MIN } else { Self::MAX };
-                let conv = match src.kind {
-                    FloatKind::Finite { conv, .. } => conv,
-                    _ => return saturated,
-                };
-                if conv.overflow {
-                    return saturated;
-                }
-                let bits = if_signed_unsigned!(
-                    $Signedness,
-                    match conv.bits {
-                        Widest::Unsigned(bits) => {
-                            let bits = bits as _;
-                            if bits < 0 {
-                                return Self::MAX;
-                            }
-                            bits
-                        }
-                        Widest::Negative(bits) => bits as _,
-                    },
-                    match conv.bits {
-                        Widest::Unsigned(bits) => bits as _,
-                        Widest::Negative(_) => return Self::MIN,
-                    },
-                );
-                Self::from_bits(bits)
-            }
             #[inline]
             #[track_caller]
             fn private_overflowing_from_float_helper(src: FromFloatHelper) -> (Self, bool) {

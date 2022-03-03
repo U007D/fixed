@@ -129,6 +129,7 @@ macro_rules! make_helper {
                 (neg, exp, mant)
             }
 
+
             #[inline]
             pub fn to_float_kind(val: $Float, dst_frac_bits: u32, dst_int_bits: u32) -> FloatKind {
                 let prec = PREC as i32;
