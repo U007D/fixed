@@ -33,7 +33,7 @@ use core::{
     fmt::{Binary, Debug, Display, LowerHex, Octal, UpperHex},
     hash::Hash,
     iter::{Product, Sum},
-    mem,
+    mem::size_of,
     num::{
         NonZeroI128, NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroU128, NonZeroU16,
         NonZeroU32, NonZeroU64, NonZeroU8,
@@ -628,21 +628,6 @@ where
     /// [`Bits`]: Fixed::Bits
     type NonZeroBits;
 
-    /// A byte array with the same size as the type.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// #![feature(generic_const_exprs)]
-    /// # #![allow(incomplete_features)]
-    ///
-    /// use fixed::{traits::Fixed, types::I16F16};
-    /// // 32-bit DELTA is 0x0000_0001_i32
-    /// const DELTA_LE_BYTES: <I16F16 as Fixed>::Bytes = I16F16::DELTA.to_le_bytes();
-    /// assert_eq!(DELTA_LE_BYTES, 1i32.to_le_bytes());
-    /// ```
-    type Bytes;
-
     /// An unsigned fixed-point number type with the same number of integer and
     /// fractional bits as `Self`.
     ///
@@ -928,7 +913,7 @@ where
     /// See also
     /// <code>FixedI32::[from\_be\_bytes][FixedI32::from_be_bytes]</code> and
     /// <code>FixedU32::[from\_be\_bytes][FixedU32::from_be_bytes]</code>.
-    fn from_be_bytes(bytes: Self::Bytes) -> Self;
+    fn from_be_bytes(bytes: [u8; size_of::<Self>()]) -> Self;
 
     /// Creates a fixed-point number from its representation as a byte
     /// array in little endian.
@@ -936,7 +921,7 @@ where
     /// See also
     /// <code>FixedI32::[from\_le\_bytes][FixedI32::from_le_bytes]</code> and
     /// <code>FixedU32::[from\_le\_bytes][FixedU32::from_le_bytes]</code>.
-    fn from_le_bytes(bytes: Self::Bytes) -> Self;
+    fn from_le_bytes(bytes: [u8; size_of::<Self>()]) -> Self;
 
     /// Creates a fixed-point number from its representation as a byte
     /// array in native endian.
@@ -944,28 +929,28 @@ where
     /// See also
     /// <code>FixedI32::[from\_ne\_bytes][FixedI32::from_ne_bytes]</code> and
     /// <code>FixedU32::[from\_ne\_bytes][FixedU32::from_ne_bytes]</code>.
-    fn from_ne_bytes(bytes: Self::Bytes) -> Self;
+    fn from_ne_bytes(bytes: [u8; size_of::<Self>()]) -> Self;
 
     /// Returns the memory representation of this fixed-point number
     /// as a byte array in big-endian byte order.
     ///
     /// See also <code>FixedI32::[to\_be\_bytes][FixedI32::to_be_bytes]</code>
     /// and <code>FixedU32::[to\_be\_bytes][FixedU32::to_be_bytes]</code>.
-    fn to_be_bytes(self) -> Self::Bytes;
+    fn to_be_bytes(self) -> [u8; size_of::<Self>()];
 
     /// Returns the memory representation of this fixed-point number
     /// as a byte array in little-endian byte order.
     ///
     /// See also <code>FixedI32::[to\_le\_bytes][FixedI32::to_le_bytes]</code>
     /// and <code>FixedU32::[to\_le\_bytes][FixedU32::to_le_bytes]</code>.
-    fn to_le_bytes(self) -> Self::Bytes;
+    fn to_le_bytes(self) -> [u8; size_of::<Self>()];
 
     /// Returns the memory representation of this fixed-point number
     /// as a byte array in native byte order.
     ///
     /// See also <code>FixedI32::[to\_ne\_bytes][FixedI32::to_ne_bytes]</code>
     /// and <code>FixedU32::[to\_ne\_bytes][FixedU32::to_ne_bytes]</code>.
-    fn to_ne_bytes(self) -> Self::Bytes;
+    fn to_ne_bytes(self) -> [u8; size_of::<Self>()];
 
     /// Creates a fixed-point number from another number.
     ///
@@ -3543,7 +3528,6 @@ macro_rules! impl_fixed {
         impl<const FRAC: i32> Fixed for $Fixed<FRAC> {
             type Bits = $Bits;
             type NonZeroBits = $NonZeroBits;
-            type Bytes = [u8; mem::size_of::<$Bits>()];
             type Signed = $IFixed<FRAC>;
             type Unsigned = $UFixed<FRAC>;
             const ZERO: Self = Self::ZERO;
@@ -3560,12 +3544,12 @@ macro_rules! impl_fixed {
             trait_delegate! { fn to_be(self) -> Self }
             trait_delegate! { fn to_le(self) -> Self }
             trait_delegate! { fn swap_bytes(self) -> Self }
-            trait_delegate! { fn from_be_bytes(bits: Self::Bytes) -> Self }
-            trait_delegate! { fn from_le_bytes(bits: Self::Bytes) -> Self }
-            trait_delegate! { fn from_ne_bytes(bits: Self::Bytes) -> Self }
-            trait_delegate! { fn to_be_bytes(self) -> Self::Bytes }
-            trait_delegate! { fn to_le_bytes(self) -> Self::Bytes }
-            trait_delegate! { fn to_ne_bytes(self) -> Self::Bytes }
+            trait_delegate! { fn from_be_bytes(bits: [u8; size_of::<Self>()]) -> Self }
+            trait_delegate! { fn from_le_bytes(bits: [u8; size_of::<Self>()]) -> Self }
+            trait_delegate! { fn from_ne_bytes(bits: [u8; size_of::<Self>()]) -> Self }
+            trait_delegate! { fn to_be_bytes(self) -> [u8; size_of::<Self>()] }
+            trait_delegate! { fn to_le_bytes(self) -> [u8; size_of::<Self>()] }
+            trait_delegate! { fn to_ne_bytes(self) -> [u8; size_of::<Self>()] }
             trait_delegate! { fn from_num<Src: ToFixed>(src: Src) -> Self }
             trait_delegate! { fn to_num<Dst: FromFixed>(self) -> Dst }
             trait_delegate! { fn checked_from_num<Src: ToFixed>(val: Src) -> Option<Self> }

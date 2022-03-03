@@ -23,7 +23,7 @@ use crate::{
 use core::{
     fmt::{Debug, Display, Formatter, Result as FmtResult},
     iter::{Product, Sum},
-    mem,
+    mem::size_of,
     ops::{
         Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div,
         DivAssign, Mul, MulAssign, Neg, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub,
@@ -355,7 +355,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// );
     /// ```
     #[inline]
-    pub fn from_be_bytes(bytes: F::Bytes) -> Self {
+    pub fn from_be_bytes(bytes: [u8; size_of::<F>()]) -> Self {
         Unwrapped(F::from_be_bytes(bytes))
     }
 
@@ -380,7 +380,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// );
     /// ```
     #[inline]
-    pub fn from_le_bytes(bytes: F::Bytes) -> Self {
+    pub fn from_le_bytes(bytes: [u8; size_of::<F>()]) -> Self {
         Unwrapped(F::from_le_bytes(bytes))
     }
 
@@ -409,7 +409,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// );
     /// ```
     #[inline]
-    pub fn from_ne_bytes(bytes: F::Bytes) -> Self {
+    pub fn from_ne_bytes(bytes: [u8; size_of::<F>()]) -> Self {
         Unwrapped(F::from_ne_bytes(bytes))
     }
 
@@ -432,7 +432,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// );
     /// ```
     #[inline]
-    pub fn to_be_bytes(self) -> F::Bytes {
+    pub fn to_be_bytes(self) -> [u8; size_of::<F>()] {
         self.0.to_be_bytes()
     }
 
@@ -455,7 +455,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// );
     /// ```
     #[inline]
-    pub fn to_le_bytes(self) -> F::Bytes {
+    pub fn to_le_bytes(self) -> [u8; size_of::<F>()] {
         self.0.to_le_bytes()
     }
 
@@ -483,7 +483,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// );
     /// ```
     #[inline]
-    pub fn to_ne_bytes(self) -> F::Bytes {
+    pub fn to_ne_bytes(self) -> [u8; size_of::<F>()] {
         self.0.to_ne_bytes()
     }
 
@@ -2039,7 +2039,7 @@ macro_rules! op_shift {
             #[inline]
             #[track_caller]
             fn $op(self, other: $Rhs) -> Unwrapped<F> {
-                let nbits = mem::size_of::<F>() as u32 * 8;
+                let nbits = size_of::<F>() as u32 * 8;
                 let checked = other as u32 % nbits;
                 assert!(checked as $Rhs == other, "overflow");
                 Unwrapped((self.0).$op(checked))
@@ -2053,7 +2053,7 @@ macro_rules! op_shift {
             #[inline]
             #[track_caller]
             fn $op(self, other: $Rhs) -> Unwrapped<F> {
-                let nbits = mem::size_of::<F>() as u32 * 8;
+                let nbits = size_of::<F>() as u32 * 8;
                 let checked = other as u32 % nbits;
                 assert!(checked as $Rhs == other, "overflow");
                 Unwrapped((self.0).$op(checked))
@@ -2067,7 +2067,7 @@ macro_rules! op_shift {
             #[inline]
             #[track_caller]
             fn $op(self, other: &$Rhs) -> Unwrapped<F> {
-                let nbits = mem::size_of::<F>() as u32 * 8;
+                let nbits = size_of::<F>() as u32 * 8;
                 let checked = *other as u32 % nbits;
                 assert!(checked as $Rhs == *other, "overflow");
                 Unwrapped((self.0).$op(checked))
@@ -2081,7 +2081,7 @@ macro_rules! op_shift {
             #[inline]
             #[track_caller]
             fn $op(self, other: &$Rhs) -> Unwrapped<F> {
-                let nbits = mem::size_of::<F>() as u32 * 8;
+                let nbits = size_of::<F>() as u32 * 8;
                 let checked = *other as u32 % nbits;
                 assert!(checked as $Rhs == *other, "overflow");
                 Unwrapped((self.0).$op(checked))
@@ -2094,7 +2094,7 @@ macro_rules! op_shift {
             #[inline]
             #[track_caller]
             fn $op_assign(&mut self, other: $Rhs) {
-                let nbits = mem::size_of::<F>() as u32 * 8;
+                let nbits = size_of::<F>() as u32 * 8;
                 let checked = other as u32 % nbits;
                 assert!(checked as $Rhs == other, "overflow");
                 (self.0).$op_assign(checked);
@@ -2107,7 +2107,7 @@ macro_rules! op_shift {
             #[inline]
             #[track_caller]
             fn $op_assign(&mut self, other: &$Rhs) {
-                let nbits = mem::size_of::<F>() as u32 * 8;
+                let nbits = size_of::<F>() as u32 * 8;
                 let checked = *other as u32 % nbits;
                 assert!(checked as $Rhs == *other, "overflow");
                 (self.0).$op_assign(checked);
