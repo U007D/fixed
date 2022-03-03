@@ -32,11 +32,6 @@ pub struct ToFixedHelper {
     pub(crate) overflow: bool,
 }
 
-pub struct ToFloatHelper {
-    pub(crate) neg: bool,
-    pub(crate) abs: u128,
-}
-
 pub struct FromFloatHelper {
     pub(crate) kind: FloatKind,
 }
@@ -48,7 +43,6 @@ pub enum FloatKind {
 
 pub trait Sealed: Copy {
     fn private_to_fixed_helper(self, dst_frac_nbits: u32, dst_int_nbits: u32) -> ToFixedHelper;
-    fn private_to_float_helper(self) -> ToFloatHelper;
     fn private_saturating_from_float_helper(src: FromFloatHelper) -> Self;
     fn private_overflowing_from_float_helper(src: FromFloatHelper) -> (Self, bool);
 }
@@ -67,12 +61,6 @@ macro_rules! impl_sealed {
                     dst_frac_nbits,
                     dst_int_nbits,
                 )
-            }
-            #[inline]
-            fn private_to_float_helper(self) -> ToFloatHelper {
-                let (neg, abs) = int_helper::$Inner::neg_abs(self.to_bits());
-                let abs = abs.into();
-                ToFloatHelper { neg, abs }
             }
             #[inline]
             fn private_saturating_from_float_helper(src: FromFloatHelper) -> Self {

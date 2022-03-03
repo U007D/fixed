@@ -15,12 +15,18 @@
 
 use crate::{
     float_helper,
-    helpers::{FloatKind, FromFloatHelper},
+    helpers::FromFloatHelper,
+    int_helper,
     traits::{Fixed, FixedEquiv, FromFixed, ToFixed},
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8,
 };
+use az::{OverflowingAs, OverflowingCast};
 use bytemuck::TransparentWrapper;
+use core::{
+    mem,
+    ops::{Shl, Shr},
+};
 use half::{bf16, f16};
 
 impl ToFixed for bool {
@@ -287,9 +293,82 @@ impl_int_equiv! { u32, FixedU32 }
 impl_int_equiv! { u64, FixedU64 }
 impl_int_equiv! { u128, FixedU128 }
 
+macro_rules! known_ok {
+    ($res:expr) => {
+        match $res {
+            Ok(o) => o,
+            Err(_) => unreachable!(),
+        }
+    };
+}
+
+#[inline]
+fn leading_ones<Bits>(bits: Bits) -> u32
+where
+    Bits: Ord + TryFrom<i8>,
+    Bits: Shl<u32, Output = Bits> + Shr<u32, Output = Bits>,
+    Bits: OverflowingCast<i8>,
+    Bits: OverflowingCast<i16>,
+    Bits: OverflowingCast<i32>,
+    Bits: OverflowingCast<i64>,
+    Bits: OverflowingCast<i128>,
+    Bits: OverflowingCast<u8>,
+    Bits: OverflowingCast<u16>,
+    Bits: OverflowingCast<u32>,
+    Bits: OverflowingCast<u64>,
+    Bits: OverflowingCast<u128>,
+{
+    let is_signed = Bits::try_from(-1i8).is_ok();
+    match (is_signed, mem::size_of::<Bits>()) {
+        (false, 1) => bits.overflowing_as::<u8>().0.leading_ones(),
+        (false, 2) => bits.overflowing_as::<u16>().0.leading_ones(),
+        (false, 4) => bits.overflowing_as::<u32>().0.leading_ones(),
+        (false, 8) => bits.overflowing_as::<u64>().0.leading_ones(),
+        (false, 16) => bits.overflowing_as::<u128>().0.leading_ones(),
+        (true, 1) => bits.overflowing_as::<i8>().0.leading_ones(),
+        (true, 2) => bits.overflowing_as::<i16>().0.leading_ones(),
+        (true, 4) => bits.overflowing_as::<i32>().0.leading_ones(),
+        (true, 8) => bits.overflowing_as::<i64>().0.leading_ones(),
+        (true, 16) => bits.overflowing_as::<i128>().0.leading_ones(),
+        _ => unreachable!(),
+    }
+}
+
+#[inline]
+fn leading_zeros<Bits>(bits: Bits) -> u32
+where
+    Bits: Ord + TryFrom<i8>,
+    Bits: Shl<u32, Output = Bits> + Shr<u32, Output = Bits>,
+    Bits: OverflowingCast<i8>,
+    Bits: OverflowingCast<i16>,
+    Bits: OverflowingCast<i32>,
+    Bits: OverflowingCast<i64>,
+    Bits: OverflowingCast<i128>,
+    Bits: OverflowingCast<u8>,
+    Bits: OverflowingCast<u16>,
+    Bits: OverflowingCast<u32>,
+    Bits: OverflowingCast<u64>,
+    Bits: OverflowingCast<u128>,
+{
+    let is_signed = Bits::try_from(-1i8).is_ok();
+    match (is_signed, mem::size_of::<Bits>()) {
+        (false, 1) => bits.overflowing_as::<u8>().0.leading_zeros(),
+        (false, 2) => bits.overflowing_as::<u16>().0.leading_zeros(),
+        (false, 4) => bits.overflowing_as::<u32>().0.leading_zeros(),
+        (false, 8) => bits.overflowing_as::<u64>().0.leading_zeros(),
+        (false, 16) => bits.overflowing_as::<u128>().0.leading_zeros(),
+        (true, 1) => bits.overflowing_as::<i8>().0.leading_zeros(),
+        (true, 2) => bits.overflowing_as::<i16>().0.leading_zeros(),
+        (true, 4) => bits.overflowing_as::<i32>().0.leading_zeros(),
+        (true, 8) => bits.overflowing_as::<i64>().0.leading_zeros(),
+        (true, 16) => bits.overflowing_as::<i128>().0.leading_zeros(),
+        _ => unreachable!(),
+    }
+}
+
 // TODO: fix for unconstrained Fixed, as currently assumed FixedStrict
 macro_rules! impl_float {
-    ($Float:ident, $link:expr, $overflows_fmt:expr, $overflows_filt:expr) => {
+    ($Float:ident, $FloatI:ident, $FloatU:ident) => {
         impl FromFixed for $Float {
             /// Converts a fixed-point number to a floating-point number.
             ///
@@ -307,12 +386,68 @@ macro_rules! impl_float {
             /// [`wrapping_from_fixed`]: FromFixed::wrapping_from_fixed
             #[inline]
             fn from_fixed<F: Fixed>(src: F) -> Self {
-                let helper = src.private_to_float_helper();
-                float_helper::$Float::from_to_float_helper(
-                    helper,
-                    F::FRAC_BITS as u32,
-                    F::INT_BITS as u32,
-                )
+                let zero: F::Bits = known_ok!(F::Bits::try_from(0i8));
+                let src = src.to_bits();
+                // handle zero early so that we can assume bits != 0
+                if src == zero {
+                    return Self::from_bits(0);
+                }
+
+                let src_is_signed = F::Bits::try_from(-1i8).is_ok();
+                let src_bits = mem::size_of::<F>() as u32 * 8;
+                let (neg, abs, excess_shift) = if $FloatU::BITS >= src_bits {
+                    if src_is_signed {
+                        let (widened, overflow): ($FloatI, bool) = src.overflowing_cast();
+                        debug_assert!(!overflow);
+                        let (neg, abs) = int_helper::$FloatI::neg_abs(widened);
+                        let shift = abs.leading_zeros();
+                        (neg, abs << shift, shift as i32)
+                    } else {
+                        let (widened, overflow): ($FloatU, bool) = src.overflowing_cast();
+                        debug_assert!(!overflow);
+                        let shift = widened.leading_zeros();
+                        (false, widened << shift, shift as i32)
+                    }
+                } else {
+                    // We need to narrow the source. First we push the bits to
+                    // the left so that we don't crop off bits we'd need.
+                    let lossless_shift = if !src_is_signed {
+                        leading_zeros(src)
+                    } else if src < zero {
+                        leading_ones(src) - 1
+                    } else {
+                        leading_zeros(src) - 1
+                    };
+                    let src = src << lossless_shift;
+                    let narrow_by = src_bits - $FloatU::BITS;
+                    let narrowed = src >> narrow_by;
+                    let sig_lower_bits = narrowed << narrow_by != src;
+                    if src_is_signed {
+                        let (narrowed, overflow) = narrowed.overflowing_as::<$FloatI>();
+                        debug_assert!(!overflow);
+                        let (neg, mut abs) = int_helper::$FloatI::neg_abs(narrowed);
+                        let shift = abs.leading_zeros();
+                        abs = abs << shift;
+                        if sig_lower_bits {
+                            abs |= 1;
+                        }
+                        (neg, abs, (shift + lossless_shift) as i32 - narrow_by as i32)
+                    } else {
+                        let (mut narrowed, overflow) = narrowed.overflowing_as::<$FloatU>();
+                        debug_assert!(!overflow);
+                        debug_assert!(narrowed.leading_zeros() == 0);
+                        if sig_lower_bits {
+                            narrowed |= 1;
+                        }
+                        (false, narrowed, lossless_shift as i32 - narrow_by as i32)
+                    }
+                };
+                // excess_shift is how much we have shifted the bits to the left.
+                // So eventually we need to divide if excess_shift is positive.
+                // Similarly we need to divide if F::FRAC_BITS is positive.
+                // That means that we can add excess_shift and F::FRAC_BITS.
+                let frac = F::FRAC_BITS.saturating_add(excess_shift);
+                float_helper::$Float::from_neg_abs(neg, abs, frac)
             }
 
             /// Converts a fixed-point number to a floating-point
@@ -385,13 +520,12 @@ returned, but it is not considered a breaking change if in the future
 it panics; if wrapping is required use [`wrapping_to_fixed`] instead.
 
 [`wrapping_to_fixed`]: ToFixed::wrapping_to_fixed
-[finite]: ", $link, "::is_finite
+[finite]: ", stringify!($Float), "::is_finite
 ";
                 #[inline]
                 fn to_fixed<F: Fixed>(self) -> F {
                     let (wrapped, overflow) = ToFixed::overflowing_to_fixed(self);
-                    debug_assert!(!overflow, $overflows_fmt, $overflows_filt(self));
-                    let _ = overflow;
+                    debug_assert!(!overflow, "overflow");
                     wrapped
                 }
             }
@@ -402,20 +536,12 @@ it panics; if wrapping is required use [`wrapping_to_fixed`] instead.
             /// Rounding is to the nearest, with ties rounded to even.
             #[inline]
             fn checked_to_fixed<F: Fixed>(self) -> Option<F> {
-                let kind = float_helper::$Float::to_float_kind(
-                    self,
-                    F::FRAC_BITS as u32,
-                    F::INT_BITS as u32,
-                );
-                match kind {
-                    FloatKind::Finite { .. } => {
-                        let helper = FromFloatHelper { kind };
-                        match F::private_overflowing_from_float_helper(helper) {
-                            (_, true) => None,
-                            (wrapped, false) => Some(wrapped),
-                        }
-                    }
-                    _ => None,
+                if !self.is_finite() {
+                    return None;
+                }
+                match ToFixed::overflowing_to_fixed(self) {
+                    (wrapped, false) => Some(wrapped),
+                    (_, true) => None,
                 }
             }
 
@@ -429,17 +555,25 @@ Rounding is to the nearest, with ties rounded to even.
 
 Panics if `self` is [NaN].
 
-[NaN]: ", $link, "::is_nan
+[NaN]: ", stringify!($Float), "::is_nan
 ";
                 #[inline]
                 fn saturating_to_fixed<F: Fixed>(self) -> F {
-                    let kind = float_helper::$Float::to_float_kind(
-                        self,
-                        F::FRAC_BITS as u32,
-                        F::INT_BITS as u32,
-                    );
-                    let helper = FromFloatHelper { kind };
-                    F::private_saturating_from_float_helper(helper)
+                    if self.is_nan() {
+                        panic!("NaN");
+                    }
+                    if self.is_finite() {
+                        let (wrapped, overflow) = ToFixed::overflowing_to_fixed(self);
+                        if !overflow {
+                            return wrapped;
+                        }
+                    }
+                    // overflow
+                    if self.is_sign_negative() {
+                        F::MIN
+                    } else {
+                        F::MAX
+                    }
                 }
             }
 
@@ -453,7 +587,7 @@ Rounding is to the nearest, with ties rounded to even.
 
 Panics if `self` is not [finite].
 
-[finite]: ", $link, "::is_finite
+[finite]: ", stringify!($Float), "::is_finite
 ";
                 #[inline]
                 fn wrapping_to_fixed<F: Fixed>(self) -> F {
@@ -475,7 +609,7 @@ Rounding is to the nearest, with ties rounded to even.
 
 Panics if `self` is not [finite].
 
-[finite]: ", $link, "::is_finite
+[finite]: ", stringify!($Float), "::is_finite
 ";
                 #[inline]
                 #[track_caller]
@@ -501,7 +635,7 @@ Rounding is to the nearest, with ties rounded to even.
 Panics if `self` is not [finite] or if the value does not fit, even
 when debug assertions are not enabled.
 
-[finite]: ", $link, "::is_finite
+[finite]: ", stringify!($Float), "::is_finite
 ";
                 #[inline]
                 fn unwrapped_to_fixed<F: Fixed>(self) -> F {
@@ -515,8 +649,8 @@ when debug assertions are not enabled.
     };
 }
 
-impl_float! { f16, "f16", "{} overflows", |x| x }
-impl_float! { bf16, "bf16", "{} overflows", |x| x }
-impl_float! { f32, "f32", "{} overflows", |x| x }
-impl_float! { f64, "f64", "{} overflows", |x| x }
-impl_float! { F128Bits, "f64", "F128Bits({}) overflows", |x: F128Bits| x.to_bits() }
+impl_float! { f16, i16, u16 }
+impl_float! { bf16, i16, u16 }
+impl_float! { f32, i32, u32 }
+impl_float! { f64, i64, u64 }
+impl_float! { F128Bits, i128, u128 }

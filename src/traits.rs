@@ -595,7 +595,8 @@ where
     /// const DELTA_BITS: <I16F16 as Fixed>::Bits = I16F16::DELTA.to_bits();
     /// assert_eq!(DELTA_BITS, 1i32);
     /// ```
-    type Bits: Ord
+    type Bits: Copy
+        + Ord
         + TryFrom<i8>
         + Shl<u32, Output = Self::Bits>
         + Shr<u32, Output = Self::Bits>

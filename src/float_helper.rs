@@ -14,17 +14,67 @@
 // <https://opensource.org/licenses/MIT>.
 
 macro_rules! make_helper {
-    ($Float:ident($Bits:ty, $IBits:ident, $prec:expr) $(; use $path:path)?) => {
+    ($Float:ident($Bits:ty, $IBits:ident) $(; use $path:path)?) => {
         #[allow(non_snake_case)]
         pub mod $Float {
             use crate::{
-                helpers::{FloatKind, ToFixedHelper, ToFloatHelper, Widest},
+                helpers::{FloatKind, ToFixedHelper, Widest},
                 int_helper,
             };
             use core::cmp::Ordering;
             $(use $path;)?
 
-            const PREC: u32 = $prec;
+            // msb must be one
+            pub fn from_neg_abs(
+                neg: bool,
+                abs: $Bits,
+                frac_bits: i32,
+            ) -> $Float {
+                debug_assert!(abs.leading_zeros() == 0);
+
+                let bits_sign = if neg { SIGN_MASK } else { 0 };
+
+                // remove implicit ones
+                let mut mantissa = abs << 1;
+                let exponent = (<$Bits>::BITS as i32 - 1).saturating_sub(frac_bits);
+                let biased_exponent = if exponent > EXP_MAX {
+                    return $Float::from_bits(EXP_MASK | bits_sign);
+                } else if exponent < EXP_MIN {
+                    let lost_prec = EXP_MIN - exponent;
+                    if lost_prec as u32 >= <$Bits>::BITS {
+                        mantissa = 0;
+                    } else {
+                        // reinsert implicit one for subnormals (SIGN_MASK is most significant bit)
+                        mantissa = (mantissa >> 1) | SIGN_MASK;
+                        mantissa >>= lost_prec - 1;
+                    }
+                    0
+                } else {
+                    (exponent + EXP_BIAS) as $Bits
+                };
+                // check for rounding
+                let round_up = {
+                    let mid_bit = SIGN_MASK >> (PREC - 1);
+                    let lower_bits = mid_bit - 1;
+                    if mantissa & mid_bit == 0 {
+                        false
+                    } else if mantissa & lower_bits != 0 {
+                        true
+                    } else {
+                        // round to even
+                        mantissa & (mid_bit << 1) != 0
+                    }
+                };
+                let bits_exp = biased_exponent << (PREC - 1);
+                let bits_mantissa = mantissa >> (<$Bits>::BITS - (PREC - 1));
+                let mut bits_exp_mantissa = bits_exp | bits_mantissa;
+                if round_up {
+                    bits_exp_mantissa += 1;
+                }
+                $Float::from_bits(bits_sign | bits_exp_mantissa)
+            }
+
+            const PREC: u32 = $Float::MANTISSA_DIGITS;
             const EXP_BIAS: i32 = (1 << (<$Bits>::BITS - PREC - 1)) - 1;
             const EXP_MIN: i32 = 1 - EXP_BIAS;
             const EXP_MAX: i32 = EXP_BIAS;
@@ -77,68 +127,6 @@ macro_rules! make_helper {
                 let mant = bits & MANT_MASK;
 
                 (neg, exp, mant)
-            }
-
-
-            #[inline]
-            pub fn from_to_float_helper(
-                val: ToFloatHelper,
-                frac_bits: u32,
-                int_bits: u32,
-            ) -> $Float {
-                let fix_bits = frac_bits + int_bits;
-
-                let bits_sign = if val.neg { SIGN_MASK } else { 0 };
-
-                let extra_zeros = 128 - fix_bits;
-                let leading_zeros = val.abs.leading_zeros() - extra_zeros;
-                let signif_bits = fix_bits - leading_zeros;
-                if signif_bits == 0 {
-                    return $Float::from_bits(bits_sign);
-                }
-                // remove leading zeros and implicit one
-                let mut mantissa = val.abs << leading_zeros << 1;
-                let exponent = int_bits as i32 - 1 - leading_zeros as i32;
-                let biased_exponent = if exponent > EXP_MAX {
-                    return $Float::from_bits(EXP_MASK | bits_sign);
-                } else if exponent < EXP_MIN {
-                    let lost_prec = EXP_MIN - exponent;
-                    if lost_prec as u32 >= (int_bits + frac_bits) {
-                        mantissa = 0;
-                    } else {
-                        // reinsert implicit one
-                        mantissa = (mantissa >> 1) | !(!0 >> 1);
-                        mantissa >>= lost_prec - 1;
-                    }
-                    0
-                } else {
-                    (exponent + EXP_MAX) as $Bits
-                };
-                // check for rounding
-                let round_up = (fix_bits >= PREC) && {
-                    let shift = PREC - 1;
-                    let mid_bit = !(!0 >> 1) >> (shift + extra_zeros);
-                    let lower_bits = mid_bit - 1;
-                    if mantissa & mid_bit == 0 {
-                        false
-                    } else if mantissa & lower_bits != 0 {
-                        true
-                    } else {
-                        // round to even
-                        mantissa & (mid_bit << 1) != 0
-                    }
-                };
-                let bits_exp = biased_exponent << (PREC - 1);
-                let bits_mantissa = (if fix_bits >= PREC - 1 {
-                    (mantissa >> (fix_bits - (PREC - 1))) as $Bits
-                } else {
-                    (mantissa as $Bits) << (PREC - 1 - fix_bits)
-                }) & !(!0 << (PREC - 1));
-                let mut bits_exp_mantissa = bits_exp | bits_mantissa;
-                if round_up {
-                    bits_exp_mantissa += 1;
-                }
-                $Float::from_bits(bits_sign | bits_exp_mantissa)
             }
 
             #[inline]
@@ -217,8 +205,8 @@ macro_rules! make_helper {
     };
 }
 
-make_helper! { f16(u16, i16, 11); use half::f16 }
-make_helper! { bf16(u16, i16, 8); use half::bf16 }
-make_helper! { f32(u32, i32, 24) }
-make_helper! { f64(u64, i64, 53) }
-make_helper! { F128Bits(u128, i128, 113); use crate::F128Bits }
+make_helper! { f16(u16, i16); use half::f16 }
+make_helper! { bf16(u16, i16); use half::bf16 }
+make_helper! { f32(u32, i32) }
+make_helper! { f64(u64, i64) }
+make_helper! { F128Bits(u128, i128); use crate::F128Bits }
