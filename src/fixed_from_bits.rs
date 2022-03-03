@@ -23,14 +23,14 @@ use core::{
     ops::{Shl, Shr},
 };
 
-enum Shift {
+pub(crate) enum Shift {
     Right(u32),
     Left(u32),
     RightAll,
     LeftAll,
 }
 #[inline]
-fn src_shift(dst_frac: i32, src_frac: i32, src_bits: u32) -> Shift {
+pub(crate) fn src_shift(dst_frac: i32, src_frac: i32, src_bits: u32) -> Shift {
     if dst_frac <= src_frac {
         let shift = src_frac.wrapping_sub(dst_frac) as u32;
         if shift >= src_bits {

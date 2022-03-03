@@ -14,14 +14,17 @@
 // <https://opensource.org/licenses/MIT>.
 
 macro_rules! make_helper {
-    ($Float:ident($Bits:ty, $IBits:ident) $(; use $path:path)?) => {
+    ($Float:ident($Bits:ident, $IBits:ident) $(; use $path:path)?) => {
         #[allow(non_snake_case)]
         pub mod $Float {
             use crate::{
+                fixed_from_bits::{self, Shift},
                 helpers::{FloatKind, ToFixedHelper, Widest},
                 int_helper,
+                traits::Fixed,
             };
-            use core::cmp::Ordering;
+            use az::OverflowingCastFrom;
+            use core::{cmp::Ordering, mem};
             $(use $path;)?
 
             // msb must be one
@@ -36,12 +39,12 @@ macro_rules! make_helper {
 
                 // remove implicit ones
                 let mut mantissa = abs << 1;
-                let exponent = (<$Bits>::BITS as i32 - 1).saturating_sub(frac_bits);
+                let exponent = ($Bits::BITS as i32 - 1).saturating_sub(frac_bits);
                 let biased_exponent = if exponent > EXP_MAX {
                     return $Float::from_bits(EXP_MASK | bits_sign);
                 } else if exponent < EXP_MIN {
                     let lost_prec = EXP_MIN - exponent;
-                    if lost_prec as u32 >= <$Bits>::BITS {
+                    if lost_prec as u32 >= $Bits::BITS {
                         mantissa = 0;
                     } else {
                         // reinsert implicit one for subnormals (SIGN_MASK is most significant bit)
@@ -66,7 +69,7 @@ macro_rules! make_helper {
                     }
                 };
                 let bits_exp = biased_exponent << (PREC - 1);
-                let bits_mantissa = mantissa >> (<$Bits>::BITS - (PREC - 1));
+                let bits_mantissa = mantissa >> ($Bits::BITS - (PREC - 1));
                 let mut bits_exp_mantissa = bits_exp | bits_mantissa;
                 if round_up {
                     bits_exp_mantissa += 1;
@@ -74,11 +77,100 @@ macro_rules! make_helper {
                 $Float::from_bits(bits_sign | bits_exp_mantissa)
             }
 
+            pub fn overflowing_to_fixed<Dst: Fixed>(src: $Float) -> (Dst, bool) {
+                // the most significant bits of src are zero, because of the
+                // sign bit and exponent bits in floating-point representations
+                let (neg, mut abs, mut src_frac) = match kind(src) {
+                    Kind::NaN => panic!("NaN"),
+                    Kind::Infinite { .. } => panic!("infinite"),
+                    Kind::Finite {
+                        neg,
+                        abs,
+                        frac_bits,
+                    } => (neg, abs, frac_bits),
+                };
+
+                // Perform any shift right now to handle rounding and to trying
+                // to convert negative numbers to unsigned if they should be
+                // shifted to zero.
+                match fixed_from_bits::src_shift(Dst::FRAC_BITS, src_frac, $Bits::BITS) {
+                    Shift::Right(shift) => if shift > 0 {
+                        let will_be_lsb = 1 << shift;
+                        let removed_bits = abs & (will_be_lsb - 1);
+                        let tie = will_be_lsb >> 1;
+                        if removed_bits > tie || (removed_bits == tie && (abs & will_be_lsb) != 0) {
+                            // either closer to next up (> tie)
+                            // or tie and currently odd (prospective lsb != 0)
+                            // so we round up
+                            abs += will_be_lsb;
+                        }
+                        abs >>= shift;
+                        src_frac -= shift as i32;
+                    }
+                    Shift::RightAll => return (Dst::ZERO, false),
+                    _ => {}
+                }
+                
+                let signed = (if neg { abs.wrapping_neg() } else { abs }) as  $IBits;
+
+                let dst_bits = mem::size_of::<Dst>() as u32 * 8;
+
+                // overflow1 is only for negative floats to unsigned fixed
+                if dst_bits > $IBits::BITS {
+                    let (wide, overflow1) = <Dst as Fixed>::Bits::overflowing_cast_from(signed);
+
+                    match fixed_from_bits::src_shift(Dst::FRAC_BITS, src_frac, dst_bits) {
+                        Shift::Right(shift) => {
+                            // we have already done the right shift
+                            debug_assert!(shift == 0);
+                            (Dst::from_bits(wide), overflow1)
+                        }
+                        Shift::Left(shift) => {
+                            let shifted = wide << shift;
+                            let overflow2 = (shifted >> shift) != wide;
+                            (Dst::from_bits(shifted), overflow2)
+                        }
+                        Shift::RightAll => {
+                            // we have already done the right shift
+                            unreachable!()
+                        }
+                        Shift::LeftAll => {
+                            (Dst::ZERO, abs != 0)
+                        }
+                    }
+                } else {
+                    // src is at least as wide as dst,
+                    match fixed_from_bits::src_shift(Dst::FRAC_BITS, src_frac, $IBits::BITS) {
+                        Shift::Right(shift) => {
+                            // we have already done the right shift
+                            debug_assert!(shift == 0);
+                            let (bits, overflow)
+                                = <Dst as Fixed>::Bits::overflowing_cast_from(signed);
+                            (Dst::from_bits(bits), overflow)
+                        }
+                        Shift::Left(shift) => {
+                            let shifted = signed << shift;
+                            let overflow1 = (shifted >> shift) != signed;
+                            let (bits, overflow2)
+                                = <Dst as Fixed>::Bits::overflowing_cast_from(shifted);
+                            (Dst::from_bits(bits), overflow1 || overflow2)
+                        }
+                        Shift::RightAll => {
+                            // we have already done the right shift
+                            unreachable!()
+                        }
+                        Shift::LeftAll => {
+                            (Dst::ZERO, abs != 0)
+                        }
+                    }
+                }
+            }
+
             const PREC: u32 = $Float::MANTISSA_DIGITS;
-            const EXP_BIAS: i32 = (1 << (<$Bits>::BITS - PREC - 1)) - 1;
+            const EXP_BIAS: i32 = (1 << ($Bits::BITS - PREC - 1)) - 1;
             const EXP_MIN: i32 = 1 - EXP_BIAS;
             const EXP_MAX: i32 = EXP_BIAS;
-            pub const SIGN_MASK: $Bits = 1 << (<$Bits>::BITS - 1);
+            pub const SIGN_MASK: $Bits = 1 << ($Bits::BITS - 1);
             pub const EXP_MASK: $Bits = !(SIGN_MASK | MANT_MASK);
             const MANT_MASK: $Bits = (1 << (PREC - 1)) - 1;
 

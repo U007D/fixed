@@ -14,9 +14,7 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
-    float_helper,
-    helpers::FromFloatHelper,
-    int_helper,
+    float_helper, int_helper,
     traits::{Fixed, FixedEquiv, FromFixed, ToFixed},
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8,
@@ -366,7 +364,6 @@ where
     }
 }
 
-// TODO: fix for unconstrained Fixed, as currently assumed FixedStrict
 macro_rules! impl_float {
     ($Float:ident, $FloatI:ident, $FloatU:ident) => {
         impl FromFixed for $Float {
@@ -568,7 +565,7 @@ Panics if `self` is [NaN].
                             return wrapped;
                         }
                     }
-                    // overflow
+                    // either self is infinite, or overflow flag returned is true
                     if self.is_sign_negative() {
                         F::MIN
                     } else {
@@ -614,13 +611,7 @@ Panics if `self` is not [finite].
                 #[inline]
                 #[track_caller]
                 fn overflowing_to_fixed<F: Fixed>(self) -> (F, bool) {
-                    let kind = float_helper::$Float::to_float_kind(
-                        self,
-                        F::FRAC_BITS as u32,
-                        F::INT_BITS as u32,
-                    );
-                    let helper = FromFloatHelper { kind };
-                    F::private_overflowing_from_float_helper(helper)
+                    float_helper::$Float::overflowing_to_fixed(self)
                 }
             }
 
