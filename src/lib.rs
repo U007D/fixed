@@ -319,6 +319,7 @@ pub mod consts;
 mod convert;
 mod debug_hex;
 mod display;
+mod f128;
 mod fixed_from_bits;
 mod float_helper;
 mod from_str;
@@ -343,12 +344,14 @@ mod wrapping;
 
 #[cfg(feature = "num-traits")]
 pub use crate::impl_num_traits::RadixParseFixedError;
+pub use crate::{
+    f128::F128Bits, from_str::ParseFixedError, unwrapped::Unwrapped, wrapping::Wrapping,
+};
 use crate::{
     from_str::FromStrRadix,
     traits::{FromFixed, ToFixed},
     types::extra::{If, True},
 };
-pub use crate::{from_str::ParseFixedError, unwrapped::Unwrapped, wrapping::Wrapping};
 use core::{
     hash::{Hash, Hasher},
     mem,
@@ -644,54 +647,6 @@ fixed! {
     FixedU128, u128, Signed,
     127, 126, 125, 124,
     False, FixedI128, i128, "128"
-}
-
-/// The bit representation of a *binary128* floating-point number (`f128`).
-///
-/// This type can be used to
-///
-///   * convert between fixed-point numbers and the bit representation of
-///     128-bit floating-point numbers.
-///   * compare fixed-point numbers and the bit representation of 128-bit
-///     floating-point numbers.
-///
-/// # Examples
-///
-/// ```rust
-/// #![feature(generic_const_exprs)]
-/// # #![allow(incomplete_features)]
-///
-/// use fixed::{types::I16F16, F128Bits};
-/// // binary128 representation for 1.0 is 0x3FFF << 112
-/// let one = F128Bits(0x3FFF_u128 << 112);
-///
-/// assert_eq!(I16F16::ONE.to_num::<F128Bits>(), one);
-/// assert_eq!(I16F16::from_num(one), I16F16::ONE);
-///
-/// // fixed-point numbers can be compared directly to F128Bits values
-/// assert!(I16F16::from_num(1.5) > one);
-/// assert!(I16F16::from_num(0.5) < one);
-/// ```
-#[repr(transparent)]
-#[derive(Clone, Copy, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
-pub struct F128Bits(pub u128);
-
-impl F128Bits {
-    #[inline]
-    pub(crate) fn to_bits(self) -> u128 {
-        self.0
-    }
-
-    #[inline]
-    pub(crate) fn from_bits(bits: u128) -> F128Bits {
-        F128Bits(bits)
-    }
-
-    #[inline]
-    pub(crate) fn is_finite(self) -> bool {
-        const EXP_MASK: u128 = (1u128 << 127) - (1u128 << 112);
-        (self.to_bits() & EXP_MASK) != EXP_MASK
-    }
 }
 
 /// Defines constant fixed-point numbers from integer expressions.

@@ -1715,41 +1715,36 @@ mod tests {
         // -01.3A -> sign 1, biased exp 3FFF, mantissa 3A00 << 96
         assert_eq!(
             I8F8::from_bits(-0x013A).to_num::<F128Bits>(),
-            F128Bits(0xBFFF_3A00_u128 << 96)
+            F128Bits::from_bits(0xBFFF_3A00_u128 << 96)
         );
-        // -1 -> sign 1, biased exp 3FFF, mantissa 0
-        assert_eq!(
-            I8F8::from_num(-1).to_num::<F128Bits>(),
-            F128Bits(0xBFFF_u128 << 112)
-        );
+        assert_eq!(I8F8::from_num(-1).to_num::<F128Bits>(), F128Bits::NEG_ONE);
         // -0.5 -> sign 1, biased exp 3FFE, mantissa 0
         assert_eq!(
             I8F8::from_num(-0.5).to_num::<F128Bits>(),
-            F128Bits(0xBFFE_u128 << 112)
+            F128Bits::from_bits(0xBFFE_u128 << 112)
         );
         // -1 >> 128 -> sign 1, biased exp 3F7F, mantissa 0
         assert_eq!(
             I0F128::from_bits(-1).to_num::<F128Bits>(),
-            F128Bits(0xBF7F_u128 << 112)
+            F128Bits::from_bits(0xBF7F_u128 << 112)
         );
         // 0 -> sign 0, biased exp 0, mantissa 0
-        assert_eq!(I8F8::ZERO.to_num::<F128Bits>(), F128Bits(0));
+        assert_eq!(I8F8::ZERO.to_num::<F128Bits>(), F128Bits::from_bits(0));
         // 1 >> 128 -> sign 0, biased exp 3F7F, mantissa 0
         assert_eq!(
             I0F128::DELTA.to_num::<F128Bits>(),
-            F128Bits(0x3F7F_u128 << 112)
+            F128Bits::from_bits(0x3F7F_u128 << 112)
         );
         // 0.5 -> sign 0, biased exp 3FFE, mantissa 0
         assert_eq!(
             I8F8::from_num(0.5).to_num::<F128Bits>(),
-            F128Bits(0x3FFE_u128 << 112)
+            F128Bits::from_bits(0x3FFE_u128 << 112)
         );
-        // 1 -> sign 0, biased exp 3FFF, mantissa 0
-        assert_eq!(I8F8::ONE.to_num::<F128Bits>(), F128Bits(0x3FFF_u128 << 112));
+        assert_eq!(I8F8::ONE.to_num::<F128Bits>(), F128Bits::ONE);
         // 01.3A -> sign 0, biased exp 3FFF, mantissa 3A00 << 96
         assert_eq!(
             I8F8::from_bits(0x013A).to_num::<F128Bits>(),
-            F128Bits(0x3FFF_3A00_u128 << 96)
+            F128Bits::from_bits(0x3FFF_3A00_u128 << 96)
         );
     }
 

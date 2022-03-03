@@ -519,4 +519,4 @@ impl_float! { f16, "f16", "{} overflows", |x| x }
 impl_float! { bf16, "bf16", "{} overflows", |x| x }
 impl_float! { f32, "f32", "{} overflows", |x| x }
 impl_float! { f64, "f64", "{} overflows", |x| x }
-impl_float! { F128Bits, "f64", "F128Bits({}) overflows", |x: F128Bits| x.0 }
+impl_float! { F128Bits, "f64", "F128Bits({}) overflows", |x: F128Bits| x.to_bits() }
