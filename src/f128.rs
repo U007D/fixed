@@ -176,7 +176,7 @@ impl F128Bits {
         (self.to_bits() & !SIGN_MASK) > EXP_MASK
     }
 
-    /// Returns [`true`] if the number is infiniteN.
+    /// Returns [`true`] if the number is infinite.
     ///
     /// # Example
     ///
@@ -194,7 +194,7 @@ impl F128Bits {
         (self.to_bits() & !SIGN_MASK) == EXP_MASK
     }
 
-    /// Returns [`true`] if the number is neither inifinte nor NaN.
+    /// Returns [`true`] if the number is neither infinite nor NaN.
     ///
     /// # Example
     ///
