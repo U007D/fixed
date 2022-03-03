@@ -19,12 +19,10 @@ macro_rules! make_helper {
         pub mod $Float {
             use crate::{
                 fixed_from_bits::{self, Shift},
-                helpers::{FloatKind, ToFixedHelper, Widest},
-                int_helper,
                 traits::Fixed,
             };
             use az::OverflowingCastFrom;
-            use core::{cmp::Ordering, mem};
+            use core::mem;
             $(use $path;)?
 
             // msb must be one
@@ -110,7 +108,7 @@ macro_rules! make_helper {
                     Shift::RightAll => return (Dst::ZERO, false),
                     _ => {}
                 }
-                
+
                 let signed = (if neg { abs.wrapping_neg() } else { abs }) as  $IBits;
 
                 let dst_bits = mem::size_of::<Dst>() as u32 * 8;
@@ -219,80 +217,6 @@ macro_rules! make_helper {
                 let mant = bits & MANT_MASK;
 
                 (neg, exp, mant)
-            }
-
-
-            #[inline]
-            pub fn to_float_kind(val: $Float, dst_frac_bits: u32, dst_int_bits: u32) -> FloatKind {
-                let prec = PREC as i32;
-
-                let (neg, exp, mut mantissa) = parts(val);
-                if exp > EXP_MAX {
-                    if mantissa == 0 {
-                        return FloatKind::Infinite { neg };
-                    } else {
-                        return FloatKind::NaN;
-                    };
-                }
-                // if not subnormal, add implicit bit
-                if exp >= EXP_MIN {
-                    mantissa |= 1 << (prec - 1);
-                }
-                if mantissa == 0 {
-                    let conv = ToFixedHelper {
-                        bits: Widest::Unsigned(0),
-                        dir: Ordering::Equal,
-                        overflow: false,
-                    };
-                    return FloatKind::Finite { neg, conv };
-                }
-
-                let mut src_frac_bits = prec - 1 - exp;
-                let need_to_shr = src_frac_bits - dst_frac_bits as i32;
-                if need_to_shr > prec {
-                    let dir = if neg {
-                        Ordering::Greater
-                    } else {
-                        Ordering::Less
-                    };
-                    let conv = ToFixedHelper {
-                        bits: Widest::Unsigned(0),
-                        dir,
-                        overflow: false,
-                    };
-                    return FloatKind::Finite { neg, conv };
-                }
-                let mut dir = Ordering::Equal;
-                if need_to_shr > 0 {
-                    let removed_bits = mantissa & !(!0 << need_to_shr);
-                    let will_be_lsb = 1 << need_to_shr;
-                    let tie = will_be_lsb >> 1;
-                    if removed_bits == 0 {
-                        // removed nothing
-                    } else if removed_bits < tie {
-                        dir = Ordering::Less;
-                    } else if removed_bits > tie || mantissa & will_be_lsb != 0 {
-                        mantissa += will_be_lsb;
-                        dir = Ordering::Greater;
-                    } else {
-                        dir = Ordering::Less;
-                    };
-                    mantissa >>= need_to_shr;
-                    src_frac_bits -= need_to_shr;
-                }
-                let mut mantissa = mantissa as $IBits;
-                if neg {
-                    mantissa = -mantissa;
-                    dir = dir.reverse();
-                }
-                let mut conv = int_helper::$IBits::to_fixed_helper(
-                    mantissa,
-                    src_frac_bits,
-                    dst_frac_bits,
-                    dst_int_bits,
-                );
-                conv.dir = dir;
-                FloatKind::Finite { neg, conv }
             }
         }
     };

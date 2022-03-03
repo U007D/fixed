@@ -15,16 +15,13 @@
 
 use crate::{
     float_helper, int_helper,
-    traits::{Fixed, FixedEquiv, FromFixed, ToFixed},
+    traits::{Fixed, FixedBits, FixedEquiv, FromFixed, ToFixed},
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8,
 };
 use az::{OverflowingAs, OverflowingCast};
 use bytemuck::TransparentWrapper;
-use core::{
-    mem,
-    ops::{Shl, Shr},
-};
+use core::mem;
 use half::{bf16, f16};
 
 impl ToFixed for bool {
@@ -301,21 +298,7 @@ macro_rules! known_ok {
 }
 
 #[inline]
-fn leading_ones<Bits>(bits: Bits) -> u32
-where
-    Bits: Ord + TryFrom<i8>,
-    Bits: Shl<u32, Output = Bits> + Shr<u32, Output = Bits>,
-    Bits: OverflowingCast<i8>,
-    Bits: OverflowingCast<i16>,
-    Bits: OverflowingCast<i32>,
-    Bits: OverflowingCast<i64>,
-    Bits: OverflowingCast<i128>,
-    Bits: OverflowingCast<u8>,
-    Bits: OverflowingCast<u16>,
-    Bits: OverflowingCast<u32>,
-    Bits: OverflowingCast<u64>,
-    Bits: OverflowingCast<u128>,
-{
+fn leading_ones<Bits: FixedBits>(bits: Bits) -> u32 {
     let is_signed = Bits::try_from(-1i8).is_ok();
     match (is_signed, mem::size_of::<Bits>()) {
         (false, 1) => bits.overflowing_as::<u8>().0.leading_ones(),
@@ -333,21 +316,7 @@ where
 }
 
 #[inline]
-fn leading_zeros<Bits>(bits: Bits) -> u32
-where
-    Bits: Ord + TryFrom<i8>,
-    Bits: Shl<u32, Output = Bits> + Shr<u32, Output = Bits>,
-    Bits: OverflowingCast<i8>,
-    Bits: OverflowingCast<i16>,
-    Bits: OverflowingCast<i32>,
-    Bits: OverflowingCast<i64>,
-    Bits: OverflowingCast<i128>,
-    Bits: OverflowingCast<u8>,
-    Bits: OverflowingCast<u16>,
-    Bits: OverflowingCast<u32>,
-    Bits: OverflowingCast<u64>,
-    Bits: OverflowingCast<u128>,
-{
+fn leading_zeros<Bits: FixedBits>(bits: Bits) -> u32 {
     let is_signed = Bits::try_from(-1i8).is_ok();
     match (is_signed, mem::size_of::<Bits>()) {
         (false, 1) => bits.overflowing_as::<u8>().0.leading_zeros(),
@@ -424,7 +393,7 @@ macro_rules! impl_float {
                         debug_assert!(!overflow);
                         let (neg, mut abs) = int_helper::$FloatI::neg_abs(narrowed);
                         let shift = abs.leading_zeros();
-                        abs = abs << shift;
+                        abs <<= shift;
                         if sig_lower_bits {
                             abs |= 1;
                         }

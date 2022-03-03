@@ -17,78 +17,22 @@ use crate::{
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
 };
-use core::cmp::Ordering;
 
-// Unsigned can have 0 ≤ x < 2^128, that is its msb can be 0 or 1.
-// Negative can have -2^127 ≤ x < 0, that is its msb must be 1.
-pub enum Widest {
-    Unsigned(u128),
-    Negative(i128),
-}
+pub trait Sealed {}
 
-pub struct ToFixedHelper {
-    pub(crate) bits: Widest,
-    pub(crate) dir: Ordering,
-    pub(crate) overflow: bool,
-}
-
-pub struct FromFloatHelper {
-    pub(crate) kind: FloatKind,
-}
-pub enum FloatKind {
-    NaN,
-    Infinite { neg: bool },
-    Finite { neg: bool, conv: ToFixedHelper },
-}
-
-pub trait Sealed: Copy {
-    fn private_overflowing_from_float_helper(src: FromFloatHelper) -> (Self, bool);
-}
 macro_rules! impl_sealed {
-    ($Fixed:ident($nbits:expr, $Signedness:tt, $Inner:ident)) => {
-        impl<const FRAC: i32> Sealed for $Fixed<FRAC> {
-            #[inline]
-            #[track_caller]
-            fn private_overflowing_from_float_helper(src: FromFloatHelper) -> (Self, bool) {
-                let conv = match src.kind {
-                    FloatKind::NaN => panic!("NaN"),
-                    FloatKind::Infinite { .. } => panic!("infinite"),
-                    FloatKind::Finite { conv, .. } => conv,
-                };
-                let mut new_overflow = false;
-                let bits = if_signed_unsigned!(
-                    $Signedness,
-                    match conv.bits {
-                        Widest::Unsigned(bits) => {
-                            let bits = bits as _;
-                            if bits < 0 {
-                                new_overflow = true;
-                            }
-                            bits
-                        }
-                        Widest::Negative(bits) => bits as _,
-                    },
-                    match conv.bits {
-                        Widest::Unsigned(bits) => bits as _,
-                        Widest::Negative(bits) => {
-                            new_overflow = true;
-                            bits as _
-                        }
-                    },
-                );
-                (Self::from_bits(bits), conv.overflow || new_overflow)
-            }
-        }
+    ($Fixed:ident) => {
+        impl<const FRAC: i32> Sealed for $Fixed<FRAC> {}
     };
 }
 
-impl_sealed! { FixedI8(8, Signed, i8) }
-impl_sealed! { FixedI16(16, Signed, i16) }
-impl_sealed! { FixedI32(32, Signed, i32) }
-impl_sealed! { FixedI64(64, Signed, i64) }
-impl_sealed! { FixedI128(128, Signed, i128) }
-impl_sealed! { FixedU8(8, Unsigned, u8) }
-impl_sealed! { FixedU16(16, Unsigned, u16) }
-impl_sealed! { FixedU32(32, Unsigned, u32) }
-impl_sealed! { FixedU64(64, Unsigned, u64) }
-impl_sealed! { FixedU128(128, Unsigned, u128) }
+impl_sealed! { FixedI8 }
+impl_sealed! { FixedI16 }
+impl_sealed! { FixedI32 }
+impl_sealed! { FixedI64 }
+impl_sealed! { FixedI128 }
+impl_sealed! { FixedU8 }
+impl_sealed! { FixedU16 }
+impl_sealed! { FixedU32 }
+impl_sealed! { FixedU64 }
+impl_sealed! { FixedU128 }

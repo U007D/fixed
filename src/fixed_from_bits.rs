@@ -14,14 +14,10 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
-    FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
-    FixedU8,
+    traits::FixedBits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16,
+    FixedU32, FixedU64, FixedU8,
 };
-use az::OverflowingCast;
-use core::{
-    mem,
-    ops::{Shl, Shr},
-};
+use core::mem;
 
 pub(crate) enum Shift {
     Right(u32),
@@ -29,6 +25,7 @@ pub(crate) enum Shift {
     RightAll,
     LeftAll,
 }
+
 #[inline]
 pub(crate) fn src_shift(dst_frac: i32, src_frac: i32, src_bits: u32) -> Shift {
     if dst_frac <= src_frac {
@@ -53,18 +50,7 @@ macro_rules! impl_fixed_from_bits {
         impl<const FRAC: i32> $Fixed<FRAC> {
             pub(crate) fn fixed_from_bits<Src>(src: Src, src_frac: i32) -> ($Fixed<FRAC>, bool)
             where
-                Src: Eq + TryFrom<i8>,
-                Src: Shl<u32, Output = Src> + Shr<u32, Output = Src>,
-                Src: OverflowingCast<i8>,
-                Src: OverflowingCast<i16>,
-                Src: OverflowingCast<i32>,
-                Src: OverflowingCast<i64>,
-                Src: OverflowingCast<i128>,
-                Src: OverflowingCast<u8>,
-                Src: OverflowingCast<u16>,
-                Src: OverflowingCast<u32>,
-                Src: OverflowingCast<u64>,
-                Src: OverflowingCast<u128>,
+                Src: FixedBits,
             {
                 let src_is_signed = Src::try_from(-1i8).is_ok();
                 let src_bits = mem::size_of::<Src>() as u32 * 8;
