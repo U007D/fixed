@@ -15,7 +15,7 @@ compiler with the [`generic_const_exprs` feature] enabled. The stable version
 stabilized. See the documentation for [porting from version 1 to version 2].
 
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
-[porting from version 1 to version 2]: https://tspiteri.gitlab.io/fixed/dev/fixed/index.html#porting-from-version-1-to-version-2
+[porting from version 1 to version 2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/index.html#porting-from-version-1-to-version-2
 
 The [*fixed* crate] provides fixed-point numbers.
 
@@ -103,7 +103,7 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
-### Version 2.0.0-alpha.2 news (unreleased)
+### Version 2.0.0-alpha.2 news (2022-03-04)
 
   * The following methods are now `const` functions:
       * [`int`][f-i-2-0a2], [`frac`][f-fr-2-0a2], [`round_to_zero`][f-rtz-2-0a2]
@@ -135,61 +135,66 @@ The conversions supported cover the following cases.
       * [`signum`][f-s-2-0a2], [`checked_signum`][f-cs-2-0a2],
         [`saturating_signum`][f-ss-2-0a2], [`wrapping_signum`][f-ws-2-0a2],
         [`unwrapped_signum`][f-us-2-0a2], [`overflowing_signum`][f-os-2-0a2],
-  * `F128Bits` has been replaced by [`F128`][f128-2-0a2] which has proper
+  * The [`Fixed`][tf-2-0a2] trait constraints have been relaxed, and the methods
+    which needed the strict constraints have been moved to the subtrait
+    [`FixedStrict`][tfs-2-0a2].
+  * `F128Bits` has been replaced by [`F128`][f128-2-0a2] which has standard
     floating-point ordering and various classification methods and associated
     constants.
 
-[f-c-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.ceil
-[f-cc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_ceil
-[f-cf-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_floor
-[f-cil10-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_int_log10
-[f-cil2-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_int_log2
-[f-cm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul
-[f-cma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul_add
-[f-cr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_round
-[f-crtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_round_ties_to_even
-[f-cs-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_signum
-[f-f-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.floor
-[f-fr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.frac
-[f-i-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.int
-[f-il10-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.int_log10
-[f-il2-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.int_log2
-[f-ma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.mul_add
-[f-oc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_ceil
-[f-of-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_floor
-[f-om-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_mul
-[f-oma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_mul_add
-[f-or-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_round
-[f-ortte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_round_ties_to_even
-[f-os-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_signum
-[f-r-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.round
-[f-rtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.round_ties_to_even
-[f-rtz-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.round_to_zero
-[f-s-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.signum
-[f-sc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_ceil
-[f-sf-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_floor
-[f-sm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_mul
-[f-sma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_mul_add
-[f-sr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_round
-[f-srtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_round_ties_to_even
-[f-ss-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_signum
-[f-uc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_ceil
-[f-uf-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_floor
-[f-um-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_mul
-[f-uma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_mul_add
-[f-ur-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_round
-[f-urtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_round_ties_to_even
-[f-us-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_signum
-[f-wc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_ceil
-[f-wd-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_div
-[f-wf-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_floor
-[f-wim-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_mul
-[f-wm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_mul
-[f-wma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_mul_add
-[f-wr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_round
-[f-wrtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_round_ties_to_even
-[f-ws-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_signum
-[f128-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.F128.html
+[f-c-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.ceil
+[f-cc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_ceil
+[f-cf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_floor
+[f-cil10-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_int_log10
+[f-cil2-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_int_log2
+[f-cm-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_mul
+[f-cma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_mul_add
+[f-cr-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_round
+[f-crtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_round_ties_to_even
+[f-cs-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_signum
+[f-f-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.floor
+[f-fr-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.frac
+[f-i-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.int
+[f-il10-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.int_log10
+[f-il2-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.int_log2
+[f-ma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.mul_add
+[f-oc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_ceil
+[f-of-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_floor
+[f-om-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_mul
+[f-oma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_mul_add
+[f-or-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_round
+[f-ortte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_round_ties_to_even
+[f-os-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_signum
+[f-r-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.round
+[f-rtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.round_ties_to_even
+[f-rtz-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.round_to_zero
+[f-s-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.signum
+[f-sc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_ceil
+[f-sf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_floor
+[f-sm-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_mul
+[f-sma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_mul_add
+[f-sr-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_round
+[f-srtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_round_ties_to_even
+[f-ss-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_signum
+[f-uc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_ceil
+[f-uf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_floor
+[f-um-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_mul
+[f-uma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_mul_add
+[f-ur-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_round
+[f-urtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_round_ties_to_even
+[f-us-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_signum
+[f-wc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_ceil
+[f-wd-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wide_div
+[f-wf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_floor
+[f-wim-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wide_mul
+[f-wm-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_mul
+[f-wma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_mul_add
+[f-wr-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_round
+[f-wrtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_round_ties_to_even
+[f-ws-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_signum
+[f128-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.F128.html
+[tf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.Fixed.html
+[tfs-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.FixedStrict.html
 
 ### Version 2.0.0-alpha.1 news (2022-02-26)
 
@@ -205,62 +210,6 @@ The conversions supported cover the following cases.
 [f-fb-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
 [f-ib-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
-
-### Version 1.13.1 news (2022-03-04)
-
-  * The [`const_fixed_from_int`][cffi-1-13] macro now accepts a visibility
-    qualifier ([merge request 10]).
-
-### Version 1.13.0 news (2022-02-22)
-
-  * The [`AddAssign`], [`SubAssign`], [`MulAssign`], [`DivAssign`],
-    [`RemAssign`], [`BitAndAssign`], [`BitOrAssign`] and [`BitXorAssign`] traits
-    for <code>[Wrapping][w-1-13]&lt;F></code> and
-    <code>[Unwrapped][u-1-13]&lt;F></code> are now also implemented with `F` as
-    the type of the right-hand side operand.
-  * Bug fix: compilation with certain flags was hanging for the thumbv6m target
-    because of a [rustc/LLVM issue][rust issue 75045]. This version should not
-    trigger the rustc/LLVM issue ([issue 45]).
-
-[`AddAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.AddAssign.html
-[`BitAndAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.BitAndAssign.html
-[`BitOrAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.BitOrAssign.html
-[`BitXorAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.BitXorAssign.html
-[`DivAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.DivAssign.html
-[`MulAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.MulAssign.html
-[`RemAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.RemAssign.html
-[`SubAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.SubAssign.html
-[cffi-1-13]: https://docs.rs/fixed/~1.13/fixed/macro.const_fixed_from_int.html
-[issue 45]: https://gitlab.com/tspiteri/fixed/-/issues/45
-[merge request 10]: https://gitlab.com/tspiteri/fixed/-/merge_requests/10
-[rust issue 75045]: https://github.com/rust-lang/rust/issues/75045
-[u-1-13]: https://docs.rs/fixed/~1.13/fixed/struct.Unwrapped.html
-[w-1-13]: https://docs.rs/fixed/~1.13/fixed/struct.Wrapping.html
-
-### Version 1.12.0 news (2022-02-04)
-
-  * The crate now requires rustc version 1.57.0 or later.
-  * The [`wide_div`][f-wd-1-12] method was added to all fixed-point numbers up to
-    64 bits wide ([issue 25]).
-  * The following methods are now `const` functions:
-      * [`unwrapped_neg`][f-un-1-12], [`unwrapped_add`][f-ua-1-12],
-        [`unwrapped_sub`][f-us-1-12]
-      * [`unwrapped_mul_int`][f-umi-1-12]
-      * [`unwrapped_shl`][f-ushl-1-12], [`unwrapped_shr`][f-ushr-1-12]
-      * [`unwrapped_abs`][f-uabs-1-12], [`unwrapped_dist`][f-ud-1-12]
-      * [`unwrapped_next_power_of_two`][f-unpot-1-12]
-
-[f-ua-1-12]: https://docs.rs/fixed/~1.12/fixed/struct.FixedI32.html#method.unwrapped_add
-[f-uabs-1-12]: https://docs.rs/fixed/~1.12/fixed/struct.FixedI32.html#method.unwrapped_abs
-[f-ud-1-12]: https://docs.rs/fixed/~1.12/fixed/struct.FixedI32.html#method.unwrapped_dist
-[f-umi-1-12]: https://docs.rs/fixed/~1.12/fixed/struct.FixedI32.html#method.unwrapped_mul_int
-[f-un-1-12]: https://docs.rs/fixed/~1.12/fixed/struct.FixedI32.html#method.unwrapped_neg
-[f-unpot-1-12]: https://docs.rs/fixed/~1.12/fixed/struct.FixedU32.html#method.unwrapped_next_power_of_two
-[f-us-1-12]: https://docs.rs/fixed/~1.12/fixed/struct.FixedI32.html#method.unwrapped_sub
-[f-ushl-1-12]: https://docs.rs/fixed/~1.12/fixed/struct.FixedI32.html#method.unwrapped_shl
-[f-ushr-1-12]: https://docs.rs/fixed/~1.12/fixed/struct.FixedI32.html#method.unwrapped_shr
-[f-wd-1-12]: https://docs.rs/fixed/~1.12/fixed/struct.FixedI32.html#method.wide_div
-[issue 25]: https://gitlab.com/tspiteri/fixed/-/issues/25
 
 ### Other releases
 
@@ -348,7 +297,7 @@ crate, add it as a dependency inside [*Cargo.toml*]:
 
 ```toml
 [dependencies]
-fixed = "2.0.0-alpha.1"
+fixed = "2.0.0-alpha.2"
 ```
 
 This alpha version of the *fixed* crate requires the nightly compiler with the
@@ -378,7 +327,7 @@ To enable features, you can add the dependency like this to [*Cargo.toml*]:
 
 ```toml
 [dependencies.fixed]
-version = "2.0.0-alpha.1"
+version = "2.0.0-alpha.2"
 features = ["serde"]
 ```
 
@@ -419,15 +368,15 @@ To port from version 1 to version 2, the following is required:
     [`FixedStrict`]. For code that uses these trait methods, [`Fixed`] should be
     replaced by [`FixedStrict`].
 
-    [`Fixed`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/traits/trait.Fixed.html
-    [`FixedStrict`]: https://tspiteri.gitlab.io/fixed/dev/fixed/traits/trait.FixedStrict.html
+    [`Fixed`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.Fixed.html
+    [`FixedStrict`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.FixedStrict.html
 
   * The [`FRAC_NBITS`] and [`INT_NBITS`] associated constants of type [`u32`]
     were replaced by [`FRAC_BITS`] and [`INT_BITS`] of type [`i32`].
 
-    [`FRAC_BITS`]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
+    [`FRAC_BITS`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
     [`FRAC_NBITS`]: https://docs.rs/fixed/1/fixed/struct.FixedI32.html#associatedconstant.FRAC_NBITS
-    [`INT_BITS`]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
+    [`INT_BITS`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
     [`INT_NBITS`]: https://docs.rs/fixed/1/fixed/struct.FixedI32.html#associatedconstant.INT_NBITS
 
   * The [`F128Bits`] struct has been replaced by [`F128`]. In version 1 the
@@ -437,9 +386,9 @@ To port from version 1 to version 2, the following is required:
     the [`to_bits`] and [`from_bits`] methods.
 
     [`F128Bits`]: https://docs.rs/fixed/1/fixed/struct.F128Bits.html
-    [`F128`]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.F128.html
-    [`from_bits`]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.F128.html#method.from_bits
-    [`to_bits`]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.F128.html#method.to_bits
+    [`F128`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.F128.html
+    [`from_bits`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.F128.html#method.from_bits
+    [`to_bits`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.F128.html#method.to_bits
     [`u128`]: https://doc.rust-lang.org/nightly/core/primitive.u128.html
 
   * The deprecated optional features `az` and `f16` were removed. These features
@@ -473,49 +422,49 @@ shall be dual licensed as above, without any additional terms or conditions.
 [*num-traits* crate]: https://crates.io/crates/num-traits
 [*serde* crate]: https://crates.io/crates/serde
 [CORDIC]: https://en.wikipedia.org/wiki/CORDIC
-[FixedI32]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html
-[FixedU32]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedU32.html
+[FixedI32]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html
+[FixedU32]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedU32.html
 [LICENSE-APACHE]: https://www.apache.org/licenses/LICENSE-2.0
 [LICENSE-MIT]: https://opensource.org/licenses/MIT
 [`Binary`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Binary.html
 [`Display`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Display.html
 [`Error`]: https://doc.rust-lang.org/nightly/std/error/trait.Error.html
-[`FixedI128`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI128.html
-[`FixedI16`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI16.html
-[`FixedI32`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html
-[`FixedI64`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI64.html
-[`FixedI8`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI8.html
-[`FixedU128`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedU128.html
-[`FixedU16`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedU16.html
-[`FixedU32`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedU32.html
-[`FixedU64`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedU64.html
-[`FixedU8`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedU8.html
-[`FromFixed`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/traits/trait.FromFixed.html
+[`FixedI128`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI128.html
+[`FixedI16`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI16.html
+[`FixedI32`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html
+[`FixedI64`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI64.html
+[`FixedI8`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI8.html
+[`FixedU128`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedU128.html
+[`FixedU16`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedU16.html
+[`FixedU32`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedU32.html
+[`FixedU64`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedU64.html
+[`FixedU8`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedU8.html
+[`FromFixed`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.FromFixed.html
 [`FromStr`]: https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html
 [`From`]: https://doc.rust-lang.org/nightly/core/convert/trait.From.html
-[`I20F12`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/types/type.I20F12.html
-[`I4F12`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/types/type.I4F12.html
-[`I4F4`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/types/type.I4F4.html
+[`I20F12`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/types/type.I20F12.html
+[`I4F12`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/types/type.I4F12.html
+[`I4F4`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/types/type.I4F4.html
 [`Into`]: https://doc.rust-lang.org/nightly/core/convert/trait.Into.html
-[`LosslessTryFrom`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/traits/trait.LosslessTryFrom.html
-[`LosslessTryInto`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/traits/trait.LosslessTryInto.html
-[`LossyFrom`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/traits/trait.LossyFrom.html
-[`LossyInto`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/traits/trait.LossyInto.html
+[`LosslessTryFrom`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.LosslessTryFrom.html
+[`LosslessTryInto`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.LosslessTryInto.html
+[`LossyFrom`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.LossyFrom.html
+[`LossyInto`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.LossyInto.html
 [`LowerHex`]: https://doc.rust-lang.org/nightly/core/fmt/trait.LowerHex.html
 [`Octal`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Octal.html
-[`ParseFixedError`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.ParseFixedError.html
-[`ToFixed`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/traits/trait.ToFixed.html
-[`U20F12`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/types/type.U20F12.html
+[`ParseFixedError`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.ParseFixedError.html
+[`ToFixed`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.ToFixed.html
+[`U20F12`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/types/type.U20F12.html
 [`UpperHex`]: https://doc.rust-lang.org/nightly/core/fmt/trait.UpperHex.html
 [`az`]: https://docs.rs/az/^1/az/index.html
 [`bf16`]: https://docs.rs/half/^1/half/struct.bf16.html
 [`bytemuck`]: https://docs.rs/bytemuck/^1/bytemuck/index.html
-[`checked_from_num`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#method.checked_from_num
+[`checked_from_num`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_from_num
 [`f16`]: https://docs.rs/half/^1/half/struct.f16.html
-[`from_num`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#method.from_num
-[`from_str_binary`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#method.from_str_binary
-[`from_str_hex`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#method.from_str_hex
-[`from_str_octal`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#method.from_str_octal
+[`from_num`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.from_num
+[`from_str_binary`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.from_str_binary
+[`from_str_hex`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.from_str_hex
+[`from_str_octal`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.from_str_octal
 [`i32`]: https://doc.rust-lang.org/nightly/core/primitive.i32.html
-[`to_num`]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#method.to_num
+[`to_num`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.to_num
 [`u32`]: https://doc.rust-lang.org/nightly/core/primitive.u32.html

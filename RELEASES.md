@@ -5,7 +5,7 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-Version 2.0.0-alpha.2 (unreleased)
+Version 2.0.0-alpha.2 (2022-03-04)
 ==================================
 
   * The following methods are now `const` functions:
@@ -38,61 +38,66 @@ Version 2.0.0-alpha.2 (unreleased)
       * [`signum`][f-s-2-0a2], [`checked_signum`][f-cs-2-0a2],
         [`saturating_signum`][f-ss-2-0a2], [`wrapping_signum`][f-ws-2-0a2],
         [`unwrapped_signum`][f-us-2-0a2], [`overflowing_signum`][f-os-2-0a2],
-  * `F128Bits` has been replaced by [`F128`][f128-2-0a2] which has proper
+  * The [`Fixed`][tf-2-0a2] trait constraints have been relaxed, and the methods
+    which needed the strict constraints have been moved to the subtrait
+    [`FixedStrict`][tfs-2-0a2].
+  * `F128Bits` has been replaced by [`F128`][f128-2-0a2] which has standard
     floating-point ordering and various classification methods and associated
     constants.
 
-[f-c-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.ceil
-[f-cc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_ceil
-[f-cf-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_floor
-[f-cil10-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_int_log10
-[f-cil2-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_int_log2
-[f-cm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul
-[f-cma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul_add
-[f-cr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_round
-[f-crtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_round_ties_to_even
-[f-cs-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_signum
-[f-f-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.floor
-[f-fr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.frac
-[f-i-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.int
-[f-il10-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.int_log10
-[f-il2-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.int_log2
-[f-ma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.mul_add
-[f-oc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_ceil
-[f-of-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_floor
-[f-om-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_mul
-[f-oma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_mul_add
-[f-or-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_round
-[f-ortte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_round_ties_to_even
-[f-os-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_signum
-[f-r-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.round
-[f-rtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.round_ties_to_even
-[f-rtz-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.round_to_zero
-[f-s-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.signum
-[f-sc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_ceil
-[f-sf-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_floor
-[f-sm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_mul
-[f-sma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_mul_add
-[f-sr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_round
-[f-srtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_round_ties_to_even
-[f-ss-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_signum
-[f-uc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_ceil
-[f-uf-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_floor
-[f-um-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_mul
-[f-uma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_mul_add
-[f-ur-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_round
-[f-urtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_round_ties_to_even
-[f-us-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_signum
-[f-wc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_ceil
-[f-wd-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_div
-[f-wf-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_floor
-[f-wim-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_mul
-[f-wm-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_mul
-[f-wma-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_mul_add
-[f-wr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_round
-[f-wrtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_round_ties_to_even
-[f-ws-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_signum
-[f128-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.F128.html
+[f-c-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.ceil
+[f-cc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_ceil
+[f-cf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_floor
+[f-cil10-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_int_log10
+[f-cil2-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_int_log2
+[f-cm-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_mul
+[f-cma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_mul_add
+[f-cr-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_round
+[f-crtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_round_ties_to_even
+[f-cs-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_signum
+[f-f-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.floor
+[f-fr-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.frac
+[f-i-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.int
+[f-il10-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.int_log10
+[f-il2-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.int_log2
+[f-ma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.mul_add
+[f-oc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_ceil
+[f-of-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_floor
+[f-om-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_mul
+[f-oma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_mul_add
+[f-or-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_round
+[f-ortte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_round_ties_to_even
+[f-os-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_signum
+[f-r-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.round
+[f-rtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.round_ties_to_even
+[f-rtz-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.round_to_zero
+[f-s-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.signum
+[f-sc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_ceil
+[f-sf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_floor
+[f-sm-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_mul
+[f-sma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_mul_add
+[f-sr-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_round
+[f-srtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_round_ties_to_even
+[f-ss-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_signum
+[f-uc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_ceil
+[f-uf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_floor
+[f-um-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_mul
+[f-uma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_mul_add
+[f-ur-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_round
+[f-urtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_round_ties_to_even
+[f-us-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_signum
+[f-wc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_ceil
+[f-wd-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wide_div
+[f-wf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_floor
+[f-wim-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wide_mul
+[f-wm-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_mul
+[f-wma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_mul_add
+[f-wr-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_round
+[f-wrtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_round_ties_to_even
+[f-ws-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_signum
+[f128-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.F128.html
+[tf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.Fixed.html
+[tfs-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.FixedStrict.html
 
 Version 2.0.0-alpha.1 (2022-02-26)
 ==================================
