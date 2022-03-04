@@ -21,9 +21,10 @@ use of const generics instead of the [*typenum*
 crate](https://crates.io/crate/typenum). This version requires the nightly
 compiler with the [`generic_const_exprs` feature] enabled. The stable version
 2.0.0 itself will not be released before the [`generic_const_exprs` feature] is
-stabilized.
+stabilized. See the documentation for [porting from version 1 to version 2].
 
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
+[porting from version 1 to version 2]: #porting-from-version-1-to-version-2
 
 The [*fixed* crate] provides fixed-point numbers.
 
@@ -241,6 +242,55 @@ updated to an incompatible newer version.
  2. `num-traits`, disabled by default. This implements some traits from the
     [*num-traits* crate]. (The plan is to promote this to an optional feature
     once the [*num-traits* crate] reaches version 1.0.0.)
+
+## Porting from version 1 to version 2
+
+To port from version 1 to version 2, the following is required:
+
+  * Temporary change required until the [`generic_const_exprs` feature] are
+    stabilized: use the nightly compiler and enable the [`generic_const_exprs`
+    feature] using
+
+    ```rust
+    #![feature(generic_const_exprs)]
+    # #![allow(incomplete_features)]
+    ```
+
+  * Use integer literals instead of typenum integer constants, for example
+    <code>[FixedI32][`FixedI32`]&lt;8></code> instead of
+    <code>[FixedI32][`FixedI32`]&lt;[U8]></code>.
+
+    [U8]: https://docs.rs/fixed/1/fixed/types/extra/type.U8.html
+
+  * The [`Fixed`] trait constraints have been relaxed, and the methods which
+    needed the strict constraints have been moved to the subtrait
+    [`FixedStrict`]. For code that uses these trait methods, [`Fixed`] should be
+    replaced by [`FixedStrict`].
+
+    [`Fixed`]: traits::Fixed
+    [`FixedStrict`]: traits::FixedStrict
+
+  * The [`FRAC_NBITS`] and [`INT_NBITS`] associated constants of type [`u32`]
+    were replaced by [`FRAC_BITS`] and [`INT_BITS`] of type [`i32`].
+
+    [`FRAC_BITS`]: FixedI32::FRAC_BITS
+    [`FRAC_NBITS`]: https://docs.rs/fixed/1/fixed/struct.FixedI32.html#associatedconstant.FRAC_NBITS
+    [`INT_BITS`]: FixedI32::INT_BITS
+    [`INT_NBITS`]: https://docs.rs/fixed/1/fixed/struct.FixedI32.html#associatedconstant.INT_NBITS
+
+  * The [`F128Bits`] struct has been replaced by [`F128`]. In version 1 the
+    ordering was total ordering, not regular floating-point number ordering, but
+    in version 2 the ordering is similar to ordering for standard floating-point
+    numbers. Also, the underlying [`u128`] value is now accessible only through
+    the [`to_bits`] and [`from_bits`] methods.
+
+    [`F128Bits`]: https://docs.rs/fixed/1/fixed/struct.F128Bits.html
+    [`from_bits`]: F128::from_bits
+    [`to_bits`]: F128::to_bits
+
+  * The deprecated optional features `az` and `f16` were removed. These features
+    had no effect, as their functionality has been unconditionally enabled since
+    version 1.7.0.
 
 ## License
 
