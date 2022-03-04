@@ -20,9 +20,12 @@ use core::{
     ops::Neg,
 };
 
-const SIGN_MASK: u128 = F128::NEG_ZERO.to_bits();
-const EXP_MASK: u128 = F128::INFINITY.to_bits();
-const MANT_MASK: u128 = F128::MIN_POSITIVE.to_bits() - 1;
+const SIGN_MASK: u128 = 1u128 << 127;
+const EXP_MASK: u128 = 0x7FFF_u128 << 112;
+const MANT_MASK: u128 = (1u128 << 112) - 1;
+const PREC: u32 = 113;
+const EXP_BITS: u32 = 15;
+const EXP_BIAS: u32 = (1 << (EXP_BITS - 1)) - 1;
 
 /// The bit representation of a *binary128* floating-point number (`f128`).
 ///
@@ -56,39 +59,39 @@ impl F128 {
     /// Zero.
     pub const ZERO: F128 = F128::from_bits(0);
     /// Negative zero (&minus;0).
-    pub const NEG_ZERO: F128 = F128::from_bits(1u128 << 127);
+    pub const NEG_ZERO: F128 = F128::from_bits(SIGN_MASK);
     /// One.
-    pub const ONE: F128 = F128::from_bits(0x3FFF_u128 << 112);
+    pub const ONE: F128 = F128::from_bits((EXP_BIAS as u128) << (PREC - 1));
     /// Negative one (&minus;1).
-    pub const NEG_ONE: F128 = F128::from_bits(0xBFFF_u128 << 112);
+    pub const NEG_ONE: F128 = F128::from_bits(SIGN_MASK | F128::ONE.to_bits());
     /// Smallest positive subnormal number.
-    pub const MIN_POSITIVE_SUB: F128 = F128::from_bits(1u128);
+    pub const MIN_POSITIVE_SUB: F128 = F128::from_bits(1);
     /// Smallest positive normal number.
-    pub const MIN_POSITIVE: F128 = F128::from_bits(1u128 << 112);
+    pub const MIN_POSITIVE: F128 = F128::from_bits(MANT_MASK + 1);
     /// Largest finite number.
-    pub const MAX: F128 = F128::from_bits((0x7FFF_u128 << 112) - 1);
+    pub const MAX: F128 = F128::from_bits(EXP_MASK - 1);
     /// Smallest finite number; equal to &minus;[`MAX`][Self::MAX].
-    pub const MIN: F128 = F128::from_bits((0xFFFF_u128 << 112) - 1);
+    pub const MIN: F128 = F128::from_bits(SIGN_MASK | F128::MAX.to_bits());
     /// Infinity (∞).
-    pub const INFINITY: F128 = F128::from_bits(0x7FFF_u128 << 112);
+    pub const INFINITY: F128 = F128::from_bits(EXP_MASK);
     /// Negative infinity (&minus;∞).
-    pub const NEG_INFINITY: F128 = F128::from_bits(0xFFFF_u128 << 112);
+    pub const NEG_INFINITY: F128 = F128::from_bits(SIGN_MASK | EXP_MASK);
     /// NaN.
-    pub const NAN: F128 = F128::from_bits(0x7FFF_8000_u128 << 96);
+    pub const NAN: F128 = F128::from_bits(EXP_MASK | (1u128 << (PREC - 2)));
 
     /// The radix or base of the internal representation.
     pub const RADIX: u32 = 2;
     /// Number of significant digits in base 2.
-    pub const MANTISSA_DIGITS: u32 = 113;
+    pub const MANTISSA_DIGITS: u32 = PREC;
 
     /// The difference between 1 and the next larger representable number.
-    pub const EPSILON: F128 = F128::from_bits((0x3FFF_u128 - 112) << 112);
+    pub const EPSILON: F128 = F128::from_bits(((EXP_BIAS - (PREC - 1)) as u128) << (PREC - 1));
     /// If <i>x</i>&nbsp;=&nbsp;`MIN_EXP`, then normal numbers
     /// ≥&nbsp;0.5&nbsp;×&nbsp;2<sup><i>x</i></sup>.
-    pub const MIN_EXP: i32 = -16381;
+    pub const MIN_EXP: i32 = 3 - F128::MAX_EXP;
     /// If <i>x</i>&nbsp;=&nbsp;`MAX_EXP`, then normal numbers
     /// <&nbsp;1&nbsp;×&nbsp;2<sup><i>x</i></sup>.
-    pub const MAX_EXP: i32 = 16383;
+    pub const MAX_EXP: i32 = EXP_BIAS as i32 + 1;
 
     /// Raw transmutation from [`u128`].
     ///
