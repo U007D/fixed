@@ -20,9 +20,9 @@ use core::{
     ops::Neg,
 };
 
-const SIGN_MASK: u128 = F128Bits::NEG_ZERO.to_bits();
-const EXP_MASK: u128 = F128Bits::INFINITY.to_bits();
-const MANT_MASK: u128 = F128Bits::MIN_POSITIVE.to_bits() - 1;
+const SIGN_MASK: u128 = F128::NEG_ZERO.to_bits();
+const EXP_MASK: u128 = F128::INFINITY.to_bits();
+const MANT_MASK: u128 = F128::MIN_POSITIVE.to_bits() - 1;
 
 /// The bit representation of a *binary128* floating-point number (`f128`).
 ///
@@ -39,42 +39,42 @@ const MANT_MASK: u128 = F128Bits::MIN_POSITIVE.to_bits() - 1;
 /// #![feature(generic_const_exprs)]
 /// # #![allow(incomplete_features)]
 ///
-/// use fixed::{types::I16F16, F128Bits};
-/// assert_eq!(I16F16::ONE.to_num::<F128Bits>(), F128Bits::ONE);
-/// assert_eq!(I16F16::from_num(F128Bits::ONE), I16F16::ONE);
+/// use fixed::{types::I16F16, F128};
+/// assert_eq!(I16F16::ONE.to_num::<F128>(), F128::ONE);
+/// assert_eq!(I16F16::from_num(F128::ONE), I16F16::ONE);
 ///
-/// // fixed-point numbers can be compared directly to F128Bits values
-/// assert!(I16F16::from_num(1.5) > F128Bits::ONE);
-/// assert!(I16F16::from_num(0.5) < F128Bits::ONE);
+/// // fixed-point numbers can be compared directly to F128 values
+/// assert!(I16F16::from_num(1.5) > F128::ONE);
+/// assert!(I16F16::from_num(0.5) < F128::ONE);
 /// ```
 #[derive(Clone, Copy, Default, Debug)]
-pub struct F128Bits {
+pub struct F128 {
     bits: u128,
 }
 
-impl F128Bits {
+impl F128 {
     /// Zero.
-    pub const ZERO: F128Bits = F128Bits::from_bits(0);
+    pub const ZERO: F128 = F128::from_bits(0);
     /// Negative zero (&minus;0).
-    pub const NEG_ZERO: F128Bits = F128Bits::from_bits(1u128 << 127);
+    pub const NEG_ZERO: F128 = F128::from_bits(1u128 << 127);
     /// One.
-    pub const ONE: F128Bits = F128Bits::from_bits(0x3FFF_u128 << 112);
+    pub const ONE: F128 = F128::from_bits(0x3FFF_u128 << 112);
     /// Negative one (&minus;1).
-    pub const NEG_ONE: F128Bits = F128Bits::from_bits(0xBFFF_u128 << 112);
+    pub const NEG_ONE: F128 = F128::from_bits(0xBFFF_u128 << 112);
     /// Smallest positive subnormal number.
-    pub const MIN_POSITIVE_SUB: F128Bits = F128Bits::from_bits(1u128);
+    pub const MIN_POSITIVE_SUB: F128 = F128::from_bits(1u128);
     /// Smallest positive normal number.
-    pub const MIN_POSITIVE: F128Bits = F128Bits::from_bits(1u128 << 112);
+    pub const MIN_POSITIVE: F128 = F128::from_bits(1u128 << 112);
     /// Largest finite number.
-    pub const MAX: F128Bits = F128Bits::from_bits((0x7FFF_u128 << 112) - 1);
+    pub const MAX: F128 = F128::from_bits((0x7FFF_u128 << 112) - 1);
     /// Smallest finite number; equal to &minus;[`MAX`][Self::MAX].
-    pub const MIN: F128Bits = F128Bits::from_bits((0xFFFF_u128 << 112) - 1);
+    pub const MIN: F128 = F128::from_bits((0xFFFF_u128 << 112) - 1);
     /// Infinity (∞).
-    pub const INFINITY: F128Bits = F128Bits::from_bits(0x7FFF_u128 << 112);
+    pub const INFINITY: F128 = F128::from_bits(0x7FFF_u128 << 112);
     /// Negative infinity (&minus;∞).
-    pub const NEG_INFINITY: F128Bits = F128Bits::from_bits(0xFFFF_u128 << 112);
+    pub const NEG_INFINITY: F128 = F128::from_bits(0xFFFF_u128 << 112);
     /// NaN.
-    pub const NAN: F128Bits = F128Bits::from_bits(0x7FFF_8000_u128 << 96);
+    pub const NAN: F128 = F128::from_bits(0x7FFF_8000_u128 << 96);
 
     /// The radix or base of the internal representation.
     pub const RADIX: u32 = 2;
@@ -82,7 +82,7 @@ impl F128Bits {
     pub const MANTISSA_DIGITS: u32 = 113;
 
     /// The difference between 1 and the next larger representable number.
-    pub const EPSILON: F128Bits = F128Bits::from_bits((0x3FFF_u128 - 112) << 112);
+    pub const EPSILON: F128 = F128::from_bits((0x3FFF_u128 - 112) << 112);
     /// If <i>x</i>&nbsp;=&nbsp;`MIN_EXP`, then normal numbers
     /// ≥&nbsp;0.5&nbsp;×&nbsp;2<sup><i>x</i></sup>.
     pub const MIN_EXP: i32 = -16381;
@@ -95,14 +95,14 @@ impl F128Bits {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     /// let infinity_bits = 0x7FFF_u128 << 112;
-    /// assert!(F128Bits::from_bits(infinity_bits - 1).is_finite());
-    /// assert!(!F128Bits::from_bits(infinity_bits).is_finite());
+    /// assert!(F128::from_bits(infinity_bits - 1).is_finite());
+    /// assert!(!F128::from_bits(infinity_bits).is_finite());
     /// ```
     #[inline]
-    pub const fn from_bits(bits: u128) -> F128Bits {
-        F128Bits { bits }
+    pub const fn from_bits(bits: u128) -> F128 {
+        F128 { bits }
     }
 
     /// Raw transmutation to [`u128`].
@@ -110,9 +110,9 @@ impl F128Bits {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::F128Bits;
-    /// assert_eq!(F128Bits::ONE.to_bits(), 0x3FFF_u128 << 112);
-    /// assert_ne!(F128Bits::ONE.to_bits(), 1u128);
+    /// use fixed::F128;
+    /// assert_eq!(F128::ONE.to_bits(), 0x3FFF_u128 << 112);
+    /// assert_ne!(F128::ONE.to_bits(), 1u128);
     /// ```
     #[inline]
     pub const fn to_bits(self) -> u128 {
@@ -121,20 +121,20 @@ impl F128Bits {
 
     /// Creates a number from a byte array in big-endian byte order.
     #[inline]
-    pub const fn from_be_bytes(bytes: [u8; 16]) -> F128Bits {
-        F128Bits::from_bits(u128::from_be_bytes(bytes))
+    pub const fn from_be_bytes(bytes: [u8; 16]) -> F128 {
+        F128::from_bits(u128::from_be_bytes(bytes))
     }
 
     /// Creates a number from a byte array in little-endian byte order.
     #[inline]
-    pub const fn from_le_bytes(bytes: [u8; 16]) -> F128Bits {
-        F128Bits::from_bits(u128::from_le_bytes(bytes))
+    pub const fn from_le_bytes(bytes: [u8; 16]) -> F128 {
+        F128::from_bits(u128::from_le_bytes(bytes))
     }
 
     /// Creates a number from a byte array in native-endian byte order.
     #[inline]
-    pub const fn from_ne_bytes(bytes: [u8; 16]) -> F128Bits {
-        F128Bits::from_bits(u128::from_ne_bytes(bytes))
+    pub const fn from_ne_bytes(bytes: [u8; 16]) -> F128 {
+        F128::from_bits(u128::from_ne_bytes(bytes))
     }
 
     /// Returns the memory representation of the number as a byte array in
@@ -163,13 +163,13 @@ impl F128Bits {
     /// # Example
     ///
     /// ```rust
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     ///
-    /// assert!(F128Bits::NAN.is_nan());
+    /// assert!(F128::NAN.is_nan());
     ///
-    /// assert!(!F128Bits::ONE.is_nan());
-    /// assert!(!F128Bits::INFINITY.is_nan());
-    /// assert!(!F128Bits::NEG_INFINITY.is_nan());
+    /// assert!(!F128::ONE.is_nan());
+    /// assert!(!F128::INFINITY.is_nan());
+    /// assert!(!F128::NEG_INFINITY.is_nan());
     /// ```
     #[inline]
     pub const fn is_nan(self) -> bool {
@@ -181,13 +181,13 @@ impl F128Bits {
     /// # Example
     ///
     /// ```rust
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     ///
-    /// assert!(F128Bits::INFINITY.is_infinite());
-    /// assert!(F128Bits::NEG_INFINITY.is_infinite());
+    /// assert!(F128::INFINITY.is_infinite());
+    /// assert!(F128::NEG_INFINITY.is_infinite());
     ///
-    /// assert!(!F128Bits::ONE.is_infinite());
-    /// assert!(!F128Bits::NAN.is_infinite());
+    /// assert!(!F128::ONE.is_infinite());
+    /// assert!(!F128::NAN.is_infinite());
     /// ```
     #[inline]
     pub const fn is_infinite(self) -> bool {
@@ -199,14 +199,14 @@ impl F128Bits {
     /// # Example
     ///
     /// ```rust
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     ///
-    /// assert!(F128Bits::ONE.is_finite());
-    /// assert!(F128Bits::MAX.is_finite());
+    /// assert!(F128::ONE.is_finite());
+    /// assert!(F128::MAX.is_finite());
     ///
-    /// assert!(!F128Bits::INFINITY.is_finite());
-    /// assert!(!F128Bits::NEG_INFINITY.is_finite());
-    /// assert!(!F128Bits::NAN.is_finite());
+    /// assert!(!F128::INFINITY.is_finite());
+    /// assert!(!F128::NEG_INFINITY.is_finite());
+    /// assert!(!F128::NAN.is_finite());
     /// ```
     #[inline]
     pub const fn is_finite(self) -> bool {
@@ -218,13 +218,13 @@ impl F128Bits {
     /// # Example
     ///
     /// ```rust
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     ///
-    /// assert!(F128Bits::ZERO.is_zero());
-    /// assert!(F128Bits::NEG_ZERO.is_zero());
+    /// assert!(F128::ZERO.is_zero());
+    /// assert!(F128::NEG_ZERO.is_zero());
     ///
-    /// assert!(!F128Bits::MIN_POSITIVE_SUB.is_zero());
-    /// assert!(!F128Bits::NAN.is_zero());
+    /// assert!(!F128::MIN_POSITIVE_SUB.is_zero());
+    /// assert!(!F128::NAN.is_zero());
     /// ```
     #[inline]
     pub const fn is_zero(self) -> bool {
@@ -236,17 +236,17 @@ impl F128Bits {
     /// # Example
     ///
     /// ```rust
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     ///
-    /// assert!(F128Bits::MIN_POSITIVE_SUB.is_subnormal());
+    /// assert!(F128::MIN_POSITIVE_SUB.is_subnormal());
     ///
-    /// assert!(!F128Bits::ZERO.is_subnormal());
-    /// assert!(!F128Bits::MIN_POSITIVE.is_subnormal());
+    /// assert!(!F128::ZERO.is_subnormal());
+    /// assert!(!F128::MIN_POSITIVE.is_subnormal());
     /// ```
     #[inline]
     pub const fn is_subnormal(self) -> bool {
         let abs = self.to_bits() & !SIGN_MASK;
-        0 < abs && abs < F128Bits::MIN_POSITIVE.to_bits()
+        0 < abs && abs < F128::MIN_POSITIVE.to_bits()
     }
 
     /// Returns [`true`] if the number is neither zero, infinite, subnormal, or NaN.
@@ -254,21 +254,21 @@ impl F128Bits {
     /// # Example
     ///
     /// ```rust
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     ///
-    /// assert!(F128Bits::MIN.is_normal());
-    /// assert!(F128Bits::MIN_POSITIVE.is_normal());
-    /// assert!(F128Bits::MAX.is_normal());
+    /// assert!(F128::MIN.is_normal());
+    /// assert!(F128::MIN_POSITIVE.is_normal());
+    /// assert!(F128::MAX.is_normal());
     ///
-    /// assert!(!F128Bits::ZERO.is_normal());
-    /// assert!(!F128Bits::MIN_POSITIVE_SUB.is_normal());
-    /// assert!(!F128Bits::INFINITY.is_normal());
-    /// assert!(!F128Bits::NAN.is_normal());
+    /// assert!(!F128::ZERO.is_normal());
+    /// assert!(!F128::MIN_POSITIVE_SUB.is_normal());
+    /// assert!(!F128::INFINITY.is_normal());
+    /// assert!(!F128::NAN.is_normal());
     /// ```
     #[inline]
     pub const fn is_normal(self) -> bool {
         let abs = self.to_bits() & !SIGN_MASK;
-        F128Bits::MIN_POSITIVE.to_bits() <= abs && abs <= F128Bits::MAX.to_bits()
+        F128::MIN_POSITIVE.to_bits() <= abs && abs <= F128::MAX.to_bits()
     }
 
     /// Returns the floating point category of the number.
@@ -280,13 +280,13 @@ impl F128Bits {
     ///
     /// ```rust
     /// use core::num::FpCategory;
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     ///
-    /// assert_eq!(F128Bits::ZERO.classify(), FpCategory::Zero);
-    /// assert_eq!(F128Bits::MIN_POSITIVE_SUB.classify(), FpCategory::Subnormal);
-    /// assert_eq!(F128Bits::MIN_POSITIVE.classify(), FpCategory::Normal);
-    /// assert_eq!(F128Bits::INFINITY.classify(), FpCategory::Infinite);
-    /// assert_eq!(F128Bits::NAN.classify(), FpCategory::Nan);
+    /// assert_eq!(F128::ZERO.classify(), FpCategory::Zero);
+    /// assert_eq!(F128::MIN_POSITIVE_SUB.classify(), FpCategory::Subnormal);
+    /// assert_eq!(F128::MIN_POSITIVE.classify(), FpCategory::Normal);
+    /// assert_eq!(F128::INFINITY.classify(), FpCategory::Infinite);
+    /// assert_eq!(F128::NAN.classify(), FpCategory::Nan);
     /// ```
     #[inline]
     pub const fn classify(self) -> FpCategory {
@@ -317,21 +317,21 @@ impl F128Bits {
     /// # Example
     ///
     /// ```rust
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     ///
     /// // -0 == +0, but -0 bits != +0 bits
-    /// assert_eq!(F128Bits::NEG_ZERO, F128Bits::ZERO);
-    /// assert_ne!(F128Bits::NEG_ZERO.to_bits(), F128Bits::ZERO.to_bits());
-    /// assert_eq!(F128Bits::NEG_ZERO.abs().to_bits(), F128Bits::ZERO.to_bits());
+    /// assert_eq!(F128::NEG_ZERO, F128::ZERO);
+    /// assert_ne!(F128::NEG_ZERO.to_bits(), F128::ZERO.to_bits());
+    /// assert_eq!(F128::NEG_ZERO.abs().to_bits(), F128::ZERO.to_bits());
     ///
-    /// assert_eq!(F128Bits::NEG_INFINITY.abs(), F128Bits::INFINITY);
-    /// assert_eq!(F128Bits::MIN.abs(), F128Bits::MAX);
+    /// assert_eq!(F128::NEG_INFINITY.abs(), F128::INFINITY);
+    /// assert_eq!(F128::MIN.abs(), F128::MAX);
     ///
-    /// assert!(F128Bits::NAN.abs().is_nan());
+    /// assert!(F128::NAN.abs().is_nan());
     /// ```
     #[inline]
-    pub const fn abs(self) -> F128Bits {
-        F128Bits::from_bits(self.to_bits() & !SIGN_MASK)
+    pub const fn abs(self) -> F128 {
+        F128::from_bits(self.to_bits() & !SIGN_MASK)
     }
 
     /// Returns a number that represents the sign of the input value.
@@ -343,23 +343,23 @@ impl F128Bits {
     /// # Example
     ///
     /// ```rust
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     ///
-    /// assert_eq!(F128Bits::ONE.signum(), F128Bits::ONE);
-    /// assert_eq!(F128Bits::INFINITY.signum(), F128Bits::ONE);
-    /// assert_eq!(F128Bits::NEG_ZERO.signum(), F128Bits::NEG_ONE);
-    /// assert_eq!(F128Bits::MIN.signum(), F128Bits::NEG_ONE);
+    /// assert_eq!(F128::ONE.signum(), F128::ONE);
+    /// assert_eq!(F128::INFINITY.signum(), F128::ONE);
+    /// assert_eq!(F128::NEG_ZERO.signum(), F128::NEG_ONE);
+    /// assert_eq!(F128::MIN.signum(), F128::NEG_ONE);
     ///
-    /// assert!(F128Bits::NAN.signum().is_nan());
+    /// assert!(F128::NAN.signum().is_nan());
     /// ```
     #[inline]
-    pub const fn signum(self) -> F128Bits {
+    pub const fn signum(self) -> F128 {
         if self.is_nan() {
             self
         } else if self.is_sign_positive() {
-            F128Bits::ONE
+            F128::ONE
         } else {
-            F128Bits::NEG_ONE
+            F128::NEG_ONE
         }
     }
 
@@ -368,20 +368,20 @@ impl F128Bits {
     /// # Example
     ///
     /// ```rust
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     ///
-    /// assert_eq!(F128Bits::ONE.copysign(F128Bits::NEG_ZERO), F128Bits::NEG_ONE);
-    /// assert_eq!(F128Bits::ONE.copysign(F128Bits::ZERO), F128Bits::ONE);
-    /// assert_eq!(F128Bits::NEG_ONE.copysign(F128Bits::NEG_INFINITY), F128Bits::NEG_ONE);
-    /// assert_eq!(F128Bits::NEG_ONE.copysign(F128Bits::INFINITY), F128Bits::ONE);
+    /// assert_eq!(F128::ONE.copysign(F128::NEG_ZERO), F128::NEG_ONE);
+    /// assert_eq!(F128::ONE.copysign(F128::ZERO), F128::ONE);
+    /// assert_eq!(F128::NEG_ONE.copysign(F128::NEG_INFINITY), F128::NEG_ONE);
+    /// assert_eq!(F128::NEG_ONE.copysign(F128::INFINITY), F128::ONE);
     ///
-    /// assert!(F128Bits::NAN.copysign(F128Bits::ONE).is_nan());
-    /// assert!(F128Bits::NAN.copysign(F128Bits::ONE).is_sign_positive());
-    /// assert!(F128Bits::NAN.copysign(F128Bits::NEG_ONE).is_sign_negative());
+    /// assert!(F128::NAN.copysign(F128::ONE).is_nan());
+    /// assert!(F128::NAN.copysign(F128::ONE).is_sign_positive());
+    /// assert!(F128::NAN.copysign(F128::NEG_ONE).is_sign_negative());
     /// ```
     #[inline]
-    pub const fn copysign(self, sign: F128Bits) -> F128Bits {
-        F128Bits::from_bits((self.to_bits() & !SIGN_MASK) | (sign.to_bits() & SIGN_MASK))
+    pub const fn copysign(self, sign: F128) -> F128 {
+        F128::from_bits((self.to_bits() & !SIGN_MASK) | (sign.to_bits() & SIGN_MASK))
     }
 
     /// Returns [`true`] if the number has a positive sign, including +0, +∞,
@@ -390,15 +390,15 @@ impl F128Bits {
     /// # Example
     ///
     /// ```rust
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     ///
-    /// assert!(F128Bits::ZERO.is_sign_positive());
-    /// assert!(F128Bits::MAX.is_sign_positive());
-    /// assert!(F128Bits::INFINITY.is_sign_positive());
+    /// assert!(F128::ZERO.is_sign_positive());
+    /// assert!(F128::MAX.is_sign_positive());
+    /// assert!(F128::INFINITY.is_sign_positive());
     ///
-    /// assert!(!F128Bits::NEG_ZERO.is_sign_positive());
-    /// assert!(!F128Bits::MIN.is_sign_positive());
-    /// assert!(!F128Bits::NEG_INFINITY.is_sign_positive());
+    /// assert!(!F128::NEG_ZERO.is_sign_positive());
+    /// assert!(!F128::MIN.is_sign_positive());
+    /// assert!(!F128::NEG_INFINITY.is_sign_positive());
     /// ```
     #[inline]
     pub const fn is_sign_positive(self) -> bool {
@@ -411,15 +411,15 @@ impl F128Bits {
     /// # Example
     ///
     /// ```rust
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     ///
-    /// assert!(F128Bits::NEG_ZERO.is_sign_negative());
-    /// assert!(F128Bits::MIN.is_sign_negative());
-    /// assert!(F128Bits::NEG_INFINITY.is_sign_negative());
+    /// assert!(F128::NEG_ZERO.is_sign_negative());
+    /// assert!(F128::MIN.is_sign_negative());
+    /// assert!(F128::NEG_INFINITY.is_sign_negative());
     ///
-    /// assert!(!F128Bits::ZERO.is_sign_negative());
-    /// assert!(!F128Bits::MAX.is_sign_negative());
-    /// assert!(!F128Bits::INFINITY.is_sign_negative());
+    /// assert!(!F128::ZERO.is_sign_negative());
+    /// assert!(!F128::MAX.is_sign_negative());
+    /// assert!(!F128::INFINITY.is_sign_negative());
     /// ```
     #[inline]
     pub const fn is_sign_negative(self) -> bool {
@@ -446,21 +446,21 @@ impl F128Bits {
     ///
     /// ```rust
     /// use core::cmp::Ordering;
-    /// use fixed::F128Bits;
+    /// use fixed::F128;
     ///
-    /// let neg_nan = F128Bits::NAN.copysign(F128Bits::NEG_ONE);
-    /// let pos_nan = F128Bits::NAN.copysign(F128Bits::ONE);
-    /// let neg_inf = F128Bits::NEG_INFINITY;
-    /// let pos_inf = F128Bits::INFINITY;
-    /// let neg_zero = F128Bits::NEG_ZERO;
-    /// let pos_zero = F128Bits::ZERO;
+    /// let neg_nan = F128::NAN.copysign(F128::NEG_ONE);
+    /// let pos_nan = F128::NAN.copysign(F128::ONE);
+    /// let neg_inf = F128::NEG_INFINITY;
+    /// let pos_inf = F128::INFINITY;
+    /// let neg_zero = F128::NEG_ZERO;
+    /// let pos_zero = F128::ZERO;
     ///
     /// assert_eq!(neg_nan.total_cmp(&neg_inf), Ordering::Less);
     /// assert_eq!(pos_nan.total_cmp(&pos_inf), Ordering::Greater);
     /// assert_eq!(neg_zero.total_cmp(&pos_zero), Ordering::Less);
     /// ```
     #[inline]
-    pub const fn total_cmp(&self, other: &F128Bits) -> Ordering {
+    pub const fn total_cmp(&self, other: &F128) -> Ordering {
         let a = self.to_bits();
         let b = other.to_bits();
         match (self.is_sign_negative(), other.is_sign_negative()) {
@@ -482,9 +482,9 @@ const fn cmp_bits(a: u128, b: u128) -> Ordering {
     }
 }
 
-impl PartialEq for F128Bits {
+impl PartialEq for F128 {
     #[inline]
-    fn eq(&self, other: &F128Bits) -> bool {
+    fn eq(&self, other: &F128) -> bool {
         if self.is_nan() || other.is_nan() {
             return false;
         }
@@ -498,9 +498,9 @@ impl PartialEq for F128Bits {
     }
 }
 
-impl PartialOrd for F128Bits {
+impl PartialOrd for F128 {
     #[inline]
-    fn partial_cmp(&self, other: &F128Bits) -> Option<Ordering> {
+    fn partial_cmp(&self, other: &F128) -> Option<Ordering> {
         if self.is_nan() || other.is_nan() {
             return None;
         }
@@ -519,24 +519,24 @@ impl PartialOrd for F128Bits {
     }
 }
 
-impl Hash for F128Bits {
+impl Hash for F128 {
     #[inline]
     fn hash<H>(&self, state: &mut H)
     where
         H: Hasher,
     {
         let mut bits = self.to_bits();
-        if bits == F128Bits::NEG_ZERO.to_bits() {
+        if bits == F128::NEG_ZERO.to_bits() {
             bits = 0;
         }
         bits.hash(state);
     }
 }
 
-impl Neg for F128Bits {
-    type Output = F128Bits;
+impl Neg for F128 {
+    type Output = F128;
     #[inline]
-    fn neg(self) -> F128Bits {
-        F128Bits::from_bits(self.to_bits() ^ SIGN_MASK)
+    fn neg(self) -> F128 {
+        F128::from_bits(self.to_bits() ^ SIGN_MASK)
     }
 }

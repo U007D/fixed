@@ -38,8 +38,9 @@ Version 2.0.0-alpha.2 (unreleased)
       * [`signum`][f-s-2-0a2], [`checked_signum`][f-cs-2-0a2],
         [`saturating_signum`][f-ss-2-0a2], [`wrapping_signum`][f-ws-2-0a2],
         [`unwrapped_signum`][f-us-2-0a2], [`overflowing_signum`][f-os-2-0a2],
-  * [`F128Bits`][f128-2-0a2] has been impreoved with proper floating-point
-    ordering and various classification methods and associated constants.
+  * `F128Bits` has been replaced by [`F128`][f128-2-0a2] which has proper
+    floating-point ordering and various classification methods and associated
+    constants.
 
 [f-c-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.ceil
 [f-cc-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_ceil
@@ -91,7 +92,7 @@ Version 2.0.0-alpha.2 (unreleased)
 [f-wr-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_round
 [f-wrtte-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_round_ties_to_even
 [f-ws-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_signum
-[f128-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.F128Bits.html
+[f128-2-0a2]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.F128.html
 
 Version 2.0.0-alpha.1 (2022-02-26)
 ==================================

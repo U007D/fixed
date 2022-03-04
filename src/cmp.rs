@@ -14,8 +14,8 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
-    float_helper, int_helper, F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8,
-    FixedU128, FixedU16, FixedU32, FixedU64, FixedU8,
+    float_helper, int_helper, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128,
+    FixedU16, FixedU32, FixedU64, FixedU8, F128,
 };
 use core::{
     cmp::Ordering,
@@ -664,7 +664,7 @@ macro_rules! fixed_cmp_prim {
         fixed_cmp_float! { $Fix($nbits, $Inner), bf16, u16 }
         fixed_cmp_float! { $Fix($nbits, $Inner), f32, u32 }
         fixed_cmp_float! { $Fix($nbits, $Inner), f64, u64 }
-        fixed_cmp_float! { $Fix($nbits, $Inner), F128Bits, u128 }
+        fixed_cmp_float! { $Fix($nbits, $Inner), F128, u128 }
     };
 }
 
