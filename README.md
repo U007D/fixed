@@ -204,6 +204,11 @@ The conversions supported cover the following cases.
 [f-ib-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
 
+### Version 1.13.1 news (unreleased)
+
+  * The [`const_fixed_from_int`][cffi-1-13] macro now accepts a visibility
+    qualifier ([merge request 10]).
+
 ### Version 1.13.0 news (2022-02-22)
 
   * The [`AddAssign`], [`SubAssign`], [`MulAssign`], [`DivAssign`],
@@ -223,7 +228,9 @@ The conversions supported cover the following cases.
 [`MulAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.MulAssign.html
 [`RemAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.RemAssign.html
 [`SubAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.SubAssign.html
+[cffi-1-13]: https://docs.rs/fixed/~1.13/fixed/macro.const_fixed_from_int.html
 [issue 45]: https://gitlab.com/tspiteri/fixed/-/issues/45
+[merge request 10]: https://gitlab.com/tspiteri/fixed/-/merge_requests/10
 [rust issue 75045]: https://github.com/rust-lang/rust/issues/75045
 [u-1-13]: https://docs.rs/fixed/~1.13/fixed/struct.Unwrapped.html
 [w-1-13]: https://docs.rs/fixed/~1.13/fixed/struct.Wrapping.html
