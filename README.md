@@ -204,7 +204,7 @@ The conversions supported cover the following cases.
 [f-ib-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
 
-### Version 1.13.1 news (unreleased)
+### Version 1.13.1 news (2022-03-04)
 
   * The [`const_fixed_from_int`][cffi-1-13] macro now accepts a visibility
     qualifier ([merge request 10]).
