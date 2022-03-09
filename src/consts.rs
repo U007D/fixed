@@ -34,7 +34,10 @@ assert_eq!(format!("{:.8}", tau), "6.28318531");
 ```
 */
 
-use crate::types::{U0F128, U1F127, U2F126, U3F125};
+use crate::{
+    types::{U0F128, U1F127, U2F126, U3F125},
+    FixedU128,
+};
 
 /*
 ```rust
@@ -69,10 +72,19 @@ fn hex_bits(val: &Float, frac_bits: i32) -> String {
 fn print(doc: &str, name: &str, val: Float) {
     println!("/// {} = {}…", doc, decimal_string(&val, 6));
     println!("// {} = {}...", name, decimal_string(&val, 40));
-    let int_bits = val.get_exp().unwrap().max(0);
+    let int_bits = val.get_exp().unwrap();
     let frac_bits = 128 - int_bits;
-    print!("pub const {}: U{}F{} = U{1}F{2}", name, int_bits, frac_bits,);
-    println!("::from_bits({});", hex_bits(&val, frac_bits));
+    if int_bits >= 0 {
+        print!("pub const {}: U{}F{} = U{1}F{2}", name, int_bits, frac_bits);
+        println!("::from_bits({});", hex_bits(&val, frac_bits));
+    } else {
+        print!("pub const {}: U0F128 = U0F128", name);
+        println!("::from_bits({});", hex_bits(&val, 128));
+
+        println!("// more precise constant for use in Fixed* associated constants");
+        println!("pub(crate) const PREC_{}: FixedU128<{}> =", name, frac_bits);
+        println!("    FixedU128::from_bits({});", hex_bits(&val, frac_bits));
+    }
     println!();
 }
 
@@ -118,9 +130,17 @@ fn main() {
     print("ln 2", "LN_2", float(2).ln());
     print("ln 10", "LN_10", float(10).ln());
     print("The golden ratio, φ", "PHI", float(1.25).sqrt() + 0.5);
-    print("The golden ratio conjugate, Φ = 1/φ", "FRAC_1_PHI", float(1.25).sqrt() - 0.5);
+    print(
+        "The golden ratio conjugate, Φ = 1/φ",
+        "FRAC_1_PHI",
+        float(1.25).sqrt() - 0.5,
+    );
     print("√φ", "SQRT_PHI", (float(1.25).sqrt() + 0.5f32).sqrt());
-    print("The Euler-Mascheroni constant, γ", "GAMMA", float(Constant::Euler));
+    print(
+        "The Euler-Mascheroni constant, γ",
+        "GAMMA",
+        float(Constant::Euler),
+    );
     print("Catalan’s constant", "CATALAN", float(Constant::Catalan));
 }
 ```
@@ -157,10 +177,16 @@ pub const FRAC_TAU_12: U0F128 = U0F128::from_bits(0x860A_91C1_6B9B_2C23_2DD9_970
 /// 1/τ = 0.159154…
 // FRAC_1_TAU = 0.1591549430918953357688837633725143620344...
 pub const FRAC_1_TAU: U0F128 = U0F128::from_bits(0x28BE_60DB_9391_054A_7F09_D5F4_7D4D_3770);
+// more precise constant for use in Fixed* associated constants
+pub(crate) const PREC_FRAC_1_TAU: FixedU128<130> =
+    FixedU128::from_bits(0xA2F9_836E_4E44_1529_FC27_57D1_F534_DDC0);
 
 /// 2/τ = 0.318309…
 // FRAC_2_TAU = 0.3183098861837906715377675267450287240689...
 pub const FRAC_2_TAU: U0F128 = U0F128::from_bits(0x517C_C1B7_2722_0A94_FE13_ABE8_FA9A_6EE0);
+// more precise constant for use in Fixed* associated constants
+pub(crate) const PREC_FRAC_2_TAU: FixedU128<129> =
+    FixedU128::from_bits(0xA2F9_836E_4E44_1529_FC27_57D1_F534_DDC0);
 
 /// 4/τ = 0.636619…
 // FRAC_4_TAU = 0.6366197723675813430755350534900574481378...
@@ -189,10 +215,16 @@ pub const FRAC_PI_6: U0F128 = U0F128::from_bits(0x860A_91C1_6B9B_2C23_2DD9_9707_
 /// π/8 = 0.392699…
 // FRAC_PI_8 = 0.3926990816987241548078304229099378605246...
 pub const FRAC_PI_8: U0F128 = U0F128::from_bits(0x6487_ED51_10B4_611A_6263_3145_C06E_0E68);
+// more precise constant for use in Fixed* associated constants
+pub(crate) const PREC_FRAC_PI_8: FixedU128<129> =
+    FixedU128::from_bits(0xC90F_DAA2_2168_C234_C4C6_628B_80DC_1CD1);
 
 /// 1/π = 0.318309…
 // FRAC_1_PI = 0.3183098861837906715377675267450287240689...
 pub const FRAC_1_PI: U0F128 = U0F128::from_bits(0x517C_C1B7_2722_0A94_FE13_ABE8_FA9A_6EE0);
+// more precise constant for use in Fixed* associated constants
+pub(crate) const PREC_FRAC_1_PI: FixedU128<129> =
+    FixedU128::from_bits(0xA2F9_836E_4E44_1529_FC27_57D1_F534_DDC0);
 
 /// 2/π = 0.636619…
 // FRAC_2_PI = 0.6366197723675813430755350534900574481378...
@@ -245,10 +277,16 @@ pub const LOG2_E: U1F127 = U1F127::from_bits(0xB8AA_3B29_5C17_F0BB_BE87_FED0_691
 /// log<sub>10</sub> 2 = 0.301029…
 // LOG10_2 = 0.3010299956639811952137388947244930267681...
 pub const LOG10_2: U0F128 = U0F128::from_bits(0x4D10_4D42_7DE7_FBCC_47C4_ACD6_05BE_48BC);
+// more precise constant for use in Fixed* associated constants
+pub(crate) const PREC_LOG10_2: FixedU128<129> =
+    FixedU128::from_bits(0x9A20_9A84_FBCF_F798_8F89_59AC_0B7C_9178);
 
 /// log<sub>10</sub> e = 0.434294…
 // LOG10_E = 0.4342944819032518276511289189166050822943...
 pub const LOG10_E: U0F128 = U0F128::from_bits(0x6F2D_EC54_9B94_38CA_9AAD_D557_D699_EE19);
+// more precise constant for use in Fixed* associated constants
+pub(crate) const PREC_LOG10_E: FixedU128<129> =
+    FixedU128::from_bits(0xDE5B_D8A9_3728_7195_355B_AAAF_AD33_DC32);
 
 /// ln 2 = 0.693147…
 // LN_2 = 0.6931471805599453094172321214581765680755...
@@ -277,6 +315,20 @@ pub const GAMMA: U0F128 = U0F128::from_bits(0x93C4_67E3_7DB0_C7A4_D1BE_3F81_0152
 /// Catalan’s constant = 0.915965…
 // CATALAN = 0.9159655941772190150546035149323841107741...
 pub const CATALAN: U0F128 = U0F128::from_bits(0xEA7C_B89F_409A_E845_2158_22E3_7D32_D0C6);
+
+// helper for associated constant versions
+#[inline]
+pub(crate) const fn shift(src_bits: u128, src_frac: i32, dst_frac: i32) -> u128 {
+    let shift_right = src_frac.saturating_sub(dst_frac);
+    if shift_right < 0 {
+        panic!("overflow");
+    }
+    if shift_right >= 128 {
+        0
+    } else {
+        src_bits >> shift_right
+    }
+}
 
 #[cfg(test)]
 mod tests {

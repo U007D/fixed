@@ -463,6 +463,7 @@ macro_rules! fixed {
         $nbytes:expr, $nbits:expr,
         $bytes_val:expr, $rev_bytes_val:expr, $be_bytes:expr, $le_bytes:expr,
         $UFixed:ident, $UInner:ident, $Signedness:tt,
+        $nbits_cm3:expr, $nbits_cm2:expr, $nbits_cm1:expr,
         $nbits_c0:expr, $nbits_c1:expr, $nbits_c2:expr, $nbits_c3:expr,
         $HasDouble:tt, $Double:ident, $DoubleInner:ty, $s_nbits_2:expr
     ) => {
@@ -475,7 +476,7 @@ macro_rules! fixed {
             $nbytes, $nbits,
             $bytes_val, $rev_bytes_val, $be_bytes, $le_bytes,
             $UFixed[stringify!($UFixed)], $UInner, $Signedness,
-            $nbits_c0, $nbits_c1, $nbits_c2, $nbits_c3,
+            $nbits_cm3, $nbits_cm2, $nbits_cm1, $nbits_c0, $nbits_c1, $nbits_c2, $nbits_c3,
             $HasDouble, $Double[stringify!($Double)], $DoubleInner, $s_nbits_2
         }
     };
@@ -488,6 +489,7 @@ macro_rules! fixed {
         $nbytes:expr, $nbits:expr,
         $bytes_val:expr, $rev_bytes_val:expr, $be_bytes:expr, $le_bytes:expr,
         $UFixed:ident[$s_ufixed:expr], $UInner:ident, $Signedness:tt,
+        $nbits_cm3:expr, $nbits_cm2:expr, $nbits_cm1:expr,
         $nbits_c0:expr, $nbits_c1:expr, $nbits_c2:expr, $nbits_c3:expr,
         $HasDouble:tt, $Double:ident[$s_double:expr], $DoubleInner:ty, $s_nbits_2:expr
     ) => {
@@ -596,7 +598,7 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
         }
         fixed_const! {
             $Fixed[$s_fixed]($nbits, $s_nbits, $s_nbits_m1, $s_nbits_m2, $s_nbits_m3, $s_nbits_m4),
-            $nbits_c0, $nbits_c1, $nbits_c2, $nbits_c3,
+            $nbits_cm3, $nbits_cm2, $nbits_cm1, $nbits_c0, $nbits_c1, $nbits_c2, $nbits_c3,
             $Signedness
         }
     };
@@ -607,7 +609,7 @@ fixed! {
     FixedU8(u8, "8", "7", "6", "5", "4"),
     1, 8, "0x12", "0x12", "[0x12]", "[0x12]",
     FixedU8, u8, Unsigned,
-    8, 7, 6, 5,
+    11, 10, 9, 8, 7, 6, 5,
     True, FixedU16, u16, "16"
 }
 fixed! {
@@ -615,7 +617,7 @@ fixed! {
     FixedU16(u16, "16", "15", "14", "13", "12"),
     2, 16, "0x1234", "0x3412", "[0x12, 0x34]", "[0x34, 0x12]",
     FixedU16, u16, Unsigned,
-    16, 15, 14, 13,
+    19, 18, 17, 16, 15, 14, 13,
     True, FixedU32, u32, "32"
 }
 fixed! {
@@ -623,7 +625,7 @@ fixed! {
     FixedU32(u32, "32", "31", "30", "29", "28"),
     4, 32, "0x1234_5678", "0x7856_3412", "[0x12, 0x34, 0x56, 0x78]", "[0x78, 0x56, 0x34, 0x12]",
     FixedU32, u32, Unsigned,
-    32, 31, 30, 29,
+    35, 34, 33, 32, 31, 30, 29,
     True, FixedU64, u64, "64"
 }
 fixed! {
@@ -633,7 +635,7 @@ fixed! {
     "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0x0F]",
     "[0x0F, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
     FixedU64, u64, Unsigned,
-    64, 63, 62, 61,
+    67, 66, 65, 64, 63, 62, 61,
     True, FixedU128, u128, "128"
 }
 fixed! {
@@ -646,7 +648,7 @@ fixed! {
     "[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, \
      0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
     FixedU128, u128, Unsigned,
-    128, 127, 126, 125,
+    131, 130, 129, 128, 127, 126, 125,
     False, FixedU128, u128, "128"
 }
 fixed! {
@@ -654,7 +656,7 @@ fixed! {
     FixedI8(i8, "8", "7", "6", "5", "4"),
     1, 8, "0x12", "0x12", "[0x12]", "[0x12]",
     FixedU8, u8, Signed,
-    7, 6, 5, 4,
+    10, 9, 8, 7, 6, 5, 4,
     True, FixedI16, i16, "16"
 }
 fixed! {
@@ -662,7 +664,7 @@ fixed! {
     FixedI16(i16, "16", "15", "14", "13", "12"),
     2, 16, "0x1234", "0x3412", "[0x12, 0x34]", "[0x34, 0x12]",
     FixedU16, u16, Signed,
-    15, 14, 13, 12,
+    18, 17, 16, 15, 14, 13, 12,
     True, FixedI32, i32, "32"
 }
 fixed! {
@@ -670,7 +672,7 @@ fixed! {
     FixedI32(i32, "32", "31", "30", "29", "28"),
     4, 32, "0x1234_5678", "0x7856_3412", "[0x12, 0x34, 0x56, 0x78]", "[0x78, 0x56, 0x34, 0x12]",
     FixedU32, u32, Signed,
-    31, 30, 29, 28,
+    34, 33, 32, 31, 30, 29, 28,
     True, FixedI64, i64, "64"
 }
 fixed! {
@@ -680,7 +682,7 @@ fixed! {
     "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0x0F]",
     "[0x0F, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
     FixedU64, u64, Signed,
-    63, 62, 61, 60,
+    66, 65, 64, 63, 62, 61, 60,
     True, FixedI128, i128, "128"
 }
 fixed! {
@@ -693,7 +695,7 @@ fixed! {
     "[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, \
      0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
     FixedU128, u128, Signed,
-    127, 126, 125, 124,
+    130, 129, 128, 127, 126, 125, 124,
     False, FixedI128, i128, "128"
 }
 

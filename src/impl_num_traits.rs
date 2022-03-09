@@ -101,7 +101,7 @@ macro_rules! impl_traits {
         impl<const FRAC: i32> One for $Fixed<FRAC>
         where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-            If<{ (0 <= FRAC) & (FRAC <= $one_max_frac) }>: True,
+            If<{ FRAC <= $one_max_frac }>: True,
         {
             #[inline]
             fn one() -> Self {
@@ -112,7 +112,7 @@ macro_rules! impl_traits {
         impl<const FRAC: i32> Num for $Fixed<FRAC>
         where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-            If<{ (0 <= FRAC) & (FRAC <= $one_max_frac) }>: True,
+            If<{ FRAC <= $one_max_frac }>: True,
         {
             type FromStrRadixErr = RadixParseFixedError;
 
@@ -145,7 +145,7 @@ macro_rules! impl_traits {
             impl<const FRAC: i32> Signed for $Fixed<FRAC>
             where
                 If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-                If<{ (0 <= FRAC) & (FRAC <= $one_max_frac) }>: True,
+                If<{ FRAC <= $one_max_frac }>: True,
             {
                 #[inline]
                 fn abs(&self) -> Self {
@@ -179,7 +179,7 @@ macro_rules! impl_traits {
             impl<const FRAC: i32> Unsigned for $Fixed<FRAC>
             where
                 If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-                If<{ (0 <= FRAC) & (FRAC <= $one_max_frac) }>: True,
+                If<{ FRAC <= $one_max_frac }>: True,
             {
             }
         }

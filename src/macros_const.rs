@@ -20,8 +20,8 @@ macro_rules! shift {
             (consts::$SRC.to_bits() >> (64 - $FRAC / 2) >> (64 + $FRAC / 2 - $FRAC)) as _,
         )
     };
-    ($SRC:ident, $src_frac_nbits:literal, $Fixed:ident<$FRAC:ident>) => {
-        $Fixed::<$FRAC>::from_bits((consts::$SRC.to_bits() >> ($src_frac_nbits - $FRAC)) as _)
+    ($SRC:ident, $src_frac:literal, $Fixed:ident<$FRAC:ident>) => {
+        $Fixed::<$FRAC>::from_bits(consts::shift(consts::$SRC.to_bits(), $src_frac, $FRAC) as _)
     };
 }
 
@@ -31,11 +31,18 @@ macro_rules! fixed_const {
             $nbits:expr, $s_nbits:expr,
             $s_nbits_m1:expr, $s_nbits_m2:expr, $s_nbits_m3:expr, $s_nbits_m4:expr
         ),
+        $nbits_cm3:expr, $nbits_cm2:expr, $nbits_cm1:expr,
         $nbits_c0:expr, $nbits_c1:expr, $nbits_c2:expr, $nbits_c3:expr,
         $Signedness:tt
     ) => {
         comment! {
-            "This block contains constants in the range 0&nbsp;<&nbsp;<i>x</i>&nbsp;<&nbsp;0.5.
+            "This block contains constants in the range 0.125&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;0.25.
+
+These constants are not representable in ",
+            if_signed_unsigned!($Signedness, "signed", "unsigned"),
+            " fixed-point numbers with less than ",
+            if_signed_unsigned!($Signedness, "&minus;1", "&minus;2"),
+            " integer bits.
 
 # Examples
 
@@ -44,118 +51,165 @@ macro_rules! fixed_const {
 # #![allow(incomplete_features)]
 
 use fixed::{consts, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<", $s_nbits, ">;
-assert_eq!(Fix::LOG10_2, Fix::from_num(consts::LOG10_2));
+type Fix = ", $s_fixed, "<", stringify!($nbits_cm2), ">;
+assert_eq!(Fix::FRAC_1_TAU, Fix::from_num(consts::FRAC_1_TAU));
 ```
-";
-            impl<const FRAC: i32> $Fixed<FRAC>
-            where
-                If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-            {
-                /// 1/τ = 0.159154…
-                pub const FRAC_1_TAU: $Fixed<FRAC> = shift!(FRAC_1_TAU, $Fixed<FRAC>);
 
-                /// 2/τ = 0.318309…
-                pub const FRAC_2_TAU: $Fixed<FRAC> = shift!(FRAC_2_TAU, $Fixed<FRAC>);
-
-                /// π/8 = 0.392699…
-                pub const FRAC_PI_8: $Fixed<FRAC> = shift!(FRAC_PI_8, $Fixed<FRAC>);
-
-                /// 1/π = 0.318309…
-                pub const FRAC_1_PI: $Fixed<FRAC> = shift!(FRAC_1_PI, $Fixed<FRAC>);
-
-                /// log<sub>10</sub> 2 = 0.301029…
-                pub const LOG10_2: $Fixed<FRAC> = shift!(LOG10_2, $Fixed<FRAC>);
-
-                /// log<sub>10</sub> e = 0.434294…
-                pub const LOG10_E: $Fixed<FRAC> = shift!(LOG10_E, $Fixed<FRAC>);
-            }
-        }
-
-        comment! {
-            "This block contains constants in the range 0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;1.
-
-",
-            if_signed_else_empty_str! {
-                $Signedness;
-                "These constants are not representable in signed
-fixed-point numbers with less than 1 integer bit.
-
-"
-            },
-            "# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::{consts, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<",
-            if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
-            ">;
-assert_eq!(Fix::LN_2, Fix::from_num(consts::LN_2));
-assert!(0.5 <= Fix::LN_2  && Fix::LN_2 < 1);
-```
-",
-            if_signed_else_empty_str! {
-                $Signedness;
-                "
-The following example fails to compile, since the maximum
-representable value with ", $s_nbits, " fractional bits and 0 integer
-bits is <&nbsp;0.5.
+The following example fails to compile, since the maximum representable value
+with ", stringify!($nbits_cm3), " fractional bits and ",
+            if_signed_unsigned!($Signedness, "&minus;2", "&minus;3"),
+            " integer bits is <&nbsp;0.125.
 
 ```rust,compile_fail
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
 use fixed::{consts, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<", $s_nbits, ">;
-let _ = Fix::LN_2;
+type Fix = ", $s_fixed, "<", stringify!($nbits_cm3), ">;
+let _ = Fix::FRAC_1_TAU;
 ```
-"
-            };
+";
             impl<const FRAC: i32> $Fixed<FRAC>
             where
-                If<{ (0 <= FRAC) & (FRAC <= $nbits_c0) }>: True,
+                If<{ FRAC <= $nbits_cm2 }>: True,
+            {
+                /// 1/τ = 0.159154…
+                pub const FRAC_1_TAU: $Fixed<FRAC> = shift!(PREC_FRAC_1_TAU, 130, $Fixed<FRAC>);
+            }
+        }
+
+        comment! {
+            "This block contains constants in the range 0.25&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;0.5.
+
+These constants are not representable in ",
+            if_signed_unsigned!($Signedness, "signed", "unsigned"),
+            " fixed-point numbers with less than ",
+            if_signed_unsigned!($Signedness, "0", "&minus;1"),
+            " integer bits.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::{consts, ", $s_fixed, "};
+type Fix = ", $s_fixed, "<", stringify!($nbits_cm1), ">;
+assert_eq!(Fix::LOG10_2, Fix::from_num(consts::LOG10_2));
+```
+
+The following example fails to compile, since the maximum representable value
+with ", stringify!($nbits_cm2), " fractional bits and ",
+            if_signed_unsigned!($Signedness, "&minus;1", "&minus;2"),
+            " integer bits is <&nbsp;0.25.
+
+```rust,compile_fail
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::{consts, ", $s_fixed, "};
+type Fix = ", $s_fixed, "<", stringify!($nbits_cm2), ">;
+let _ = Fix::LOG10_2;
+```
+";
+            impl<const FRAC: i32> $Fixed<FRAC>
+            where
+                If<{ FRAC <= $nbits_cm1 }>: True,
+            {
+                /// 2/τ = 0.318309…
+                pub const FRAC_2_TAU: $Fixed<FRAC> = shift!(PREC_FRAC_2_TAU, 129, $Fixed<FRAC>);
+
+                /// π/8 = 0.392699…
+                pub const FRAC_PI_8: $Fixed<FRAC> = shift!(PREC_FRAC_PI_8, 129, $Fixed<FRAC>);
+
+                /// 1/π = 0.318309…
+                pub const FRAC_1_PI: $Fixed<FRAC> = shift!(PREC_FRAC_1_PI, 129, $Fixed<FRAC>);
+
+                /// log<sub>10</sub> 2 = 0.301029…
+                pub const LOG10_2: $Fixed<FRAC> = shift!(PREC_LOG10_2, 129, $Fixed<FRAC>);
+
+                /// log<sub>10</sub> e = 0.434294…
+                pub const LOG10_E: $Fixed<FRAC> = shift!(PREC_LOG10_E, 129, $Fixed<FRAC>);
+            }
+        }
+
+        comment! {
+            "This block contains constants in the range 0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;1.
+
+These constants are not representable in ",
+            if_signed_unsigned!($Signedness, "signed", "unsigned"),
+            " fixed-point numbers with less than ",
+            if_signed_unsigned!($Signedness, "1", "0"),
+            " integer bits.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::{consts, ", $s_fixed, "};
+type Fix = ", $s_fixed, "<", stringify!($nbits_c0), ">;
+assert_eq!(Fix::LN_2, Fix::from_num(consts::LN_2));
+assert!(0.5 <= Fix::LN_2  && Fix::LN_2 < 1);
+```
+
+The following example fails to compile, since the maximum representable value
+with ", stringify!($nbits_cm1), " fractional bits and ",
+            if_signed_unsigned!($Signedness, "0", "&minus;1"),
+            " integer bits is <&nbsp;0.5.
+
+```rust,compile_fail
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::{consts, ", $s_fixed, "};
+type Fix = ", $s_fixed, "<", stringify!($nbits_cm1), ">;
+let _ = Fix::LN_2;
+```
+";
+            impl<const FRAC: i32> $Fixed<FRAC>
+            where
+                If<{ FRAC <= $nbits_c0 }>: True,
             {
                 /// τ/8 = 0.785398…
-                pub const FRAC_TAU_8: $Fixed<FRAC> = shift!(FRAC_TAU_8, $Fixed<FRAC>);
+                pub const FRAC_TAU_8: $Fixed<FRAC> = shift!(FRAC_TAU_8, 128, $Fixed<FRAC>);
 
                 /// τ/12 = 0.523598…
-                pub const FRAC_TAU_12: $Fixed<FRAC> = shift!(FRAC_TAU_12, $Fixed<FRAC>);
+                pub const FRAC_TAU_12: $Fixed<FRAC> = shift!(FRAC_TAU_12, 128, $Fixed<FRAC>);
 
                 /// 4/τ = 0.636619…
-                pub const FRAC_4_TAU: $Fixed<FRAC> = shift!(FRAC_4_TAU, $Fixed<FRAC>);
+                pub const FRAC_4_TAU: $Fixed<FRAC> = shift!(FRAC_4_TAU, 128, $Fixed<FRAC>);
 
                 /// π/4 = 0.785398…
-                pub const FRAC_PI_4: $Fixed<FRAC> = shift!(FRAC_PI_4, $Fixed<FRAC>);
+                pub const FRAC_PI_4: $Fixed<FRAC> = shift!(FRAC_PI_4, 128, $Fixed<FRAC>);
 
                 /// π/6 = 0.523598…
-                pub const FRAC_PI_6: $Fixed<FRAC> = shift!(FRAC_PI_6, $Fixed<FRAC>);
+                pub const FRAC_PI_6: $Fixed<FRAC> = shift!(FRAC_PI_6, 128, $Fixed<FRAC>);
 
                 /// 2/π = 0.636619…
-                pub const FRAC_2_PI: $Fixed<FRAC> = shift!(FRAC_2_PI, $Fixed<FRAC>);
+                pub const FRAC_2_PI: $Fixed<FRAC> = shift!(FRAC_2_PI, 128, $Fixed<FRAC>);
 
                 /// 1/√π = 0.564189…
-                pub const FRAC_1_SQRT_PI: $Fixed<FRAC> = shift!(FRAC_1_SQRT_PI, $Fixed<FRAC>);
+                pub const FRAC_1_SQRT_PI: $Fixed<FRAC> = shift!(FRAC_1_SQRT_PI, 128, $Fixed<FRAC>);
 
                 /// 1/√2 = 0.707106…
-                pub const FRAC_1_SQRT_2: $Fixed<FRAC> = shift!(FRAC_1_SQRT_2, $Fixed<FRAC>);
+                pub const FRAC_1_SQRT_2: $Fixed<FRAC> = shift!(FRAC_1_SQRT_2, 128, $Fixed<FRAC>);
 
                 /// 1/√3 = 0.577350…
-                pub const FRAC_1_SQRT_3: $Fixed<FRAC> = shift!(FRAC_1_SQRT_3, $Fixed<FRAC>);
+                pub const FRAC_1_SQRT_3: $Fixed<FRAC> = shift!(FRAC_1_SQRT_3, 128, $Fixed<FRAC>);
 
                 /// ln 2 = 0.693147…
-                pub const LN_2: $Fixed<FRAC> = shift!(LN_2, $Fixed<FRAC>);
+                pub const LN_2: $Fixed<FRAC> = shift!(LN_2, 128, $Fixed<FRAC>);
 
                 /// The golden ratio conjugate, Φ = 1/φ = 0.618033…
-                pub const FRAC_1_PHI: $Fixed<FRAC> = shift!(FRAC_1_PHI, $Fixed<FRAC>);
+                pub const FRAC_1_PHI: $Fixed<FRAC> = shift!(FRAC_1_PHI, 128, $Fixed<FRAC>);
 
                 /// The Euler-Mascheroni constant, γ = 0.577215…
-                pub const GAMMA: $Fixed<FRAC> = shift!(GAMMA, $Fixed<FRAC>);
+                pub const GAMMA: $Fixed<FRAC> = shift!(GAMMA, 128, $Fixed<FRAC>);
 
                 /// Catalan’s constant = 0.915965…
-                pub const CATALAN: $Fixed<FRAC> = shift!(CATALAN, $Fixed<FRAC>);
+                pub const CATALAN: $Fixed<FRAC> = shift!(CATALAN, 128, $Fixed<FRAC>);
             }
         }
 
@@ -175,17 +229,13 @@ These constants are not representable in ",
 # #![allow(incomplete_features)]
 
 use fixed::{consts, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<",
-            if_signed_unsigned!($Signedness, $s_nbits_m2, $s_nbits_m1),
-            ">;
+type Fix = ", $s_fixed, "<", stringify!($nbits_c1), ">;
 assert_eq!(Fix::LOG2_E, Fix::from_num(consts::LOG2_E));
 assert!(1 <= Fix::LOG2_E && Fix::LOG2_E < 2);
 ```
 
-The following example fails to compile, since the maximum
-representable value with ",
-            if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
-            " fractional bits and ",
+The following example fails to compile, since the maximum representable value
+with ", stringify!($nbits_c0), " fractional bits and ",
             if_signed_unsigned!($Signedness, "1 integer bit", "0 integer bits"),
             " is <&nbsp;1.
 
@@ -194,15 +244,13 @@ representable value with ",
 # #![allow(incomplete_features)]
 
 use fixed::{consts, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<",
-            if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
-            ">;
+type Fix = ", $s_fixed, "<", stringify!($nbits_c0), ">;
 let _ = Fix::LOG2_E;
 ```
 ";
             impl<const FRAC: i32> $Fixed<FRAC>
             where
-                If<{ (0 <= FRAC) & (FRAC <= $nbits_c1) }>: True,
+                If<{ FRAC <= $nbits_c1 }>: True,
             {
                 comment! {
                     "One.
@@ -276,17 +324,13 @@ These constants are not representable in ",
 # #![allow(incomplete_features)]
 
 use fixed::{consts, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<",
-            if_signed_unsigned!($Signedness, $s_nbits_m3, $s_nbits_m2),
-            ">;
+type Fix = ", $s_fixed, "<", stringify!($nbits_c2), ">;
 assert_eq!(Fix::E, Fix::from_num(consts::E));
 assert!(2 <= Fix::E && Fix::E < 4);
 ```
 
-The following example fails to compile, since the maximum
-representable value with ",
-            if_signed_unsigned!($Signedness, $s_nbits_m2, $s_nbits_m1),
-            " fractional bits and ",
+The following example fails to compile, since the maximum representable value
+with ", stringify!($nbits_c1), " fractional bits and ",
             if_signed_unsigned!($Signedness, "2 integer bits", "1 integer bit"),
             " is <&nbsp;2.
 
@@ -295,15 +339,13 @@ representable value with ",
 # #![allow(incomplete_features)]
 
 use fixed::{consts, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<",
-            if_signed_unsigned!($Signedness, $s_nbits_m2, $s_nbits_m1),
-            ">;
+type Fix = ", $s_fixed, "<", stringify!($nbits_c1), ">;
 let _ = Fix::E;
 ```
 ";
             impl<const FRAC: i32> $Fixed<FRAC>
             where
-                If<{ (0 <= FRAC) & (FRAC <= $nbits_c2) }>: True,
+                If<{ FRAC <= $nbits_c2 }>: True,
             {
                 /// τ/2 = 3.14159…
                 pub const FRAC_TAU_2: $Fixed<FRAC> = shift!(FRAC_TAU_2, 126, $Fixed<FRAC>);
@@ -341,17 +383,13 @@ These constants are not representable in ",
 # #![allow(incomplete_features)]
 
 use fixed::{consts, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<",
-            if_signed_unsigned!($Signedness, $s_nbits_m4, $s_nbits_m3),
-            ">;
+type Fix = ", $s_fixed, "<", stringify!($nbits_c3), ">;
 assert_eq!(Fix::TAU, Fix::from_num(consts::TAU));
 assert!(4 <= Fix::TAU && Fix::TAU < 8);
 ```
 
-The following example fails to compile, since the maximum
-representable value with ",
-            if_signed_unsigned!($Signedness, $s_nbits_m3, $s_nbits_m2),
-            " fractional bits and ",
+The following example fails to compile, since the maximum representable value
+with ", stringify!($nbits_c2), " fractional bits and ",
             if_signed_unsigned!($Signedness, "3", "2"),
             " integer bits is <&nbsp;4.
 
@@ -360,15 +398,13 @@ representable value with ",
 # #![allow(incomplete_features)]
 
 use fixed::{consts, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<",
-            if_signed_unsigned!($Signedness, $s_nbits_m3, $s_nbits_m2),
-            ">;
+type Fix = ", $s_fixed, "<", stringify!($nbits_c2), ">;
 let _ = Fix::TAU;
 ```
 ";
             impl<const FRAC: i32> $Fixed<FRAC>
             where
-                If<{ (0 <= FRAC) & (FRAC <= $nbits_c3) }>: True,
+                If<{ FRAC <= $nbits_c3 }>: True,
             {
                 /// A turn, τ = 6.28318…
                 pub const TAU: $Fixed<FRAC> = shift!(TAU, 125, $Fixed<FRAC>);
