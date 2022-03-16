@@ -19,7 +19,7 @@ use crate::{
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8, F128,
 };
-use az::{OverflowingAs, OverflowingCast};
+use az::{OverflowingAs, OverflowingCast, OverflowingCastFrom};
 use bytemuck::TransparentWrapper;
 use core::mem;
 use half::{bf16, f16};
@@ -288,18 +288,10 @@ impl_int_equiv! { u32, FixedU32 }
 impl_int_equiv! { u64, FixedU64 }
 impl_int_equiv! { u128, FixedU128 }
 
-macro_rules! known_ok {
-    ($res:expr) => {
-        match $res {
-            Ok(o) => o,
-            Err(_) => unreachable!(),
-        }
-    };
-}
-
 #[inline]
 fn leading_ones<Bits: FixedBits>(bits: Bits) -> u32 {
-    let is_signed = Bits::try_from(-1i8).is_ok();
+    let neg_overflows = Bits::overflowing_cast_from(-1i8).1;
+    let is_signed = !neg_overflows;
     match (is_signed, mem::size_of::<Bits>()) {
         (false, 1) => bits.overflowing_as::<u8>().0.leading_ones(),
         (false, 2) => bits.overflowing_as::<u16>().0.leading_ones(),
@@ -317,7 +309,8 @@ fn leading_ones<Bits: FixedBits>(bits: Bits) -> u32 {
 
 #[inline]
 fn leading_zeros<Bits: FixedBits>(bits: Bits) -> u32 {
-    let is_signed = Bits::try_from(-1i8).is_ok();
+    let neg_overflows = Bits::overflowing_cast_from(-1i8).1;
+    let is_signed = !neg_overflows;
     match (is_signed, mem::size_of::<Bits>()) {
         (false, 1) => bits.overflowing_as::<u8>().0.leading_zeros(),
         (false, 2) => bits.overflowing_as::<u16>().0.leading_zeros(),
@@ -352,14 +345,15 @@ macro_rules! impl_float {
             /// [`wrapping_from_fixed`]: FromFixed::wrapping_from_fixed
             #[inline]
             fn from_fixed<F: Fixed>(src: F) -> Self {
-                let zero: F::Bits = known_ok!(F::Bits::try_from(0i8));
+                let zero = F::Bits::overflowing_cast_from(0u8).0;
                 let src = src.to_bits();
                 // handle zero early so that we can assume bits != 0
                 if src == zero {
                     return Self::from_bits(0);
                 }
 
-                let src_is_signed = F::Bits::try_from(-1i8).is_ok();
+                let src_neg_overflows = F::Bits::overflowing_cast_from(-1i8).1;
+                let src_is_signed = !src_neg_overflows;
                 let src_bits = mem::size_of::<F>() as u32 * 8;
                 let (neg, abs, excess_shift) = if $FloatU::BITS >= src_bits {
                     if src_is_signed {

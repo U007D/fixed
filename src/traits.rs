@@ -3820,10 +3820,7 @@ macro_rules! impl_fixed {
                 match $Fixed::fixed_from_bits(src.to_bits(), F::FRAC_BITS) {
                     (wrapped, false) => wrapped,
                     (_, true) => {
-                        let src_bits_zero = match F::Bits::try_from(0i8) {
-                            Ok(zero) => zero,
-                            Err(_) => unreachable!(),
-                        };
+                        let src_bits_zero = F::Bits::overflowing_cast_from(0u8).0;
                         if src.to_bits() < src_bits_zero {
                             $Fixed::MIN
                         } else {
@@ -3939,6 +3936,8 @@ macro_rules! impl_fixed {
                 FromFixed::unwrapped_from_fixed(self)
             }
         }
+
+        impl FixedBits for $Bits {}
     };
 }
 
@@ -3975,7 +3974,7 @@ impl_fixed! { FixedU128, FixedI128, FixedU128, 128, u128, NonZeroU128, Unsigned 
 /// ```
 pub trait FixedBits
 where
-    Self: Copy + Ord + TryFrom<i8>,
+    Self: Copy + Ord,
     Self: Shl<u32, Output = Self> + Shr<u32, Output = Self>,
     Self: OverflowingCast<i8> + OverflowingCastFrom<i8>,
     Self: OverflowingCast<i16> + OverflowingCastFrom<i16>,
@@ -3987,22 +3986,5 @@ where
     Self: OverflowingCast<u32> + OverflowingCastFrom<u32>,
     Self: OverflowingCast<u64> + OverflowingCastFrom<u64>,
     Self: OverflowingCast<u128> + OverflowingCastFrom<u128>,
-{
-}
-
-impl<Bits> FixedBits for Bits
-where
-    Bits: Copy + Ord + TryFrom<i8>,
-    Bits: Shl<u32, Output = Bits> + Shr<u32, Output = Bits>,
-    Bits: OverflowingCast<i8> + OverflowingCastFrom<i8>,
-    Bits: OverflowingCast<i16> + OverflowingCastFrom<i16>,
-    Bits: OverflowingCast<i32> + OverflowingCastFrom<i32>,
-    Bits: OverflowingCast<i64> + OverflowingCastFrom<i64>,
-    Bits: OverflowingCast<i128> + OverflowingCastFrom<i128>,
-    Bits: OverflowingCast<u8> + OverflowingCastFrom<u8>,
-    Bits: OverflowingCast<u16> + OverflowingCastFrom<u16>,
-    Bits: OverflowingCast<u32> + OverflowingCastFrom<u32>,
-    Bits: OverflowingCast<u64> + OverflowingCastFrom<u64>,
-    Bits: OverflowingCast<u128> + OverflowingCastFrom<u128>,
 {
 }

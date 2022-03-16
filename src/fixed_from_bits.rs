@@ -52,7 +52,8 @@ macro_rules! impl_fixed_from_bits {
             where
                 Src: FixedBits,
             {
-                let src_is_signed = Src::try_from(-1i8).is_ok();
+                let src_neg_overflow = Src::overflowing_cast_from(-1i8).1;
+                let src_is_signed = !src_neg_overflow;
                 let src_bits = mem::size_of::<Src>() as u32 * 8;
                 // If src is narrower and we need to shift left, we widen src.
                 if $nbits > src_bits && FRAC > src_frac {
@@ -96,10 +97,7 @@ macro_rules! impl_fixed_from_bits {
                         }
                     }
                     Shift::LeftAll => {
-                        let src_zero = match Src::try_from(0i8) {
-                            Ok(zero) => zero,
-                            Err(_) => unreachable!(),
-                        };
+                        let src_zero = Src::overflowing_cast_from(0u8).0;
                         ($Fixed::ZERO, src != src_zero)
                     }
                 }
