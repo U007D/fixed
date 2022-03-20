@@ -1151,6 +1151,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let one_point_5 = Unwrapped::<I16F16>::from_num(1.5);
     /// let four = Unwrapped::<I16F16>::from_num(4);
@@ -1161,6 +1164,9 @@ impl<F: Fixed> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let two = Unwrapped::<I16F16>::from_num(2);
     /// let max = Unwrapped::<I16F16>::MAX;
@@ -1780,6 +1786,9 @@ impl<F: FixedSigned> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Unwrapped,
@@ -1793,6 +1802,9 @@ impl<F: FixedSigned> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Unwrapped,
@@ -1818,6 +1830,9 @@ impl<F: FixedSigned> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Unwrapped,
@@ -1831,6 +1846,9 @@ impl<F: FixedSigned> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Unwrapped,
@@ -1969,6 +1987,9 @@ impl<F: FixedUnsigned> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Unwrapped,
@@ -1982,6 +2003,9 @@ impl<F: FixedUnsigned> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Unwrapped,
@@ -2007,6 +2031,9 @@ impl<F: FixedUnsigned> Unwrapped<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Unwrapped,
@@ -2020,6 +2047,9 @@ impl<F: FixedUnsigned> Unwrapped<F> {
     /// The following panics because of overflow.
     ///
     /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Unwrapped,

@@ -1066,6 +1066,9 @@ impl<F: Fixed> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{types::I16F16, Wrapping};
     /// let one_point_5 = Wrapping::<I16F16>::from_num(1.5);
     /// let four = Wrapping::<I16F16>::from_num(4);
@@ -1563,6 +1566,9 @@ impl<F: FixedSigned> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Wrapping,
@@ -1590,6 +1596,9 @@ impl<F: FixedSigned> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Wrapping,
@@ -1719,6 +1728,9 @@ impl<F: FixedUnsigned> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Wrapping,
@@ -1746,6 +1758,9 @@ impl<F: FixedUnsigned> Wrapping<F> {
     /// # Examples
     ///
     /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
     /// use fixed::{
     ///     types::{I16F16, U16F16},
     ///     Wrapping,
