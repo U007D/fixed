@@ -17,6 +17,10 @@
 Traits for conversions and for generic use of fixed-point numbers.
 */
 
+pub use crate::traits_bits::{
+    FixedBits, FixedBitsCast, FixedBitsOptionalArbitrary, FixedBitsOptionalBorsh,
+    FixedBitsOptionalNum, FixedBitsOptionalSerde,
+};
 use crate::{
     helpers::Sealed,
     types::extra::{If, True},
@@ -25,7 +29,7 @@ use crate::{
 };
 #[cfg(feature = "arbitrary")]
 use arbitrary::Arbitrary;
-use az::{OverflowingCast, OverflowingCastFrom};
+use az::OverflowingCastFrom;
 #[cfg(feature = "borsh")]
 use borsh::{BorshDeserialize, BorshSerialize};
 use bytemuck::{self, Pod, TransparentWrapper};
@@ -1439,8 +1443,15 @@ where
     /// See also <code>FixedI32::[dist][FixedI32::dist]</code> and
     /// <code>FixedU32::[dist][FixedU32::dist]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
-    #[doc(alias = "abs_diff")]
     fn dist(self, other: Self) -> Self;
+
+    /// Returns the absolute value of the difference between `self` and `other`
+    /// using an unsigned type without any wrapping or panicking.
+    ///
+    /// See also <code>FixedI32::[abs\_diff][FixedI32::abs_diff]</code> and
+    /// <code>FixedU32::[abs\_diff][FixedU32::abs_diff]</code>.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn abs_diff(self, other: Self) -> Self::Unsigned;
 
     /// Returns the mean of `self` and `other`.
     ///
@@ -1448,6 +1459,19 @@ where
     /// <code>FixedU32::[mean][FixedU32::mean]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn mean(self, other: Self) -> Self;
+
+    /// Returns the next multiple of `other`.
+    ///
+    /// See also
+    /// <code>FixedI32::[next\_multiple\_of][FixedI32::next_multiple_of]</code>
+    /// and
+    /// <code>FixedU32::[next\_multiple\_of][FixedU32::next_multiple_of]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `other` is zero.
+    #[must_use]
+    fn next_multiple_of(self, other: Self) -> Self;
 
     /// Multiply and add. Returns `self` × `mul` + `add`.
     ///
@@ -1520,6 +1544,16 @@ where
     /// and <code>FixedU32::[checked\_rem][FixedU32::checked_rem]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn checked_rem(self, rhs: Self) -> Option<Self>;
+
+    /// Checked next multiple of `other`. Returns the next multiple, or [`None`]
+    /// if `other` is zero or on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[checked\_next\_multiple\_of][FixedI32::checked_next_multiple_of]</code>
+    /// and
+    /// <code>FixedU32::[checked\_next\_multiple\_of][FixedU32::checked_next_multiple_of]</code>.
+    #[must_use]
+    fn checked_next_multiple_of(self, other: Self) -> Option<Self>;
 
     /// Checked multiply and add. Returns `self` × `mul` + `add`, or [`None`] on overflow.
     ///
@@ -1627,6 +1661,19 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn saturating_mul(self, rhs: Self) -> Self;
 
+    /// Saturating next multiple of `other`.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_next\_multiple\_of][FixedI32::saturating_next_multiple_of]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_next\_multiple\_of][FixedU32::saturating_next_multiple_of]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `other` is zero.
+    #[must_use]
+    fn saturating_next_multiple_of(self, other: Self) -> Self;
+
     /// Saturating multiply and add. Returns `self` × `mul` + `add`, saturating on overflow.
     ///
     /// See also
@@ -1689,6 +1736,19 @@ where
     /// and <code>FixedU32::[wrapping\_mul][FixedU32::wrapping_mul]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn wrapping_mul(self, rhs: Self) -> Self;
+
+    /// Wrapping next multiple of `other`.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_next\_multiple\_of][FixedI32::wrapping_next_multiple_of]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_next\_multiple\_of][FixedU32::wrapping_next_multiple_of]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `other` is zero.
+    #[must_use]
+    fn wrapping_next_multiple_of(self, other: Self) -> Self;
 
     /// Wrapping multiply and add. Returns `self` × `mul` + `add`, wrapping on overflow.
     ///
@@ -1821,6 +1881,21 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn unwrapped_rem(self, rhs: Self) -> Self;
 
+    /// Unwrapped next multiple of `other`. Returns the next multiple, panicking
+    /// on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_next\_multiple\_of][FixedI32::unwrapped_next_multiple_of]</code>
+    /// and
+    /// <code>FixedU32::[unwrapped\_next\_multiple\_of][FixedU32::unwrapped_next_multiple_of]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `other` is zero or on overflow.
+    #[track_caller]
+    #[must_use]
+    fn unwrapped_next_multiple_of(self, other: Self) -> Self;
+
     /// Unwrapped multiply and add. Returns `self` × `mul` + `add`, panicking on overflow.
     ///
     /// See also
@@ -1834,6 +1909,22 @@ where
     #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn unwrapped_mul_add(self, mul: Self, add: Self) -> Self;
+
+    /// Overflowing next multiple of `other`.
+    ///
+    /// Returns a [tuple] of the next multiple and a [`bool`], indicating
+    /// whether an overflow has occurred. On overflow, the wrapped value is
+    /// returned.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_next\_multiple\_of][FixedI32::overflowing_next_multiple_of]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_next\_multiple\_of][FixedU32::overflowing_next_multiple_of]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `other` is zero.
+    fn overflowing_next_multiple_of(self, other: Self) -> (Self, bool);
 
     /// Unwrapped multiply and accumulate. Adds (`a` × `b`) to `self`, panicking on overflow.
     ///
@@ -2848,7 +2939,6 @@ where
     ///
     /// See also
     /// <code>FixedI32::[unsigned\_dist][FixedI32::unsigned_dist]</code>.
-    #[doc(alias = "abs_diff")]
     fn unsigned_dist(self, other: Self) -> Self::Unsigned;
 
     /// Returns a number representing the sign of `self`.
@@ -2871,6 +2961,18 @@ where
     #[must_use]
     fn signum(self) -> Self;
 
+    /// Addition with an unsigned fixed-point number.
+    ///
+    /// See also <code>FixedI32::[add\_unsigned][FixedI32::add_unsigned]</code>.
+    #[must_use]
+    fn add_unsigned(self, rhs: Self::Unsigned) -> Self;
+
+    /// Subtraction with an unsigned fixed-point number.
+    ///
+    /// See also <code>FixedI32::[sub\_unsigned][FixedI32::sub_unsigned]</code>.
+    #[must_use]
+    fn sub_unsigned(self, rhs: Self::Unsigned) -> Self;
+
     /// Checked absolute value. Returns the absolute value, or [`None`] on overflow.
     ///
     /// Overflow can only occur when trying to find the absolute value of the minimum value.
@@ -2890,6 +2992,21 @@ where
     /// See also
     /// <code>FixedI32::[checked\_signum][FixedI32::checked_signum]</code>.
     fn checked_signum(self) -> Option<Self>;
+
+    /// Checked addition with an unsigned fixed-point number. Returns the sum,
+    /// or [`None`] on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[checked\_add\_unsigned][FixedI32::checked_add_unsigned]</code>.
+    #[must_use]
+    fn checked_add_unsigned(self, rhs: Self::Unsigned) -> Option<Self>;
+
+    /// Checked subtraction with an unsigned fixed-point number. Returns the
+    /// difference, or [`None`] on overflow.
+    ///
+    /// See also <code>FixedI32::[checked\_sub\_unsigned][FixedI32::checked_sub_unsigned]</code>.
+    #[must_use]
+    fn checked_sub_unsigned(self, rhs: Self::Unsigned) -> Option<Self>;
 
     /// Saturating absolute value. Returns the absolute value, saturating on overflow.
     ///
@@ -2914,6 +3031,22 @@ where
     #[must_use]
     fn saturating_signum(self) -> Self;
 
+    /// Saturating addition with an unsigned fixed-point number. Returns the
+    /// sum, saturating on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_add\_unsigned][FixedI32::saturating_add_unsigned]</code>.
+    #[must_use]
+    fn saturating_add_unsigned(self, rhs: Self::Unsigned) -> Self;
+
+    /// Saturating subtraction with an unsigned fixed-point number. Returns the
+    /// difference, saturating on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_sub\_unsigned][FixedI32::saturating_sub_unsigned]</code>.
+    #[must_use]
+    fn saturating_sub_unsigned(self, rhs: Self::Unsigned) -> Self;
+
     /// Wrapping absolute value. Returns the absolute value, wrapping on overflow.
     ///
     /// Overflow can only occur when trying to find the absolute value of the minimum value.
@@ -2935,6 +3068,22 @@ where
     /// <code>FixedI32::[wrapping\_signum][FixedI32::wrapping_signum]</code>.
     #[must_use]
     fn wrapping_signum(self) -> Self;
+
+    /// Wrapping addition with an unsigned fixed-point number. Returns the sum,
+    /// wrapping on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_add\_unsigned][FixedI32::wrapping_add_unsigned]</code>.
+    #[must_use]
+    fn wrapping_add_unsigned(self, rhs: Self::Unsigned) -> Self;
+
+    /// Wrapping subtraction with an unsigned fixed-point number. Returns the
+    /// difference, wrapping on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_sub\_unsigned][FixedI32::wrapping_sub_unsigned]</code>.
+    #[must_use]
+    fn wrapping_sub_unsigned(self, rhs: Self::Unsigned) -> Self;
 
     /// Unwrapped absolute value. Returns the absolute value, panicking on overflow.
     ///
@@ -2969,6 +3118,32 @@ where
     #[must_use]
     fn unwrapped_signum(self) -> Self;
 
+    /// Unwrapped addition with an unsigned fixed-point number. Returns the sum,
+    /// panicking on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_add\_unsigned][FixedI32::unwrapped_add_unsigned]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the result does not fit.
+    #[track_caller]
+    #[must_use]
+    fn unwrapped_add_unsigned(self, rhs: Self::Unsigned) -> Self;
+
+    /// Unwrapped subtraction with an unsigned fixed-point number. Returns the
+    /// difference, panicking on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_sub\_unsigned][FixedI32::unwrapped_sub_unsigned]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the result does not fit.
+    #[track_caller]
+    #[must_use]
+    fn unwrapped_sub_unsigned(self, rhs: Self::Unsigned) -> Self;
+
     /// Overflowing absolute value.
     ///
     /// Returns a [tuple] of the fixed-point number and a [`bool`],
@@ -2994,6 +3169,26 @@ where
     /// See also
     /// <code>FixedI32::[overflowing\_signum][FixedI32::overflowing_signum]</code>.
     fn overflowing_signum(self) -> (Self, bool);
+
+    /// Overflowing addition with an unsigned fixed-point number.
+    ///
+    /// Returns a [tuple] of the sum and a [`bool`], indicating whether an
+    /// overflow has occurred. On overflow, the wrapped value is returned.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_add\_unsigned][FixedI32::overflowing_add_unsigned]</code>.
+    #[must_use]
+    fn overflowing_add_unsigned(self, rhs: Self::Unsigned) -> (Self, bool);
+
+    /// Overflowing subtraction with an unsigned fixed-point number.
+    ///
+    /// Returns a [tuple] of the difference and a [`bool`], indicating whether
+    /// an overflow has occurred. On overflow, the wrapped value is returned.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_sub\_unsigned][FixedI32::overflowing_sub_unsigned]</code>.
+    #[must_use]
+    fn overflowing_sub_unsigned(self, rhs: Self::Unsigned) -> (Self, bool);
 }
 
 /// This trait provides methods common to all unsigned fixed-point numbers.
@@ -3036,12 +3231,55 @@ where
     #[must_use]
     fn next_power_of_two(self) -> Self;
 
+    /// Addition with an signed fixed-point number.
+    ///
+    /// See also <code>FixedU32::[add\_signed][FixedU32::add_signed]</code>.
+    #[must_use]
+    fn add_signed(self, rhs: Self::Signed) -> Self;
+
+    /// Subtraction with an signed fixed-point number.
+    ///
+    /// See also <code>FixedU32::[sub\_signed][FixedU32::sub_signed]</code>.
+    #[must_use]
+    fn sub_signed(self, rhs: Self::Signed) -> Self;
+
     /// Returns the smallest power of two that is ≥&nbsp;`self`, or [`None`] if the
     /// next power of two is too large to represent.
     ///
     /// See also
     /// <code>FixedU32::[checked\_next\_power\_of\_two][FixedU32::checked_next_power_of_two]</code>.
     fn checked_next_power_of_two(self) -> Option<Self>;
+
+    /// Checked addition with an signed fixed-point number. Returns the sum,
+    /// or [`None`] on overflow.
+    ///
+    /// See also
+    /// <code>FixedU32::[checked\_add\_signed][FixedU32::checked_add_signed]</code>.
+    #[must_use]
+    fn checked_add_signed(self, rhs: Self::Signed) -> Option<Self>;
+
+    /// Checked subtraction with an signed fixed-point number. Returns the
+    /// difference, or [`None`] on overflow.
+    ///
+    /// See also <code>FixedU32::[checked\_sub\_signed][FixedU32::checked_sub_signed]</code>.
+    #[must_use]
+    fn checked_sub_signed(self, rhs: Self::Signed) -> Option<Self>;
+
+    /// Saturating addition with an signed fixed-point number. Returns the
+    /// sum, saturating on overflow.
+    ///
+    /// See also
+    /// <code>FixedU32::[saturating\_add\_signed][FixedU32::saturating_add_signed]</code>.
+    #[must_use]
+    fn saturating_add_signed(self, rhs: Self::Signed) -> Self;
+
+    /// Saturating subtraction with an signed fixed-point number. Returns the
+    /// difference, saturating on overflow.
+    ///
+    /// See also
+    /// <code>FixedU32::[saturating\_sub\_signed][FixedU32::saturating_sub_signed]</code>.
+    #[must_use]
+    fn saturating_sub_signed(self, rhs: Self::Signed) -> Self;
 
     /// Returns the smallest power of two that is ≥&nbsp;`self`, wrapping
     /// to 0 if the next power of two is too large to represent.
@@ -3050,6 +3288,22 @@ where
     /// <code>FixedU32::[wrapping\_next\_power\_of\_two][FixedU32::wrapping_next_power_of_two]</code>.
     #[must_use]
     fn wrapping_next_power_of_two(self) -> Self;
+
+    /// Wrapping addition with an signed fixed-point number. Returns the sum,
+    /// wrapping on overflow.
+    ///
+    /// See also
+    /// <code>FixedU32::[wrapping\_add\_signed][FixedU32::wrapping_add_signed]</code>.
+    #[must_use]
+    fn wrapping_add_signed(self, rhs: Self::Signed) -> Self;
+
+    /// Wrapping subtraction with an signed fixed-point number. Returns the
+    /// difference, wrapping on overflow.
+    ///
+    /// See also
+    /// <code>FixedU32::[wrapping\_sub\_signed][FixedU32::wrapping_sub_signed]</code>.
+    #[must_use]
+    fn wrapping_sub_signed(self, rhs: Self::Signed) -> Self;
 
     /// Returns the smallest power of two that is ≥&nbsp;`self`, panicking
     /// if the next power of two is too large to represent.
@@ -3063,6 +3317,52 @@ where
     #[track_caller]
     #[must_use]
     fn unwrapped_next_power_of_two(self) -> Self;
+
+    /// Unwrapped addition with an signed fixed-point number. Returns the sum,
+    /// panicking on overflow.
+    ///
+    /// See also
+    /// <code>FixedU32::[unwrapped\_add\_signed][FixedU32::unwrapped_add_signed]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the result does not fit.
+    #[track_caller]
+    #[must_use]
+    fn unwrapped_add_signed(self, rhs: Self::Signed) -> Self;
+
+    /// Unwrapped subtraction with an signed fixed-point number. Returns the
+    /// difference, panicking on overflow.
+    ///
+    /// See also
+    /// <code>FixedU32::[unwrapped\_sub\_signed][FixedU32::unwrapped_sub_signed]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the result does not fit.
+    #[track_caller]
+    #[must_use]
+    fn unwrapped_sub_signed(self, rhs: Self::Signed) -> Self;
+
+    /// Overflowing addition with an signed fixed-point number.
+    ///
+    /// Returns a [tuple] of the sum and a [`bool`], indicating whether an
+    /// overflow has occurred. On overflow, the wrapped value is returned.
+    ///
+    /// See also
+    /// <code>FixedU32::[overflowing\_add\_signed][FixedU32::overflowing_add_signed]</code>.
+    #[must_use]
+    fn overflowing_add_signed(self, rhs: Self::Signed) -> (Self, bool);
+
+    /// Overflowing subtraction with an signed fixed-point number.
+    ///
+    /// Returns a [tuple] of the difference and a [`bool`], indicating whether
+    /// an overflow has occurred. On overflow, the wrapped value is returned.
+    ///
+    /// See also
+    /// <code>FixedU32::[overflowing\_sub\_signed][FixedU32::overflowing_sub_signed]</code>.
+    #[must_use]
+    fn overflowing_sub_signed(self, rhs: Self::Signed) -> (Self, bool);
 }
 
 /// This trait provides lossless conversions that might be fallible.
@@ -3588,7 +3888,9 @@ macro_rules! impl_fixed {
             trait_delegate! { fn rotate_right(self, n: u32) -> Self }
             trait_delegate! { fn is_zero(self) -> bool }
             trait_delegate! { fn dist(self, other: Self) -> Self }
+            trait_delegate! { fn abs_diff(self, other: Self) -> Self::Unsigned }
             trait_delegate! { fn mean(self, other: Self) -> Self }
+            trait_delegate! { fn next_multiple_of(self, other: Self) -> Self }
             trait_delegate! { fn mul_add(self, mul: Self, add: Self) -> Self }
             trait_delegate! { fn mul_acc(&mut self, a: Self, b: Self) }
             trait_delegate! { fn rem_euclid(self, rhs: Self) -> Self }
@@ -3597,6 +3899,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn checked_sub(self, rhs: Self) -> Option<Self> }
             trait_delegate! { fn checked_mul(self, rhs: Self) -> Option<Self> }
             trait_delegate! { fn checked_rem(self, rhs: Self) -> Option<Self> }
+            trait_delegate! { fn checked_next_multiple_of(self, other: Self) -> Option<Self> }
             trait_delegate! { fn checked_mul_add(self, mul: Self, add: Self) -> Option<Self> }
             trait_delegate! { fn checked_mul_acc(&mut self, a: Self, b: Self) -> Option<()> }
             trait_delegate! { fn checked_rem_euclid(self, rhs: Self) -> Option<Self> }
@@ -3609,6 +3912,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn saturating_add(self, rhs: Self) -> Self }
             trait_delegate! { fn saturating_sub(self, rhs: Self) -> Self }
             trait_delegate! { fn saturating_mul(self, rhs: Self) -> Self }
+            trait_delegate! { fn saturating_next_multiple_of(self, other: Self) -> Self }
             trait_delegate! { fn saturating_mul_add(self, mul: Self, add: Self) -> Self }
             trait_delegate! { fn saturating_mul_acc(&mut self, a: Self, b: Self) }
             trait_delegate! { fn saturating_mul_int(self, rhs: Self::Bits) -> Self }
@@ -3617,6 +3921,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn wrapping_add(self, rhs: Self) -> Self }
             trait_delegate! { fn wrapping_sub(self, rhs: Self) -> Self }
             trait_delegate! { fn wrapping_mul(self, rhs: Self) -> Self }
+            trait_delegate! { fn wrapping_next_multiple_of(self, other: Self) -> Self }
             trait_delegate! { fn wrapping_mul_add(self, mul: Self, add: Self) -> Self }
             trait_delegate! { fn wrapping_mul_acc(&mut self, a: Self, b: Self) }
             trait_delegate! { fn wrapping_mul_int(self, rhs: Self::Bits) -> Self }
@@ -3629,6 +3934,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn unwrapped_sub(self, rhs: Self) -> Self }
             trait_delegate! { fn unwrapped_mul(self, rhs: Self) -> Self }
             trait_delegate! { fn unwrapped_rem(self, rhs: Self) -> Self }
+            trait_delegate! { fn unwrapped_next_multiple_of(self, other: Self) -> Self }
             trait_delegate! { fn unwrapped_mul_add(self, mul: Self, add: Self) -> Self }
             trait_delegate! { fn unwrapped_mul_acc(&mut self, a: Self, b: Self) }
             trait_delegate! { fn unwrapped_rem_euclid(self, rhs: Self) -> Self }
@@ -3641,6 +3947,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn overflowing_add(self, rhs: Self) -> (Self, bool) }
             trait_delegate! { fn overflowing_sub(self, rhs: Self) -> (Self, bool) }
             trait_delegate! { fn overflowing_mul(self, rhs: Self) -> (Self, bool) }
+            trait_delegate! { fn overflowing_next_multiple_of(self, other: Self) -> (Self, bool) }
             trait_delegate! { fn overflowing_mul_add(self, mul: Self, add: Self) -> (Self, bool) }
             trait_delegate! { fn overflowing_mul_acc(&mut self, a: Self, b: Self) -> bool }
             trait_delegate! { fn overflowing_mul_int(self, rhs: Self::Bits) -> (Self, bool) }
@@ -3746,22 +4053,42 @@ macro_rules! impl_fixed {
             $Signedness;
             impl<const FRAC: i32> FixedSigned for $Fixed<FRAC> {
                 trait_delegate! { fn signed_bits(self) -> u32 }
+                trait_delegate! { fn is_positive(self) -> bool }
+                trait_delegate! { fn is_negative(self) -> bool }
                 trait_delegate! { fn abs(self) -> Self }
                 trait_delegate! { fn unsigned_abs(self) -> Self::Unsigned }
                 trait_delegate! { fn unsigned_dist(self, other: Self) -> Self::Unsigned }
                 trait_delegate! { fn signum(self) -> Self }
+                trait_delegate! { fn add_unsigned(self, rhs: Self::Unsigned) -> Self }
+                trait_delegate! { fn sub_unsigned(self, rhs: Self::Unsigned) -> Self }
                 trait_delegate! { fn checked_abs(self) -> Option<Self> }
                 trait_delegate! { fn checked_signum(self) -> Option<Self> }
+                trait_delegate! {
+                    fn checked_add_unsigned(self, rhs: Self::Unsigned) -> Option<Self>
+                }
+                trait_delegate! {
+                    fn checked_sub_unsigned(self, rhs: Self::Unsigned) -> Option<Self>
+                }
                 trait_delegate! { fn saturating_abs(self) -> Self }
                 trait_delegate! { fn saturating_signum(self) -> Self }
+                trait_delegate! { fn saturating_add_unsigned(self, rhs: Self::Unsigned) -> Self }
+                trait_delegate! { fn saturating_sub_unsigned(self, rhs: Self::Unsigned) -> Self }
                 trait_delegate! { fn wrapping_abs(self) -> Self }
                 trait_delegate! { fn wrapping_signum(self) -> Self }
+                trait_delegate! { fn wrapping_add_unsigned(self, rhs: Self::Unsigned) -> Self }
+                trait_delegate! { fn wrapping_sub_unsigned(self, rhs: Self::Unsigned) -> Self }
                 trait_delegate! { fn unwrapped_abs(self) -> Self }
                 trait_delegate! { fn unwrapped_signum(self) -> Self }
+                trait_delegate! { fn unwrapped_add_unsigned(self, rhs: Self::Unsigned) -> Self }
+                trait_delegate! { fn unwrapped_sub_unsigned(self, rhs: Self::Unsigned) -> Self }
                 trait_delegate! { fn overflowing_abs(self) -> (Self, bool) }
                 trait_delegate! { fn overflowing_signum(self) -> (Self, bool) }
-                trait_delegate! { fn is_positive(self) -> bool }
-                trait_delegate! { fn is_negative(self) -> bool }
+                trait_delegate! {
+                    fn overflowing_add_unsigned(self, rhs: Self::Unsigned) -> (Self, bool)
+                }
+                trait_delegate! {
+                    fn overflowing_sub_unsigned(self, rhs: Self::Unsigned) -> (Self, bool)
+                }
             }
         }
 
@@ -3772,9 +4099,25 @@ macro_rules! impl_fixed {
                 trait_delegate! { fn is_power_of_two(self) -> bool }
                 trait_delegate! { fn highest_one(self) -> Self }
                 trait_delegate! { fn next_power_of_two(self) -> Self }
+                trait_delegate! { fn add_signed(self, rhs: Self::Signed) -> Self }
+                trait_delegate! { fn sub_signed(self, rhs: Self::Signed) -> Self }
                 trait_delegate! { fn checked_next_power_of_two(self) -> Option<Self> }
+                trait_delegate! { fn checked_add_signed(self, rhs: Self::Signed) -> Option<Self> }
+                trait_delegate! { fn checked_sub_signed(self, rhs: Self::Signed) -> Option<Self> }
+                trait_delegate! { fn saturating_add_signed(self, rhs: Self::Signed) -> Self }
+                trait_delegate! { fn saturating_sub_signed(self, rhs: Self::Signed) -> Self }
                 trait_delegate! { fn wrapping_next_power_of_two(self) -> Self }
+                trait_delegate! { fn wrapping_add_signed(self, rhs: Self::Signed) -> Self }
+                trait_delegate! { fn wrapping_sub_signed(self, rhs: Self::Signed) -> Self }
                 trait_delegate! { fn unwrapped_next_power_of_two(self) -> Self }
+                trait_delegate! { fn unwrapped_add_signed(self, rhs: Self::Signed) -> Self }
+                trait_delegate! { fn unwrapped_sub_signed(self, rhs: Self::Signed) -> Self }
+                trait_delegate! {
+                    fn overflowing_add_signed(self, rhs: Self::Signed) -> (Self, bool)
+                }
+                trait_delegate! {
+                    fn overflowing_sub_signed(self, rhs: Self::Signed) -> (Self, bool)
+                }
             }
         }
 
@@ -3936,8 +4279,6 @@ macro_rules! impl_fixed {
                 FromFixed::unwrapped_from_fixed(self)
             }
         }
-
-        impl FixedBits for $Bits {}
     };
 }
 
@@ -3951,40 +4292,3 @@ impl_fixed! { FixedU16, FixedI16, FixedU16, 16, u16, NonZeroU16, Unsigned }
 impl_fixed! { FixedU32, FixedI32, FixedU32, 32, u32, NonZeroU32, Unsigned }
 impl_fixed! { FixedU64, FixedI64, FixedU64, 64, u64, NonZeroU64, Unsigned }
 impl_fixed! { FixedU128, FixedI128, FixedU128, 128, u128, NonZeroU128, Unsigned }
-
-/// This trait is implemented for <code>[Fixed]::[Bits][Fixed::Bits]</code> for
-/// all fixed-point numbers.
-///
-/// This provides some facilities to manipulate bits in generic functions.
-///
-/// # Examples
-///
-/// ```rust
-/// use az::OverflowingAs;
-/// use fixed::{traits::Fixed, types::*};
-/// fn limited_positive_bits<F: Fixed>(fixed: F) -> Option<u32> {
-///     let bits = fixed.to_bits();
-///     match bits.overflowing_as::<u32>() {
-///         (wrapped, false) => Some(wrapped),
-///         (_, true) => None,
-///     }
-/// }
-/// assert_eq!(limited_positive_bits(I16F16::from_bits(100)), Some(100));
-/// assert_eq!(limited_positive_bits(I16F16::from_bits(-100)), None);
-/// ```
-pub trait FixedBits
-where
-    Self: Copy + Ord,
-    Self: Shl<u32, Output = Self> + Shr<u32, Output = Self>,
-    Self: OverflowingCast<i8> + OverflowingCastFrom<i8>,
-    Self: OverflowingCast<i16> + OverflowingCastFrom<i16>,
-    Self: OverflowingCast<i32> + OverflowingCastFrom<i32>,
-    Self: OverflowingCast<i64> + OverflowingCastFrom<i64>,
-    Self: OverflowingCast<i128> + OverflowingCastFrom<i128>,
-    Self: OverflowingCast<u8> + OverflowingCastFrom<u8>,
-    Self: OverflowingCast<u16> + OverflowingCastFrom<u16>,
-    Self: OverflowingCast<u32> + OverflowingCastFrom<u32>,
-    Self: OverflowingCast<u64> + OverflowingCastFrom<u64>,
-    Self: OverflowingCast<u128> + OverflowingCastFrom<u128>,
-{
-}

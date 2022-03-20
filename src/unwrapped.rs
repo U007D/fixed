@@ -1110,7 +1110,6 @@ impl<F: Fixed> Unwrapped<F> {
     /// ```
     #[inline]
     #[must_use = "this returns the result of the operation, without modifying the original"]
-    #[doc(alias = "abs_diff")]
     pub fn dist(self, other: Unwrapped<F>) -> Unwrapped<F> {
         Unwrapped(self.0.unwrapped_dist(other.0))
     }
@@ -1136,6 +1135,42 @@ impl<F: Fixed> Unwrapped<F> {
     #[must_use = "this returns the result of the operation, without modifying the original"]
     pub fn mean(self, other: Unwrapped<F>) -> Unwrapped<F> {
         Unwrapped(self.0.mean(other.0))
+    }
+
+    /// Returns the next multiple of `other`.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_next\_multiple\_of][FixedI32::unwrapped_next_multiple_of]</code>
+    /// and
+    /// <code>FixedU32::[unwrapped\_next\_multiple\_of][FixedU32::unwrapped_next_multiple_of]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `other` is zero or on overflow.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::{types::I16F16, Unwrapped};
+    /// let one_point_5 = Unwrapped::<I16F16>::from_num(1.5);
+    /// let four = Unwrapped::<I16F16>::from_num(4);
+    /// let four_point_5 = Unwrapped::<I16F16>::from_num(4.5);
+    /// assert_eq!(four.next_multiple_of(one_point_5), four_point_5);
+    /// ```
+    ///
+    /// The following panics because of overflow.
+    ///
+    /// ```rust,should_panic
+    /// use fixed::{types::I16F16, Unwrapped};
+    /// let two = Unwrapped::<I16F16>::from_num(2);
+    /// let max = Unwrapped::<I16F16>::MAX;
+    /// let _overflow = max.next_multiple_of(two);
+    /// ```
+    #[inline]
+    #[track_caller]
+    #[must_use]
+    pub fn next_multiple_of(self, other: Unwrapped<F>) -> Unwrapped<F> {
+        Unwrapped(self.0.unwrapped_next_multiple_of(other.0))
     }
 
     /// Multiply and add. Returns `self` × `mul` + `add`.
@@ -1732,6 +1767,82 @@ impl<F: FixedSigned> Unwrapped<F> {
     pub fn signum(self) -> Unwrapped<F> {
         Unwrapped(self.0.unwrapped_signum())
     }
+
+    /// Addition with an unsigned fixed-point number.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_add\_unsigned][FixedI32::unwrapped_add_unsigned]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the result does not fit.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::{
+    ///     types::{I16F16, U16F16},
+    ///     Unwrapped,
+    /// };
+    /// assert_eq!(
+    ///     Unwrapped::<I16F16>::from_num(-5).add_unsigned(U16F16::from_num(3)),
+    ///     Unwrapped::<I16F16>::from_num(-2)
+    /// );
+    /// ```
+    ///
+    /// The following panics because of overflow.
+    ///
+    /// ```rust,should_panic
+    /// use fixed::{
+    ///     types::{I16F16, U16F16},
+    ///     Unwrapped,
+    /// };
+    /// let _overflow = Unwrapped::<I16F16>::ZERO.add_unsigned(U16F16::MAX);
+    /// ```
+    #[inline]
+    #[track_caller]
+    #[must_use]
+    pub fn add_unsigned(self, rhs: F::Unsigned) -> Unwrapped<F> {
+        Unwrapped(self.0.unwrapped_add_unsigned(rhs))
+    }
+
+    /// Subtraction with an unsigned fixed-point number.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_sub\_unsigned][FixedI32::unwrapped_sub_unsigned]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the result does not fit.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::{
+    ///     types::{I16F16, U16F16},
+    ///     Unwrapped,
+    /// };
+    /// assert_eq!(
+    ///     Unwrapped::<I16F16>::from_num(3).sub_unsigned(U16F16::from_num(5)),
+    ///     Unwrapped::<I16F16>::from_num(-2)
+    /// );
+    /// ```
+    ///
+    /// The following panics because of overflow.
+    ///
+    /// ```rust,should_panic
+    /// use fixed::{
+    ///     types::{I16F16, U16F16},
+    ///     Unwrapped,
+    /// };
+    /// let _overflow = Unwrapped::<I16F16>::ZERO.sub_unsigned(U16F16::MAX);
+    /// ```
+    #[inline]
+    #[track_caller]
+    #[must_use]
+    pub fn sub_unsigned(self, rhs: F::Unsigned) -> Unwrapped<F> {
+        Unwrapped(self.0.unwrapped_sub_unsigned(rhs))
+    }
 }
 
 impl<F: FixedUnsigned> Unwrapped<F> {
@@ -1844,6 +1955,82 @@ impl<F: FixedUnsigned> Unwrapped<F> {
     #[must_use]
     pub fn next_power_of_two(self) -> Unwrapped<F> {
         Unwrapped(self.0.unwrapped_next_power_of_two())
+    }
+
+    /// Addition with an signed fixed-point number.
+    ///
+    /// See also
+    /// <code>FixedU32::[unwrapped\_add\_signed][FixedU32::unwrapped_add_signed]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the result does not fit.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::{
+    ///     types::{I16F16, U16F16},
+    ///     Unwrapped,
+    /// };
+    /// assert_eq!(
+    ///     Unwrapped::<U16F16>::from_num(5).add_signed(I16F16::from_num(-3)),
+    ///     Unwrapped::<U16F16>::from_num(2)
+    /// );
+    /// ```
+    ///
+    /// The following panics because of overflow.
+    ///
+    /// ```rust,should_panic
+    /// use fixed::{
+    ///     types::{I16F16, U16F16},
+    ///     Unwrapped,
+    /// };
+    /// let _overflow = Unwrapped::<U16F16>::ZERO.add_signed(-I16F16::DELTA);
+    /// ```
+    #[inline]
+    #[track_caller]
+    #[must_use]
+    pub fn add_signed(self, rhs: F::Signed) -> Unwrapped<F> {
+        Unwrapped(self.0.unwrapped_add_signed(rhs))
+    }
+
+    /// Subtraction with an signed fixed-point number.
+    ///
+    /// See also
+    /// <code>FixedU32::[unwrapped\_sub\_signed][FixedU32::unwrapped_sub_signed]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the result does not fit.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::{
+    ///     types::{I16F16, U16F16},
+    ///     Unwrapped,
+    /// };
+    /// assert_eq!(
+    ///     Unwrapped::<U16F16>::from_num(5).sub_signed(I16F16::from_num(-3)),
+    ///     Unwrapped::<U16F16>::from_num(8)
+    /// );
+    /// ```
+    ///
+    /// The following panics because of overflow.
+    ///
+    /// ```rust,should_panic
+    /// use fixed::{
+    ///     types::{I16F16, U16F16},
+    ///     Unwrapped,
+    /// };
+    /// let _overflow = Unwrapped::<U16F16>::ZERO.sub_signed(I16F16::DELTA);
+    /// ```
+    #[inline]
+    #[track_caller]
+    #[must_use]
+    pub fn sub_signed(self, rhs: F::Signed) -> Unwrapped<F> {
+        Unwrapped(self.0.unwrapped_sub_signed(rhs))
     }
 }
 

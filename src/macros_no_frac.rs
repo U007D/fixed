@@ -21,7 +21,7 @@ macro_rules! fixed_no_frac {
         ),
         $nbytes:expr, $nbits:expr,
         $bytes_val:expr, $rev_bytes_val:expr, $be_bytes:expr, $le_bytes:expr,
-        $UFixed:ident[$s_ufixed:expr], $UInner:ty, $Signedness:tt,
+        $IFixed:ident[$s_ifixed:expr], $UFixed:ident[$s_ufixed:expr], $UInner:ty, $Signedness:tt,
         $HasDouble:tt, $Double:ident[$s_double:expr], $DoubleInner:ty, $s_nbits_2:expr
     ) => {
         /// The items in this block are implemented for all values of `FRAC`.
@@ -1302,21 +1302,24 @@ assert_eq!(Fix::MIN.unsigned_abs(), min_as_unsigned);
                 }
             }
 
-            if_signed! {
-                $Signedness;
-                comment! {
-                    "Returns the distance from `self` to `other`.
+            comment! {
+                "Returns the distance from `self` to `other`.
 
 The distance is the absolute value of the difference.
 
-# Panics
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "# Panics
 
 When debug assertions are enabled, this method panics if the result overflows.
 When debug assertions are not enabled, the wrapped value can be returned, but it
 is not considered a breaking change if in the future it panics; if wrapping is
 required use [`wrapping_dist`] instead.
 
-# Examples
+",
+                },
+                "# Examples
 
 ```rust
 #![feature(generic_const_exprs)]
@@ -1325,22 +1328,32 @@ required use [`wrapping_dist`] instead.
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE.dist(Fix::from_num(5)), Fix::from_num(4));
-assert_eq!(Fix::from_num(-1).dist(Fix::from_num(2)), Fix::from_num(3));
-```
-
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "assert_eq!(Fix::from_num(-1).dist(Fix::from_num(2)), Fix::from_num(3));
+",
+                },
+                "```
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "
 [`wrapping_dist`]: Self::wrapping_dist
-";
-
-                    #[inline]
-                    #[must_use = "this returns the result of the operation, without modifying the original"]
-                    pub const fn dist(self, other: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                        let s = self.to_bits();
-                        let o = other.to_bits();
-                        let d = if s < o { o - s } else { s - o };
-                        Self::from_bits(d)
-                    }
+",
+                };
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn dist(self, other: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                    let s = self.to_bits();
+                    let o = other.to_bits();
+                    let d = if s < o { o - s } else { s - o };
+                    Self::from_bits(d)
                 }
+            }
 
+            if_signed! {
+                $Signedness;
                 comment! {
                     "Returns the distance from `self` to `other` using an
 unsigned type without any wrapping or panicking.
@@ -1362,7 +1375,6 @@ assert_eq!(Fix::MIN.unsigned_dist(Fix::MAX), UFix::MAX);
 ";
                     #[inline]
                     #[must_use = "this returns the result of the operation, without modifying the original"]
-                    #[doc(alias = "abs_diff")]
                     pub const fn unsigned_dist(self, other: $Fixed<FRAC>) -> $UFixed<FRAC> {
                         let s = self.to_bits();
                         let o = other.to_bits();
@@ -1414,33 +1426,31 @@ assert_eq!(Fix::from_num(-5).signum(), -1);
                 }
             }
 
-            if_unsigned! {
-                $Signedness;
-                comment! {
-                    "Returns the distance from `self` to `other`.
+            comment! {
+                if_signed_unsigned!(
+                    $Signedness,
+                    "Returns the absolute value of the difference between `self`
+and `other` using an unsigned type without any wrapping or panicking.
 
-The distance is the absolute value of the difference.
+This method is the same as [`unsigned_dist`] for signed fixed-point numbers.
 
-# Examples
+[`unsigned_dist`]: Self::unsigned_dist
+",
+                    "Returns the absolute value of the difference between `self` and `other`.
 
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
+This method is the same as [`dist`] for unsigned fixed-point numbers.
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-assert_eq!(Fix::ONE.dist(Fix::from_num(5)), Fix::from_num(4));
-```
-";
-                    #[inline]
-                    #[must_use = "this returns the result of the operation, without modifying the original"]
-                    #[doc(alias = "abs_diff")]
-                    pub const fn dist(self, other: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                        let s = self.to_bits();
-                        let o = other.to_bits();
-                        let d = if s < o { o - s } else { s - o };
-                        Self::from_bits(d)
-                    }
+[`dist`]: Self::dist
+",
+                );
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn abs_diff(self, other: $Fixed<FRAC>) -> $UFixed<FRAC> {
+                    if_signed_unsigned!(
+                        $Signedness,
+                        self.unsigned_dist(other),
+                        self.dist(other),
+                    )
                 }
             }
 
@@ -1473,6 +1483,58 @@ assert_eq!(Fix::from_num(3).mean(Fix::from_num(4)), Fix::from_num(3.5));
                     // (a + b) / 2 = (a & b) + (a ^ b) / 2
                     let (a, b) = (self.to_bits(), other.to_bits());
                     $Fixed::from_bits((a & b) + ((a ^ b) >> 1))
+                }
+            }
+
+            comment! {
+                "Returns the smallest multiple of `other` that is ≥&nbsp;`self`",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    " if `other` is positive, and the largest multiple of
+`other` that is ≤&nbsp;`self` if `other` is negative",
+                },
+                ".
+
+# Panics
+
+Panics if `other` is zero.
+
+When debug assertions are enabled, this method also panics if the result
+overflows. When debug assertions are not enabled, the wrapped value can be
+returned, but it is not considered a breaking change if in the future it panics;
+if wrapping is required use [`wrapping_next_multiple_of`] instead.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(
+    Fix::from_num(4).next_multiple_of(Fix::from_num(1.5)),
+    Fix::from_num(4.5)
+);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "assert_eq!(
+    Fix::from_num(4).next_multiple_of(Fix::from_num(-1.5)),
+    Fix::from_num(3)
+);
+",
+                },
+                "```
+
+[`wrapping_next_multiple_of`]: Self::wrapping_next_multiple_of
+";
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn next_multiple_of(self, other: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, overflow) = self.overflowing_next_multiple_of(other);
+                    debug_assert!(!overflow, "overflow");
+                    ans
                 }
             }
 
@@ -1608,6 +1670,136 @@ assert_eq!(Fix::from_num(6.5).next_power_of_two(), Fix::from_num(8));
                     pub const fn next_power_of_two(self) -> $Fixed<FRAC> {
                         Self::from_bits(self.to_bits().next_power_of_two())
                     }
+                }
+            }
+
+            if_signed! {
+                $Signedness;
+                /// Addition with an unsigned fixed-point number.
+                ///
+                /// # Panics
+                ///
+                /// When debug assertions are enabled, this method panics if the
+                /// result overflows. When debug assertions are not enabled, the
+                /// wrapped value can be returned, but it is not considered a
+                /// breaking change if in the future it panics; if wrapping is
+                /// required use [`wrapping_add_unsigned`] instead.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(-5).add_unsigned(UFix::from_num(3)), -2);
+                /// ```
+                ///
+                /// [`wrapping_add_unsigned`]: Self::wrapping_add_unsigned
+                #[inline]
+                #[must_use]
+                pub const fn add_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, overflow) = self.overflowing_add_unsigned(rhs);
+                    debug_assert!(!overflow, "overflow");
+                    ans
+                }
+
+                /// Subtraction with an unsigned fixed-point number.
+                ///
+                /// # Panics
+                ///
+                /// When debug assertions are enabled, this method panics if the
+                /// result overflows. When debug assertions are not enabled, the
+                /// wrapped value can be returned, but it is not considered a
+                /// breaking change if in the future it panics; if wrapping is
+                /// required use [`wrapping_sub_unsigned`] instead.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(3).sub_unsigned(UFix::from_num(5)), -2);
+                /// ```
+                ///
+                /// [`wrapping_sub_unsigned`]: Self::wrapping_sub_unsigned
+                #[inline]
+                #[must_use]
+                pub const fn sub_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, overflow) = self.overflowing_sub_unsigned(rhs);
+                    debug_assert!(!overflow, "overflow");
+                    ans
+                }
+            }
+
+            if_unsigned! {
+                $Signedness;
+                /// Addition with a signed fixed-point number.
+                ///
+                /// # Panics
+                ///
+                /// When debug assertions are enabled, this method panics if the
+                /// result overflows. When debug assertions are not enabled, the
+                /// wrapped value can be returned, but it is not considered a
+                /// breaking change if in the future it panics; if wrapping is
+                /// required use [`wrapping_add_signed`] instead.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(5).add_signed(IFix::from_num(-3)), 2);
+                /// ```
+                ///
+                /// [`wrapping_add_signed`]: Self::wrapping_add_signed
+                #[inline]
+                #[must_use]
+                pub const fn add_signed(self, rhs: $IFixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, overflow) = self.overflowing_add_signed(rhs);
+                    debug_assert!(!overflow, "overflow");
+                    ans
+                }
+
+                /// Subtraction with a signed fixed-point number.
+                ///
+                /// # Panics
+                ///
+                /// When debug assertions are enabled, this method panics if the
+                /// result overflows. When debug assertions are not enabled, the
+                /// wrapped value can be returned, but it is not considered a
+                /// breaking change if in the future it panics; if wrapping is
+                /// required use [`wrapping_sub_signed`] instead.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(5).sub_signed(IFix::from_num(-3)), 8);
+                /// ```
+                ///
+                /// [`wrapping_sub_signed`]: Self::wrapping_sub_signed
+                #[inline]
+                #[must_use]
+                pub const fn sub_signed(self, rhs: $IFixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, overflow) = self.overflowing_sub_signed(rhs);
+                    debug_assert!(!overflow, "overflow");
+                    ans
                 }
             }
 
@@ -2305,6 +2497,51 @@ assert_eq!(ZeroIntBits::from_num(-0.5).checked_signum(), None);
             }
 
             comment! {
+                "Checked next multiple of `other`. Returns the next multiple, or
+[`None`] if `other` is zero or on overflow.
+
+The next multiple is the smallest multiple of `other` that is ≥&nbsp;`self`",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    " if `other` is positive, and the largest multiple of
+`other` that is ≤&nbsp;`self` if `other` is negative",
+                },
+                ".
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(
+    Fix::from_num(4).checked_next_multiple_of(Fix::from_num(1.5)),
+    Some(Fix::from_num(4.5))
+);
+assert_eq!(Fix::from_num(4).checked_next_multiple_of(Fix::ZERO), None);
+assert_eq!(Fix::MAX.checked_next_multiple_of(Fix::from_num(2)), None);
+```
+";
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn checked_next_multiple_of(
+                    self,
+                    other: $Fixed<FRAC>,
+                ) -> Option<$Fixed<FRAC>> {
+                    if other.to_bits() == 0 {
+                        None
+                    } else {
+                        match self.overflowing_next_multiple_of(other) {
+                            (ans, false) => Some(ans),
+                            (_, true) => None,
+                        }
+                    }
+                }
+            }
+
+            comment! {
                 "Checked inverse linear interpolation between `start` and `end`.
 Returns [`None`] on overflow or when `start`&nbsp;=&nbsp;`end`.
 
@@ -2379,6 +2616,126 @@ assert!(Fix::MAX.checked_next_power_of_two().is_none());
                             Some(bits) => Some(Self::from_bits(bits)),
                             None => None,
                         }
+                    }
+                }
+            }
+
+            if_signed! {
+                $Signedness;
+                /// Checked addition with an unsigned fixed-point number.
+                /// Returns the sum, or [`None`] on overflow.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// assert_eq!(
+                ///     Fix::from_num(-5).checked_add_unsigned(UFix::from_num(3)),
+                ///     Some(Fix::from_num(-2))
+                /// );
+                /// assert_eq!(Fix::MAX.checked_add_unsigned(UFix::DELTA), None);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn checked_add_unsigned(
+                    self,
+                    rhs: $UFixed<FRAC>,
+                ) -> Option<$Fixed<FRAC>> {
+                    match self.overflowing_add_unsigned(rhs) {
+                        (ans, false) => Some(ans),
+                        (_, true) => None,
+                    }
+                }
+
+                /// Checked subtraction with an unsigned fixed-point number.
+                /// Returns the difference, or [`None`] on overflow.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// assert_eq!(
+                ///     Fix::from_num(3).checked_sub_unsigned(UFix::from_num(5)),
+                ///     Some(Fix::from_num(-2))
+                /// );
+                /// assert_eq!(Fix::MIN.checked_sub_unsigned(UFix::DELTA), None);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn checked_sub_unsigned(
+                    self,
+                    rhs: $UFixed<FRAC>,
+                ) -> Option<$Fixed<FRAC>> {
+                    match self.overflowing_sub_unsigned(rhs) {
+                        (ans, false) => Some(ans),
+                        (_, true) => None,
+                    }
+                }
+            }
+
+            if_unsigned! {
+                $Signedness;
+                /// Checked addition with a signed fixed-point number.
+                /// Returns the sum, or [`None`] on overflow.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// assert_eq!(
+                ///     Fix::from_num(5).checked_add_signed(IFix::from_num(-3)),
+                ///     Some(Fix::from_num(2))
+                /// );
+                /// assert_eq!(Fix::from_num(2).checked_add_signed(IFix::from_num(-3)), None);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn checked_add_signed(self, rhs: $IFixed<FRAC>) -> Option<$Fixed<FRAC>> {
+                    match self.overflowing_add_signed(rhs) {
+                        (ans, false) => Some(ans),
+                        (_, true) => None,
+                    }
+                }
+
+                /// Checked subtraction with a signed fixed-point number.
+                /// Returns the difference, or [`None`] on overflow.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// assert_eq!(
+                ///     Fix::from_num(5).checked_sub_signed(IFix::from_num(-3)),
+                ///     Some(Fix::from_num(8))
+                /// );
+                /// assert_eq!(Fix::from_num(2).checked_sub_signed(IFix::from_num(3)), None);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn checked_sub_signed(self, rhs: $IFixed<FRAC>) -> Option<$Fixed<FRAC>> {
+                    match self.overflowing_sub_signed(rhs) {
+                        (ans, false) => Some(ans),
+                        (_, true) => None,
                     }
                 }
             }
@@ -2840,6 +3197,59 @@ assert_eq!(ZeroIntBits::from_num(-0.5).saturating_signum(), ZeroIntBits::MIN);
             }
 
             comment! {
+                "Saturating next multiple of `other`.
+
+The next multiple is the smallest multiple of `other` that is ≥&nbsp;`self`",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    " if `other` is positive, and the largest multiple of
+`other` that is ≤&nbsp;`self` if `other` is negative",
+                },
+                ".
+
+# Panics
+
+Panics if `other` is zero.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(
+    Fix::from_num(4).saturating_next_multiple_of(Fix::from_num(1.5)),
+    Fix::from_num(4.5)
+);
+assert_eq!(Fix::MAX.saturating_next_multiple_of(Fix::from_num(2)), Fix::MAX);
+```
+";
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn saturating_next_multiple_of(
+                    self,
+                    other: $Fixed<FRAC>
+                ) -> $Fixed<FRAC> {
+                    match self.overflowing_next_multiple_of(other) {
+                        (ans, false) => ans,
+                        (_, true) => {
+                            if_signed_unsigned!(
+                                $Signedness,
+                                if other.to_bits() < 0 {
+                                    $Fixed::MIN
+                                } else {
+                                    $Fixed::MAX
+                                },
+                                $Fixed::MAX,
+                            )
+                        }
+                    }
+                }
+            }
+
+            comment! {
                 "Inverse linear interpolation between `start` and `end`,
 saturating on overflow.
 
@@ -2898,6 +3308,122 @@ assert_eq!(Fix::MAX.saturating_inv_lerp::<4>(Fix::from_num(0.5), Fix::ZERO), Fix
                         ),
                     }
 
+                }
+            }
+
+            if_signed! {
+                $Signedness;
+                /// Saturating addition with an unsigned fixed-point number.
+                /// Returns the sum, saturating on overflow.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(-5).saturating_add_unsigned(UFix::from_num(3)), -2);
+                /// assert_eq!(Fix::from_num(-5).saturating_add_unsigned(UFix::MAX), Fix::MAX);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn saturating_add_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
+                    match self.overflowing_add_unsigned(rhs) {
+                        (ans, false) => ans,
+                        (_, true) => $Fixed::MAX,
+                    }
+                }
+
+                /// Saturating subtraction with an unsigned fixed-point number.
+                /// Returns the difference, saturating on overflow.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(3).saturating_sub_unsigned(UFix::from_num(5)), -2);
+                /// assert_eq!(Fix::from_num(5).saturating_sub_unsigned(UFix::MAX), Fix::MIN);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn saturating_sub_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
+                    match self.overflowing_sub_unsigned(rhs) {
+                        (ans, false) => ans,
+                        (_, true) => $Fixed::MIN,
+                    }
+                }
+            }
+
+            if_unsigned! {
+                $Signedness;
+                /// Saturating addition with a signed fixed-point number.
+                /// Returns the sum, saturating on overflow.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(5).saturating_add_signed(IFix::from_num(-3)), 2);
+                /// assert_eq!(Fix::from_num(2).saturating_add_signed(IFix::from_num(-3)), 0);
+                /// assert_eq!(Fix::MAX.saturating_add_signed(IFix::MAX), Fix::MAX);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn saturating_add_signed(self, rhs: $IFixed<FRAC>) -> $Fixed<FRAC> {
+                    match self.overflowing_add_signed(rhs) {
+                        (ans, false) => ans,
+                        (_, true) => {
+                            if rhs.is_negative() {
+                                $Fixed::ZERO
+                            } else {
+                                $Fixed::MAX
+                            }
+                        }
+                    }
+                }
+
+                /// Saturating subtraction with a signed fixed-point number.
+                /// Returns the difference, saturating on overflow.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(5).saturating_sub_signed(IFix::from_num(-3)), 8);
+                /// assert_eq!(Fix::ONE.saturating_sub_signed(IFix::MAX), Fix::ZERO);
+                /// assert_eq!(Fix::MAX.saturating_sub_signed(IFix::MIN), Fix::MAX);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn saturating_sub_signed(self, rhs: $IFixed<FRAC>) -> $Fixed<FRAC> {
+                    match self.overflowing_sub_signed(rhs) {
+                        (ans, false) => ans,
+                        (_, true) => {
+                            if rhs.is_negative() {
+                                $Fixed::MAX
+                            } else {
+                                $Fixed::ZERO
+                            }
+                        }
+                    }
                 }
             }
 
@@ -3324,6 +3850,51 @@ assert_eq!(ZeroIntBits::from_num(-0.5).wrapping_signum(), 0);
             }
 
             comment! {
+                "Wrapping next multiple of `other`.
+
+The next multiple is the smallest multiple of `other` that is ≥&nbsp;`self`",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    " if `other` is positive, and the largest multiple of
+`other` that is ≤&nbsp;`self` if `other` is negative",
+                },
+                ".
+
+# Panics
+
+Panics if `other` is zero.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(
+    Fix::from_num(4).wrapping_next_multiple_of(Fix::from_num(1.5)),
+    Fix::from_num(4.5)
+);
+let max_minus_delta = Fix::MAX - Fix::DELTA;
+assert_eq!(
+    Fix::MAX.wrapping_next_multiple_of(max_minus_delta),
+    max_minus_delta.wrapping_mul_int(2)
+);
+```
+";
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn wrapping_next_multiple_of(
+                    self,
+                    other: $Fixed<FRAC>
+                ) -> $Fixed<FRAC> {
+                    let (ans, _) = self.overflowing_next_multiple_of(other);
+                    ans
+                }
+            }
+
+            comment! {
                 "Inverse linear interpolation between `start` and `end`,
 wrapping on overflow.
 
@@ -3404,6 +3975,100 @@ assert_eq!(Fix::MAX.wrapping_next_power_of_two(), 0);
                             None => Self::ZERO,
                         }
                     }
+                }
+            }
+
+            if_signed! {
+                $Signedness;
+                /// Wrapping addition with an unsigned fixed-point number.
+                /// Returns the sum, wrapping on overflow.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(-5).wrapping_add_unsigned(UFix::from_num(3)), -2);
+                /// assert_eq!(Fix::ZERO.wrapping_add_unsigned(UFix::MAX), -Fix::DELTA);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn wrapping_add_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, _) = self.overflowing_add_unsigned(rhs);
+                    ans
+                }
+
+                /// Wrapping subtraction with an unsigned fixed-point number.
+                /// Returns the difference, wrapping on overflow.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(3).wrapping_sub_unsigned(UFix::from_num(5)), -2);
+                /// assert_eq!(Fix::ZERO.wrapping_sub_unsigned(UFix::MAX), Fix::DELTA);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn wrapping_sub_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, _) = self.overflowing_sub_unsigned(rhs);
+                    ans
+                }
+            }
+
+            if_unsigned! {
+                $Signedness;
+                /// Wrapping addition with a signed fixed-point number.
+                /// Returns the sum, wrapping on overflow.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(5).wrapping_add_signed(IFix::from_num(-3)), 2);
+                /// assert_eq!(Fix::ZERO.wrapping_add_signed(-IFix::DELTA), Fix::MAX);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn wrapping_add_signed(self, rhs: $IFixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, _) = self.overflowing_add_signed(rhs);
+                    ans
+                }
+
+                /// Wrapping subtraction with a signed fixed-point number.
+                /// Returns the difference, wrapping on overflow.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(5).wrapping_sub_signed(IFix::from_num(-3)), 8);
+                /// assert_eq!(Fix::ZERO.wrapping_sub_signed(IFix::DELTA), Fix::MAX);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn wrapping_sub_signed(self, rhs: $IFixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, _) = self.overflowing_sub_signed(rhs);
+                    ans
                 }
             }
 
@@ -4172,6 +4837,59 @@ let _overflow = OneIntBit::from_num(0.5).unwrapped_signum();
             }
 
             comment! {
+                "Returns the next multiple of `other`, panicking on overflow.
+
+The next multiple is the smallest multiple of `other` that is ≥&nbsp;`self`",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    " if `other` is positive, and the largest multiple of
+`other` that is ≤&nbsp;`self` if `other` is negative",
+                },
+                ".
+
+# Panics
+
+Panics if `other` is zero or on overflow.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(
+    Fix::from_num(4).unwrapped_next_multiple_of(Fix::from_num(1.5)),
+    Fix::from_num(4.5)
+);
+```
+
+The following panics because of overflow.
+
+```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+let _overflow = Fix::MAX.unwrapped_next_multiple_of(Fix::from_num(2));
+```
+";
+                #[inline]
+                #[track_caller]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn unwrapped_next_multiple_of(
+                    self,
+                    other: $Fixed<FRAC>
+                ) -> $Fixed<FRAC> {
+                    let (ans, overflow) = self.overflowing_next_multiple_of(other);
+                    assert!(!overflow, "overflow");
+                    ans
+                }
+            }
+
+            comment! {
                 "Inverse linear interpolation between `start` and `end`,
 panicking on overflow.
 
@@ -4287,6 +5005,164 @@ let _overflow = Fix::MAX.unwrapped_next_power_of_two();
                             None => panic!("overflow"),
                         }
                     }
+                }
+            }
+
+            if_signed! {
+                $Signedness;
+                /// Unwrapped addition with an unsigned fixed-point number.
+                /// Returns the sum, panicking on overflow.
+                ///
+                /// # Panics
+                ///
+                /// Panics if the result does not fit.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(-5).unwrapped_add_unsigned(UFix::from_num(3)), -2);
+                /// ```
+                ///
+                /// The following panics because of overflow.
+                ///
+                /// ```rust,should_panic
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// let _overflow = Fix::MAX.unwrapped_add_unsigned(UFix::DELTA);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn unwrapped_add_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, overflow) = self.overflowing_add_unsigned(rhs);
+                    assert!(!overflow, "overflow");
+                    ans
+                }
+
+                /// Unwrapped subtraction with an unsigned fixed-point number.
+                /// Returns the difference, panicking on overflow.
+                ///
+                /// # Panics
+                ///
+                /// Panics if the result does not fit.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(3).unwrapped_sub_unsigned(UFix::from_num(5)), -2);
+                /// ```
+                ///
+                /// The following panics because of overflow.
+                ///
+                /// ```rust,should_panic
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// let _overflow = Fix::MIN.unwrapped_sub_unsigned(UFix::DELTA);
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn unwrapped_sub_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, overflow) = self.overflowing_sub_unsigned(rhs);
+                    assert!(!overflow, "overflow");
+                    ans
+                }
+            }
+
+            if_unsigned! {
+                $Signedness;
+                /// Unwrapped addition with a signed fixed-point number.
+                /// Returns the sum, panicking on overflow.
+                ///
+                /// # Panics
+                ///
+                /// Panics if the result does not fit.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(5).unwrapped_add_signed(IFix::from_num(-3)), 2);
+                /// ```
+                ///
+                /// The following panics because of overflow.
+                ///
+                /// ```rust,should_panic
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// let _overflow = Fix::from_num(2).unwrapped_add_signed(IFix::from_num(-3));
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn unwrapped_add_signed(self, rhs: $IFixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, overflow) = self.overflowing_add_signed(rhs);
+                    assert!(!overflow, "overflow");
+                    ans
+                }
+
+                /// Unwrapped subtraction with a signed fixed-point number.
+                /// Returns the difference, panicking on overflow.
+                ///
+                /// # Panics
+                ///
+                /// Panics if the result does not fit.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// assert_eq!(Fix::from_num(5).unwrapped_sub_signed(IFix::from_num(-3)), 8);
+                /// ```
+                ///
+                /// The following panics because of overflow.
+                ///
+                /// ```rust,should_panic
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// let _overflow = Fix::from_num(2).unwrapped_sub_signed(IFix::from_num(3));
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn unwrapped_sub_signed(self, rhs: $IFixed<FRAC>) -> $Fixed<FRAC> {
+                    let (ans, overflow) = self.overflowing_sub_signed(rhs);
+                    assert!(!overflow, "overflow");
+                    ans
                 }
             }
 
@@ -4834,6 +5710,93 @@ assert_eq!(ZeroIntBits::from_num(-0.5).overflowing_signum(), (ZeroIntBits::ZERO,
             }
 
             comment! {
+                "Overflowing next multiple of `other`.
+
+Returns a [tuple] of the next multiple and a [`bool`] indicating whether an
+overflow has occurred. On overflow, the wrapped value is returned.
+
+The next multiple is the smallest multiple of `other` that is ≥&nbsp;`self`",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    " if `other` is positive, and the largest multiple of
+`other` that is ≤&nbsp;`self` if `other` is negative",
+                },
+                ".
+
+# Panics
+
+Panics if `other` is zero.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(
+    Fix::from_num(4).overflowing_next_multiple_of(Fix::from_num(1.5)),
+    (Fix::from_num(4.5), false)
+);
+let max_minus_delta = Fix::MAX - Fix::DELTA;
+assert_eq!(
+    Fix::MAX.overflowing_next_multiple_of(max_minus_delta),
+    (max_minus_delta.wrapping_mul_int(2), true)
+);
+```
+";
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn overflowing_next_multiple_of(
+                    self,
+                    other: $Fixed<FRAC>
+                ) -> ($Fixed<FRAC>, bool) {
+                    let slf = self.to_bits();
+                    let other = other.to_bits();
+
+                    if_signed! {
+                        $Signedness;
+
+                        // check for overflowing division
+                        if other == -1 {
+                            return (self, false);
+                        }
+
+                        // panics if other == 0
+                        let rem = slf % other;
+
+                        let m = if rem.is_negative() != other.is_negative() {
+                            // cannot overflow as they have opposite signs
+                            rem + other
+                        } else {
+                            rem
+                        };
+                        if m == 0 {
+                            (self, false)
+                        } else {
+                            // other - m cannot overflow because they have the same sign
+                            self.overflowing_add($Fixed::from_bits(other - m))
+                        }
+                    }
+
+                    if_unsigned! {
+                        $Signedness;
+
+                        // panics if other == 0
+                        let rem = slf % other;
+
+                        if rem == 0 {
+                            (self, false)
+                        } else {
+                            // other - rem cannot overflow because rem is smaller
+                            self.overflowing_add($Fixed::from_bits(other - rem))
+                        }
+                    }
+                }
+            }
+
+            comment! {
                 "Overflowing inverse linear interpolation between `start` and `end`.
 
 Returns a [tuple] of the result and a [`bool`] indicationg whether an overflow
@@ -4886,6 +5849,160 @@ assert_eq!(
                         RET_FRAC as u32,
                     );
                     ($Fixed::from_bits(bits), overflow)
+                }
+            }
+
+            if_signed! {
+                $Signedness;
+                /// Overflowing addition with an unsigned fixed-point number.
+                ///
+                /// Returns a [tuple] of the sum and a [`bool`] indicating
+                /// whether an overflow has occurred. On overflow, the wrapped
+                /// value is returned.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// assert_eq!(
+                ///     Fix::from_num(-5).overflowing_add_unsigned(UFix::from_num(3)),
+                ///     (Fix::from_num(-2), false)
+                /// );
+                /// assert_eq!(
+                ///     Fix::ZERO.overflowing_add_unsigned(UFix::MAX),
+                ///     (-Fix::DELTA, true)
+                /// );
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn overflowing_add_unsigned(
+                    self,
+                    rhs: $UFixed<FRAC>,
+                ) -> ($Fixed<FRAC>, bool) {
+                    let signed_rhs = rhs.to_bits() as $Inner;
+                    let overflow1 = signed_rhs < 0;
+                    let (bits, overflow2) = self.to_bits().overflowing_add(signed_rhs);
+                    // if both overflow1 and overflow2, then they cancel each other out
+                    ($Fixed::from_bits(bits), overflow1 != overflow2)
+                }
+
+                /// Overflowing subtraction with an unsigned fixed-point number.
+                ///
+                /// Returns a [tuple] of the difference and a [`bool`]
+                /// indicating whether an overflow has occurred. On overflow,
+                /// the wrapped value is returned.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type UFix = ", $s_ufixed, "<4>;")]
+                /// assert_eq!(
+                ///     Fix::from_num(3).overflowing_sub_unsigned(UFix::from_num(5)),
+                ///     (Fix::from_num(-2), false)
+                /// );
+                /// assert_eq!(
+                ///     Fix::ZERO.overflowing_sub_unsigned(UFix::MAX),
+                ///     (Fix::DELTA, true)
+                /// );
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn overflowing_sub_unsigned(
+                    self,
+                    rhs: $UFixed<FRAC>,
+                ) -> ($Fixed<FRAC>, bool) {
+                    let signed_rhs = rhs.to_bits() as $Inner;
+                    let overflow1 = signed_rhs < 0;
+                    let (bits, overflow2) = self.to_bits().overflowing_sub(signed_rhs);
+                    // if both overflow1 and overflow2, then they cancel each other out
+                    ($Fixed::from_bits(bits), overflow1 != overflow2)
+                }
+            }
+
+            if_unsigned! {
+                $Signedness;
+                /// Overflowing addition with a signed fixed-point number.
+                ///
+                /// Returns a [tuple] of the sum and a [`bool`] indicating
+                /// whether an overflow has occurred. On overflow, the wrapped
+                /// value is returned.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// assert_eq!(
+                ///     Fix::from_num(5).overflowing_add_signed(IFix::from_num(-3)),
+                ///     (Fix::from_num(2), false)
+                /// );
+                /// assert_eq!(
+                ///     Fix::ZERO.overflowing_add_signed(-IFix::DELTA),
+                ///     (Fix::MAX, true)
+                /// );
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn overflowing_add_signed(
+                    self,
+                    rhs: $IFixed<FRAC>,
+                ) -> ($Fixed<FRAC>, bool) {
+                    let unsigned_rhs = rhs.to_bits() as $Inner;
+                    let overflow1 = rhs.is_negative();
+                    let (bits, overflow2) = self.to_bits().overflowing_add(unsigned_rhs);
+                    // if both overflow1 and overflow2, then they cancel each other out
+                    ($Fixed::from_bits(bits), overflow1 != overflow2)
+                }
+
+                /// Overflowing subtraction with a signed fixed-point number.
+                ///
+                /// Returns a [tuple] of the difference and a [`bool`]
+                /// indicating whether an overflow has occurred. On overflow,
+                /// the wrapped value is returned.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// #![feature(generic_const_exprs)]
+                /// # #![allow(incomplete_features)]
+                ///
+                #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                #[doc = concat!("type IFix = ", $s_ifixed, "<4>;")]
+                /// assert_eq!(
+                ///     Fix::from_num(5).overflowing_sub_signed(IFix::from_num(-3)),
+                ///     (Fix::from_num(8), false)
+                /// );
+                /// assert_eq!(
+                ///     Fix::ZERO.overflowing_sub_signed(IFix::DELTA),
+                ///     (Fix::MAX, true)
+                /// );
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn overflowing_sub_signed(
+                    self,
+                    rhs: $IFixed<FRAC>,
+                ) -> ($Fixed<FRAC>, bool) {
+                    let unsigned_rhs = rhs.to_bits() as $Inner;
+                    let overflow1 = rhs.is_negative();
+                    let (bits, overflow2) = self.to_bits().overflowing_sub(unsigned_rhs);
+                    // if both overflow1 and overflow2, then they cancel each other out
+                    ($Fixed::from_bits(bits), overflow1 != overflow2)
                 }
             }
         }

@@ -115,6 +115,93 @@ Version 2.0.0-alpha.1 (2022-02-26)
 [f-ib-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
 
+Version 1.14.0 (2022-03-20)
+===========================
+
+  * The [`next_multiple_of`][f-nmo-1-14] method was added to all fixed-point
+    numbers, to the [`Fixed`][tf-1-14] trait, and to the [`Wrapping`][w-1-14]
+    and [`Unwrapped`][u-1-14] wrappers.
+  * The following methods were added to all fixed-point numbers and to the
+    [`Fixed`][tf-1-14] trait:
+      * [`abs_diff`][f-ad-1-14]
+      * [`checked_next_multiple_of`][f-cnmo-1-14],
+        [`saturating_next_multiple_of`][f-snmo-1-14],
+        [`wrapping_next_multiple_of`][f-wnmo-1-14],
+        [`unwrapped_next_multiple_of`][f-unmo-1-14],
+        [`overflowing_next_multiple_of`][f-onmo-1-14]
+  * The following methods were added to all signed fixed-point numbers, to the
+    [`FixedSigned`][tfs-1-14] trait, and to the [`Wrapping`][w-1-14] and
+    [`Unwrapped`][u-1-14] wrappers for signed numbers:
+      * [`add_unsigned`][f-au-1-14], [`sub_unsigned`][f-su-1-14]
+      * [`checked_add_unsigned`][f-cau-1-14],
+        [`saturating_add_unsigned`][f-sau-1-14],
+        [`wrapping_add_unsigned`][f-wau-1-14],
+        [`unwrapped_add_unsigned`][f-uau-1-14],
+        [`overflowing_add_unsigned`][f-oau-1-14]
+      * [`checked_sub_unsigned`][f-csu-1-14],
+        [`saturating_sub_unsigned`][f-ssu-1-14],
+        [`wrapping_sub_unsigned`][f-wsu-1-14],
+        [`unwrapped_sub_unsigned`][f-usu-1-14],
+        [`overflowing_sub_unsigned`][f-osu-1-14]
+  * The following methods were added to all unsigned fixed-point numbers, to the
+    [`FixedUnsigned`][tfu-1-14] trait, and to the [`Wrapping`][w-1-14] and
+    [`Unwrapped`][u-1-14] wrappers for unsigned numbers:
+      * [`add_signed`][f-as-1-14], [`sub_signed`][f-ss-1-14]
+      * [`checked_add_signed`][f-cas-1-14],
+        [`saturating_add_signed`][f-sas-1-14],
+        [`wrapping_add_signed`][f-was-1-14],
+        [`unwrapped_add_signed`][f-uas-1-14],
+        [`overflowing_add_signed`][f-oas-1-14]
+      * [`checked_sub_signed`][f-css-1-14],
+        [`saturating_sub_signed`][f-sss-1-14],
+        [`wrapping_sub_signed`][f-wss-1-14],
+        [`unwrapped_sub_signed`][f-uss-1-14],
+        [`overflowing_sub_signed`][f-oss-1-14]
+  * Supertraits were added to <code>[Fixed][tf-1-14]::[Bits][tf-b-1-14]</code>
+    and to <code>[Fixed][tf-1-14]::[NonZeroBits][tf-nzb-1-14]</code> in order to
+    allow conversions and operations in generic functions.
+  * The [*az* crate] dependency was updated to [version 1.2][az-1-2].
+
+[az-1-2]: https://docs.rs/az/~1.2/az/index.html
+[f-ad-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.abs_diff
+[f-as-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedU32.html#method.add_signed
+[f-au-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.add_unsigned
+[f-cas-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedU32.html#method.checked_add_signed
+[f-cau-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.checked_add_unsigned
+[f-cnmo-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.checked_next_multiple_of
+[f-css-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedU32.html#method.checked_sub_signed
+[f-csu-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.checked_sub_unsigned
+[f-nmo-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.next_multiple_of
+[f-oas-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedU32.html#method.overflowing_add_signed
+[f-oau-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.overflowing_add_unsigned
+[f-onmo-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.overflowing_next_multiple_of
+[f-oss-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedU32.html#method.overflowing_sub_signed
+[f-osu-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.overflowing_sub_unsigned
+[f-sas-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedU32.html#method.saturating_add_signed
+[f-sau-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.saturating_add_unsigned
+[f-snmo-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.saturating_next_multiple_of
+[f-ss-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedU32.html#method.sub_signed
+[f-sss-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedU32.html#method.saturating_sub_signed
+[f-ssu-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.saturating_sub_unsigned
+[f-su-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.sub_unsigned
+[f-uas-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedU32.html#method.unwrapped_add_signed
+[f-uau-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.unwrapped_add_unsigned
+[f-unmo-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.unwrapped_next_multiple_of
+[f-uss-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedU32.html#method.unwrapped_sub_signed
+[f-usu-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.unwrapped_sub_unsigned
+[f-was-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedU32.html#method.wrapping_add_signed
+[f-wau-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.wrapping_add_unsigned
+[f-wnmo-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.wrapping_next_multiple_of
+[f-wss-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedU32.html#method.wrapping_sub_signed
+[f-wsu-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.FixedI32.html#method.wrapping_sub_unsigned
+[tf-1-14]: https://docs.rs/fixed/~1.14/fixed/traits/trait.Fixed.html
+[tf-b-1-14]: https://docs.rs/fixed/~1.14/fixed/traits/trait.Fixed.html#associatedtype.Bits
+[tf-nzb-1-14]: https://docs.rs/fixed/~1.14/fixed/traits/trait.Fixed.html#associatedtype.NonZeroBits
+[tfs-1-14]: https://docs.rs/fixed/~1.14/fixed/traits/trait.FixedSigned.html
+[tfu-1-14]: https://docs.rs/fixed/~1.14/fixed/traits/trait.FixedUnsigned.html
+[u-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.Unwrapped.html
+[w-1-14]: https://docs.rs/fixed/~1.14/fixed/struct.Wrapping.html
+
 Version 1.13.1 (2022-03-04)
 ===========================
 
