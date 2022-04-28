@@ -103,6 +103,19 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
+### Version 2.0.0-alpha.3 news (unreleased)
+
+  * The following methods are now `const` functions:
+      * [`wide_mul_unsigned`][f-wmu-2-0a3], [`wide_sdiv`][f-ws-2-0a3],
+        [`wide_div_unsigned`][f-wdu-2-0a3]
+      * [`wide_mul_signed`][f-wms-2-0a3], [`wide_sdiv_signed`][f-wss-2-0a3]
+
+[f-wdu-2-0a3]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_div_unsigned
+[f-wms-2-0a3]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedU32.html#method.wide_mul_signed
+[f-wmu-2-0a3]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_mul_unsigned
+[f-ws-2-0a3]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_sdiv
+[f-wss-2-0a3]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedU32.html#method.wide_sdiv_signed
+
 ### Version 2.0.0-alpha.2 news (2022-03-04)
 
   * The following methods are now `const` functions:
