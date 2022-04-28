@@ -17,12 +17,14 @@ macro_rules! fixed_no_frac {
     (
         $Fixed:ident[$s_fixed:expr](
             $Inner:ident[$s_inner:expr],
-            $s_nbits:expr, $s_nbits_m1:expr, $s_nbits_m2:expr
+            $s_nbits:expr, $s_nbits_p1:expr, $s_nbits_m1:expr, $s_nbits_m2:expr, $s_nbits_m3:expr
         ),
-        $nbytes:expr, $nbits:expr,
+        $nbytes:expr, $nbits:expr, $nbits_m1:expr,
         $bytes_val:expr, $rev_bytes_val:expr, $be_bytes:expr, $le_bytes:expr,
-        $IFixed:ident[$s_ifixed:expr], $UFixed:ident[$s_ufixed:expr], $UInner:ty, $Signedness:tt,
-        $HasDouble:tt, $Double:ident[$s_double:expr], $DoubleInner:ty, $s_nbits_2:expr
+        $IFixed:ident[$s_ifixed:expr], $UFixed:ident[$s_ufixed:expr],
+        $IInner:ty, $UInner:ty, $Signedness:tt,
+        $HasDouble:tt, $s_nbits_2:expr,
+        $Double:ident[$s_double:expr], $DoubleInner:ty, $IDouble:ident, $IDoubleInner:ty
     ) => {
         /// The items in this block are implemented for all values of `FRAC`.
         impl<const FRAC: i32> $Fixed<FRAC> {
@@ -228,7 +230,7 @@ representation identical to the given integer.
 
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
-// 0010.0000 == 2
+// 0010.0000 = 2
 assert_eq!(Fix::from_bits(0b10_0000), 2);
 ```
 ";
@@ -990,7 +992,7 @@ have <i>f</i>&nbsp;+&nbsp;<i>g</i> fractional bits and ", $s_nbits_2,
 
 use fixed::", $s_fixed, ";
 // decimal: 1.25 × 1.0625 = 1.328_125
-// binary: 1.01 × 1.0001 == 1.010101
+// binary: 1.01 × 1.0001 = 1.010101
 let a = ", $s_fixed, "::<2>::from_num(1.25);
 let b = ", $s_fixed, "::<4>::from_num(1.0625);
 assert_eq!(a.wide_mul(b), 1.328_125);
@@ -1005,6 +1007,104 @@ assert_eq!(a.wide_mul(b), 1.328_125);
                         let self_bits = self.to_bits() as $DoubleInner;
                         let rhs_bits = rhs.to_bits() as $DoubleInner;
                         $Double::from_bits(self_bits * rhs_bits)
+                    }
+                }
+
+                if_signed! {
+                    $Signedness;
+                    /// Multiplies an unsigned fixed-point number and returns a
+                    /// wider signed type to retain all precision.
+                    ///
+                    /// If `self` has <i>f</i> fractional bits and
+                    #[doc = concat!($s_nbits, "&nbsp;&minus;&nbsp;<i>f</i>")]
+                    /// integer bits, and `rhs` has <i>g</i> fractional bits and
+                    #[doc = concat!($s_nbits, "&nbsp;&minus;&nbsp;<i>g</i>")]
+                    /// integer bits, then the returned fixed-point number will
+                    /// have <i>f</i>&nbsp;+&nbsp;<i>g</i> fractional bits and
+                    #[doc = concat!(
+                        $s_nbits_2,
+                        "&nbsp;&minus;&nbsp;<i>f</i>&nbsp;&minus;&nbsp;<i>g</i>"
+                    )]
+                    /// integer bits.
+                    ///
+                    /// # Examples
+                    ///
+                    /// ```rust
+                    /// #![feature(generic_const_exprs)]
+                    /// # #![allow(incomplete_features)]
+                    ///
+                    #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_ufixed, "};")]
+                    /// // decimal: -1.25 × 1.0625 = -1.328_125
+                    /// // binary: -1.01 × 1.0001 = -1.010101
+                    #[doc = concat!("let a = ", $s_fixed, "::<2>::from_num(-1.25);")]
+                    #[doc = concat!("let b = ", $s_ufixed, "::<4>::from_num(1.0625);")]
+                    /// assert_eq!(a.wide_mul_unsigned(b), -1.328_125);
+                    /// ```
+                    #[inline]
+                    #[must_use]
+                    pub const fn wide_mul_unsigned<const RHS_FRAC: i32>(
+                        self,
+                        rhs: $UFixed<RHS_FRAC>,
+                    ) -> $Double<{ FRAC + RHS_FRAC }> {
+                        let wide_lhs = self.to_bits() as $DoubleInner;
+                        let rhs_signed = rhs.to_bits() as $Inner;
+                        let wide_rhs = rhs_signed as $DoubleInner;
+                        let mut wide_prod = wide_lhs * wide_rhs;
+                        if rhs_signed < 0 {
+                            // rhs msb treated as -2^(N - 1) instead of +2^(N - 1),
+                            // so error in rhs is -2^N, and error in prod is -2^N × lhs
+                            wide_prod += wide_lhs << $nbits;
+                        }
+                        $Double::from_bits(wide_prod)
+                    }
+                }
+
+                if_unsigned! {
+                    $Signedness;
+                    /// Multiplies a signed fixed-point number and returns a
+                    /// wider signed type to retain all precision.
+                    ///
+                    /// If `self` has <i>f</i> fractional bits and
+                    #[doc = concat!($s_nbits, "&nbsp;&minus;&nbsp;<i>f</i>")]
+                    /// integer bits, and `rhs` has <i>g</i> fractional bits and
+                    #[doc = concat!($s_nbits, "&nbsp;&minus;&nbsp;<i>g</i>")]
+                    /// integer bits, then the returned fixed-point number will
+                    /// have <i>f</i>&nbsp;+&nbsp;<i>g</i> fractional bits and
+                    #[doc = concat!(
+                        $s_nbits_2,
+                        "&nbsp;&minus;&nbsp;<i>f</i>&nbsp;&minus;&nbsp;<i>g</i>"
+                    )]
+                    /// integer bits.
+                    ///
+                    /// # Examples
+                    ///
+                    /// ```rust
+                    /// #![feature(generic_const_exprs)]
+                    /// # #![allow(incomplete_features)]
+                    ///
+                    #[doc = concat!("use fixed::{", $s_ifixed, ", ", $s_fixed, "};")]
+                    /// // decimal: 1.25 × -1.0625 = -1.328_125
+                    /// // binary: 1.01 × -1.0001 = -1.010101
+                    #[doc = concat!("let a = ", $s_fixed, "::<2>::from_num(1.25);")]
+                    #[doc = concat!("let b = ", $s_ifixed, "::<4>::from_num(-1.0625);")]
+                    /// assert_eq!(a.wide_mul_signed(b), -1.328_125);
+                    /// ```
+                    #[inline]
+                    #[must_use]
+                    pub const fn wide_mul_signed<const RHS_FRAC: i32>(
+                        self,
+                        rhs: $IFixed<RHS_FRAC>,
+                    ) -> $IDouble<{ FRAC + RHS_FRAC }> {
+                        let lhs_signed = self.to_bits() as $IInner;
+                        let wide_lhs = lhs_signed as $IDoubleInner;
+                        let wide_rhs = rhs.to_bits() as $IDoubleInner;
+                        let mut wide_prod = wide_lhs * wide_rhs;
+                        if lhs_signed < 0 {
+                            // lhs msb treated as -2^(N - 1) instead of +2^(N - 1),
+                            // so error in lhs is -2^N, and error in prod is -2^N × rhs
+                            wide_prod += wide_rhs << ($nbytes * 8);
+                        }
+                        $IDouble::from_bits(wide_prod)
                     }
                 }
 
@@ -1025,7 +1125,8 @@ bits.
                         "
 **Warning:** While most cases of overflow are avoided using this method,
 dividing [`MIN`][Self::MIN] by <code>-[DELTA][Self::DELTA]</code> will still
-result in panic due to overflow.
+result in panic due to overflow. The alternative [`wide_sdiv`][Self::wide_sdiv]
+method avoids this by sacrificing one fractional bit in the return type.
 "
                     },
                     "
@@ -1048,7 +1149,7 @@ Panics if the divisor is zero",
 
 use fixed::{", $s_fixed, ", ", $s_double, "};
 // decimal: 4.625 / 0.03125 = 148
-// binary: 100.101 / 0.00001 == 10010100
+// binary: 100.101 / 0.00001 = 10010100
 let a = ", $s_fixed, "::<3>::from_num(4.625);
 let b = ", $s_fixed, "::<5>::from_num(0.03125);
 let ans: ", $s_double, "<", $s_nbits_m2, "> = a.wide_div(b);
@@ -1079,6 +1180,182 @@ let _overflow = Fix::MIN.wide_div(-Fix::DELTA);
                         let self_bits = self.to_bits() as $DoubleInner;
                         let rhs_bits = rhs.to_bits() as $DoubleInner;
                         $Double::from_bits((self_bits << $nbits) / rhs_bits)
+                    }
+                }
+
+                if_signed! {
+                    $Signedness;
+
+                    /// Divides two fixed-point numbers and returns a wider type
+                    /// to retain more precision.
+                    ///
+                    /// If `self` has <i>f</i> fractional bits and
+                    #[doc = concat!($s_nbits, "&nbsp;&minus;&nbsp;<i>f</i>")]
+                    /// integer bits, and `rhs` has <i>g</i> fractional bits and
+                    #[doc = concat!($s_nbits, "&nbsp;&minus;&nbsp;<i>g</i>")]
+                    /// integer bits, then the returned fixed-point number will have
+                    #[doc = concat!(
+                        $s_nbits_m1, "&nbsp;+&nbsp;<i>f</i>&nbsp;&minus;&nbsp;<i>g</i>"
+                    )]
+                    /// fractional bits and
+                    #[doc = concat!(
+                        $s_nbits_p1, "&nbsp;&minus;&nbsp;<i>f</i>&nbsp;+&nbsp;<i>g</i>"
+                    )]
+                    /// integer bits.
+                    ///
+                    /// This is similar to the [`wide_div`] method but
+                    /// sacrifices one fractional bit to avoid overflow.
+                    ///
+                    /// # Panics
+                    ///
+                    /// Panics if the divisor is zero.
+                    ///
+                    /// # Examples
+                    ///
+                    /// ```rust
+                    /// #![feature(generic_const_exprs)]
+                    /// # #![allow(incomplete_features)]
+                    ///
+                    #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_double, "};")]
+                    /// // decimal: 4.625 / 0.03125 = 148
+                    /// // binary: 100.101 / 0.00001 = 10010100
+                    #[doc = concat!("let a = ", $s_fixed, "::<4>::from_num(4.625);")]
+                    #[doc = concat!("let b = ", $s_fixed, "::<5>::from_num(0.03125);")]
+                    #[doc = concat!(
+                        "let ans: ", $s_double, "<", $s_nbits_m2, "> = a.wide_sdiv(b);"
+                    )]
+                    /// assert_eq!(ans, 148);
+                    /// ```
+                    ///
+                    /// Unlike [`wide_div`], dividing [`MIN`][Self::MIN] by
+                    /// <code>-[DELTA][Self::DELTA]</code> does not overflow.
+                    ///
+                    /// ```rust
+                    /// #![feature(generic_const_exprs)]
+                    /// # #![allow(incomplete_features)]
+                    ///
+                    #[doc = concat!("use fixed::{", $s_fixed, ", ", $s_double, "};")]
+                    #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+                    #[doc = concat!("type DFix = ", $s_double, "<", $s_nbits_m1, ">;")]
+                    /// assert_eq!(Fix::MIN.wide_sdiv(-Fix::DELTA), (DFix::MIN / 2).abs());
+                    /// ```
+                    ///
+                    /// [`wide_div`]: Self::wide_div
+                    #[inline]
+                    #[must_use]
+                    pub const fn wide_sdiv<const RHS_FRAC: i32>(
+                        self,
+                        rhs: $Fixed<RHS_FRAC>,
+                    ) -> $Double<{ $nbits_m1 + FRAC - RHS_FRAC }> {
+                        let self_bits = self.to_bits() as $DoubleInner;
+                        let rhs_bits = rhs.to_bits() as $DoubleInner;
+                        $Double::from_bits((self_bits << $nbits_m1) / rhs_bits)
+                    }
+
+                    /// Divides by an unsigned fixed-point number and returns a
+                    /// wider signed type to retain more precision.
+                    ///
+                    /// If `self` has <i>f</i> fractional bits and
+                    #[doc = concat!($s_nbits, "&nbsp;&minus;&nbsp;<i>f</i>")]
+                    /// integer bits, and `rhs` has <i>g</i> fractional bits and
+                    #[doc = concat!($s_nbits, "&nbsp;&minus;&nbsp;<i>g</i>")]
+                    /// integer bits, then the returned fixed-point number will have
+                    #[doc = concat!($s_nbits, "&nbsp;+&nbsp;<i>f</i>&nbsp;&minus;&nbsp;<i>g</i>")]
+                    /// fractional bits and
+                    #[doc = concat!($s_nbits, "&nbsp;&minus;&nbsp;<i>f</i>&nbsp;+&nbsp;<i>g</i>")]
+                    /// integer bits.
+                    ///
+                    /// # Panics
+                    ///
+                    /// Panics if the divisor is zero.
+                    ///
+                    /// # Examples
+                    ///
+                    /// ```rust
+                    /// #![feature(generic_const_exprs)]
+                    /// # #![allow(incomplete_features)]
+                    ///
+                    #[doc = concat!(
+                        "use fixed::{", $s_fixed, ", ", $s_double, ", ", $s_ufixed, "};"
+                    )]
+                    /// // decimal: -4.625 / 0.03125 = -148
+                    /// // binary: -100.101 / 0.00001 = -10010100
+                    #[doc = concat!("let a = ", $s_fixed, "::<3>::from_num(-4.625);")]
+                    #[doc = concat!("let b = ", $s_ufixed, "::<5>::from_num(0.03125);")]
+                    #[doc = concat!(
+                        "let ans: ", $s_double, "<", $s_nbits_m2, "> = a.wide_div_unsigned(b);"
+                    )]
+                    /// assert_eq!(ans, -148);
+                    /// ```
+                    #[inline]
+                    #[must_use]
+                    pub const fn wide_div_unsigned<const RHS_FRAC: i32>(
+                        self,
+                        rhs: $UFixed<RHS_FRAC>,
+                    ) -> $Double<{ $nbits + FRAC - RHS_FRAC }> {
+                        let self_bits = self.to_bits() as $DoubleInner;
+                        let rhs_bits = rhs.to_bits() as $DoubleInner;
+                        $Double::from_bits((self_bits << $nbits) / rhs_bits)
+                    }
+                }
+
+                if_unsigned! {
+                    $Signedness;
+                    /// Divides by a signed fixed-point number and returns a
+                    /// wider signed type to retain more precision.
+                    ///
+                    /// If `self` has <i>f</i> fractional bits and
+                    #[doc = concat!($s_nbits, "&nbsp;&minus;&nbsp;<i>f</i>")]
+                    /// integer bits, and `rhs` has <i>g</i> fractional bits and
+                    #[doc = concat!($s_nbits, "&nbsp;&minus;&nbsp;<i>g</i>")]
+                    /// integer bits, then the returned fixed-point number will have
+                    #[doc = concat!(
+                        $s_nbits_m1, "&nbsp;+&nbsp;<i>f</i>&nbsp;&minus;&nbsp;<i>g</i>"
+                    )]
+                    /// fractional bits and
+                    #[doc = concat!(
+                        $s_nbits_p1, "&nbsp;&minus;&nbsp;<i>f</i>&nbsp;+&nbsp;<i>g</i>"
+                    )]
+                    /// integer bits.
+                    ///
+                    /// See also
+                    #[doc = concat!(
+                        "<code>[`", $s_ifixed, "`]",
+                        "::[wide\\_sdiv][", $s_ifixed, "::wide_sdiv]</code>."
+                    )]
+                    ///
+                    /// # Panics
+                    ///
+                    /// Panics if the divisor is zero.
+                    ///
+                    /// # Examples
+                    ///
+                    /// ```rust
+                    /// #![feature(generic_const_exprs)]
+                    /// # #![allow(incomplete_features)]
+                    ///
+                    #[doc = concat!(
+                        "use fixed::{", $s_fixed, ", ", $s_ifixed, ", ", stringify!($IDouble), "};"
+                    )]
+                    /// // decimal: 4.625 / -0.03125 = -148
+                    /// // binary: 100.101 / -0.00001 = -10010100
+                    #[doc = concat!("let a = ", $s_fixed, "::<4>::from_num(4.625);")]
+                    #[doc = concat!("let b = ", $s_ifixed, "::<5>::from_num(-0.03125);")]
+                    #[doc = concat!(
+                        "let ans: ", stringify!($IDouble), "<", $s_nbits_m2, ">",
+                        " = a.wide_sdiv_signed(b);"
+                    )]
+                    /// assert_eq!(ans, -148);
+                    /// ```
+                    #[inline]
+                    #[must_use]
+                    pub const fn wide_sdiv_signed<const RHS_FRAC: i32>(
+                        self,
+                        rhs: $IFixed<RHS_FRAC>,
+                    ) -> $IDouble<{ $nbits_m1 + FRAC - RHS_FRAC }> {
+                        let self_bits = self.to_bits() as $IDoubleInner;
+                        let rhs_bits = rhs.to_bits() as $IDoubleInner;
+                        $IDouble::from_bits((self_bits << $nbits_m1) / rhs_bits)
                     }
                 }
             }

@@ -115,6 +115,25 @@ Version 2.0.0-alpha.1 (2022-02-26)
 [f-ib-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
 
+Version 1.15.0 (2022-04-28)
+===========================
+
+  * The following methods were added to all fixed-point signed numbers up to 64
+    bits wide:
+      * [`wide_mul_unsigned`][f-wmu-1-15]
+      * [`wide_sdiv`][f-ws-1-15]
+      * [`wide_div_unsigned`][f-wdu-1-15]
+  * The following methods were added to all fixed-point unsigned numbers up to
+    64 bits wide:
+      * [`wide_mul_signed`][f-wms-1-15]
+      * [`wide_sdiv_signed`][f-wss-1-15]
+
+[f-wdu-1-15]: https://docs.rs/fixed/~1.15/fixed/struct.FixedI32.html#method.wide_div_unsigned
+[f-wms-1-15]: https://docs.rs/fixed/~1.15/fixed/struct.FixedU32.html#method.wide_mul_signed
+[f-wmu-1-15]: https://docs.rs/fixed/~1.15/fixed/struct.FixedI32.html#method.wide_mul_unsigned
+[f-ws-1-15]: https://docs.rs/fixed/~1.15/fixed/struct.FixedI32.html#method.wide_sdiv
+[f-wss-1-15]: https://docs.rs/fixed/~1.15/fixed/struct.FixedU32.html#method.wide_sdiv_signed
+
 Version 1.14.0 (2022-03-20)
 ===========================
 

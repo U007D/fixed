@@ -459,40 +459,45 @@ macro_rules! fixed {
         $description:expr,
         $Fixed:ident(
             $Inner:ident, $s_nbits:expr,
-            $s_nbits_m1:expr, $s_nbits_m2:expr, $s_nbits_m3:expr, $s_nbits_m4:expr
+            $s_nbits_p1:expr, $s_nbits_m1:expr, $s_nbits_m2:expr, $s_nbits_m3:expr, $s_nbits_m4:expr
         ),
-        $nbytes:expr, $nbits:expr,
+        $nbytes:expr, $nbits:expr, $nbits_m1:expr,
         $bytes_val:expr, $rev_bytes_val:expr, $be_bytes:expr, $le_bytes:expr,
-        $IFixed:ident, $UFixed:ident, $UInner:ident, $Signedness:tt,
+        $IFixed:ident, $UFixed:ident, $IInner:ident, $UInner:ident, $Signedness:tt,
         $nbits_cm3:expr, $nbits_cm2:expr, $nbits_cm1:expr,
         $nbits_c0:expr, $nbits_c1:expr, $nbits_c2:expr, $nbits_c3:expr,
-        $HasDouble:tt, $Double:ident, $DoubleInner:ty, $s_nbits_2:expr
+        $HasDouble:tt, $s_nbits_2:expr,
+        $Double:ident, $DoubleInner:ty, $IDouble:ident, $IDoubleInner:ty
     ) => {
         fixed! {
             $description,
             $Fixed[stringify!($Fixed)](
                 $Inner[stringify!($Inner)], $s_nbits,
-                $s_nbits_m1, $s_nbits_m2, $s_nbits_m3, $s_nbits_m4
+                $s_nbits_p1, $s_nbits_m1, $s_nbits_m2, $s_nbits_m3, $s_nbits_m4
             ),
-            $nbytes, $nbits,
+            $nbytes, $nbits, $nbits_m1,
             $bytes_val, $rev_bytes_val, $be_bytes, $le_bytes,
-            $IFixed[stringify!($IFixed)], $UFixed[stringify!($UFixed)], $UInner, $Signedness,
+            $IFixed[stringify!($IFixed)], $UFixed[stringify!($UFixed)],
+            $IInner, $UInner, $Signedness,
             $nbits_cm3, $nbits_cm2, $nbits_cm1, $nbits_c0, $nbits_c1, $nbits_c2, $nbits_c3,
-            $HasDouble, $Double[stringify!($Double)], $DoubleInner, $s_nbits_2
+            $HasDouble, $s_nbits_2,
+            $Double[stringify!($Double)], $DoubleInner, $IDouble, $IDoubleInner
         }
     };
     (
         $description:expr,
         $Fixed:ident[$s_fixed:expr](
             $Inner:ident[$s_inner:expr], $s_nbits:expr,
-            $s_nbits_m1:expr, $s_nbits_m2:expr, $s_nbits_m3:expr, $s_nbits_m4:expr
+            $s_nbits_p1:expr, $s_nbits_m1:expr, $s_nbits_m2:expr, $s_nbits_m3:expr, $s_nbits_m4:expr
         ),
-        $nbytes:expr, $nbits:expr,
+        $nbytes:expr, $nbits:expr, $nbits_m1:expr,
         $bytes_val:expr, $rev_bytes_val:expr, $be_bytes:expr, $le_bytes:expr,
-        $IFixed:ident[$s_ifixed:expr], $UFixed:ident[$s_ufixed:expr], $UInner:ident, $Signedness:tt,
+        $IFixed:ident[$s_ifixed:expr], $UFixed:ident[$s_ufixed:expr],
+        $IInner:ident, $UInner:ident, $Signedness:tt,
         $nbits_cm3:expr, $nbits_cm2:expr, $nbits_cm1:expr,
         $nbits_c0:expr, $nbits_c1:expr, $nbits_c2:expr, $nbits_c3:expr,
-        $HasDouble:tt, $Double:ident[$s_double:expr], $DoubleInner:ty, $s_nbits_2:expr
+        $HasDouble:tt, $s_nbits_2:expr,
+        $Double:ident[$s_double:expr], $DoubleInner:ty, $IDouble:ident, $IDoubleInner:ty
     ) => {
         comment! {
             $description, "-bit ",
@@ -587,10 +592,14 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
 
         // inherent methods that do not require FRAC bounds, some of which can thus be const
         fixed_no_frac! {
-            $Fixed[$s_fixed]($Inner[$s_inner], $s_nbits, $s_nbits_m1, $s_nbits_m2),
-            $nbytes, $nbits, $bytes_val, $rev_bytes_val, $be_bytes, $le_bytes,
-            $IFixed[$s_ifixed], $UFixed[$s_ufixed], $UInner, $Signedness,
-            $HasDouble, $Double[$s_double], $DoubleInner, $s_nbits_2
+            $Fixed[$s_fixed](
+                $Inner[$s_inner], $s_nbits, $s_nbits_p1, $s_nbits_m1, $s_nbits_m2, $s_nbits_m3
+            ),
+            $nbytes, $nbits, $nbits_m1, $bytes_val, $rev_bytes_val, $be_bytes, $le_bytes,
+            $IFixed[$s_ifixed], $UFixed[$s_ufixed],
+            $IInner, $UInner, $Signedness,
+            $HasDouble, $s_nbits_2,
+            $Double[$s_double], $DoubleInner, $IDouble, $IDoubleInner
         }
         // inherent methods that require FRAC bounds, and cannot be const
         fixed_frac! {
@@ -607,97 +616,97 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
 
 fixed! {
     "An eight",
-    FixedU8(u8, "8", "7", "6", "5", "4"),
-    1, 8, "0x12", "0x12", "[0x12]", "[0x12]",
-    FixedI8, FixedU8, u8, Unsigned,
+    FixedU8(u8, "8", "9", "7", "6", "5", "4"),
+    1, 8, 7, "0x12", "0x12", "[0x12]", "[0x12]",
+    FixedI8, FixedU8, i8, u8, Unsigned,
     11, 10, 9, 8, 7, 6, 5,
-    True, FixedU16, u16, "16"
+    True, "16", FixedU16, u16, FixedI16, i16
 }
 fixed! {
     "A 16",
-    FixedU16(u16, "16", "15", "14", "13", "12"),
-    2, 16, "0x1234", "0x3412", "[0x12, 0x34]", "[0x34, 0x12]",
-    FixedI16, FixedU16, u16, Unsigned,
+    FixedU16(u16, "16", "17", "15", "14", "13", "12"),
+    2, 16, 15, "0x1234", "0x3412", "[0x12, 0x34]", "[0x34, 0x12]",
+    FixedI16, FixedU16, i16, u16, Unsigned,
     19, 18, 17, 16, 15, 14, 13,
-    True, FixedU32, u32, "32"
+    True, "32", FixedU32, u32, FixedI32, i32
 }
 fixed! {
     "A 32",
-    FixedU32(u32, "32", "31", "30", "29", "28"),
-    4, 32, "0x1234_5678", "0x7856_3412", "[0x12, 0x34, 0x56, 0x78]", "[0x78, 0x56, 0x34, 0x12]",
-    FixedI32, FixedU32, u32, Unsigned,
+    FixedU32(u32, "32", "33", "31", "30", "29", "28"),
+    4, 32, 31, "0x1234_5678", "0x7856_3412", "[0x12, 0x34, 0x56, 0x78]", "[0x78, 0x56, 0x34, 0x12]",
+    FixedI32, FixedU32, i32, u32, Unsigned,
     35, 34, 33, 32, 31, 30, 29,
-    True, FixedU64, u64, "64"
+    True, "64", FixedU64, u64, FixedI64, i64
 }
 fixed! {
     "A 64",
-    FixedU64(u64, "64", "63", "62", "61", "60"),
-    8, 64, "0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412",
+    FixedU64(u64, "64", "65", "63", "62", "61", "60"),
+    8, 64, 63, "0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412",
     "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0x0F]",
     "[0x0F, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
-    FixedI64, FixedU64, u64, Unsigned,
+    FixedI64, FixedU64, i64, u64, Unsigned,
     67, 66, 65, 64, 63, 62, 61,
-    True, FixedU128, u128, "128"
+    True, "128", FixedU128, u128, FixedI128, i128
 }
 fixed! {
     "A 128",
-    FixedU128(u128, "128", "127", "126", "125", "124"),
-    16, 128, "0x1234_5678_9ABC_DEF0_0102_0304_0506_0708",
+    FixedU128(u128, "128", "129", "127", "126", "125", "124"),
+    16, 128, 127, "0x1234_5678_9ABC_DEF0_0102_0304_0506_0708",
     "0x0807_0605_0403_0201_F0DE_BC9A_7856_3412",
     "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, \
      0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]",
     "[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, \
      0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
-    FixedI128, FixedU128, u128, Unsigned,
+    FixedI128, FixedU128, i128, u128, Unsigned,
     131, 130, 129, 128, 127, 126, 125,
-    False, FixedU128, u128, "128"
+    False, "128", FixedU128, u128, FixedI128, i128
 }
 fixed! {
     "An eight",
-    FixedI8(i8, "8", "7", "6", "5", "4"),
-    1, 8, "0x12", "0x12", "[0x12]", "[0x12]",
-    FixedI8, FixedU8, u8, Signed,
+    FixedI8(i8, "8", "9", "7", "6", "5", "4"),
+    1, 8, 7, "0x12", "0x12", "[0x12]", "[0x12]",
+    FixedI8, FixedU8, i8, u8, Signed,
     10, 9, 8, 7, 6, 5, 4,
-    True, FixedI16, i16, "16"
+    True, "16", FixedI16, i16, FixedI16, i16
 }
 fixed! {
     "A 16",
-    FixedI16(i16, "16", "15", "14", "13", "12"),
-    2, 16, "0x1234", "0x3412", "[0x12, 0x34]", "[0x34, 0x12]",
-    FixedI16, FixedU16, u16, Signed,
+    FixedI16(i16, "16", "17", "15", "14", "13", "12"),
+    2, 16, 15, "0x1234", "0x3412", "[0x12, 0x34]", "[0x34, 0x12]",
+    FixedI16, FixedU16, i16, u16, Signed,
     18, 17, 16, 15, 14, 13, 12,
-    True, FixedI32, i32, "32"
+    True, "32", FixedI32, i32, FixedI32, i32
 }
 fixed! {
     "A 32",
-    FixedI32(i32, "32", "31", "30", "29", "28"),
-    4, 32, "0x1234_5678", "0x7856_3412", "[0x12, 0x34, 0x56, 0x78]", "[0x78, 0x56, 0x34, 0x12]",
-    FixedI32, FixedU32, u32, Signed,
+    FixedI32(i32, "32", "33", "31", "30", "29", "28"),
+    4, 32, 31, "0x1234_5678", "0x7856_3412", "[0x12, 0x34, 0x56, 0x78]", "[0x78, 0x56, 0x34, 0x12]",
+    FixedI32, FixedU32, i32, u32, Signed,
     34, 33, 32, 31, 30, 29, 28,
-    True, FixedI64, i64, "64"
+    True, "64", FixedI64, i64, FixedI64, i64
 }
 fixed! {
     "A 64",
-    FixedI64(i64, "64", "63", "62", "61", "60"),
-    8, 64, "0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412",
+    FixedI64(i64, "64", "65", "63", "62", "61", "60"),
+    8, 64, 63, "0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412",
     "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0x0F]",
     "[0x0F, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
-    FixedI64, FixedU64, u64, Signed,
+    FixedI64, FixedU64, i64, u64, Signed,
     66, 65, 64, 63, 62, 61, 60,
-    True, FixedI128, i128, "128"
+    True, "128", FixedI128, i128, FixedI128, i128
 }
 fixed! {
     "A 128",
-    FixedI128(i128, "128", "127", "126", "125", "124"),
-    16, 128, "0x1234_5678_9ABC_DEF0_0102_0304_0506_0708",
+    FixedI128(i128, "128", "129", "127", "126", "125", "124"),
+    16, 128, 127, "0x1234_5678_9ABC_DEF0_0102_0304_0506_0708",
     "0x0807_0605_0403_0201_F0DE_BC9A_7856_3412",
     "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, \
      0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]",
     "[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, \
      0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
-    FixedI128, FixedU128, u128, Signed,
+    FixedI128, FixedU128, i128, u128, Signed,
     130, 129, 128, 127, 126, 125, 124,
-    False, FixedI128, i128, "128"
+    False, "128", FixedI128, i128, FixedI128, i128
 }
 
 /// Defines constant fixed-point numbers from integer expressions.
@@ -1468,5 +1477,134 @@ mod tests {
             I1F31::from_num(-1).overflowing_recip(),
             (I1F31::from_num(-1), false)
         );
+    }
+
+    #[test]
+    fn wide_mul_mixed() {
+        // +7FFF.FFFF * 7FFF.FFFF = +3FFF_FFFE.0000_0001
+        // 7FFF.FFFF * 7FFF.FFFF = 3FFF_FFFE.0000_0001
+        // +7FFF.FFFF * +7FFF.FFFF = +3FFF_FFFE.0000_0001
+        let s = I16F16::MAX;
+        let u = U16F16::MAX >> 1u32;
+        let t = U16F16::from_bits(s.to_bits() as u32);
+        let v = I16F16::from_bits(u.to_bits() as i32);
+        assert_eq!(s.wide_mul_unsigned(u).to_bits(), 0x3FFF_FFFF_0000_0001);
+        assert_eq!(t.wide_mul(u).to_bits(), 0x3FFF_FFFF_0000_0001);
+        assert_eq!(s.wide_mul(v).to_bits(), 0x3FFF_FFFF_0000_0001);
+        assert_eq!(s.wide_mul_unsigned(u), u.wide_mul_signed(s));
+        assert_eq!(t.wide_mul(u), u.wide_mul(t));
+        assert_eq!(s.wide_mul(v), v.wide_mul(s));
+
+        // +7FFF.FFFF * 8000.0000 = +3FFF_FFFF.8000_0000
+        // 7FFF.FFFF * 8000.0000 = 3FFF_FFFF.8000_0000
+        // +7FFF.FFFF * -8000.0000 = -3FFF_FFFF.8000_0000
+        let s = I16F16::MAX;
+        let u = !(U16F16::MAX >> 1u32);
+        let t = U16F16::from_bits(s.to_bits() as u32);
+        let v = I16F16::from_bits(u.to_bits() as i32);
+        assert_eq!(s.wide_mul_unsigned(u).to_bits(), 0x3FFF_FFFF_8000_0000);
+        assert_eq!(t.wide_mul(u).to_bits(), 0x3FFF_FFFF_8000_0000);
+        assert_eq!(s.wide_mul(v).to_bits(), -0x3FFF_FFFF_8000_0000);
+        assert_eq!(s.wide_mul_unsigned(u), u.wide_mul_signed(s));
+        assert_eq!(t.wide_mul(u), u.wide_mul(t));
+        assert_eq!(s.wide_mul(v), v.wide_mul(s));
+
+        // +7FFF.FFFF * FFFF.FFFF = +7FFF_FFFE.8000_0001
+        // 7FFF.FFFF * FFFF.FFFF = 7FFF_FFFE.8000_0001
+        // +7FFF.FFFF * -0000.0001 = -0000_0000.7FFF_FFFF
+        let s = I16F16::MAX;
+        let u = U16F16::MAX;
+        let t = U16F16::from_bits(s.to_bits() as u32);
+        let v = I16F16::from_bits(u.to_bits() as i32);
+        assert_eq!(s.wide_mul_unsigned(u).to_bits(), 0x7FFF_FFFE_8000_0001);
+        assert_eq!(t.wide_mul(u).to_bits(), 0x7FFF_FFFE_8000_0001);
+        assert_eq!(s.wide_mul(v).to_bits(), -0x0000_0000_7FFF_FFFF);
+        assert_eq!(s.wide_mul_unsigned(u), u.wide_mul_signed(s));
+        assert_eq!(t.wide_mul(u), u.wide_mul(t));
+        assert_eq!(s.wide_mul(v), v.wide_mul(s));
+
+        // -8000.0000 * 7FFF.FFFF = -3FFF_FFFF.8000_0000
+        // 8000.0000 * 7FFF.FFFF = 3FFF_FFFF.8000_0000
+        // -8000.0000 * +7FFF.FFFF = -3FFF_FFFF.8000_0000
+        let s = I16F16::MIN;
+        let u = U16F16::MAX >> 1u32;
+        let t = U16F16::from_bits(s.to_bits() as u32);
+        let v = I16F16::from_bits(u.to_bits() as i32);
+        assert_eq!(s.wide_mul_unsigned(u).to_bits(), -0x3FFF_FFFF_8000_0000);
+        assert_eq!(t.wide_mul(u).to_bits(), 0x3FFF_FFFF_8000_0000);
+        assert_eq!(s.wide_mul(v).to_bits(), -0x3FFF_FFFF_8000_0000);
+        assert_eq!(s.wide_mul_unsigned(u), u.wide_mul_signed(s));
+        assert_eq!(t.wide_mul(u), u.wide_mul(t));
+        assert_eq!(s.wide_mul(v), v.wide_mul(s));
+
+        // -8000.0000 * 8000.0000 = -4000_0000.0000_0000
+        // 8000.0000 * 8000.0000 = 4000_0000.0000_0000
+        // -8000.0000 * -8000.0000 = +4000_0000.0000_0000
+        let s = I16F16::MIN;
+        let u = !(U16F16::MAX >> 1u32);
+        let t = U16F16::from_bits(s.to_bits() as u32);
+        let v = I16F16::from_bits(u.to_bits() as i32);
+        assert_eq!(s.wide_mul_unsigned(u).to_bits(), -0x4000_0000_0000_0000);
+        assert_eq!(t.wide_mul(u).to_bits(), 0x4000_0000_0000_0000);
+        assert_eq!(s.wide_mul(v).to_bits(), 0x4000_0000_0000_0000);
+        assert_eq!(s.wide_mul_unsigned(u), u.wide_mul_signed(s));
+        assert_eq!(t.wide_mul(u), u.wide_mul(t));
+        assert_eq!(s.wide_mul(v), v.wide_mul(s));
+
+        // -8000.0000 * FFFF.FFFF = -7FFF_FFFF.8000_0000
+        // 8000.0000 * FFFF.FFFF = 7FFF_FFFF.8000_0000
+        // -8000.0000 * -0000.0001 = +0000_0000.8000_0000
+        let s = I16F16::MIN;
+        let u = U16F16::MAX;
+        let t = U16F16::from_bits(s.to_bits() as u32);
+        let v = I16F16::from_bits(u.to_bits() as i32);
+        assert_eq!(s.wide_mul_unsigned(u).to_bits(), -0x7FFF_FFFF_8000_0000);
+        assert_eq!(t.wide_mul(u).to_bits(), 0x7FFF_FFFF_8000_0000);
+        assert_eq!(s.wide_mul(v).to_bits(), 0x8000_0000);
+        assert_eq!(s.wide_mul_unsigned(u), u.wide_mul_signed(s));
+        assert_eq!(t.wide_mul(u), u.wide_mul(t));
+        assert_eq!(s.wide_mul(v), v.wide_mul(s));
+
+        // -0000.0001 * 7FFF.FFFF = -0000_0000.7FFF_FFFF
+        // FFFF.FFFF * 7FFF.FFFF = 7FFF_FFFE.8000_0001
+        // -0000.0001 * +7FFF.FFFF = -0000_0000.7FFF_FFFF
+        let s = -I16F16::DELTA;
+        let u = U16F16::MAX >> 1u32;
+        let t = U16F16::from_bits(s.to_bits() as u32);
+        let v = I16F16::from_bits(u.to_bits() as i32);
+        assert_eq!(s.wide_mul_unsigned(u).to_bits(), -0x0000_0000_7FFF_FFFF);
+        assert_eq!(t.wide_mul(u).to_bits(), 0x7FFF_FFFE_8000_0001);
+        assert_eq!(s.wide_mul(v).to_bits(), -0x0000_0000_7FFF_FFFF);
+        assert_eq!(s.wide_mul_unsigned(u), u.wide_mul_signed(s));
+        assert_eq!(t.wide_mul(u), u.wide_mul(t));
+        assert_eq!(s.wide_mul(v), v.wide_mul(s));
+
+        // -0000.0001 * 8000.0000 = -0000_0000.8000_0000
+        // FFFF.FFFF * 8000.0000 = 7FFF_FFFF.8000_0000
+        // -0000.0001 * -8000.0000 = +0000_0000.8000_0000
+        let s = -I16F16::DELTA;
+        let u = !(U16F16::MAX >> 1u32);
+        let t = U16F16::from_bits(s.to_bits() as u32);
+        let v = I16F16::from_bits(u.to_bits() as i32);
+        assert_eq!(s.wide_mul_unsigned(u).to_bits(), -0x0000_0000_8000_0000);
+        assert_eq!(t.wide_mul(u).to_bits(), 0x7FFF_FFFF_8000_0000);
+        assert_eq!(s.wide_mul(v).to_bits(), 0x0000_0000_8000_0000);
+        assert_eq!(s.wide_mul_unsigned(u), u.wide_mul_signed(s));
+        assert_eq!(t.wide_mul(u), u.wide_mul(t));
+        assert_eq!(s.wide_mul(v), v.wide_mul(s));
+
+        // -0000.0001 * FFFF.FFFF = -0000_0000.FFFF_FFFF
+        // FFFF.FFFF * FFFF.FFFF = FFFF_FFFE.0000_0001
+        // -0000.0001 * -0000.0001 = +0000_0000.0000_0001
+        let s = -I16F16::DELTA;
+        let u = U16F16::MAX;
+        let t = U16F16::from_bits(s.to_bits() as u32);
+        let v = I16F16::from_bits(u.to_bits() as i32);
+        assert_eq!(s.wide_mul_unsigned(u).to_bits(), -0x0000_0000_FFFF_FFFF);
+        assert_eq!(t.wide_mul(u).to_bits(), 0xFFFF_FFFE_0000_0001);
+        assert_eq!(s.wide_mul(v).to_bits(), 0x0000_0000_0000_0001);
+        assert_eq!(s.wide_mul_unsigned(u), u.wide_mul_signed(s));
+        assert_eq!(t.wide_mul(u), u.wide_mul(t));
+        assert_eq!(s.wide_mul(v), v.wide_mul(s));
     }
 }
