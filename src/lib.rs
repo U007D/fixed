@@ -401,10 +401,7 @@ use crate::{
     traits::{FromFixed, ToFixed},
     types::extra::{If, True},
 };
-use core::{
-    hash::{Hash, Hasher},
-    mem,
-};
+use core::hash::{Hash, Hasher};
 
 /// A prelude to import useful traits.
 ///
