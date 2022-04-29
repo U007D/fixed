@@ -840,14 +840,14 @@ where
 
     /// The number of integer bits.
     ///
-    /// See also <code>FixedI32::[INT\_NBITS][FixedI32::INT_BITS]</code> and
-    /// <code>FixedU32::[INT\_NBITS][FixedU32::INT_BITS]</code>.
+    /// See also <code>FixedI32::[INT\_BITS][FixedI32::INT_BITS]</code> and
+    /// <code>FixedU32::[INT\_BITS][FixedU32::INT_BITS]</code>.
     const INT_BITS: i32;
 
     /// The number of fractional bits.
     ///
-    /// See also <code>FixedI32::[FRAC\_NBITS][FixedI32::FRAC_BITS]</code> and
-    /// <code>FixedU32::[FRAC\_NBITS][FixedU32::FRAC_BITS]</code>.
+    /// See also <code>FixedI32::[FRAC\_BITS][FixedI32::FRAC_BITS]</code> and
+    /// <code>FixedU32::[FRAC\_BITS][FixedU32::FRAC_BITS]</code>.
     const FRAC_BITS: i32;
 
     /// Creates a fixed-point number that has a bitwise representation

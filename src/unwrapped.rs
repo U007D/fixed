@@ -141,8 +141,8 @@ impl<F: Fixed> Unwrapped<F> {
 
     /// The number of integer bits.
     ///
-    /// See also <code>FixedI32::[INT\_NBITS][FixedI32::INT_BITS]</code> and
-    /// <code>FixedU32::[INT\_NBITS][FixedU32::INT_BITS]</code>.
+    /// See also <code>FixedI32::[INT\_BITS][FixedI32::INT_BITS]</code> and
+    /// <code>FixedU32::[INT\_BITS][FixedU32::INT_BITS]</code>.
     ///
     /// # Examples
     ///
@@ -157,8 +157,8 @@ impl<F: Fixed> Unwrapped<F> {
 
     /// The number of fractional bits.
     ///
-    /// See also <code>FixedI32::[FRAC\_NBITS][FixedI32::FRAC_BITS]</code> and
-    /// <code>FixedU32::[FRAC\_NBITS][FixedU32::FRAC_BITS]</code>.
+    /// See also <code>FixedI32::[FRAC\_BITS][FixedI32::FRAC_BITS]</code> and
+    /// <code>FixedU32::[FRAC\_BITS][FixedU32::FRAC_BITS]</code>.
     ///
     /// # Examples
     ///
