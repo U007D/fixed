@@ -40,7 +40,7 @@ use core::{
     mem::size_of,
     num::{
         NonZeroI128, NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroU128, NonZeroU16,
-        NonZeroU32, NonZeroU64, NonZeroU8,
+        NonZeroU32, NonZeroU64, NonZeroU8, TryFromIntError,
     },
     ops::{
         Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div,
@@ -616,7 +616,7 @@ where
     /// ```
     ///
     /// [`Bits`]: Fixed::Bits
-    type NonZeroBits: TryFrom<Self::Bits>;
+    type NonZeroBits: TryFrom<Self::Bits, Error = TryFromIntError>;
 
     /// An unsigned fixed-point number type with the same number of integer and
     /// fractional bits as `Self`.
