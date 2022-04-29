@@ -1624,7 +1624,11 @@ assert_eq!(Fix::ONE.dist(Fix::from_num(5)), Fix::from_num(4));
                 pub const fn dist(self, other: $Fixed<FRAC>) -> $Fixed<FRAC> {
                     let s = self.to_bits();
                     let o = other.to_bits();
-                    let d = if s < o { o - s } else { s - o };
+                    let d = if_signed_unsigned!(
+                        $Signedness,
+                        if s < o { o - s } else { s - o },
+                        s.abs_diff(o),
+                    );
                     Self::from_bits(d)
                 }
             }
@@ -1653,14 +1657,7 @@ assert_eq!(Fix::MIN.unsigned_dist(Fix::MAX), UFix::MAX);
                     #[inline]
                     #[must_use = "this returns the result of the operation, without modifying the original"]
                     pub const fn unsigned_dist(self, other: $Fixed<FRAC>) -> $UFixed<FRAC> {
-                        let s = self.to_bits();
-                        let o = other.to_bits();
-                        let d = if s < o {
-                            o.wrapping_sub(s)
-                        } else {
-                            s.wrapping_sub(o)
-                        };
-                        $UFixed::from_bits(d as $UInner)
+                        self.abs_diff(other)
                     }
                 }
 
@@ -1723,11 +1720,7 @@ This method is the same as [`dist`] for unsigned fixed-point numbers.
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub const fn abs_diff(self, other: $Fixed<FRAC>) -> $UFixed<FRAC> {
-                    if_signed_unsigned!(
-                        $Signedness,
-                        self.unsigned_dist(other),
-                        self.dist(other),
-                    )
+                    $UFixed::from_bits(self.to_bits().abs_diff(other.to_bits()))
                 }
             }
 
