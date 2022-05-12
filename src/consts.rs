@@ -316,20 +316,6 @@ pub const GAMMA: U0F128 = U0F128::from_bits(0x93C4_67E3_7DB0_C7A4_D1BE_3F81_0152
 // CATALAN = 0.9159655941772190150546035149323841107741...
 pub const CATALAN: U0F128 = U0F128::from_bits(0xEA7C_B89F_409A_E845_2158_22E3_7D32_D0C6);
 
-// helper for associated constant versions
-#[inline]
-pub(crate) const fn shift(src_bits: u128, src_frac: i32, dst_frac: i32) -> u128 {
-    let shift_right = src_frac.saturating_sub(dst_frac);
-    if shift_right < 0 {
-        panic!("overflow");
-    }
-    if shift_right >= 128 {
-        0
-    } else {
-        src_bits >> shift_right
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
