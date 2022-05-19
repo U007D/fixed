@@ -1425,6 +1425,67 @@ assert_eq!(Fix::MAX.mul_add(Fix::from_num(1.5), -Fix::MAX), Fix::MAX / 2);
             }
 
             comment! {
+                "Add the product `a`&nbsp;×&nbsp;`b` to `self`.
+
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "For some cases, the product `a`&nbsp;×&nbsp;`b` would
+overflow on its own, but the final result `self`&nbsp;+&nbsp;`a`&nbsp;×&nbsp;`b`
+is representable; in these cases this method returns the correct result without
+overflow.
+
+",
+                },
+                "The `a` and `b` parameters can have a fixed-point type like
+`self` but with a different number of fractional bits.
+
+# Panics
+
+When debug assertions are enabled, this method panics if the result overflows.
+When debug assertions are not enabled, the wrapped value can be returned, but it
+is not considered a breaking change if in the future it panics; if wrapping is
+required use [`wrapping_add_prod`] instead.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(Fix::from_num(3).add_prod(Fix::from_num(4), Fix::from_num(0.5)), 5);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "// -MAX + MAX × 1.5 = MAX / 2, which does not overflow
+assert_eq!((-Fix::MAX).add_prod(Fix::MAX, Fix::from_num(1.5)), Fix::MAX / 2);
+"
+                },
+                "```
+
+[`wrapping_add_prod`]: Self::wrapping_add_prod
+";
+                #[inline]
+                #[must_use]
+                pub const fn add_prod<const A_FRAC: i32, const B_FRAC: i32>(
+                    self,
+                    a: $Fixed<A_FRAC>,
+                    b: $Fixed<B_FRAC>,
+                ) -> $Fixed<FRAC> {
+                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
+                        a.to_bits(),
+                        b.to_bits(),
+                        self.to_bits(),
+                        arith::saturating_add_sub_i32(A_FRAC, B_FRAC, FRAC),
+                    );
+                    debug_assert!(!overflow, "overflow");
+                    Self::from_bits(ans)
+                }
+            }
+
+            comment! {
                 "Multiply and accumulate. Adds (`a` × `b`) to `self`.
 
 ",
@@ -2414,6 +2475,67 @@ assert_eq!(Fix::MAX.checked_mul_add(Fix::from_num(1.5), -Fix::MAX), Some(Fix::MA
             }
 
             comment! {
+                "Adds the product `a`&nbsp;×&nbsp;`b` to `self`, returning [`None`] on overflow.
+
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "For some cases, the product `a`&nbsp;×&nbsp;`b` would
+overflow on its own, but the final result `self`&nbsp;+&nbsp;`a`&nbsp;×&nbsp;`b`
+is representable; in these cases this method returns the correct result without
+overflow.
+
+",
+                },
+                "The `a` and `b` parameters can have a fixed-point type like
+`self` but with a different number of fractional bits.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(
+    Fix::from_num(3).checked_add_prod(Fix::from_num(4), Fix::from_num(0.5)),
+    Some(Fix::from_num(5))
+);
+assert_eq!(Fix::DELTA.checked_add_prod(Fix::MAX, Fix::ONE), None);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "// -MAX + MAX × 1.5 = MAX / 2, which does not overflow
+assert_eq!(
+    (-Fix::MAX).checked_add_prod(Fix::MAX, Fix::from_num(1.5)),
+    Some(Fix::MAX / 2)
+);
+"
+                },
+                "```
+";
+                #[inline]
+                #[must_use]
+                pub const fn checked_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
+                    self,
+                    a: $Fixed<A_FRAC>,
+                    b: $Fixed<B_FRAC>,
+                ) -> Option<$Fixed<FRAC>> {
+                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
+                        a.to_bits(),
+                        b.to_bits(),
+                        self.to_bits(),
+                        arith::saturating_add_sub_i32(A_FRAC, B_FRAC, FRAC),
+                    );
+                    if overflow {
+                        return None;
+                    }
+                    Some(Self::from_bits(ans))
+                }
+            }
+
+            comment! {
                 r#"Checked multiply and accumulate. Adds (`a` × `b`) to `self`,
 or returns [`None`] on overflow.
 
@@ -3231,6 +3353,76 @@ assert_eq!(Fix::MAX.saturating_mul_add(Fix::from_num(1.5), -Fix::MAX), half_max)
             }
 
             comment! {
+                "Returns `a`&nbsp;×&nbsp;`b` to `self`, saturating on overflow.
+
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "For some cases, the product `a`&nbsp;×&nbsp;`b` would
+overflow on its own, but the final result `self`&nbsp;+&nbsp;`a`&nbsp;×&nbsp;`b`
+is representable; in these cases this method returns the correct result without
+overflow.
+
+",
+                },
+                "The `a` and `b` parameters can have a fixed-point type like
+`self` but with a different number of fractional bits.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(
+    Fix::from_num(3).saturating_add_prod(Fix::from_num(4), Fix::from_num(0.5)),
+    5
+);
+assert_eq!(Fix::ONE.saturating_add_prod(Fix::MAX, Fix::from_num(3)), Fix::MAX);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "// -MAX + MAX × 1.5 = MAX / 2, which does not overflow
+assert_eq!(
+    (-Fix::MAX).saturating_add_prod(Fix::MAX, Fix::from_num(1.5)),
+    Fix::MAX / 2
+);
+"
+                },
+                "```
+";
+                #[inline]
+                #[must_use]
+                pub const fn saturating_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
+                    self,
+                    a: $Fixed<A_FRAC>,
+                    b: $Fixed<B_FRAC>,
+                ) -> $Fixed<FRAC> {
+                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
+                        a.to_bits(),
+                        b.to_bits(),
+                        self.to_bits(),
+                        arith::saturating_add_sub_i32(A_FRAC, B_FRAC, FRAC),
+                    );
+                    if overflow {
+                        if_signed_unsigned!(
+                            $Signedness,
+                            if a.is_negative() != b.is_negative() {
+                                Self::MIN
+                            } else {
+                                Self::MAX
+                            },
+                            Self::MAX,
+                        )
+                    } else {
+                        Self::from_bits(ans)
+                    }
+                }
+            }
+
+            comment! {
                 "Saturating multiply and accumulate. Adds (`a` × `b`) to `self`,
 saturating on overflow.
 
@@ -3853,6 +4045,47 @@ assert_eq!(Fix::MAX.wrapping_mul_add(Fix::from_num(3), Fix::MAX), wrapped);
                         mul.to_bits(),
                         add.to_bits(),
                         MUL_FRAC,
+                    );
+                    Self::from_bits(ans)
+                }
+            }
+
+            comment! {
+                "Returns `a`&nbsp;×&nbsp;`b` to `self`, wrapping on overflow.
+
+The `a` and `b` parameters can have a fixed-point type like `self` but with a
+different number of fractional bits.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(
+    Fix::from_num(3).wrapping_add_prod(Fix::from_num(4), Fix::from_num(0.5)),
+    5
+);
+assert_eq!(
+    Fix::MAX.wrapping_add_prod(Fix::MAX, Fix::from_num(3)),
+    Fix::MAX.wrapping_mul_int(4)
+);
+```
+";
+                #[inline]
+                #[must_use]
+                pub const fn wrapping_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
+                    self,
+                    a: $Fixed<A_FRAC>,
+                    b: $Fixed<B_FRAC>,
+                ) -> $Fixed<FRAC> {
+                    let (ans, _) = arith::$Inner::overflowing_mul_add(
+                        a.to_bits(),
+                        b.to_bits(),
+                        self.to_bits(),
+                        arith::saturating_add_sub_i32(A_FRAC, B_FRAC, FRAC),
                     );
                     Self::from_bits(ans)
                 }
@@ -4646,6 +4879,80 @@ let _overflow = Fix::MAX.unwrapped_mul_add(Fix::ONE, Fix::DELTA);
                         Some(ans) => ans,
                         None => panic!("overflow"),
                     }
+                }
+            }
+
+            comment! {
+                "Returns `a`&nbsp;×&nbsp;`b` to `self`, panicking on overflow.
+
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "For some cases, the product `a`&nbsp;×&nbsp;`b` would
+overflow on its own, but the final result `self`&nbsp;+&nbsp;`a`&nbsp;×&nbsp;`b`
+is representable; in these cases this method returns the correct result without
+overflow.
+
+",
+                },
+                "The `a` and `b` parameters can have a fixed-point type like
+`self` but with a different number of fractional bits.
+
+# Panics
+
+Panics if the result does not fit.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(
+    Fix::from_num(3).unwrapped_add_prod(Fix::from_num(4), Fix::from_num(0.5)),
+    5
+);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "// -MAX + MAX × 1.5 = MAX / 2, which does not overflow
+assert_eq!(
+    (-Fix::MAX).unwrapped_add_prod(Fix::MAX, Fix::from_num(1.5)),
+    Fix::MAX / 2
+);
+"
+                },
+                "```
+
+The following panics because of overflow.
+
+```should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+let _overflow = Fix::DELTA.unwrapped_add_prod(Fix::MAX, Fix::ONE);
+```
+";
+                #[inline]
+                #[must_use]
+                #[track_caller]
+                pub const fn unwrapped_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
+                    self,
+                    a: $Fixed<A_FRAC>,
+                    b: $Fixed<B_FRAC>,
+                ) -> $Fixed<FRAC> {
+                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
+                        a.to_bits(),
+                        b.to_bits(),
+                        self.to_bits(),
+                        arith::saturating_add_sub_i32(A_FRAC, B_FRAC, FRAC),
+                    );
+                    assert!(!overflow, "overflow");
+                    Self::from_bits(ans)
                 }
             }
 
@@ -5632,6 +5939,70 @@ assert_eq!(
                         mul.to_bits(),
                         add.to_bits(),
                         MUL_FRAC,
+                    );
+                    (Self::from_bits(ans), overflow)
+                }
+            }
+
+            comment! {
+                "Adds the product `a`&nbsp;×&nbsp;`b` to `self`.
+
+Returns a [tuple] of the result and a [`bool`] indicating whether an overflow
+has occurred. On overflow, the wrapped value is returned.
+
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "For some cases, the product `a`&nbsp;×&nbsp;`b` would
+overflow on its own, but the final result `self`&nbsp;+&nbsp;`a`&nbsp;×&nbsp;`b`
+is representable; in these cases this method returns the correct result without
+overflow.
+
+",
+                },
+                "The `a` and `b` parameters can have a fixed-point type like
+`self` but with a different number of fractional bits.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<4>;
+assert_eq!(
+    Fix::from_num(3).overflowing_add_prod(Fix::from_num(4), Fix::from_num(0.5)),
+    (Fix::from_num(5), false)
+);
+assert_eq!(
+    Fix::MAX.overflowing_add_prod(Fix::MAX, Fix::from_num(3)),
+    (Fix::MAX.wrapping_mul_int(4), true)
+);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "// -MAX + MAX × 1.5 = MAX / 2, which does not overflow
+assert_eq!(
+    (-Fix::MAX).overflowing_add_prod(Fix::MAX, Fix::from_num(1.5)),
+    (Fix::MAX / 2, false)
+);
+"
+                },
+                "```
+";
+                #[inline]
+                #[must_use]
+                pub const fn overflowing_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
+                    self,
+                    a: $Fixed<A_FRAC>,
+                    b: $Fixed<B_FRAC>,
+                ) -> ($Fixed<FRAC>, bool) {
+                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
+                        a.to_bits(),
+                        b.to_bits(),
+                        self.to_bits(),
+                        arith::saturating_add_sub_i32(A_FRAC, B_FRAC, FRAC),
                     );
                     (Self::from_bits(ans), overflow)
                 }
