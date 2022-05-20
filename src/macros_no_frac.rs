@@ -1425,7 +1425,7 @@ assert_eq!(Fix::MAX.mul_add(Fix::from_num(1.5), -Fix::MAX), Fix::MAX / 2);
             }
 
             comment! {
-                "Add the product `a`&nbsp;×&nbsp;`b` to `self`.
+                "Adds `self` to the product `a`&nbsp;×&nbsp;`b`.
 
 ",
                 if_signed_else_empty_str! {
@@ -2468,7 +2468,7 @@ assert_eq!(Fix::MAX.checked_mul_add(Fix::from_num(1.5), -Fix::MAX), Some(Fix::MA
             }
 
             comment! {
-                "Adds the product `a`&nbsp;×&nbsp;`b` to `self`, returning [`None`] on overflow.
+                "Adds `self` to the product `a`&nbsp;×&nbsp;`b`, returning [`None`] on overflow.
 
 ",
                 if_signed_else_empty_str! {
@@ -3342,7 +3342,7 @@ assert_eq!(Fix::MAX.saturating_mul_add(Fix::from_num(1.5), -Fix::MAX), half_max)
             }
 
             comment! {
-                "Returns `a`&nbsp;×&nbsp;`b` to `self`, saturating on overflow.
+                "Adds `self` to the product `a`&nbsp;×&nbsp;`b`, saturating on overflow.
 
 ",
                 if_signed_else_empty_str! {
@@ -4021,7 +4021,7 @@ assert_eq!(Fix::MAX.wrapping_mul_add(Fix::from_num(3), Fix::MAX), wrapped);
             }
 
             comment! {
-                "Returns `a`&nbsp;×&nbsp;`b` to `self`, wrapping on overflow.
+                "Adds `self` to the product `a`&nbsp;×&nbsp;`b`, wrapping on overflow.
 
 The `a` and `b` parameters can have a fixed-point type like `self` but with a
 different number of fractional bits.
@@ -4847,7 +4847,7 @@ let _overflow = Fix::MAX.unwrapped_mul_add(Fix::ONE, Fix::DELTA);
             }
 
             comment! {
-                "Returns `a`&nbsp;×&nbsp;`b` to `self`, panicking on overflow.
+                "Adds `self` to the product `a`&nbsp;×&nbsp;`b`, panicking on overflow.
 
 ",
                 if_signed_else_empty_str! {
@@ -5902,7 +5902,7 @@ assert_eq!(
             }
 
             comment! {
-                "Adds the product `a`&nbsp;×&nbsp;`b` to `self`.
+                "Adds `self` to the product `a`&nbsp;×&nbsp;`b`.
 
 Returns a [tuple] of the result and a [`bool`] indicating whether an overflow
 has occurred. On overflow, the wrapped value is returned.
