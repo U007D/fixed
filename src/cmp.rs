@@ -687,8 +687,8 @@ mod tests {
     #[test]
     fn cmp_signed() {
         use core::cmp::Ordering::*;
-        let neg1_16 = FixedI32::<16>::from_num(-1);
-        let neg1_20 = FixedI32::<20>::from_num(-1);
+        let neg1_16 = FixedI32::<16>::NEG_ONE;
+        let neg1_20 = FixedI32::<20>::NEG_ONE;
         let mut a = neg1_16;
         let mut b = neg1_20;
         // a = ffff.0000 = -1, b = fff.00000 = -1

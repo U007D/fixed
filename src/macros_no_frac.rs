@@ -1670,7 +1670,7 @@ assert_eq!(Fix::ONE.dist(Fix::from_num(5)), Fix::from_num(4));
 ",
                 if_signed_else_empty_str! {
                     $Signedness;
-                    "assert_eq!(Fix::from_num(-1).dist(Fix::from_num(2)), Fix::from_num(3));
+                    "assert_eq!(Fix::NEG_ONE.dist(Fix::from_num(2)), Fix::from_num(3));
 ",
                 },
                 "```
@@ -1708,7 +1708,7 @@ The distance is the absolute value of the difference.
 use fixed::{", $s_fixed, ", ", $s_ufixed, "};
 type Fix = ", $s_fixed, "<4>;
 type UFix = ", $s_ufixed, "<4>;
-assert_eq!(Fix::from_num(-1).unsigned_dist(Fix::from_num(2)), UFix::from_num(3));
+assert_eq!(Fix::NEG_ONE.unsigned_dist(Fix::from_num(2)), UFix::from_num(3));
 assert_eq!(Fix::MIN.unsigned_dist(Fix::MAX), UFix::MAX);
 ```
 ";
@@ -2862,7 +2862,7 @@ use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(5).checked_signum(), Some(Fix::ONE));
 assert_eq!(Fix::ZERO.checked_signum(), Some(Fix::ZERO));
-assert_eq!(Fix::from_num(-5).checked_signum(), Some(Fix::from_num(-1)));
+assert_eq!(Fix::from_num(-5).checked_signum(), Some(Fix::NEG_ONE));
 
 type OneIntBit = ", $s_fixed, "<", $s_nbits_m1, ">;
 type ZeroIntBits = ", $s_fixed, "<", $s_nbits, ">;
@@ -6264,11 +6264,11 @@ use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(5).overflowing_signum(), (Fix::ONE, false));
 assert_eq!(Fix::ZERO.overflowing_signum(), (Fix::ZERO, false));
-assert_eq!(Fix::from_num(-5).overflowing_signum(), (Fix::from_num(-1), false));
+assert_eq!(Fix::from_num(-5).overflowing_signum(), (Fix::NEG_ONE, false));
 
 type OneIntBit = ", $s_fixed, "<", $s_nbits_m1, ">;
 type ZeroIntBits = ", $s_fixed, "<", $s_nbits, ">;
-assert_eq!(OneIntBit::from_num(0.5).overflowing_signum(), (OneIntBit::from_num(-1), true));
+assert_eq!(OneIntBit::from_num(0.5).overflowing_signum(), (OneIntBit::NEG_ONE, true));
 assert_eq!(ZeroIntBits::from_num(0.25).overflowing_signum(), (ZeroIntBits::ZERO, true));
 assert_eq!(ZeroIntBits::from_num(-0.5).overflowing_signum(), (ZeroIntBits::ZERO, true));
 ```

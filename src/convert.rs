@@ -1717,7 +1717,7 @@ mod tests {
             I8F8::from_bits(-0x013A).to_num::<F128>(),
             F128::from_bits(0xBFFF_3A00_u128 << 96)
         );
-        assert_eq!(I8F8::from_num(-1).to_num::<F128>(), F128::NEG_ONE);
+        assert_eq!(I8F8::NEG_ONE.to_num::<F128>(), F128::NEG_ONE);
         // -0.5 -> sign 1, biased exp 3FFE, mantissa 0
         assert_eq!(
             I8F8::from_num(-0.5).to_num::<F128>(),
