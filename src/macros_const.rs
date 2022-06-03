@@ -41,6 +41,16 @@ macro_rules! fixed_const {
                 const U128_ONE: FixedU128<127> = FixedU128::<127>::DELTA.unwrapped_shl(127);
                 Self::from_const(U128_ONE)
             }
+
+            if_signed! {
+                $Signedness;
+                const fn neg_one() -> $Fixed<FRAC> {
+                    if FRAC >= $nbits {
+                        panic!("overflow");
+                    }
+                    Self::from_bits(if FRAC <= 0 { -1 } else { -1 << FRAC })
+                }
+            }
         }
 
         comment! {
@@ -142,13 +152,15 @@ let _ = Fix::LOG10_2;
         }
 
         comment! {
-            "This block contains constants in the range 0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;1.
+            "This block contains constants in the range 0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;1",
+            if_signed_else_empty_str!{ $Signedness; ", and &minus;1" },
+            ".
 
 These constants are not representable in ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
             " fixed-point numbers with less than ",
-            if_signed_unsigned!($Signedness, "1", "0"),
-            " integer bits.
+            if_signed_unsigned!($Signedness, "1 integer bit", "0 integer bits"),
+            ".
 
 # Examples
 
@@ -180,6 +192,41 @@ let _ = Fix::LN_2;
             where
                 If<{ FRAC <= $nbits_c0 }>: True,
             {
+                if_signed! {
+                    $Signedness;
+                    comment! {
+                        "Negative one.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<", $s_nbits_m1, ">;
+assert_eq!(Fix::NEG_ONE, Fix::from_num(-1));
+```
+
+The following would fail as
+<code>[", $s_fixed, "]&lt;", $s_nbits_m1, "></code>
+cannot represent 1, so there is no
+<code>[", $s_fixed, "]::&lt;", $s_nbits_m1, ">::[ONE]</code>.
+
+[ONE]: ", $s_fixed, "::ONE
+
+```rust,compile_fail
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+const _ERROR: ", $s_fixed, "<", $s_nbits_m1, "> = ", $s_fixed, "::ONE.unwrapped_neg();
+```
+";
+                        pub const NEG_ONE: $Fixed<FRAC> = Self::neg_one();
+                    }
+                }
+
                 /// τ/8 = 0.785398…
                 pub const FRAC_TAU_8: $Fixed<FRAC> = Self::from_const(consts::FRAC_TAU_8);
 
