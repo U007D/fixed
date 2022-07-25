@@ -26,7 +26,7 @@ macro_rules! fixed_const {
         impl<const FRAC: i32> $Fixed<FRAC> {
             const fn from_const<const SRC_FRAC: i32>(src: FixedU128<SRC_FRAC>) -> $Fixed<FRAC> {
                 let shift_right = SRC_FRAC.saturating_sub(FRAC);
-                if shift_right < 0 {
+                if shift_right < if_signed_unsigned!($Signedness, 129, 128) - $nbits {
                     panic!("overflow");
                 }
                 let bits128 = if shift_right >= 128 {
@@ -38,8 +38,10 @@ macro_rules! fixed_const {
             }
 
             const fn one() -> $Fixed<FRAC> {
-                const U128_ONE: FixedU128<127> = FixedU128::<127>::DELTA.unwrapped_shl(127);
-                Self::from_const(U128_ONE)
+                if FRAC >= $nbits - if_signed_unsigned!($Signedness, 1, 0) {
+                    panic!("overflow");
+                }
+                $Fixed::from_bits(if FRAC < 0 { 0 } else { 1 << FRAC })
             }
 
             if_signed! {
@@ -48,7 +50,7 @@ macro_rules! fixed_const {
                     if FRAC >= $nbits {
                         panic!("overflow");
                     }
-                    Self::from_bits(if FRAC <= 0 { -1 } else { -1 << FRAC })
+                    $Fixed::from_bits(if FRAC < 0 { -1 } else { -1 << FRAC })
                 }
             }
         }
