@@ -15,7 +15,7 @@ compiler with the [`generic_const_exprs` feature] enabled. The stable version
 stabilized. See the documentation for [porting from version 1 to version 2].
 
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
-[porting from version 1 to version 2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/index.html#porting-from-version-1-to-version-2
+[porting from version 1 to version 2]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/index.html#porting-from-version-1-to-version-2
 
 The [*fixed* crate] provides fixed-point numbers.
 
@@ -103,7 +103,7 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
-### Version 2.0.0-alpha.3 news (unreleased)
+### Version 2.0.0-alpha.3 news (2022-07-25)
 
   * Version 1.6.1 was merged.
 
@@ -221,7 +221,7 @@ crate, add it as a dependency inside [*Cargo.toml*]:
 
 ```toml
 [dependencies]
-fixed = "2.0.0-alpha.2"
+fixed = "2.0.0-alpha.3"
 ```
 
 This alpha version of the *fixed* crate requires the nightly compiler with the
@@ -251,7 +251,7 @@ To enable features, you can add the dependency like this to [*Cargo.toml*]:
 
 ```toml
 [dependencies.fixed]
-version = "2.0.0-alpha.2"
+version = "2.0.0-alpha.3"
 features = ["serde"]
 ```
 
@@ -292,15 +292,15 @@ To port from version 1 to version 2, the following is required:
     [`FixedStrict`]. For code that uses these trait methods, [`Fixed`] should be
     replaced by [`FixedStrict`].
 
-    [`Fixed`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.Fixed.html
-    [`FixedStrict`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.FixedStrict.html
+    [`Fixed`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/traits/trait.Fixed.html
+    [`FixedStrict`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/traits/trait.FixedStrict.html
 
   * The [`FRAC_NBITS`] and [`INT_NBITS`] associated constants of type [`u32`]
     were replaced by [`FRAC_BITS`] and [`INT_BITS`] of type [`i32`].
 
-    [`FRAC_BITS`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
+    [`FRAC_BITS`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
     [`FRAC_NBITS`]: https://docs.rs/fixed/1/fixed/struct.FixedI32.html#associatedconstant.FRAC_NBITS
-    [`INT_BITS`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
+    [`INT_BITS`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
     [`INT_NBITS`]: https://docs.rs/fixed/1/fixed/struct.FixedI32.html#associatedconstant.INT_NBITS
 
   * The [`F128Bits`] struct has been replaced by [`F128`]. In version 1 the
@@ -310,9 +310,9 @@ To port from version 1 to version 2, the following is required:
     the [`to_bits`] and [`from_bits`] methods.
 
     [`F128Bits`]: https://docs.rs/fixed/1/fixed/struct.F128Bits.html
-    [`F128`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.F128.html
-    [`from_bits`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.F128.html#method.from_bits
-    [`to_bits`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.F128.html#method.to_bits
+    [`F128`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.F128.html
+    [`from_bits`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.F128.html#method.from_bits
+    [`to_bits`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.F128.html#method.to_bits
     [`u128`]: https://doc.rust-lang.org/nightly/core/primitive.u128.html
 
   * The deprecated optional features `az` and `f16` were removed. These features
@@ -346,49 +346,49 @@ shall be dual licensed as above, without any additional terms or conditions.
 [*num-traits* crate]: https://crates.io/crates/num-traits
 [*serde* crate]: https://crates.io/crates/serde
 [CORDIC]: https://en.wikipedia.org/wiki/CORDIC
-[FixedI32]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html
-[FixedU32]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedU32.html
+[FixedI32]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI32.html
+[FixedU32]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedU32.html
 [LICENSE-APACHE]: https://www.apache.org/licenses/LICENSE-2.0
 [LICENSE-MIT]: https://opensource.org/licenses/MIT
 [`Binary`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Binary.html
 [`Display`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Display.html
 [`Error`]: https://doc.rust-lang.org/nightly/std/error/trait.Error.html
-[`FixedI128`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI128.html
-[`FixedI16`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI16.html
-[`FixedI32`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html
-[`FixedI64`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI64.html
-[`FixedI8`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI8.html
-[`FixedU128`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedU128.html
-[`FixedU16`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedU16.html
-[`FixedU32`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedU32.html
-[`FixedU64`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedU64.html
-[`FixedU8`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedU8.html
-[`FromFixed`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.FromFixed.html
+[`FixedI128`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI128.html
+[`FixedI16`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI16.html
+[`FixedI32`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI32.html
+[`FixedI64`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI64.html
+[`FixedI8`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI8.html
+[`FixedU128`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedU128.html
+[`FixedU16`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedU16.html
+[`FixedU32`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedU32.html
+[`FixedU64`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedU64.html
+[`FixedU8`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedU8.html
+[`FromFixed`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/traits/trait.FromFixed.html
 [`FromStr`]: https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html
 [`From`]: https://doc.rust-lang.org/nightly/core/convert/trait.From.html
-[`I20F12`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/types/type.I20F12.html
-[`I4F12`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/types/type.I4F12.html
-[`I4F4`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/types/type.I4F4.html
+[`I20F12`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/types/type.I20F12.html
+[`I4F12`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/types/type.I4F12.html
+[`I4F4`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/types/type.I4F4.html
 [`Into`]: https://doc.rust-lang.org/nightly/core/convert/trait.Into.html
-[`LosslessTryFrom`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.LosslessTryFrom.html
-[`LosslessTryInto`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.LosslessTryInto.html
-[`LossyFrom`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.LossyFrom.html
-[`LossyInto`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.LossyInto.html
+[`LosslessTryFrom`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/traits/trait.LosslessTryFrom.html
+[`LosslessTryInto`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/traits/trait.LosslessTryInto.html
+[`LossyFrom`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/traits/trait.LossyFrom.html
+[`LossyInto`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/traits/trait.LossyInto.html
 [`LowerHex`]: https://doc.rust-lang.org/nightly/core/fmt/trait.LowerHex.html
 [`Octal`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Octal.html
-[`ParseFixedError`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.ParseFixedError.html
-[`ToFixed`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.ToFixed.html
-[`U20F12`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/types/type.U20F12.html
+[`ParseFixedError`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.ParseFixedError.html
+[`ToFixed`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/traits/trait.ToFixed.html
+[`U20F12`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/types/type.U20F12.html
 [`UpperHex`]: https://doc.rust-lang.org/nightly/core/fmt/trait.UpperHex.html
 [`az`]: https://docs.rs/az/^1/az/index.html
 [`bf16`]: https://docs.rs/half/^1/half/struct.bf16.html
 [`bytemuck`]: https://docs.rs/bytemuck/^1/bytemuck/index.html
-[`checked_from_num`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_from_num
+[`checked_from_num`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI32.html#method.checked_from_num
 [`f16`]: https://docs.rs/half/^1/half/struct.f16.html
-[`from_num`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.from_num
-[`from_str_binary`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.from_str_binary
-[`from_str_hex`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.from_str_hex
-[`from_str_octal`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.from_str_octal
+[`from_num`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI32.html#method.from_num
+[`from_str_binary`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI32.html#method.from_str_binary
+[`from_str_hex`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI32.html#method.from_str_hex
+[`from_str_octal`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI32.html#method.from_str_octal
 [`i32`]: https://doc.rust-lang.org/nightly/core/primitive.i32.html
-[`to_num`]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.to_num
+[`to_num`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.FixedI32.html#method.to_num
 [`u32`]: https://doc.rust-lang.org/nightly/core/primitive.u32.html

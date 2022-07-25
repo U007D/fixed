@@ -5,7 +5,7 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-Version 2.0.0-alpha.3 (unreleased)
+Version 2.0.0-alpha.3 (2022-07-25)
 ==================================
 
   * Version 1.6.1 was merged.
