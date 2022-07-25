@@ -8,50 +8,11 @@ as-is, without any warranty. -->
 Version 2.0.0-alpha.3 (unreleased)
 ==================================
 
-  * The following methods are now `const` functions:
-      * [`wide_mul_unsigned`][f-wmu-2-0a3], [`wide_sdiv`][f-ws-2-0a3],
-        [`wide_div_unsigned`][f-wdu-2-0a3]
-      * [`wide_mul_signed`][f-wms-2-0a3], [`wide_sdiv_signed`][f-wss-2-0a3]
-
-[f-wdu-2-0a3]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_div_unsigned
-[f-wms-2-0a3]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedU32.html#method.wide_mul_signed
-[f-wmu-2-0a3]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_mul_unsigned
-[f-ws-2-0a3]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wide_sdiv
-[f-wss-2-0a3]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedU32.html#method.wide_sdiv_signed
+  * Version 1.6.1 was merged.
 
 Version 2.0.0-alpha.2 (2022-03-04)
 ==================================
 
-  * The following methods are now `const` functions:
-      * [`int`][f-i-2-0a2], [`frac`][f-fr-2-0a2], [`round_to_zero`][f-rtz-2-0a2]
-      * [`ceil`][f-c-2-0a2], [`checked_ceil`][f-cc-2-0a2],
-        [`saturating_ceil`][f-sc-2-0a2], [`wrapping_ceil`][f-wc-2-0a2],
-        [`unwrapped_ceil`][f-uc-2-0a2], [`overflowing_ceil`][f-oc-2-0a2],
-      * [`floor`][f-f-2-0a2], [`checked_floor`][f-cf-2-0a2],
-        [`saturating_floor`][f-sf-2-0a2], [`wrapping_floor`][f-wf-2-0a2],
-        [`unwrapped_floor`][f-uf-2-0a2], [`overflowing_floor`][f-of-2-0a2],
-      * [`round`][f-r-2-0a2], [`checked_round`][f-cr-2-0a2],
-        [`saturating_round`][f-sr-2-0a2], [`wrapping_round`][f-wr-2-0a2],
-        [`unwrapped_round`][f-ur-2-0a2], [`overflowing_round`][f-or-2-0a2],
-      * [`round_ties_to_even`][f-rtte-2-0a2],
-        [`checked_round_ties_to_even`][f-crtte-2-0a2],
-        [`saturating_round_ties_to_even`][f-srtte-2-0a2],
-        [`wrapping_round_ties_to_even`][f-wrtte-2-0a2],
-        [`unwrapped_round_ties_to_even`][f-urtte-2-0a2],
-        [`overflowing_round_ties_to_even`][f-ortte-2-0a2],
-      * [`int_log2`][f-il2-2-0a2], [`checked_int_log2`][f-cil2-2-0a2],
-        [`int_log10`][f-il10-2-0a2], [`checked_int_log2`][f-cil10-2-0a2]
-      * [`wide_mul`][f-wim-2-0a2], [`wide_div`][f-wd-2-0a2],
-      * [`checked_mul`][f-cm-2-0a2], [`saturating_mul`][f-sm-2-0a2],
-        [`wrapping_mul`][f-wm-2-0a2], [`unwrapped_mul`][f-um-2-0a2],
-        [`overflowing_mul`][f-om-2-0a2],
-      * [`mul_add`][f-ma-2-0a2], [`checked_mul_add`][f-cma-2-0a2],
-        [`saturating_mul_add`][f-sma-2-0a2], [`wrapping_mul_add`][f-wma-2-0a2],
-        [`unwrapped_mul_add`][f-uma-2-0a2],
-        [`overflowing_mul_add`][f-oma-2-0a2],
-      * [`signum`][f-s-2-0a2], [`checked_signum`][f-cs-2-0a2],
-        [`saturating_signum`][f-ss-2-0a2], [`wrapping_signum`][f-ws-2-0a2],
-        [`unwrapped_signum`][f-us-2-0a2], [`overflowing_signum`][f-os-2-0a2],
   * The [`Fixed`][tf-2-0a2] trait constraints have been relaxed, and the methods
     which needed the strict constraints have been moved to the subtrait
     [`FixedStrict`][tfs-2-0a2].
@@ -59,56 +20,6 @@ Version 2.0.0-alpha.2 (2022-03-04)
     floating-point ordering and various classification methods and associated
     constants.
 
-[f-c-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.ceil
-[f-cc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_ceil
-[f-cf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_floor
-[f-cil10-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_int_log10
-[f-cil2-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_int_log2
-[f-cm-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_mul
-[f-cma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_mul_add
-[f-cr-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_round
-[f-crtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_round_ties_to_even
-[f-cs-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.checked_signum
-[f-f-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.floor
-[f-fr-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.frac
-[f-i-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.int
-[f-il10-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.int_log10
-[f-il2-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.int_log2
-[f-ma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.mul_add
-[f-oc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_ceil
-[f-of-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_floor
-[f-om-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_mul
-[f-oma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_mul_add
-[f-or-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_round
-[f-ortte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_round_ties_to_even
-[f-os-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.overflowing_signum
-[f-r-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.round
-[f-rtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.round_ties_to_even
-[f-rtz-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.round_to_zero
-[f-s-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.signum
-[f-sc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_ceil
-[f-sf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_floor
-[f-sm-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_mul
-[f-sma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_mul_add
-[f-sr-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_round
-[f-srtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_round_ties_to_even
-[f-ss-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.saturating_signum
-[f-uc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_ceil
-[f-uf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_floor
-[f-um-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_mul
-[f-uma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_mul_add
-[f-ur-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_round
-[f-urtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_round_ties_to_even
-[f-us-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.unwrapped_signum
-[f-wc-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_ceil
-[f-wd-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wide_div
-[f-wf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_floor
-[f-wim-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wide_mul
-[f-wm-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_mul
-[f-wma-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_mul_add
-[f-wr-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_round
-[f-wrtte-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_round_ties_to_even
-[f-ws-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.FixedI32.html#method.wrapping_signum
 [f128-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.F128.html
 [tf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.Fixed.html
 [tfs-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.FixedStrict.html
@@ -128,6 +39,129 @@ Version 2.0.0-alpha.1 (2022-02-26)
 [f-fb-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
 [f-ib-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
+
+Version 1.16.1 (2022-07-22)
+===========================
+
+  * *Cargo.toml* now includes the [`rust-version`] field ([merge request 11]).
+
+Version 1.16.0 (2022-06-30)
+===========================
+
+  * The crate now requires rustc version 1.61.0 or later.
+  * The [`NEG_ONE`][f-no-1-16] constant was added to all signed fixed-point
+    numbers that can represent the value &minus;1.
+  * The [`add_prod`][f-ap-1-16] method was added to all fixed-point numbers, to
+    the [`Fixed`][tf-1-16] trait, and to the [`Wrapping`][w-1-16] and
+    [`Unwrapped`][u-1-16] wrappers.
+  * The following methods were added to all fixed-point numbers and to the
+    [`Fixed`][tf-1-16] trait:
+      * [`checked_add_prod`][f-cap-1-16],
+        [`saturating_add_prod`][f-sap-1-16],
+        [`wrapping_add_prod`][f-wap-1-16],
+        [`unwrapped_add_prod`][f-uap-1-16],
+        [`overflowing_add_prod`][f-oap-1-16]
+  * The following methods are now `const` functions:
+      * [`int`][f-i-1-16], [`frac`][f-fr-1-16], [`round_to_zero`][f-rtz-1-16]
+      * [`ceil`][f-c-1-16], [`checked_ceil`][f-cc-1-16],
+        [`saturating_ceil`][f-sc-1-16], [`wrapping_ceil`][f-wc-1-16],
+        [`unwrapped_ceil`][f-uc-1-16], [`overflowing_ceil`][f-oc-1-16]
+      * [`floor`][f-f-1-16], [`checked_floor`][f-cf-1-16],
+        [`saturating_floor`][f-sf-1-16], [`wrapping_floor`][f-wf-1-16],
+        [`unwrapped_floor`][f-uf-1-16], [`overflowing_floor`][f-of-1-16]
+      * [`round`][f-r-1-16], [`checked_round`][f-cr-1-16],
+        [`saturating_round`][f-sr-1-16], [`wrapping_round`][f-wr-1-16],
+        [`unwrapped_round`][f-ur-1-16], [`overflowing_round`][f-or-1-16]
+      * [`round_ties_to_even`][f-rtte-1-16],
+        [`checked_round_ties_to_even`][f-crtte-1-16],
+        [`saturating_round_ties_to_even`][f-srtte-1-16],
+        [`wrapping_round_ties_to_even`][f-wrtte-1-16],
+        [`unwrapped_round_ties_to_even`][f-urtte-1-16],
+        [`overflowing_round_ties_to_even`][f-ortte-1-16]
+      * [`int_log2`][f-il2-1-16], [`checked_int_log2`][f-cil2-1-16],
+        [`int_log10`][f-il10-1-16], [`checked_int_log2`][f-cil10-1-16]
+      * [`wide_mul`][f-wim-1-16], [`wide_mul_unsigned`][f-wmu-1-16],
+        [`wide_mul_signed`][f-wms-1-16]
+      * [`wide_div`][f-wd-1-16], [`wide_sdiv`][f-ws-1-16],
+        [`wide_div_unsigned`][f-wdu-1-16], [`wide_sdiv_signed`][f-wss-1-16]
+      * [`checked_mul`][f-cm-1-16], [`saturating_mul`][f-sm-1-16],
+        [`wrapping_mul`][f-wm-1-16], [`unwrapped_mul`][f-um-1-16],
+        [`overflowing_mul`][f-om-1-16]
+      * [`mul_add`][f-ma-1-16], [`checked_mul_add`][f-cma-1-16],
+        [`saturating_mul_add`][f-sma-1-16], [`wrapping_mul_add`][f-wma-1-16],
+        [`unwrapped_mul_add`][f-uma-1-16],
+        [`overflowing_mul_add`][f-oma-1-16]
+      * [`signum`][f-s-1-16], [`checked_signum`][f-cs-1-16],
+        [`saturating_signum`][f-ss-1-16], [`wrapping_signum`][f-ws-1-16],
+        [`unwrapped_signum`][f-us-1-16], [`overflowing_signum`][f-os-1-16]
+
+[f-ap-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.add_prod
+[f-c-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.ceil
+[f-cap-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.checked_add_prod
+[f-cc-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.checked_ceil
+[f-cf-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.checked_floor
+[f-cil10-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.checked_int_log10
+[f-cil2-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.checked_int_log2
+[f-cm-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.checked_mul
+[f-cma-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.checked_mul_add
+[f-cr-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.checked_round
+[f-crtte-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.checked_round_ties_to_even
+[f-cs-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.checked_signum
+[f-f-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.floor
+[f-fr-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.frac
+[f-i-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.int
+[f-il10-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.int_log10
+[f-il2-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.int_log2
+[f-ma-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.mul_add
+[f-no-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#associatedconstant.NEG_ONE
+[f-oap-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.overflowing_add_prod
+[f-oc-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.overflowing_ceil
+[f-of-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.overflowing_floor
+[f-om-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.overflowing_mul
+[f-oma-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.overflowing_mul_add
+[f-or-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.overflowing_round
+[f-ortte-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.overflowing_round_ties_to_even
+[f-os-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.overflowing_signum
+[f-r-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.round
+[f-rtte-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.round_ties_to_even
+[f-rtz-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.round_to_zero
+[f-rtz-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.round_to_zero
+[f-s-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.signum
+[f-sap-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.saturating_add_prod
+[f-sc-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.saturating_ceil
+[f-sf-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.saturating_floor
+[f-sm-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.saturating_mul
+[f-sma-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.saturating_mul_add
+[f-sr-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.saturating_round
+[f-srtte-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.saturating_round_ties_to_even
+[f-ss-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.saturating_signum
+[f-uap-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.unwrapped_add_prod
+[f-uc-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.unwrapped_ceil
+[f-uf-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.unwrapped_floor
+[f-um-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.unwrapped_mul
+[f-uma-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.unwrapped_mul_add
+[f-ur-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.unwrapped_round
+[f-urtte-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.unwrapped_round_ties_to_even
+[f-us-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.unwrapped_signum
+[f-wap-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.wrapping_add_prod
+[f-wc-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.wrapping_ceil
+[f-wd-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.wide_div
+[f-wdu-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.wide_div_unsigned
+[f-wf-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.wrapping_floor
+[f-wim-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.wide_mul
+[f-wm-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.wrapping_mul
+[f-wma-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.wrapping_mul_add
+[f-wms-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedU32.html#method.wide_mul_signed
+[f-wmu-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.wide_mul_unsigned
+[f-wr-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.wrapping_round
+[f-wrtte-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.wrapping_round_ties_to_even
+[f-ws-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.wide_sdiv
+[f-ws-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedI32.html#method.wrapping_signum
+[f-wss-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.FixedU32.html#method.wide_sdiv_signed
+[merge request 11]: https://gitlab.com/tspiteri/fixed/-/merge_requests/11
+[tf-1-16]: https://docs.rs/fixed/~1.16/fixed/traits/trait.Fixed.html
+[u-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.Unwrapped.html
+[w-1-16]: https://docs.rs/fixed/~1.16/fixed/struct.Wrapping.html
 
 Version 1.15.0 (2022-04-28)
 ===========================
@@ -1092,3 +1126,4 @@ Version 0.1.0 (2018-08-10)
 [`Rem`]: https://doc.rust-lang.org/nightly/core/ops/trait.Rem.html
 [`SubAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.SubAssign.html
 [`Sum`]: https://doc.rust-lang.org/nightly/core/iter/trait.Sum.html
+[`rust-version`]: https://doc.rust-lang.org/nightly/cargo/reference/manifest.html#the-rust-version-field
