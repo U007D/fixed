@@ -8,7 +8,7 @@ as-is, without any warranty. -->
 Version 2.0.0-alpha.3 (2022-07-25)
 ==================================
 
-  * Version 1.6.1 was merged.
+  * Version 1.16.1 was merged.
 
 Version 2.0.0-alpha.2 (2022-03-04)
 ==================================
