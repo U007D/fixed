@@ -27,6 +27,40 @@ macro_rules! fixed_frac {
         where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
+            comment! {
+                "Parses a string slice containing decimal digits to return a fixed-point number.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
+// 1.75 is 1.11 in binary
+let f = Fix::from_str("1.75");
+let check = Fix::from_bits(0b111 << (4 - 2));
+assert_eq!(f, Ok(check));
+"#,
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    r#"let neg = Fix::from_str("-1.75");
+assert_eq!(neg, Ok(-check));
+"#,
+                },
+                "```
+";
+                #[inline]
+                pub const fn from_str(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                    match from_str::$Inner::from_str_radix(src, 10, FRAC as u32) {
+                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Err(e) => Err(e),
+                    }
+                }
+            }
 
             comment! {
                 "Parses a string slice containing binary digits to return a fixed-point number.
@@ -55,8 +89,11 @@ assert_eq!(neg, Ok(-check));
                 "```
 ";
                 #[inline]
-                pub fn from_str_binary(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
-                    FromStrRadix::from_str_radix(src, 2)
+                pub const fn from_str_binary(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                    match from_str::$Inner::from_str_radix(src, 2, FRAC as u32) {
+                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -87,8 +124,11 @@ assert_eq!(neg, Ok(-check));
                 "```
 ";
                 #[inline]
-                pub fn from_str_octal(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
-                    FromStrRadix::from_str_radix(src, 8)
+                pub const fn from_str_octal(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                    match from_str::$Inner::from_str_radix(src, 8, FRAC as u32) {
+                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -119,8 +159,11 @@ assert_eq!(neg, Ok(-check));
                 "```
 ";
                 #[inline]
-                pub fn from_str_hex(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
-                    FromStrRadix::from_str_radix(src, 16)
+                pub const fn from_str_hex(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                    match from_str::$Inner::from_str_radix(src, 16, FRAC as u32) {
+                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -151,8 +194,13 @@ assert_eq!(U8F8::saturating_from_str("-1"), Ok(U8F8::ZERO));
                 "```
 ";
                 #[inline]
-                pub fn saturating_from_str(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
-                    FromStrRadix::saturating_from_str_radix(src, 10)
+                pub const fn saturating_from_str(
+                    src: &str,
+                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                    match from_str::$Inner::saturating_from_str_radix(src, 10, FRAC as u32) {
+                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -183,8 +231,13 @@ assert_eq!(U8F8::saturating_from_str_binary("-1"), Ok(U8F8::ZERO));
                 "```
 ";
                 #[inline]
-                pub fn saturating_from_str_binary(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
-                    FromStrRadix::saturating_from_str_radix(src, 2)
+                pub const fn saturating_from_str_binary(
+                    src: &str,
+                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                    match from_str::$Inner::saturating_from_str_radix(src, 2, FRAC as u32) {
+                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -215,8 +268,13 @@ assert_eq!(U8F8::saturating_from_str_octal("-1"), Ok(U8F8::ZERO));
                 "```
 ";
                 #[inline]
-                pub fn saturating_from_str_octal(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
-                    FromStrRadix::saturating_from_str_radix(src, 8)
+                pub const fn saturating_from_str_octal(
+                    src: &str,
+                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                    match from_str::$Inner::saturating_from_str_radix(src, 8, FRAC as u32) {
+                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -247,8 +305,13 @@ assert_eq!(U8F8::saturating_from_str_hex("-1"), Ok(U8F8::ZERO));
                 "```
 ";
                 #[inline]
-                pub fn saturating_from_str_hex(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
-                    FromStrRadix::saturating_from_str_radix(src, 16)
+                pub const fn saturating_from_str_hex(
+                    src: &str,
+                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                    match from_str::$Inner::saturating_from_str_radix(src, 16, FRAC as u32) {
+                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -281,8 +344,11 @@ assert_eq!(U8F8::wrapping_from_str("-9999.5"), Ok(U8F8::from_num(240.5)));
                 "```
 ";
                 #[inline]
-                pub fn wrapping_from_str(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
-                    FromStrRadix::wrapping_from_str_radix(src, 10)
+                pub const fn wrapping_from_str(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                    match from_str::$Inner::wrapping_from_str_radix(src, 10, FRAC as u32) {
+                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -315,8 +381,13 @@ assert_eq!(U8F8::wrapping_from_str_binary("-101100111000.1"), Ok(check.wrapping_
                 "```
 ";
                 #[inline]
-                pub fn wrapping_from_str_binary(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
-                    FromStrRadix::wrapping_from_str_radix(src, 2)
+                pub const fn wrapping_from_str_binary(
+                    src: &str,
+                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                    match from_str::$Inner::wrapping_from_str_radix(src, 2, FRAC as u32) {
+                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -349,8 +420,13 @@ assert_eq!(U8F8::wrapping_from_str_octal("-7165.4"), Ok(check.wrapping_neg()));
                 "```
 ";
                 #[inline]
-                pub fn wrapping_from_str_octal(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
-                    FromStrRadix::wrapping_from_str_radix(src, 8)
+                pub const fn wrapping_from_str_octal(
+                    src: &str,
+                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                    match from_str::$Inner::wrapping_from_str_radix(src, 8, FRAC as u32) {
+                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -383,8 +459,13 @@ assert_eq!(U8F8::wrapping_from_str_hex("-C0F.FE"), Ok(check.wrapping_neg()));
                 "```
 ";
                 #[inline]
-                pub fn wrapping_from_str_hex(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
-                    FromStrRadix::wrapping_from_str_radix(src, 16)
+                pub const fn wrapping_from_str_hex(
+                    src: &str,
+                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                    match from_str::$Inner::wrapping_from_str_radix(src, 16, FRAC as u32) {
+                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -420,10 +501,13 @@ assert_eq!(U8F8::overflowing_from_str("9999.5"), Ok((U8F8::from_num(15.5), true)
                 "```
 ";
                 #[inline]
-                pub fn overflowing_from_str(
+                pub const fn overflowing_from_str(
                     src: &str,
                 ) -> Result<($Fixed<FRAC>, bool), ParseFixedError> {
-                    FromStrRadix::overflowing_from_str_radix(src, 10)
+                    match from_str::$Inner::overflowing_from_str_radix(src, 10, FRAC as u32) {
+                        Ok((bits, overflow)) => Ok(($Fixed::from_bits(bits), overflow)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -459,10 +543,13 @@ assert_eq!(U8F8::overflowing_from_str_binary("101100111000.1"), Ok((check, true)
                 "```
 ";
                 #[inline]
-                pub fn overflowing_from_str_binary(
+                pub const fn overflowing_from_str_binary(
                     src: &str,
                 ) -> Result<($Fixed<FRAC>, bool), ParseFixedError> {
-                    FromStrRadix::overflowing_from_str_radix(src, 2)
+                    match from_str::$Inner::overflowing_from_str_radix(src, 2, FRAC as u32) {
+                        Ok((bits, overflow)) => Ok(($Fixed::from_bits(bits), overflow)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -498,10 +585,13 @@ assert_eq!(U8F8::overflowing_from_str_octal("7165.4"), Ok((check, true)));
                 "```
 ";
                 #[inline]
-                pub fn overflowing_from_str_octal(
+                pub const fn overflowing_from_str_octal(
                     src: &str,
                 ) -> Result<($Fixed<FRAC>, bool), ParseFixedError> {
-                    FromStrRadix::overflowing_from_str_radix(src, 8)
+                    match from_str::$Inner::overflowing_from_str_radix(src, 8, FRAC as u32) {
+                        Ok((bits, overflow)) => Ok(($Fixed::from_bits(bits), overflow)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 
@@ -537,10 +627,13 @@ assert_eq!(U8F8::overflowing_from_str_hex("C0F.FE"), Ok((check, true)));
                 "```
 ";
                 #[inline]
-                pub fn overflowing_from_str_hex(
+                pub const fn overflowing_from_str_hex(
                     src: &str,
                 ) -> Result<($Fixed<FRAC>, bool), ParseFixedError> {
-                    FromStrRadix::overflowing_from_str_radix(src, 16)
+                    match from_str::$Inner::overflowing_from_str_radix(src, 16, FRAC as u32) {
+                        Ok((bits, overflow)) => Ok(($Fixed::from_bits(bits), overflow)),
+                        Err(e) => Err(e),
+                    }
                 }
             }
 

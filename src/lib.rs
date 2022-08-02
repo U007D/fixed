@@ -397,7 +397,6 @@ mod wrapping;
 pub use crate::impl_num_traits::RadixParseFixedError;
 pub use crate::{f128::F128, from_str::ParseFixedError, unwrapped::Unwrapped, wrapping::Wrapping};
 use crate::{
-    from_str::FromStrRadix,
     traits::{FromFixed, ToFixed},
     types::extra::{If, True},
 };
