@@ -470,6 +470,186 @@ assert_eq!(U8F8::wrapping_from_str_hex("-C0F.FE"), Ok(check.wrapping_neg()));
             }
 
             comment! {
+                "Parses a string slice containing decimal digits to return a fixed-point number,
+panicking on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Panics
+
+Panics if the value does not fit or if there is a parsing error.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
+// 1.75 is 1.11 in binary
+let f = Fix::unwrapped_from_str("1.75");
+assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
+```
+
+The following panics because of a parsing error.
+
+```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::"#, $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
+let _error = Fix::unwrapped_from_str("1.75.");
+```
+"#;
+                #[inline]
+                #[track_caller]
+                #[must_use]
+                pub const fn unwrapped_from_str(src: &str) -> $Fixed<FRAC> {
+                    match $Fixed::from_str(src) {
+                        Ok(o) => o,
+                        Err(e) => e.panic(),
+                    }
+                }
+            }
+
+            comment! {
+                "Parses a string slice containing binary digits to return a fixed-point number,
+panicking on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Panics
+
+Panics if the value does not fit or if there is a parsing error.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
+// 1.75 is 1.11 in binary
+let f = Fix::unwrapped_from_str_binary("1.11");
+assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
+```
+
+The following panics because of a parsing error.
+
+```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::"#, $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
+let _error = Fix::unwrapped_from_str_binary("1.2");
+```
+"#;
+                #[inline]
+                #[track_caller]
+                #[must_use]
+                pub const fn unwrapped_from_str_binary(src: &str) -> $Fixed<FRAC> {
+                    match $Fixed::from_str_binary(src) {
+                        Ok(o) => o,
+                        Err(e) => e.panic(),
+                    }
+                }
+            }
+
+            comment! {
+                "Parses a string slice containing octal digits to return a fixed-point number,
+panicking on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Panics
+
+Panics if the value does not fit or if there is a parsing error.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
+// 1.75 is 1.11 in binary, 1.6 in octal
+let f = Fix::unwrapped_from_str_octal("1.6");
+assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
+```
+
+The following panics because of a parsing error.
+
+```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::"#, $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
+let _error = Fix::unwrapped_from_str_octal("1.8");
+```
+"#;
+                #[inline]
+                #[track_caller]
+                #[must_use]
+                pub const fn unwrapped_from_str_octal(src: &str) -> $Fixed<FRAC> {
+                    match $Fixed::from_str_octal(src) {
+                        Ok(o) => o,
+                        Err(e) => e.panic(),
+                    }
+                }
+            }
+
+            comment! {
+                "Parses a string slice containing hexadecimal digits to return a fixed-point number,
+wrapping on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Panics
+
+Panics if the value does not fit or if there is a parsing error.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
+// 1.75 is 1.11 in binary, 1.C in hexadecimal
+let f = Fix::unwrapped_from_str_hex("1.C");
+assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
+```
+
+The following panics because of a parsing error.
+
+```rust,should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::"#, $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
+let _error = Fix::unwrapped_from_str_hex("1.G");
+```
+"#;
+                #[inline]
+                #[track_caller]
+                #[must_use]
+                pub const fn unwrapped_from_str_hex(src: &str) -> $Fixed<FRAC> {
+                    match $Fixed::from_str_hex(src) {
+                        Ok(o) => o,
+                        Err(e) => e.panic(),
+                    }
+                }
+            }
+
+            comment! {
                 "Parses a string slice containing decimal digits to return a fixed-point number.
 
 Returns a [tuple] of the fixed-point number and a [`bool`] indicating
