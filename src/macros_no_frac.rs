@@ -1910,7 +1910,7 @@ assert_eq!(Fix::from_num(5).inv_lerp::<4>(start, end), 2);
 [`wrapping_inv_lerp`]: Self::wrapping_inv_lerp
 ";
                 #[inline]
-                pub fn inv_lerp<const RET_FRAC: i32>(
+                pub const fn inv_lerp<const RET_FRAC: i32>(
                     self,
                     start: $Fixed<FRAC>,
                     end: $Fixed<FRAC>,
@@ -2953,7 +2953,7 @@ assert_eq!(Fix::MAX.checked_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5)), None);
 ```
 ";
                 #[inline]
-                pub fn checked_inv_lerp<const RET_FRAC: i32>(
+                pub const fn checked_inv_lerp<const RET_FRAC: i32>(
                     self,
                     start: $Fixed<FRAC>,
                     end: $Fixed<FRAC>,
@@ -3716,7 +3716,7 @@ assert_eq!(Fix::MAX.saturating_inv_lerp::<4>(Fix::from_num(0.5), Fix::ZERO), Fix
 ```
 ";
                 #[inline]
-                pub fn saturating_inv_lerp<const RET_FRAC: i32>(
+                pub const fn saturating_inv_lerp<const RET_FRAC: i32>(
                     self,
                     start: $Fixed<FRAC>,
                     end: $Fixed<FRAC>,
@@ -4398,7 +4398,7 @@ assert_eq!(
 ```
 ";
                 #[inline]
-                pub fn wrapping_inv_lerp<const RET_FRAC: i32>(
+                pub const fn wrapping_inv_lerp<const RET_FRAC: i32>(
                     self,
                     start: $Fixed<FRAC>,
                     end: $Fixed<FRAC>,
@@ -5479,7 +5479,7 @@ let _overflow = Fix::MAX.unwrapped_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5));
 ```
 ";
                 #[inline]
-                pub fn unwrapped_inv_lerp<const RET_FRAC: i32>(
+                pub const fn unwrapped_inv_lerp<const RET_FRAC: i32>(
                     self,
                     start: $Fixed<FRAC>,
                     end: $Fixed<FRAC>,
@@ -6431,7 +6431,7 @@ assert_eq!(
 ```
 ";
                 #[inline]
-                pub fn overflowing_inv_lerp<const RET_FRAC: i32>(
+                pub const fn overflowing_inv_lerp<const RET_FRAC: i32>(
                     self,
                     start: $Fixed<FRAC>,
                     end: $Fixed<FRAC>,
