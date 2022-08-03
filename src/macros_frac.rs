@@ -509,7 +509,7 @@ let _error = Fix::unwrapped_from_str("1.75.");
                 pub const fn unwrapped_from_str(src: &str) -> $Fixed<FRAC> {
                     match $Fixed::from_str(src) {
                         Ok(o) => o,
-                        Err(e) => e.panic(),
+                        Err(e) => panic!("{}", e.message()),
                     }
                 }
             }
@@ -554,7 +554,7 @@ let _error = Fix::unwrapped_from_str_binary("1.2");
                 pub const fn unwrapped_from_str_binary(src: &str) -> $Fixed<FRAC> {
                     match $Fixed::from_str_binary(src) {
                         Ok(o) => o,
-                        Err(e) => e.panic(),
+                        Err(e) => panic!("{}", e.message()),
                     }
                 }
             }
@@ -599,7 +599,7 @@ let _error = Fix::unwrapped_from_str_octal("1.8");
                 pub const fn unwrapped_from_str_octal(src: &str) -> $Fixed<FRAC> {
                     match $Fixed::from_str_octal(src) {
                         Ok(o) => o,
-                        Err(e) => e.panic(),
+                        Err(e) => panic!("{}", e.message()),
                     }
                 }
             }
@@ -644,7 +644,7 @@ let _error = Fix::unwrapped_from_str_hex("1.G");
                 pub const fn unwrapped_from_str_hex(src: &str) -> $Fixed<FRAC> {
                     match $Fixed::from_str_hex(src) {
                         Ok(o) => o,
-                        Err(e) => e.panic(),
+                        Err(e) => panic!("{}", e.message()),
                     }
                 }
             }
