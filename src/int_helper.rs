@@ -17,7 +17,7 @@ macro_rules! make_helper {
     ($i: ident, $u:ident) => {
         pub mod $i {
             #[inline]
-            pub fn neg_abs(val: $i) -> (bool, $u) {
+            pub const fn neg_abs(val: $i) -> (bool, $u) {
                 if val < 0 {
                     (true, val.wrapping_neg() as $u)
                 } else {
