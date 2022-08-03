@@ -1236,24 +1236,38 @@ assert_eq!(Fix::from_num(3.75).checked_rem_int(0), None);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn checked_rem_int(self, rhs: $Inner) -> Option<$Fixed<FRAC>> {
+                pub const fn checked_rem_int(self, rhs: $Inner) -> Option<$Fixed<FRAC>> {
                     // Overflow converting rhs to $Fixed<FRAC> means that either
                     //   * |rhs| > |self|, and so remainder is self, or
                     //   * self is signed min with at least one integer bit,
                     //     and the value of rhs is -self, so remainder is 0.
-                    match Self::checked_from_num(rhs) {
-                        Some(fixed_rhs) => self.checked_rem(fixed_rhs),
-                        None => Some(if_signed_unsigned!(
+                    if rhs == 0 {
+                        return None;
+                    }
+                    let can_shift = if_signed_unsigned!(
+                        $Signedness,
+                        if rhs.is_negative() {
+                            rhs.leading_ones() - 1
+                        } else {
+                            rhs.leading_zeros() - 1
+                        },
+                        rhs.leading_zeros(),
+                    );
+                    if Self::FRAC_BITS as u32 <= can_shift {
+                        let fixed_rhs = Self::from_bits(rhs << Self::FRAC_BITS);
+                        self.checked_rem(fixed_rhs)
+                    } else {
+                        if_signed_unsigned!(
                             $Signedness,
-                            if self == Self::MIN
+                            if self.to_bits() == $Inner::MIN
                                 && (Self::INT_BITS > 0 && rhs == 1 << (Self::INT_BITS - 1))
                             {
-                                Self::ZERO
+                                Some(Self::ZERO)
                             } else {
-                                self
+                                Some(self)
                             },
-                            self,
-                        )),
+                            Some(self),
+                        )
                     }
                 }
             }
@@ -2027,8 +2041,11 @@ let _divisor_is_zero = Fix::from_num(3.75).unwrapped_rem_int(0);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn unwrapped_rem_int(self, rhs: $Inner) -> $Fixed<FRAC> {
-                    self.checked_rem_int(rhs).expect("division by zero")
+                pub const fn unwrapped_rem_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                    match self.checked_rem_int(rhs) {
+                        Some(ans) => ans,
+                        None => panic!("division by zero"),
+                    }
                 }
             }
 
