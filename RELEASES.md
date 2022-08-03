@@ -9,6 +9,16 @@ Version 2.0.0-alpha.4 (unreleased)
 ==================================
 
   * Version 1.17.0 was merged.
+  * The [`Unwrapped`][u-2-0a4] methods [`from_str`][u-fs-2-0a4],
+    [`from_str_binary`][u-fsb-2-0a4], [`from_str_octal`][u-fso-2-0a4] and
+    [`from_str_hex`][u-fsh-2-0a4] return the value directly instead of a [`Result`].
+
+[`Result`]: https://doc.rust-lang.org/nightly/core/result/enum.Result.html
+[u-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html
+[u-fs-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str
+[u-fsb-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_binary
+[u-fsh-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_hex
+[u-fso-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_octal
 
 Version 2.0.0-alpha.3 (2022-07-25)
 ==================================
@@ -1264,6 +1274,7 @@ Version 0.1.0 (2018-08-10)
 [`Product`]: https://doc.rust-lang.org/nightly/core/iter/trait.Product.html
 [`RemAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.RemAssign.html
 [`Rem`]: https://doc.rust-lang.org/nightly/core/ops/trait.Rem.html
+[`Result`]: https://doc.rust-lang.org/nightly/core/result/enum.Result.html
 [`SubAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.SubAssign.html
 [`Sum`]: https://doc.rust-lang.org/nightly/core/iter/trait.Sum.html
 [`rust-version`]: https://doc.rust-lang.org/nightly/cargo/reference/manifest.html#the-rust-version-field

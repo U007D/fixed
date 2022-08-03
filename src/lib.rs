@@ -310,6 +310,15 @@ To port from version 1 to version 2, the following is required:
     [`from_bits`]: F128::from_bits
     [`to_bits`]: F128::to_bits
 
+  * For the [`Unwrapped`] wrapper, the methods [`from_str`][u-fs],
+    [`from_str_binary`][u-fsb], [`from_str_octal`][u-fso] and
+    [`from_str_hex`][u-fsh] return the value directly instead of a [`Result`].
+
+    [u-fs]: Unwrapped#method.from_str
+    [u-fsb]: Unwrapped#method.from_str_binary
+    [u-fsh]: Unwrapped#method.from_str_hex
+    [u-fso]: Unwrapped#method.from_str_octal
+
   * The deprecated optional features `az` and `f16` were removed. These features
     had no effect, as their functionality has been unconditionally enabled since
     version 1.7.0.

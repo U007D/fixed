@@ -1338,6 +1338,45 @@ impl<F: FixedStrict> Unwrapped<F> {
     /// Rounding is to the nearest, with ties rounded to even.
     ///
     /// See also
+    /// <code>FixedI32::[unwrapped\_from\_str][FixedI32::unwrapped_from_str]</code>
+    /// and
+    /// <code>FixedU32::[unwrapped\_from\_str][FixedU32::unwrapped_from_str]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the value does not fit or if there is a parsing error.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F8, Unwrapped};
+    /// // 16 + 3/4 = 16.75
+    /// let check = Unwrapped(I8F8::from_bits((16 << 8) + (3 << 8) / 4));
+    /// assert_eq!(Unwrapped::<I8F8>::from_str("16.75"), check);
+    /// ```
+    ///
+    /// The following panics because of a parsing error.
+    ///
+    /// ```rust,should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F8, Unwrapped};
+    /// let _error = Unwrapped::<I8F8>::from_str("1.2.");
+    /// ```
+    #[inline]
+    pub fn from_str(src: &str) -> Unwrapped<F> {
+        Unwrapped(F::unwrapped_from_str(src))
+    }
+
+    /// Parses a string slice containing binary digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
     /// <code>FixedI32::[unwrapped\_from\_str\_binary][FixedI32::unwrapped_from_str_binary]</code>
     /// and
     /// <code>FixedU32::[unwrapped\_from\_str\_binary][FixedU32::unwrapped_from_str_binary]</code>.
@@ -1354,7 +1393,7 @@ impl<F: FixedStrict> Unwrapped<F> {
     ///
     /// use fixed::{types::I8F8, Unwrapped};
     /// let check = Unwrapped(I8F8::from_bits(0b1110001 << (8 - 1)));
-    /// assert_eq!(Unwrapped::<I8F8>::from_str_binary("111000.1"), Ok(check));
+    /// assert_eq!(Unwrapped::<I8F8>::from_str_binary("111000.1"), check);
     /// ```
     ///
     /// The following panics because of a parsing error.
@@ -1366,15 +1405,9 @@ impl<F: FixedStrict> Unwrapped<F> {
     /// use fixed::{types::I8F8, Unwrapped};
     /// let _error = Unwrapped::<I8F8>::from_str_binary("1.2");
     /// ```
-    ///
-    /// # Compatibility note
-    ///
-    /// This method either returns [`Ok`] or panics, and never returns [`Err`].
-    /// In version 2, this method will not return a [`Result`], but will return
-    /// the fixed-point number directly.
     #[inline]
-    pub fn from_str_binary(src: &str) -> Result<Unwrapped<F>, ParseFixedError> {
-        Ok(Unwrapped(F::unwrapped_from_str_binary(src)))
+    pub fn from_str_binary(src: &str) -> Unwrapped<F> {
+        Unwrapped(F::unwrapped_from_str_binary(src))
     }
 
     /// Parses a string slice containing octal digits to return a fixed-point number.
@@ -1398,7 +1431,7 @@ impl<F: FixedStrict> Unwrapped<F> {
     ///
     /// use fixed::{types::I8F8, Unwrapped};
     /// let check = Unwrapped(I8F8::from_bits(0o1654 << (8 - 3)));
-    /// assert_eq!(Unwrapped::<I8F8>::from_str_octal("165.4"), Ok(check));
+    /// assert_eq!(Unwrapped::<I8F8>::from_str_octal("165.4"), check);
     /// ```
     ///
     /// The following panics because of a parsing error.
@@ -1410,15 +1443,9 @@ impl<F: FixedStrict> Unwrapped<F> {
     /// use fixed::{types::I8F8, Unwrapped};
     /// let _error = Unwrapped::<I8F8>::from_str_octal("1.8");
     /// ```
-    ///
-    /// # Compatibility note
-    ///
-    /// This method either returns [`Ok`] or panics, and never returns [`Err`].
-    /// In version 2, this method will not return a [`Result`], but will return
-    /// the fixed-point number directly.
     #[inline]
-    pub fn from_str_octal(src: &str) -> Result<Unwrapped<F>, ParseFixedError> {
-        Ok(Unwrapped(F::unwrapped_from_str_octal(src)))
+    pub fn from_str_octal(src: &str) -> Unwrapped<F> {
+        Unwrapped(F::unwrapped_from_str_octal(src))
     }
 
     /// Parses a string slice containing hexadecimal digits to return a fixed-point number.
@@ -1442,7 +1469,7 @@ impl<F: FixedStrict> Unwrapped<F> {
     ///
     /// use fixed::{types::I8F8, Unwrapped};
     /// let check = Unwrapped(I8F8::from_bits(0xFFE));
-    /// assert_eq!(Unwrapped::<I8F8>::from_str_hex("F.FE"), Ok(check));
+    /// assert_eq!(Unwrapped::<I8F8>::from_str_hex("F.FE"), check);
     /// ```
     ///
     /// The following panics because of a parsing error.
@@ -1454,15 +1481,9 @@ impl<F: FixedStrict> Unwrapped<F> {
     /// use fixed::{types::I8F8, Unwrapped};
     /// let _error = Unwrapped::<I8F8>::from_str_hex("1.G");
     /// ```
-    ///
-    /// # Compatibility note
-    ///
-    /// This method either returns [`Ok`] or panics, and never returns [`Err`].
-    /// In version 2, this method will not return a [`Result`], but will return
-    /// the fixed-point number directly.
     #[inline]
-    pub fn from_str_hex(src: &str) -> Result<Unwrapped<F>, ParseFixedError> {
-        Ok(Unwrapped(F::unwrapped_from_str_hex(src)))
+    pub fn from_str_hex(src: &str) -> Unwrapped<F> {
+        Unwrapped(F::unwrapped_from_str_hex(src))
     }
 
     /// Integer base-10 logarithm, rounded down.
@@ -2194,6 +2215,11 @@ impl<F: FixedStrict> FromStr for Unwrapped<F> {
     ///
     /// Rounding is to the nearest, with ties rounded to even.
     ///
+    /// This method either returns [`Ok`] or panics, and never returns [`Err`].
+    /// The inherent method
+    /// <code>[Unwrapped]&lt;F>::[from\_str][Unwrapped::from_str]</code> returns
+    /// the value directly instead of a [`Result`].
+    ///
     /// See also
     /// <code>FixedI32::[unwrapped\_from\_str][FixedI32::unwrapped_from_str]</code>
     /// and
@@ -2202,13 +2228,6 @@ impl<F: FixedStrict> FromStr for Unwrapped<F> {
     /// # Panics
     ///
     /// Panics if the value does not fit or if there is a parsing error.
-    ///
-    /// # Compatibility note
-    ///
-    /// This method either returns [`Ok`] or panics, and never returns [`Err`].
-    /// In version 2, an inherent `Unwrapped<F>::from_str` method will be added
-    /// that does not return a [`Result`], but will return the fixed-point
-    /// number directly.
     #[inline]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(Unwrapped(F::unwrapped_from_str(s)))
