@@ -106,14 +106,16 @@ The conversions supported cover the following cases.
 ### Version 2.0.0-alpha.4 news (unreleased)
 
   * Version 1.17.0 was merged.
-  * The [`Unwrapped`][u-2-0a4] methods [`from_str`][u-fs-2-0a4],
-    [`from_str_binary`][u-fsb-2-0a4], [`from_str_octal`][u-fso-2-0a4] and
-    [`from_str_hex`][u-fsh-2-0a4] return the value directly instead of a [`Result`].
+  * The [`Unwrapped`][u-2-0a4] methods [`from_str_binary`][u-fsb-2-0a4],
+    [`from_str_octal`][u-fso-2-0a4] and [`from_str_hex`][u-fsh-2-0a4] return the
+    value directly instead of a [`Result`].
+  * The [`from_str_dec`][u-fsd-2-0a4] method was added to the
+    [`Unwrapped`][u-2-0a4] wrapper.
 
 [`Result`]: https://doc.rust-lang.org/nightly/core/result/enum.Result.html
 [u-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html
-[u-fs-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str
 [u-fsb-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_binary
+[u-fsd-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_dec
 [u-fsh-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_hex
 [u-fso-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_octal
 
@@ -350,13 +352,12 @@ To port from version 1 to version 2, the following is required:
     [`to_bits`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.F128.html#method.to_bits
     [`u128`]: https://doc.rust-lang.org/nightly/core/primitive.u128.html
 
-  * For the [`Unwrapped`] wrapper, the methods [`from_str`][u-fs],
-    [`from_str_binary`][u-fsb], [`from_str_octal`][u-fso] and
-    [`from_str_hex`][u-fsh] return the value directly instead of a [`Result`].
+  * For the [`Unwrapped`] wrapper, the methods [`from_str_binary`][u-fsb],
+    [`from_str_octal`][u-fso] and [`from_str_hex`][u-fsh] return the value
+    directly instead of a [`Result`].
 
     [`Result`]: https://doc.rust-lang.org/nightly/core/result/enum.Result.html
     [`Unwrapped`]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.Unwrapped.html
-    [u-fs]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.Unwrapped.html#method.from_str
     [u-fsb]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.Unwrapped.html#method.from_str_binary
     [u-fsh]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.Unwrapped.html#method.from_str_hex
     [u-fso]: https://docs.rs/fixed/2.0.0-alpha.3/fixed/struct.Unwrapped.html#method.from_str_octal

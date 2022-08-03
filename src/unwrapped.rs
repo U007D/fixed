@@ -1355,7 +1355,7 @@ impl<F: FixedStrict> Unwrapped<F> {
     /// use fixed::{types::I8F8, Unwrapped};
     /// // 16 + 3/4 = 16.75
     /// let check = Unwrapped(I8F8::from_bits((16 << 8) + (3 << 8) / 4));
-    /// assert_eq!(Unwrapped::<I8F8>::from_str("16.75"), check);
+    /// assert_eq!(Unwrapped::<I8F8>::from_str_dec("16.75"), check);
     /// ```
     ///
     /// The following panics because of a parsing error.
@@ -1365,10 +1365,10 @@ impl<F: FixedStrict> Unwrapped<F> {
     /// # #![allow(incomplete_features)]
     ///
     /// use fixed::{types::I8F8, Unwrapped};
-    /// let _error = Unwrapped::<I8F8>::from_str("1.2.");
+    /// let _error = Unwrapped::<I8F8>::from_str_dec("1.2.");
     /// ```
     #[inline]
-    pub fn from_str(src: &str) -> Unwrapped<F> {
+    pub fn from_str_dec(src: &str) -> Unwrapped<F> {
         Unwrapped(F::unwrapped_from_str(src))
     }
 
@@ -2217,13 +2217,8 @@ impl<F: FixedStrict> FromStr for Unwrapped<F> {
     ///
     /// This method either returns [`Ok`] or panics, and never returns [`Err`].
     /// The inherent method
-    /// <code>[Unwrapped]&lt;F>::[from\_str][Unwrapped::from_str]</code> returns
-    /// the value directly instead of a [`Result`].
-    ///
-    /// See also
-    /// <code>FixedI32::[unwrapped\_from\_str][FixedI32::unwrapped_from_str]</code>
-    /// and
-    /// <code>FixedU32::[unwrapped\_from\_str][FixedU32::unwrapped_from_str]</code>.
+    /// <code>[Unwrapped]&lt;F>::[from\_str\_dec][Unwrapped::from_str_dec]</code>
+    /// returns the value directly instead of a [`Result`].
     ///
     /// # Panics
     ///

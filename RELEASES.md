@@ -9,14 +9,16 @@ Version 2.0.0-alpha.4 (unreleased)
 ==================================
 
   * Version 1.17.0 was merged.
-  * The [`Unwrapped`][u-2-0a4] methods [`from_str`][u-fs-2-0a4],
-    [`from_str_binary`][u-fsb-2-0a4], [`from_str_octal`][u-fso-2-0a4] and
-    [`from_str_hex`][u-fsh-2-0a4] return the value directly instead of a [`Result`].
+  * The [`Unwrapped`][u-2-0a4] methods [`from_str_binary`][u-fsb-2-0a4],
+    [`from_str_octal`][u-fso-2-0a4] and [`from_str_hex`][u-fsh-2-0a4] return the
+    value directly instead of a [`Result`].
+  * The [`from_str_dec`][u-fsd-2-0a4] method was added to the
+    [`Unwrapped`][u-2-0a4] wrapper.
 
 [`Result`]: https://doc.rust-lang.org/nightly/core/result/enum.Result.html
 [u-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html
-[u-fs-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str
 [u-fsb-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_binary
+[u-fsd-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_dec
 [u-fsh-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_hex
 [u-fso-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_octal
 
