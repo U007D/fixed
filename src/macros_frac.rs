@@ -1030,7 +1030,7 @@ assert_eq!(Fix::from_num(7.5).rem_euclid_int(2), Fix::from_num(1.5));
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn rem_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                pub const fn rem_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
                     let (ans, overflow) = self.overflowing_rem_euclid_int(rhs);
                     debug_assert!(!overflow, "overflow");
                     ans
@@ -1344,11 +1344,14 @@ assert_eq!(Fix::from_num(-7.5).checked_rem_euclid_int(20), None);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn checked_rem_euclid_int(self, rhs: $Inner) -> Option<$Fixed<FRAC>> {
+                pub const fn checked_rem_euclid_int(self, rhs: $Inner) -> Option<$Fixed<FRAC>> {
                     if_signed! {
                         $Signedness;
-                        let rem = self.checked_rem_int(rhs)?;
-                        if rem >= 0 {
+                        let rem = match self.checked_rem_int(rhs){
+                            Some(s) => s,
+                            None => return None,
+                        };
+                        if !rem.is_negative() {
                             return Some(rem);
                         }
                         // Work in unsigned.
@@ -1365,7 +1368,18 @@ assert_eq!(Fix::from_num(-7.5).checked_rem_euclid_int(20), None);
                         let rem_int_abs = remb_abs >> Self::FRAC_BITS;
                         let rem_frac = remb & Self::FRAC_MASK;
                         let ans_int = rhs_abs - rem_int_abs - if rem_frac > 0 { 1 } else { 0 };
-                        Self::checked_from_num(ans_int).map(|x| x | Self::from_bits(rem_frac))
+                        let ansb_abs = if ans_int == 0 {
+                            0
+                        } else if Self::FRAC_BITS as u32 <= ans_int.leading_zeros() {
+                            ans_int << Self::FRAC_BITS
+                        } else {
+                            return None
+                        };
+                        let ansb = ansb_abs as $Inner;
+                        if ansb.is_negative() {
+                            return None;
+                        }
+                        Some(Self::from_bits(ansb | rem_frac))
                     }
                     if_unsigned! {
                         $Signedness;
@@ -1625,7 +1639,7 @@ assert_eq!(Fix::from_num(-7.5).saturating_rem_euclid_int(20), Fix::MAX);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn saturating_rem_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                pub const fn saturating_rem_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
                     match self.overflowing_rem_euclid_int(rhs) {
                         (val, false) => val,
                         (_, true) => $Fixed::MAX,
@@ -1857,7 +1871,7 @@ assert_eq!(Fix::from_num(-7.5).wrapping_rem_euclid_int(20), Fix::from_num(-3.5))
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn wrapping_rem_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                pub const fn wrapping_rem_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
                     self.overflowing_rem_euclid_int(rhs).0
                 }
             }
@@ -2168,7 +2182,7 @@ let _overflow = Fix::from_num(-7.5).unwrapped_rem_euclid_int(20);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn unwrapped_rem_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                pub const fn unwrapped_rem_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
                     match self.overflowing_rem_euclid_int(rhs) {
                         (_, true) => panic!("overflow"),
                         (ans, false) => ans,
@@ -2468,11 +2482,11 @@ assert_eq!(Fix::from_num(-7.5).overflowing_rem_euclid_int(20), (Fix::from_num(-3
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn overflowing_rem_euclid_int(self, rhs: $Inner) -> ($Fixed<FRAC>, bool) {
+                pub const fn overflowing_rem_euclid_int(self, rhs: $Inner) -> ($Fixed<FRAC>, bool) {
                     if_signed! {
                         $Signedness;
-                        let rem = self % rhs;
-                        if rem >= 0 {
+                        let rem = self.unwrapped_rem_int(rhs);
+                        if !rem.is_negative() {
                             return (rem, false);
                         }
                         // Work in unsigned.
@@ -2489,12 +2503,22 @@ assert_eq!(Fix::from_num(-7.5).overflowing_rem_euclid_int(20), (Fix::from_num(-3
                         let rem_int_abs = remb_abs >> Self::FRAC_BITS;
                         let rem_frac = remb & Self::FRAC_MASK;
                         let ans_int = rhs_abs - rem_int_abs - if rem_frac > 0 { 1 } else { 0 };
-                        let (ans, overflow) = Self::overflowing_from_num(ans_int);
-                        (ans | Self::from_bits(rem_frac), overflow)
+                        let (ansb_abs, overflow1) = if ans_int == 0 {
+                            (0, false)
+                        } else if Self::FRAC_BITS as u32 <= ans_int.leading_zeros() {
+                            (ans_int << Self::FRAC_BITS, false)
+                        } else if Self::FRAC_BITS as u32 == $Inner::BITS {
+                            (0, true)
+                        } else {
+                            (ans_int << Self::FRAC_BITS, true)
+                        };
+                        let ansb = ansb_abs as $Inner;
+                        let overflow2 = ansb.is_negative();
+                        (Self::from_bits(ansb | rem_frac), overflow1 | overflow2)
                     }
                     if_unsigned! {
                         $Signedness;
-                        (self % rhs, false)
+                        (self.unwrapped_rem_int(rhs), false)
                     }
                 }
             }
