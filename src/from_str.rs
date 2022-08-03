@@ -948,6 +948,17 @@ const fn frac_is_half(bytes: Bytes, radix: u32) -> bool {
     bytes.len() == 1 && bytes.get(0) - b'0' == (radix as u8) / 2
 }
 
+signed_helpers! { i8, u8 }
+signed_helpers! { i16, u16 }
+signed_helpers! { i32, u32 }
+signed_helpers! { i64, u64 }
+signed_helpers! { i128, u128 }
+unsigned_helpers! { u8, u8, false; u16, 3, 8 }
+unsigned_helpers! { u16, u8, true; u32, 6, 16 }
+unsigned_helpers! { u32, u16, true; u64, 13, 32 }
+unsigned_helpers! { u64, u32, true; u128, 27, 64 }
+unsigned_helpers! { u128 }
+
 macro_rules! impl_from_str {
     ($Fixed:ident, $nbits:expr) => {
         impl<const FRAC: i32> FromStr for $Fixed<FRAC>
@@ -975,17 +986,6 @@ impl_from_str! { FixedU16, 16 }
 impl_from_str! { FixedU32, 32 }
 impl_from_str! { FixedU64, 64 }
 impl_from_str! { FixedU128, 128 }
-
-signed_helpers! { i8, u8 }
-signed_helpers! { i16, u16 }
-signed_helpers! { i32, u32 }
-signed_helpers! { i64, u64 }
-signed_helpers! { i128, u128 }
-unsigned_helpers! { u8, u8, false; u16, 3, 8 }
-unsigned_helpers! { u16, u8, true; u32, 6, 16 }
-unsigned_helpers! { u32, u16, true; u64, 13, 32 }
-unsigned_helpers! { u64, u32, true; u128, 27, 64 }
-unsigned_helpers! { u128 }
 
 #[cfg(test)]
 mod tests {
