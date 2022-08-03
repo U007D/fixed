@@ -1130,7 +1130,7 @@ assert_eq!(Fix::MAX.checked_div(Fix::ONE / 2), None);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn checked_div(self, rhs: $Fixed<FRAC>) -> Option<$Fixed<FRAC>> {
+                pub const fn checked_div(self, rhs: $Fixed<FRAC>) -> Option<$Fixed<FRAC>> {
                     if rhs.to_bits() == 0 {
                         return None;
                     }
@@ -1421,16 +1421,20 @@ assert_eq!(Fix::MAX.saturating_div(one_half), Fix::MAX);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn saturating_div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                pub const fn saturating_div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
                     match arith::$Inner::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32)
                     {
                         (ans, false) => Self::from_bits(ans),
                         (_, true) => {
-                            if (self < 0) != (rhs < 0) {
-                                Self::MIN
-                            } else {
-                                Self::MAX
-                            }
+                            if_signed_unsigned!(
+                                $Signedness,
+                                if self.is_negative() != rhs.is_negative() {
+                                    Self::MIN
+                                } else {
+                                    Self::MAX
+                                },
+                                Self::MAX,
+                            )
                         }
                     }
                 }
@@ -1688,7 +1692,7 @@ assert_eq!(Fix::MAX.wrapping_div(quarter), wrapped);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn wrapping_div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                pub const fn wrapping_div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
                     let (ans, _) =
                         arith::$Inner::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32);
                     Self::from_bits(ans)
@@ -1908,7 +1912,7 @@ let _overflow = Fix::MAX.unwrapped_div(quarter);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn unwrapped_div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                pub const fn unwrapped_div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
                     match self.overflowing_div(rhs) {
                         (_, true) => panic!("overflow"),
                         (ans, false) => ans,
@@ -2224,7 +2228,7 @@ assert_eq!(Fix::MAX.overflowing_div(quarter), (wrapped, true));
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub fn overflowing_div(self, rhs: $Fixed<FRAC>) -> ($Fixed<FRAC>, bool) {
+                pub const fn overflowing_div(self, rhs: $Fixed<FRAC>) -> ($Fixed<FRAC>, bool) {
                     let (ans, overflow) =
                         arith::$Inner::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32);
                     (Self::from_bits(ans), overflow)
