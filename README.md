@@ -103,6 +103,10 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
+### Version 2.0.0-alpha.4 news (unreleased)
+
+  * Version 1.17.0 was merged.
+
 ### Version 2.0.0-alpha.3 news (2022-07-25)
 
   * Version 1.16.1 was merged.

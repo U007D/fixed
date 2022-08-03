@@ -45,7 +45,7 @@ Version 2.0.0-alpha.1 (2022-02-26)
 [f-ib-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
 
-Version 1.17.0 (unreleased)
+Version 1.17.0 (2022-08-03)
 ===========================
 
   * The inherent [`from_str`][f-fs-1-17] method was added as a `const` function
