@@ -34,7 +34,7 @@ std = []
 [dependencies]
 az = "1.2"
 bytemuck = "1.2"
-half = "1.6"
+half = { version = "2", default_features = false }
 
 [dependencies.arbitrary]
 version = "1"
