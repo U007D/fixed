@@ -144,9 +144,9 @@ Note that `INT_BITS`&nbsp;+&nbsp;[`FRAC_BITS`]&nbsp;=&nbsp;", $s_nbits, ".
 Both `INT_BITS` and [`FRAC_BITS`] can be negative.
 
   * When `INT_BITS`&nbsp;<&nbsp;0 and [`FRAC_BITS`]&nbsp;>&nbsp;", $s_nbits, ",
-    the magnitude can be very large and [`DELTA`]&nbsp;>&nbsp;1.
-  * When `INT_BITS`&nbsp;>&nbsp;", $s_nbits, " and [`FRAC_BITS`]&nbsp;<&nbsp;0,
     the magnitude can be very small and [`DELTA`]&nbsp;<&nbsp;2<sup>&minus;", $s_nbits, "</sup>.
+  * When `INT_BITS`&nbsp;>&nbsp;", $s_nbits, " and [`FRAC_BITS`]&nbsp;<&nbsp;0,
+    the magnitude can be very large and [`DELTA`]&nbsp;>&nbsp;1.
 
 # Examples
 
@@ -162,7 +162,7 @@ assert_eq!(Fix::INT_BITS, ", $s_nbits, " - 6);
 [`DELTA`]: Self::DELTA
 [`FRAC_BITS`]: Self::FRAC_BITS
 ";
-                pub const INT_BITS: i32 = $Inner::BITS as i32 - FRAC;
+                pub const INT_BITS: i32 = $nbits - FRAC;
             }
 
             comment! {
@@ -172,10 +172,9 @@ Note that [`INT_BITS`]&nbsp;+&nbsp;`FRAC_BITS`&nbsp;=&nbsp;", $s_nbits, ".
 Both [`INT_BITS`] and `FRAC_BITS` can be negative.
 
   * When [`INT_BITS`]&nbsp;<&nbsp;0 and `FRAC_BITS`&nbsp;>&nbsp;", $s_nbits, ",
-    [`DELTA`]&nbsp;>&nbsp;1. That is, the magnitude can be very large.
+    the magnitude can be very small and [`DELTA`]&nbsp;<&nbsp;2<sup>&minus;", $s_nbits, "</sup>.
   * When [`INT_BITS`]&nbsp;>&nbsp;", $s_nbits, " and `FRAC_BITS`&nbsp;<&nbsp;0,
-    [`DELTA`]&nbsp;<&nbsp;2<sup>&minus;", $s_nbits, "</sup>. That is, the
-    magnitude can be very small.
+    the magnitude can be very large and [`DELTA`]&nbsp;>&nbsp;1.
 
 # Examples
 
