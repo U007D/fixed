@@ -240,6 +240,9 @@ let _ = Fix::LN_2;
                     comment! {
                         "Negative one.
 
+If `FRAC`&nbsp;<&nbsp;0 and [`DELTA`]&nbsp;>&nbsp;1, `NEG_ONE` will be rounded down to
+<code>-[DELTA][`DELTA`]</code>.
+
 # Examples
 
 ```rust
@@ -249,14 +252,16 @@ let _ = Fix::LN_2;
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<", $s_nbits_m1, ">;
 assert_eq!(Fix::NEG_ONE, Fix::from_num(-1));
+
+type Imprecise = ", $s_fixed, "<-1>;
+assert!(Imprecise::DELTA > 1);
+assert_eq!(Imprecise::NEG_ONE, -Imprecise::DELTA);
 ```
 
 The following would fail as
 <code>[", $s_fixed, "]&lt;", $s_nbits_m1, "></code>
 cannot represent 1, so there is no
 <code>[", $s_fixed, "]::&lt;", $s_nbits_m1, ">::[ONE]</code>.
-
-[ONE]: ", $s_fixed, "::ONE
 
 ```rust,compile_fail
 #![feature(generic_const_exprs)]
@@ -265,6 +270,9 @@ cannot represent 1, so there is no
 use fixed::", $s_fixed, ";
 const _ERROR: ", $s_fixed, "<", $s_nbits_m1, "> = ", $s_fixed, "::ONE.unwrapped_neg();
 ```
+
+[ONE]: ", $s_fixed, "::ONE
+[`DELTA`]: ", $s_fixed, "::DELTA
 ";
                         pub const NEG_ONE: $Fixed<FRAC> = Self::neg_one();
                     }
@@ -366,6 +374,9 @@ let _ = Fix::LOG2_E;
                 comment! {
                     "One.
 
+If `FRAC`&nbsp;<&nbsp;0 and [`DELTA`]&nbsp;>&nbsp;1, `ONE` will be rounded down
+to [`ZERO`].
+
 # Examples
 
 ```rust
@@ -375,7 +386,14 @@ let _ = Fix::LOG2_E;
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ONE, Fix::from_num(1));
+
+type Imprecise = ", $s_fixed, "<-1>;
+assert!(Imprecise::DELTA > 1);
+assert_eq!(Imprecise::ONE, Imprecise::ZERO);
 ```
+
+[`DELTA`]: ", $s_fixed, "::DELTA
+[`ZERO`]: ", $s_fixed, "::ZERO
 ";
                     pub const ONE: $Fixed<FRAC> = Self::one();
                 }
