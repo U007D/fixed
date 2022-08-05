@@ -14,7 +14,6 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
-    types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8, Unwrapped, Wrapping,
 };
@@ -26,31 +25,13 @@ macro_rules! unsafe_impl_traits {
         unsafe impl<const FRAC: i32> Pod for $Fixed<FRAC> {}
         unsafe impl<const FRAC: i32> TransparentWrapper<$Inner> for $Fixed<FRAC> {}
 
-        unsafe impl<const FRAC: i32> Zeroable for Wrapping<$Fixed<FRAC>>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {}
-        unsafe impl<const FRAC: i32> Pod for Wrapping<$Fixed<FRAC>>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {}
-        unsafe impl<const FRAC: i32> TransparentWrapper<$Fixed<FRAC>> for Wrapping<$Fixed<FRAC>>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {}
+        unsafe impl<const FRAC: i32> Zeroable for Wrapping<$Fixed<FRAC>> {}
+        unsafe impl<const FRAC: i32> Pod for Wrapping<$Fixed<FRAC>> {}
+        unsafe impl<const FRAC: i32> TransparentWrapper<$Fixed<FRAC>> for Wrapping<$Fixed<FRAC>> {}
 
-        unsafe impl<const FRAC: i32> Zeroable for Unwrapped<$Fixed<FRAC>>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {}
-        unsafe impl<const FRAC: i32> Pod for Unwrapped<$Fixed<FRAC>>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {}
-        unsafe impl<const FRAC: i32> TransparentWrapper<$Fixed<FRAC>> for Unwrapped<$Fixed<FRAC>>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {}
+        unsafe impl<const FRAC: i32> Zeroable for Unwrapped<$Fixed<FRAC>> {}
+        unsafe impl<const FRAC: i32> Pod for Unwrapped<$Fixed<FRAC>> {}
+        unsafe impl<const FRAC: i32> TransparentWrapper<$Fixed<FRAC>> for Unwrapped<$Fixed<FRAC>> {}
     };
 }
 
