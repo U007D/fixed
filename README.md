@@ -280,9 +280,11 @@ The *fixed* crate has these optional feature:
     [`ParseFixedError`].
  4. `serde-str`, disabled by default. Fixed-point numbers are serialized as
     strings showing the value when using human-readable formats. This feature
-    requires the `serde` and the `std` optional features. **Warning:** numbers
-    serialized when this feature is enabled cannot be deserialized when this
-    feature is disabled, and vice versa.
+    requires the `serde` and the `std` optional features. With this feature,
+    serialization is only supported for fixed-point numbers where the number of
+    fractional bits is from zero to the total number of bits. **Warning:**
+    numbers serialized when this feature is enabled cannot be deserialized when
+    this feature is disabled, and vice versa.
 
 To enable features, you can add the dependency like this to [*Cargo.toml*]:
 

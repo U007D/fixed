@@ -13,8 +13,9 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
+#[cfg(feature = "serde-str")]
+use crate::types::extra::{If, True};
 use crate::{
-    types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8, Unwrapped, Wrapping,
 };
@@ -33,19 +34,35 @@ use {
 
 macro_rules! serde_fixed {
     ($Fixed:ident($nbits:expr) is $TBits:ident name $Name:expr) => {
-        impl<const FRAC: i32> Serialize for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
-            #[cfg(not(feature = "serde-str"))]
+        #[cfg(not(feature = "serde-str"))]
+        impl<const FRAC: i32> Serialize for $Fixed<FRAC> {
             fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
                 let bits = self.to_bits();
                 let mut state = serializer.serialize_struct($Name, 1)?;
                 state.serialize_field("bits", &bits)?;
                 state.end()
             }
+        }
 
-            #[cfg(feature = "serde-str")]
+        #[cfg(not(feature = "serde-str"))]
+        impl<const FRAC: i32> Serialize for Wrapping<$Fixed<FRAC>> {
+            fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+                self.0.serialize(serializer)
+            }
+        }
+
+        #[cfg(not(feature = "serde-str"))]
+        impl<const FRAC: i32> Serialize for Unwrapped<$Fixed<FRAC>> {
+            fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+                self.0.serialize(serializer)
+            }
+        }
+
+        #[cfg(feature = "serde-str")]
+        impl<const FRAC: i32> Serialize for $Fixed<FRAC>
+        where
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
+        {
             fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
                 if serializer.is_human_readable() {
                     self.to_string().serialize(serializer)
@@ -55,6 +72,7 @@ macro_rules! serde_fixed {
             }
         }
 
+        #[cfg(feature = "serde-str")]
         impl<const FRAC: i32> Serialize for Wrapping<$Fixed<FRAC>>
         where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
@@ -64,6 +82,7 @@ macro_rules! serde_fixed {
             }
         }
 
+        #[cfg(feature = "serde-str")]
         impl<const FRAC: i32> Serialize for Unwrapped<$Fixed<FRAC>>
         where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
@@ -73,11 +92,8 @@ macro_rules! serde_fixed {
             }
         }
 
-        impl<'de, const FRAC: i32> Deserialize<'de> for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
-            #[cfg(not(feature = "serde-str"))]
+        #[cfg(not(feature = "serde-str"))]
+        impl<'de, const FRAC: i32> Deserialize<'de> for $Fixed<FRAC> {
             fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
                 struct FixedVisitor;
 
@@ -116,8 +132,27 @@ macro_rules! serde_fixed {
                 let bits = deserializer.deserialize_struct($Name, FIELDS, FixedVisitor)?;
                 Ok($Fixed::from_bits(bits))
             }
+        }
 
-            #[cfg(feature = "serde-str")]
+        #[cfg(not(feature = "serde-str"))]
+        impl<'de, const FRAC: i32> Deserialize<'de> for Wrapping<$Fixed<FRAC>> {
+            fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+                $Fixed::deserialize(deserializer).map(Wrapping)
+            }
+        }
+
+        #[cfg(not(feature = "serde-str"))]
+        impl<'de, const FRAC: i32> Deserialize<'de> for Unwrapped<$Fixed<FRAC>> {
+            fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+                $Fixed::deserialize(deserializer).map(Unwrapped)
+            }
+        }
+
+        #[cfg(feature = "serde-str")]
+        impl<'de, const FRAC: i32> Deserialize<'de> for $Fixed<FRAC>
+        where
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
+        {
             fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
                 if deserializer.is_human_readable() {
                     String::deserialize(deserializer)?
@@ -129,6 +164,7 @@ macro_rules! serde_fixed {
             }
         }
 
+        #[cfg(feature = "serde-str")]
         impl<'de, const FRAC: i32> Deserialize<'de> for Wrapping<$Fixed<FRAC>>
         where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
@@ -138,6 +174,7 @@ macro_rules! serde_fixed {
             }
         }
 
+        #[cfg(feature = "serde-str")]
         impl<'de, const FRAC: i32> Deserialize<'de> for Unwrapped<$Fixed<FRAC>>
         where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
