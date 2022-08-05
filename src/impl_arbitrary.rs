@@ -14,7 +14,6 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
-    types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8, Unwrapped, Wrapping,
 };
@@ -34,10 +33,7 @@ macro_rules! impl_trait {
             }
         }
 
-        impl<'a, const FRAC: i32> Arbitrary<'a> for Wrapping<$Fixed<FRAC>>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<'a, const FRAC: i32> Arbitrary<'a> for Wrapping<$Fixed<FRAC>> {
             #[inline]
             fn arbitrary(u: &mut Unstructured<'a>) -> ArbitraryResult<Self> {
                 Ok(Self::from_bits(<$Inner as Arbitrary<'a>>::arbitrary(u)?))
@@ -49,10 +45,7 @@ macro_rules! impl_trait {
             }
         }
 
-        impl<'a, const FRAC: i32> Arbitrary<'a> for Unwrapped<$Fixed<FRAC>>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<'a, const FRAC: i32> Arbitrary<'a> for Unwrapped<$Fixed<FRAC>> {
             #[inline]
             fn arbitrary(u: &mut Unstructured<'a>) -> ArbitraryResult<Self> {
                 Ok(Self::from_bits(<$Inner as Arbitrary<'a>>::arbitrary(u)?))
