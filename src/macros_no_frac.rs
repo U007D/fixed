@@ -1413,14 +1413,7 @@ assert_eq!(Fix::MAX.mul_add(Fix::from_num(1.5), -Fix::MAX), Fix::MAX / 2);
                     mul: $Fixed<MUL_FRAC>,
                     add: $Fixed<FRAC>,
                 ) -> $Fixed<FRAC> {
-                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
-                        self.to_bits(),
-                        mul.to_bits(),
-                        add.to_bits(),
-                        MUL_FRAC,
-                    );
-                    debug_assert!(!overflow, "overflow");
-                    Self::from_bits(ans)
+                    add.add_prod(self, mul)
                 }
             }
 
@@ -2459,15 +2452,7 @@ assert_eq!(Fix::MAX.checked_mul_add(Fix::from_num(1.5), -Fix::MAX), Some(Fix::MA
                     mul: $Fixed<MUL_FRAC>,
                     add: $Fixed<FRAC>,
                 ) -> Option<$Fixed<FRAC>> {
-                    match arith::$Inner::overflowing_mul_add(
-                        self.to_bits(),
-                        mul.to_bits(),
-                        add.to_bits(),
-                        MUL_FRAC,
-                    ) {
-                        (ans, false) => Some(Self::from_bits(ans)),
-                        (_, true) => None,
-                    }
+                    add.checked_add_prod(self, mul)
                 }
             }
 
@@ -3322,26 +3307,7 @@ assert_eq!(Fix::MAX.saturating_mul_add(Fix::from_num(1.5), -Fix::MAX), half_max)
                     mul: $Fixed<MUL_FRAC>,
                     add: $Fixed<FRAC>,
                 ) -> $Fixed<FRAC> {
-                    match arith::$Inner::overflowing_mul_add(
-                        self.to_bits(),
-                        mul.to_bits(),
-                        add.to_bits(),
-                        MUL_FRAC,
-                    ) {
-                        (ans, false) => Self::from_bits(ans),
-                        (_, true) => {
-                            let negative = if_signed_unsigned!(
-                                $Signedness,
-                                self.is_negative() != mul.is_negative(),
-                                false,
-                            );
-                            if negative {
-                                Self::MIN
-                            } else {
-                                Self::MAX
-                            }
-                        }
-                    }
+                    add.saturating_add_prod(self, mul)
                 }
             }
 
@@ -4014,13 +3980,7 @@ assert_eq!(Fix::MAX.wrapping_mul_add(Fix::from_num(3), Fix::MAX), wrapped);
                     mul: $Fixed<MUL_FRAC>,
                     add: $Fixed<FRAC>,
                 ) -> $Fixed<FRAC> {
-                    let (ans, _) = arith::$Inner::overflowing_mul_add(
-                        self.to_bits(),
-                        mul.to_bits(),
-                        add.to_bits(),
-                        MUL_FRAC,
-                    );
-                    Self::from_bits(ans)
+                    add.wrapping_add_prod(self, mul)
                 }
             }
 
@@ -4843,10 +4803,7 @@ let _overflow = Fix::MAX.unwrapped_mul_add(Fix::ONE, Fix::DELTA);
                     mul: $Fixed<MUL_FRAC>,
                     add: $Fixed<FRAC>,
                 ) -> $Fixed<FRAC> {
-                    match self.checked_mul_add(mul, add) {
-                        Some(ans) => ans,
-                        None => panic!("overflow"),
-                    }
+                    add.unwrapped_add_prod(self, mul)
                 }
             }
 
@@ -5895,13 +5852,7 @@ assert_eq!(
                     mul: $Fixed<MUL_FRAC>,
                     add: $Fixed<FRAC>,
                 ) -> ($Fixed<FRAC>, bool) {
-                    let (ans, overflow) = arith::$Inner::overflowing_mul_add(
-                        self.to_bits(),
-                        mul.to_bits(),
-                        add.to_bits(),
-                        MUL_FRAC,
-                    );
-                    (Self::from_bits(ans), overflow)
+                    add.overflowing_add_prod(self, mul)
                 }
             }
 
