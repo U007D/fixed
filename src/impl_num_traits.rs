@@ -205,10 +205,7 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: i32> CheckedMul for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> CheckedMul for $Fixed<FRAC> {
             #[inline]
             fn checked_mul(&self, v: &Self) -> Option<Self> {
                 (*self).checked_mul(*v)
@@ -260,10 +257,7 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: i32> SaturatingMul for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> SaturatingMul for $Fixed<FRAC> {
             #[inline]
             fn saturating_mul(&self, v: &Self) -> Self {
                 (*self).saturating_mul(*v)
@@ -291,10 +285,7 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: i32> WrappingMul for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> WrappingMul for $Fixed<FRAC> {
             #[inline]
             fn wrapping_mul(&self, v: &Self) -> Self {
                 (*self).wrapping_mul(*v)
@@ -329,20 +320,14 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: i32> OverflowingMul for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> OverflowingMul for $Fixed<FRAC> {
             #[inline]
             fn overflowing_mul(&self, v: &Self) -> (Self, bool) {
                 (*self).overflowing_mul(*v)
             }
         }
 
-        impl<const FRAC: i32, const MUL_FRAC: i32> MulAdd<$Fixed<MUL_FRAC>> for $Fixed<FRAC>
-        where
-            If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32, const MUL_FRAC: i32> MulAdd<$Fixed<MUL_FRAC>> for $Fixed<FRAC> {
             type Output = $Fixed<FRAC>;
             #[inline]
             fn mul_add(self, a: $Fixed<MUL_FRAC>, b: $Fixed<FRAC>) -> $Fixed<FRAC> {
@@ -350,27 +335,21 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: i32, const MUL_FRAC: i32> MulAddAssign<$Fixed<MUL_FRAC>> for $Fixed<FRAC>
-        where
-            If<{ (0 <= MUL_FRAC) & (MUL_FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32, const MUL_FRAC: i32> MulAddAssign<$Fixed<MUL_FRAC>> for $Fixed<FRAC> {
             #[inline]
             fn mul_add_assign(&mut self, a: $Fixed<MUL_FRAC>, b: $Fixed<FRAC>) {
                 *self = self.mul_add(a, b)
             }
         }
 
-        impl<const FRAC: i32> FloatConst for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> FloatConst for $Fixed<FRAC> {
             #[inline]
             fn E() -> Self {
                 consts::E.to_num()
             }
             #[inline]
             fn FRAC_1_PI() -> Self {
-                consts::FRAC_1_PI.to_num()
+                consts::PREC_FRAC_1_PI.to_num()
             }
             #[inline]
             fn FRAC_1_SQRT_2() -> Self {
@@ -402,7 +381,7 @@ macro_rules! impl_traits {
             }
             #[inline]
             fn FRAC_PI_8() -> Self {
-                consts::FRAC_PI_8.to_num()
+                consts::PREC_FRAC_PI_8.to_num()
             }
             #[inline]
             fn LN_10() -> Self {
@@ -414,7 +393,7 @@ macro_rules! impl_traits {
             }
             #[inline]
             fn LOG10_E() -> Self {
-                consts::LOG10_E.to_num()
+                consts::PREC_LOG10_E.to_num()
             }
             #[inline]
             fn LOG2_E() -> Self {
@@ -434,7 +413,7 @@ macro_rules! impl_traits {
             }
             #[inline]
             fn LOG10_2() -> Self {
-                consts::LOG10_2.to_num()
+                consts::PREC_LOG10_2.to_num()
             }
             #[inline]
             fn LOG2_10() -> Self {
@@ -442,10 +421,7 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: i32> ToPrimitive for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> ToPrimitive for $Fixed<FRAC> {
             #[inline]
             fn to_i64(&self) -> Option<i64> {
                 self.checked_to_num()
@@ -504,10 +480,7 @@ macro_rules! impl_traits {
             }
         }
 
-        impl<const FRAC: i32> FromPrimitive for $Fixed<FRAC>
-        where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
-        {
+        impl<const FRAC: i32> FromPrimitive for $Fixed<FRAC> {
             #[inline]
             fn from_i64(n: i64) -> Option<Self> {
                 Self::checked_from_num(n)
