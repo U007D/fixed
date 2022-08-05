@@ -1842,6 +1842,9 @@ Returns
 (`self`&nbsp;&minus;&nbsp;`start`)&nbsp;/&nbsp;(`end`&nbsp;&minus;&nbsp;`start`).
 This is 0 when `self`&nbsp;=&nbsp;`start`, and 1 when `self`&nbsp;=&nbsp;`end`.
 
+This method is implemented for
+0&nbsp;≤&nbsp;`RET_FRAC`&nbsp;≤&nbsp;", $s_nbits, ".
+
 # Panics
 
 Panics when `start`&nbsp;=&nbsp;`end`.
@@ -2868,6 +2871,9 @@ Returns
 (`self`&nbsp;&minus;&nbsp;`start`)&nbsp;/&nbsp;(`end`&nbsp;&minus;&nbsp;`start`).
 This is 0 when `self`&nbsp;=&nbsp;`start`, and 1 when `self`&nbsp;=&nbsp;`end`.
 
+This method is implemented for
+0&nbsp;≤&nbsp;`RET_FRAC`&nbsp;≤&nbsp;", $s_nbits, ".
+
 # Examples
 
 ```rust
@@ -3580,6 +3586,9 @@ Returns
 (`self`&nbsp;&minus;&nbsp;`start`)&nbsp;/&nbsp;(`end`&nbsp;&minus;&nbsp;`start`).
 This is 0 when `self`&nbsp;=&nbsp;`start`, and 1 when `self`&nbsp;=&nbsp;`end`.
 
+This method is implemented for
+0&nbsp;≤&nbsp;`RET_FRAC`&nbsp;≤&nbsp;", $s_nbits, ".
+
 # Panics
 
 Panics when `start`&nbsp;=&nbsp;`end`.
@@ -4240,6 +4249,9 @@ number of fractional bits.
 Returns
 (`self`&nbsp;&minus;&nbsp;`start`)&nbsp;/&nbsp;(`end`&nbsp;&minus;&nbsp;`start`).
 This is 0 when `self`&nbsp;=&nbsp;`start`, and 1 when `self`&nbsp;=&nbsp;`end`.
+
+This method is implemented for
+0&nbsp;≤&nbsp;`RET_FRAC`&nbsp;≤&nbsp;", $s_nbits, ".
 
 # Panics
 
@@ -5264,6 +5276,9 @@ Returns
 (`self`&nbsp;&minus;&nbsp;`start`)&nbsp;/&nbsp;(`end`&nbsp;&minus;&nbsp;`start`).
 This is 0 when `self`&nbsp;=&nbsp;`start`, and 1 when `self`&nbsp;=&nbsp;`end`.
 
+This method is implemented for
+0&nbsp;≤&nbsp;`RET_FRAC`&nbsp;≤&nbsp;", $s_nbits, ".
+
 # Panics
 
 Panics when `start`&nbsp;=&nbsp;`end` or when the results overflows.
@@ -6190,6 +6205,9 @@ number of fractional bits.
 Computes
 (`self`&nbsp;&minus;&nbsp;`start`)&nbsp;/&nbsp;(`end`&nbsp;&minus;&nbsp;`start`).
 This is 0 when `self`&nbsp;=&nbsp;`start`, and 1 when `self`&nbsp;=&nbsp;`end`.
+
+This method is implemented for
+0&nbsp;≤&nbsp;`RET_FRAC`&nbsp;≤&nbsp;", $s_nbits, ".
 
 # Panics
 

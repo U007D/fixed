@@ -21,7 +21,7 @@ macro_rules! fixed_frac {
         ),
         $UFixed:ident, $UInner:ident, $Signedness:tt
     ) => {
-        /// The items in this block are implemented for `FRAC` in the range
+        /// The items in this block are implemented for
         #[doc = concat!("0&nbsp;≤&nbsp;`FRAC`&nbsp;≤&nbsp;", $s_nbits, ".")]
         impl<const FRAC: i32> $Fixed<FRAC>
         where

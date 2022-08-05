@@ -56,7 +56,8 @@ macro_rules! fixed_const {
         }
 
         comment! {
-            "This block contains constants in the range 0.125&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;0.25.
+            "This block contains constants in the range 0.125&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;0.25,
+which are implemented for `FRAC`&nbsp;≤&nbsp;", stringify!($nbits_cm2), ".
 
 These constants are not representable in ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
@@ -73,6 +74,17 @@ These constants are not representable in ",
 use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", stringify!($nbits_cm2), ">;
 assert_eq!(Fix::FRAC_1_TAU, Fix::from_num(consts::FRAC_1_TAU));
+```
+
+If `FRAC` is very small, the constants can be rounded down to insignificance.
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<-", $s_nbits, ">;
+assert_eq!(Fix::FRAC_1_TAU, Fix::ZERO);
 ```
 
 The following example fails to compile, since the maximum representable value
@@ -99,7 +111,8 @@ let _ = Fix::FRAC_1_TAU;
         }
 
         comment! {
-            "This block contains constants in the range 0.25&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;0.5.
+            "This block contains constants in the range 0.25&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;0.5,
+which are implemented for `FRAC`&nbsp;≤&nbsp;", stringify!($nbits_cm1), ".
 
 These constants are not representable in ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
@@ -116,6 +129,17 @@ These constants are not representable in ",
 use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", stringify!($nbits_cm1), ">;
 assert_eq!(Fix::LOG10_2, Fix::from_num(consts::LOG10_2));
+```
+
+If `FRAC` is very small, the constants can be rounded down to insignificance.
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<-", $s_nbits, ">;
+assert_eq!(Fix::LOG10_2, Fix::ZERO);
 ```
 
 The following example fails to compile, since the maximum representable value
@@ -156,7 +180,7 @@ let _ = Fix::LOG10_2;
         comment! {
             "This block contains constants in the range 0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;1",
             if_signed_else_empty_str!{ $Signedness; ", and &minus;1" },
-            ".
+            ", which are implemented for `FRAC`&nbsp;≤&nbsp;", stringify!($nbits_c0), ".
 
 These constants are not representable in ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
@@ -174,6 +198,23 @@ use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", stringify!($nbits_c0), ">;
 assert_eq!(Fix::LN_2, Fix::from_num(consts::LN_2));
 assert!(0.5 <= Fix::LN_2  && Fix::LN_2 < 1);
+```
+
+If `FRAC` is very small, the constants can be rounded down to insignificance.
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<-", $s_nbits, ">;
+",
+            if_signed_else_empty_str! {
+                $Signedness;
+                "assert_eq!(Fix::NEG_ONE, -Fix::DELTA);
+",
+            },
+            "assert_eq!(Fix::LN_2, Fix::ZERO);
 ```
 
 The following example fails to compile, since the maximum representable value
@@ -271,7 +312,8 @@ const _ERROR: ", $s_fixed, "<", $s_nbits_m1, "> = ", $s_fixed, "::ONE.unwrapped_
         }
 
         comment! {
-            "This block contains constants in the range 1&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;2.
+            "This block contains constants in the range 1&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;2,
+which are implemented for `FRAC`&nbsp;≤&nbsp;", stringify!($nbits_c1), ".
 
 These constants are not representable in ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
@@ -289,6 +331,18 @@ use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", stringify!($nbits_c1), ">;
 assert_eq!(Fix::LOG2_E, Fix::from_num(consts::LOG2_E));
 assert!(1 <= Fix::LOG2_E && Fix::LOG2_E < 2);
+```
+
+If `FRAC` is very small, the constants can be rounded down to insignificance.
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<-", $s_nbits, ">;
+assert_eq!(Fix::ONE, Fix::ZERO);
+assert_eq!(Fix::LOG2_E, Fix::ZERO);
 ```
 
 The following example fails to compile, since the maximum representable value
@@ -365,7 +419,8 @@ assert_eq!(Fix::ONE, Fix::from_num(1));
         }
 
         comment! {
-            "This block contains constants in the range 2&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;4.
+            "This block contains constants in the range 2&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;4,
+which are implemented for `FRAC`&nbsp;≤&nbsp;", stringify!($nbits_c2), ".
 
 These constants are not representable in ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
@@ -383,6 +438,17 @@ use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", stringify!($nbits_c2), ">;
 assert_eq!(Fix::E, Fix::from_num(consts::E));
 assert!(2 <= Fix::E && Fix::E < 4);
+```
+
+If `FRAC` is very small, the constants can be rounded down to insignificance.
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<-", $s_nbits, ">;
+assert_eq!(Fix::E, Fix::ZERO);
 ```
 
 The following example fails to compile, since the maximum representable value
@@ -424,7 +490,8 @@ let _ = Fix::E;
         }
 
         comment! {
-            "This block contains constants in the range 4&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;8.
+            "This block contains constants in the range 4&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;8,
+which are implemented for `FRAC`&nbsp;≤&nbsp;", stringify!($nbits_c3), ".
 
 These constants are not representable in ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
@@ -442,6 +509,17 @@ use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", stringify!($nbits_c3), ">;
 assert_eq!(Fix::TAU, Fix::from_num(consts::TAU));
 assert!(4 <= Fix::TAU && Fix::TAU < 8);
+```
+
+If `FRAC` is very small, the constants can be rounded down to insignificance.
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, "<-", $s_nbits, ">;
+assert_eq!(Fix::TAU, Fix::ZERO);
 ```
 
 The following example fails to compile, since the maximum representable value
