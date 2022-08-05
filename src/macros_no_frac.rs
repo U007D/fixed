@@ -1404,7 +1404,7 @@ overflow.
 ",
                 },
                 "The `a` and `b` parameters can have a fixed-point type like
-`self` but with a different number of fractional bits.
+`self` but with a different [number of fractional bits].
 
 The [`mul_acc`] method performs the same operation as this method but mutates
 `self` instead of returning the result.
@@ -1436,6 +1436,7 @@ assert_eq!((-Fix::MAX).add_prod(Fix::MAX, Fix::from_num(1.5)), Fix::MAX / 2);
 
 [`mul_acc`]: Self::mul_acc
 [`wrapping_add_prod`]: Self::wrapping_add_prod
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 #[must_use]
@@ -1468,7 +1469,7 @@ this method saves the correct result without overflow.
 ",
                 },
                 "The `a` and `b` parameters can have a fixed-point type like
-`self` but with a different number of fractional bits.
+`self` but with a different [number of fractional bits].
 
 The [`add_prod`] method performs the same operation as this method but returns
 the result instead of mutating `self`.
@@ -1506,6 +1507,7 @@ assert_eq!(acc, Fix::MAX / 2);
 
 [`add_prod`]: Self::add_prod
 [`wrapping_mul_acc`]: Self::wrapping_mul_acc
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 pub fn mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
@@ -1836,7 +1838,7 @@ assert_eq!(
                 "Inverse linear interpolation between `start` and `end`.
 
 The computed value can have a fixed-point type like `self` but with a different
-number of fractional bits.
+[number of fractional bits].
 
 Returns
 (`self`&nbsp;&minus;&nbsp;`start`)&nbsp;/&nbsp;(`end`&nbsp;&minus;&nbsp;`start`).
@@ -1877,6 +1879,7 @@ assert_eq!(Fix::from_num(5).inv_lerp::<4>(start, end), 2);
 ```
 
 [`wrapping_inv_lerp`]: Self::wrapping_inv_lerp
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 pub const fn inv_lerp<const RET_FRAC: i32>(
@@ -2419,7 +2422,7 @@ overflow.
 ",
                 },
                 "The `a` and `b` parameters can have a fixed-point type like
-`self` but with a different number of fractional bits.
+`self` but with a different [number of fractional bits].
 
 # Examples
 
@@ -2445,6 +2448,8 @@ assert_eq!(
 "
                 },
                 "```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 #[must_use]
@@ -2487,7 +2492,7 @@ this method saves the correct result without overflow.
 ",
                 },
                 "The `a` and `b` parameters can have a fixed-point type like
-`self` but with a different number of fractional bits.
+`self` but with a different [number of fractional bits].
 
 # Examples
 
@@ -2521,6 +2526,7 @@ assert_eq!(acc, Fix::MAX / 2);
                 "```
 
 [`mul_acc`]: Self::mul_acc
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 #[must_use = "this `Option` may be a `None` variant indicating overflow, which should be handled"]
@@ -2865,7 +2871,7 @@ assert_eq!(Fix::MAX.checked_next_multiple_of(Fix::from_num(2)), None);
 Returns [`None`] on overflow or when `start`&nbsp;=&nbsp;`end`.
 
 The computed value can have a fixed-point type like `self` but with a different
-number of fractional bits.
+[number of fractional bits].
 
 Returns
 (`self`&nbsp;&minus;&nbsp;`start`)&nbsp;/&nbsp;(`end`&nbsp;&minus;&nbsp;`start`).
@@ -2888,6 +2894,8 @@ assert_eq!(Fix::from_num(3).checked_inv_lerp::<4>(two, four), Some(Fix::from_num
 assert_eq!(Fix::from_num(2).checked_inv_lerp::<4>(two, two), None);
 assert_eq!(Fix::MAX.checked_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5)), None);
 ```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 pub const fn checked_inv_lerp<const RET_FRAC: i32>(
@@ -3249,7 +3257,7 @@ overflow.
 ",
                 },
                 "The `a` and `b` parameters can have a fixed-point type like
-`self` but with a different number of fractional bits.
+`self` but with a different [number of fractional bits].
 
 # Examples
 
@@ -3275,6 +3283,8 @@ assert_eq!(
 "
                 },
                 "```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 #[must_use]
@@ -3319,7 +3329,7 @@ this method saves the correct result without overflow.
 ",
                 },
                 "The `a` and `b` parameters can have a fixed-point type like
-`self` but with a different number of fractional bits.
+`self` but with a different [number of fractional bits].
 
 # Examples
 
@@ -3347,6 +3357,8 @@ assert_eq!(acc, Fix::MAX / 2);
 "
                 },
                 "```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 pub fn saturating_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
@@ -3580,7 +3592,7 @@ assert_eq!(Fix::MAX.saturating_next_multiple_of(Fix::from_num(2)), Fix::MAX);
 saturating on overflow.
 
 The computed value can have a fixed-point type like `self` but with a different
-number of fractional bits.
+[number of fractional bits].
 
 Returns
 (`self`&nbsp;&minus;&nbsp;`start`)&nbsp;/&nbsp;(`end`&nbsp;&minus;&nbsp;`start`).
@@ -3607,6 +3619,8 @@ assert_eq!(Fix::from_num(3).saturating_inv_lerp::<4>(two, four), 0.5);
 assert_eq!(Fix::MAX.saturating_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5)), Fix::MAX);
 assert_eq!(Fix::MAX.saturating_inv_lerp::<4>(Fix::from_num(0.5), Fix::ZERO), Fix::MIN);
 ```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 pub const fn saturating_inv_lerp<const RET_FRAC: i32>(
@@ -3902,7 +3916,7 @@ requires that `self` and `add` must have the same [number of fractional bits].
                 "Adds `self` to the product `a`&nbsp;×&nbsp;`b`, wrapping on overflow.
 
 The `a` and `b` parameters can have a fixed-point type like `self` but with a
-different number of fractional bits.
+different [number of fractional bits].
 
 # Examples
 
@@ -3921,6 +3935,8 @@ assert_eq!(
     Fix::MAX.wrapping_mul_int(4)
 );
 ```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 #[must_use]
@@ -3944,7 +3960,7 @@ assert_eq!(
 wrapping on overflow.
 
 The `a` and `b` parameters can have a fixed-point type like
-`self` but with a different number of fractional bits.
+`self` but with a different [number of fractional bits].
 
 # Examples
 
@@ -3962,6 +3978,8 @@ acc = Fix::MAX;
 acc.wrapping_mul_acc(Fix::MAX, Fix::from_num(3));
 assert_eq!(acc, Fix::MAX.wrapping_mul_int(4));
 ```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 pub fn wrapping_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
@@ -4244,7 +4262,7 @@ assert_eq!(
 wrapping on overflow.
 
 The computed value can have a fixed-point type like `self` but with a different
-number of fractional bits.
+[number of fractional bits].
 
 Returns
 (`self`&nbsp;&minus;&nbsp;`start`)&nbsp;/&nbsp;(`end`&nbsp;&minus;&nbsp;`start`).
@@ -4273,6 +4291,8 @@ assert_eq!(
     Fix::MAX.wrapping_mul_int(2)
 );
 ```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 pub const fn wrapping_inv_lerp<const RET_FRAC: i32>(
@@ -4702,7 +4722,7 @@ overflow.
 ",
                 },
                 "The `a` and `b` parameters can have a fixed-point type like
-`self` but with a different number of fractional bits.
+`self` but with a different [number of fractional bits].
 
 # Panics
 
@@ -4742,6 +4762,8 @@ use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::DELTA.unwrapped_add_prod(Fix::MAX, Fix::ONE);
 ```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 #[must_use]
@@ -4776,7 +4798,7 @@ this method saves the correct result without overflow.
 ",
                 },
                 "The `a` and `b` parameters can have a fixed-point type like
-`self` but with a different number of fractional bits.
+`self` but with a different [number of fractional bits].
 
 # Panics
 
@@ -4816,6 +4838,8 @@ type Fix = ", $s_fixed, "<4>;
 let mut acc = Fix::DELTA;
 acc.unwrapped_mul_acc(Fix::MAX, Fix::ONE);
 ```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 #[track_caller]
@@ -5270,7 +5294,7 @@ let _overflow = Fix::MAX.unwrapped_next_multiple_of(Fix::from_num(2));
 panicking on overflow.
 
 The computed value can have a fixed-point type like `self` but with a different
-number of fractional bits.
+[number of fractional bits].
 
 Returns
 (`self`&nbsp;&minus;&nbsp;`start`)&nbsp;/&nbsp;(`end`&nbsp;&minus;&nbsp;`start`).
@@ -5318,6 +5342,8 @@ use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 let _overflow = Fix::MAX.unwrapped_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5));
 ```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 pub const fn unwrapped_inv_lerp<const RET_FRAC: i32>(
@@ -5722,7 +5748,7 @@ overflow.
 ",
                 },
                 "The `a` and `b` parameters can have a fixed-point type like
-`self` but with a different number of fractional bits.
+`self` but with a different [number of fractional bits].
 
 # Examples
 
@@ -5751,6 +5777,8 @@ assert_eq!(
 "
                 },
                 "```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 #[must_use]
@@ -5783,7 +5811,7 @@ this method saves the correct result without overflow.
 ",
                 },
                 "The `a` and `b` parameters can have a fixed-point type like
-`self` but with a different number of fractional bits.
+`self` but with a different [number of fractional bits].
 
 # Examples
 
@@ -5811,6 +5839,8 @@ assert_eq!(acc, Fix::MAX / 2);
 "
                 },
                 "```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 #[must_use = "this returns whether overflow occurs; use `wrapping_mul_acc` if the flag is not needed"]
@@ -6200,7 +6230,7 @@ Returns a [tuple] of the result and a [`bool`] indicationg whether an overflow
 has occurred. On overflow, the wrapped value is returned.
 
 The computed value can have a fixed-point type like `self` but with a different
-number of fractional bits.
+[number of fractional bits].
 
 Computes
 (`self`&nbsp;&minus;&nbsp;`start`)&nbsp;/&nbsp;(`end`&nbsp;&minus;&nbsp;`start`).
@@ -6232,6 +6262,8 @@ assert_eq!(
     (Fix::MAX.wrapping_mul_int(2), true)
 );
 ```
+
+[number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
                 pub const fn overflowing_inv_lerp<const RET_FRAC: i32>(

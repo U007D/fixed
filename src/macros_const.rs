@@ -63,7 +63,7 @@ These constants are not representable in ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
             " fixed-point numbers with less than ",
             if_signed_unsigned!($Signedness, "&minus;1", "&minus;2"),
-            " integer bits.
+            " [integer bits].
 
 # Examples
 
@@ -88,9 +88,9 @@ assert_eq!(Fix::FRAC_1_TAU, Fix::ZERO);
 ```
 
 The following example fails to compile, since the maximum representable value
-with ", stringify!($nbits_cm3), " fractional bits and ",
+with ", stringify!($nbits_cm3), " [fractional bits] and ",
             if_signed_unsigned!($Signedness, "&minus;2", "&minus;3"),
-            " integer bits is <&nbsp;0.125.
+            " [integer bits] is <&nbsp;0.125.
 
 ```rust,compile_fail
 #![feature(generic_const_exprs)]
@@ -100,6 +100,9 @@ use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", stringify!($nbits_cm3), ">;
 let _ = Fix::FRAC_1_TAU;
 ```
+
+[fractional bits]: Self::FRAC_BITS
+[integer bits]: Self::INT_BITS
 ";
             impl<const FRAC: i32> $Fixed<FRAC>
             where
@@ -118,7 +121,7 @@ These constants are not representable in ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
             " fixed-point numbers with less than ",
             if_signed_unsigned!($Signedness, "0", "&minus;1"),
-            " integer bits.
+            " [integer bits].
 
 # Examples
 
@@ -143,9 +146,9 @@ assert_eq!(Fix::LOG10_2, Fix::ZERO);
 ```
 
 The following example fails to compile, since the maximum representable value
-with ", stringify!($nbits_cm2), " fractional bits and ",
+with ", stringify!($nbits_cm2), " [fractional bits] and ",
             if_signed_unsigned!($Signedness, "&minus;1", "&minus;2"),
-            " integer bits is <&nbsp;0.25.
+            " [integer bits] is <&nbsp;0.25.
 
 ```rust,compile_fail
 #![feature(generic_const_exprs)]
@@ -155,6 +158,9 @@ use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", stringify!($nbits_cm2), ">;
 let _ = Fix::LOG10_2;
 ```
+
+[fractional bits]: Self::FRAC_BITS
+[integer bits]: Self::INT_BITS
 ";
             impl<const FRAC: i32> $Fixed<FRAC>
             where
@@ -185,7 +191,7 @@ let _ = Fix::LOG10_2;
 These constants are not representable in ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
             " fixed-point numbers with less than ",
-            if_signed_unsigned!($Signedness, "1 integer bit", "0 integer bits"),
+            if_signed_unsigned!($Signedness, "1 [integer bit]", "0 [integer bits]"),
             ".
 
 # Examples
@@ -218,9 +224,9 @@ type Fix = ", $s_fixed, "<-", $s_nbits, ">;
 ```
 
 The following example fails to compile, since the maximum representable value
-with ", stringify!($nbits_cm1), " fractional bits and ",
+with ", stringify!($nbits_cm1), " [fractional bits] and ",
             if_signed_unsigned!($Signedness, "0", "&minus;1"),
-            " integer bits is <&nbsp;0.5.
+            " [integer bits] is <&nbsp;0.5.
 
 ```rust,compile_fail
 #![feature(generic_const_exprs)]
@@ -230,6 +236,10 @@ use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", stringify!($nbits_cm1), ">;
 let _ = Fix::LN_2;
 ```
+
+[fractional bits]: Self::FRAC_BITS
+[integer bit]: Self::INT_BITS
+[integer bits]: Self::INT_BITS
 ";
             impl<const FRAC: i32> $Fixed<FRAC>
             where
@@ -326,7 +336,7 @@ which are implemented for `FRAC`&nbsp;≤&nbsp;", stringify!($nbits_c1), ".
 These constants are not representable in ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
             " fixed-point numbers with less than ",
-            if_signed_unsigned!($Signedness, "2 integer bits", "1 integer bit"),
+            if_signed_unsigned!($Signedness, "2 [integer bits]", "1 [integer bit]"),
             ".
 
 # Examples
@@ -354,8 +364,8 @@ assert_eq!(Fix::LOG2_E, Fix::ZERO);
 ```
 
 The following example fails to compile, since the maximum representable value
-with ", stringify!($nbits_c0), " fractional bits and ",
-            if_signed_unsigned!($Signedness, "1 integer bit", "0 integer bits"),
+with ", stringify!($nbits_c0), " [fractional bits] and ",
+            if_signed_unsigned!($Signedness, "1 [integer bit]", "0 [integer bits]"),
             " is <&nbsp;1.
 
 ```rust,compile_fail
@@ -366,6 +376,10 @@ use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", stringify!($nbits_c0), ">;
 let _ = Fix::LOG2_E;
 ```
+
+[fractional bits]: Self::FRAC_BITS
+[integer bit]: Self::INT_BITS
+[integer bits]: Self::INT_BITS
 ";
             impl<const FRAC: i32> $Fixed<FRAC>
             where
@@ -444,7 +458,7 @@ These constants are not representable in ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
             " fixed-point numbers with less than ",
             if_signed_unsigned!($Signedness, "3", "2"),
-            " integer bits.
+            " [integer bits].
 
 # Examples
 
@@ -470,8 +484,8 @@ assert_eq!(Fix::E, Fix::ZERO);
 ```
 
 The following example fails to compile, since the maximum representable value
-with ", stringify!($nbits_c1), " fractional bits and ",
-            if_signed_unsigned!($Signedness, "2 integer bits", "1 integer bit"),
+with ", stringify!($nbits_c1), " [fractional bits] and ",
+            if_signed_unsigned!($Signedness, "2 [integer bits]", "1 [integer bit]"),
             " is <&nbsp;2.
 
 ```rust,compile_fail
@@ -482,6 +496,10 @@ use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", stringify!($nbits_c1), ">;
 let _ = Fix::E;
 ```
+
+[fractional bits]: Self::FRAC_BITS
+[integer bit]: Self::INT_BITS
+[integer bits]: Self::INT_BITS
 ";
             impl<const FRAC: i32> $Fixed<FRAC>
             where
@@ -515,7 +533,7 @@ These constants are not representable in ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
             " fixed-point numbers with less than ",
             if_signed_unsigned!($Signedness, "4", "3"),
-            " integer bits.
+            " [integer bits].
 
 # Examples
 
@@ -541,9 +559,9 @@ assert_eq!(Fix::TAU, Fix::ZERO);
 ```
 
 The following example fails to compile, since the maximum representable value
-with ", stringify!($nbits_c2), " fractional bits and ",
+with ", stringify!($nbits_c2), " [fractional bits] and ",
             if_signed_unsigned!($Signedness, "3", "2"),
-            " integer bits is <&nbsp;4.
+            " [integer bits] is <&nbsp;4.
 
 ```rust,compile_fail
 #![feature(generic_const_exprs)]
@@ -553,6 +571,9 @@ use fixed::{consts, ", $s_fixed, "};
 type Fix = ", $s_fixed, "<", stringify!($nbits_c2), ">;
 let _ = Fix::TAU;
 ```
+
+[fractional bits]: Self::FRAC_BITS
+[integer bits]: Self::INT_BITS
 ";
             impl<const FRAC: i32> $Fixed<FRAC>
             where
