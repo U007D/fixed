@@ -91,7 +91,7 @@ macro_rules! impl_bits {
 ///
 /// [Bits]: crate::traits::Fixed::Bits
 /// [Fixed]: crate::traits::Fixed
-pub trait FixedBits
+pub trait FixedBits: Sealed
 where
     Self: Default + Hash + Ord,
     Self: Pod,
@@ -117,7 +117,6 @@ where
     Self: FixedBitsOptionalBorsh,
     Self: FixedBitsOptionalNum,
     Self: FixedBitsOptionalSerde,
-    Self: Sealed,
 {
 }
 
@@ -150,7 +149,7 @@ impl_bits! { u64 }
 impl_bits! { u128 }
 
 #[cfg(not(feature = "arbitrary"))]
-/// This trait is used to provide supertrait to the [`FixedBits`] trait
+/// This trait is used to provide supertraits to the [`FixedBits`] trait
 /// depending on the crates’s [optional features], and should not be used
 /// directly.
 ///
@@ -161,7 +160,7 @@ impl_bits! { u128 }
 pub trait FixedBitsOptionalArbitrary: Sealed {}
 
 #[cfg(feature = "arbitrary")]
-/// This trait is used to provide supertrait to the [`FixedBits`] trait
+/// This trait is used to provide supertraits to the [`FixedBits`] trait
 /// depending on the crates’s [optional features], and should not be used
 /// directly.
 ///
