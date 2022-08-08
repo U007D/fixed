@@ -32,7 +32,7 @@ use arbitrary::Arbitrary;
 use az::OverflowingCastFrom;
 #[cfg(feature = "borsh")]
 use borsh::{BorshDeserialize, BorshSerialize};
-use bytemuck::{self, Pod, TransparentWrapper};
+use bytemuck::{self, Contiguous, Pod, TransparentWrapper};
 use core::{
     fmt::{Binary, Debug, Display, LowerHex, Octal, UpperHex},
     hash::Hash,
@@ -416,7 +416,7 @@ where
 pub trait Fixed: Sealed
 where
     Self: Debug + Default + Hash + Ord,
-    Self: Pod + TransparentWrapper<<Self as Fixed>::Bits>,
+    Self: Contiguous + Pod + TransparentWrapper<<Self as Fixed>::Bits>,
     Self: FromFixed + ToFixed,
     Self: Add<Output = Self> + AddAssign,
     Self: Sub<Output = Self> + SubAssign,

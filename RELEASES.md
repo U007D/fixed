@@ -57,6 +57,19 @@ Version 2.0.0-alpha.1 (2022-02-26)
 [f-ib-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
 
+Version 1.18.0 (unreleased)
+===========================
+
+  * The [`Contiguous`][bm-c-1] trait from the [*bytemuck* crate] was implemented
+    for all fixed-point numbers, added as a supertrait to the [`Fixed`][tf-1-18]
+    trait, and implemented for the [`Wrapping`][w-1-18] and
+    [`Unwrapped`][u-1-18] wrappers.
+
+[bm-c-1]: https://docs.rs/bytemuck/^1/bytemuck/trait.Contiguous.html
+[tf-1-18]: https://docs.rs/fixed/~1.18/fixed/traits/trait.Fixed.html
+[u-1-18]: https://docs.rs/fixed/~1.18/fixed/struct.Unwrapped.html
+[w-1-18]: https://docs.rs/fixed/~1.18/fixed/struct.Wrapping.html
+
 Version 1.17.0 (2022-08-03)
 ===========================
 

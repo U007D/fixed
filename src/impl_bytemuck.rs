@@ -17,20 +17,35 @@ use crate::{
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8, Unwrapped, Wrapping,
 };
-use bytemuck::{Pod, TransparentWrapper, Zeroable};
+use bytemuck::{Contiguous, Pod, TransparentWrapper, Zeroable};
 
 macro_rules! unsafe_impl_traits {
     ($Fixed:ident, $nbits:expr, $Inner:ident) => {
         unsafe impl<const FRAC: i32> Zeroable for $Fixed<FRAC> {}
         unsafe impl<const FRAC: i32> Pod for $Fixed<FRAC> {}
+        unsafe impl<const FRAC: i32> Contiguous for $Fixed<FRAC> {
+            type Int = $Inner;
+            const MAX_VALUE: $Inner = $Inner::MAX;
+            const MIN_VALUE: $Inner = $Inner::MIN;
+        }
         unsafe impl<const FRAC: i32> TransparentWrapper<$Inner> for $Fixed<FRAC> {}
 
         unsafe impl<const FRAC: i32> Zeroable for Wrapping<$Fixed<FRAC>> {}
         unsafe impl<const FRAC: i32> Pod for Wrapping<$Fixed<FRAC>> {}
+        unsafe impl<const FRAC: i32> Contiguous for Wrapping<$Fixed<FRAC>> {
+            type Int = $Inner;
+            const MAX_VALUE: $Inner = $Inner::MAX;
+            const MIN_VALUE: $Inner = $Inner::MIN;
+        }
         unsafe impl<const FRAC: i32> TransparentWrapper<$Fixed<FRAC>> for Wrapping<$Fixed<FRAC>> {}
 
         unsafe impl<const FRAC: i32> Zeroable for Unwrapped<$Fixed<FRAC>> {}
         unsafe impl<const FRAC: i32> Pod for Unwrapped<$Fixed<FRAC>> {}
+        unsafe impl<const FRAC: i32> Contiguous for Unwrapped<$Fixed<FRAC>> {
+            type Int = $Inner;
+            const MAX_VALUE: $Inner = $Inner::MAX;
+            const MIN_VALUE: $Inner = $Inner::MIN;
+        }
         unsafe impl<const FRAC: i32> TransparentWrapper<$Fixed<FRAC>> for Unwrapped<$Fixed<FRAC>> {}
     };
 }
