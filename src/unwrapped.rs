@@ -1507,7 +1507,7 @@ impl<F: FixedStrict> Unwrapped<F> {
     ///
     /// # Panics
     ///
-    /// Panics if the fixed-point number is ≤&nbsp;0, or if the base is <&nbsp;2.
+    /// Panics if the fixed-point number is ≤&nbsp;0 or if the base is <&nbsp;2.
     #[inline]
     #[track_caller]
     pub fn int_log(self, base: u32) -> i32 {
