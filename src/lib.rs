@@ -302,15 +302,10 @@ To port from version 1 to version 2, the following is required:
     [`INT_BITS`]: FixedI32::INT_BITS
     [`INT_NBITS`]: https://docs.rs/fixed/1/fixed/struct.FixedI32.html#associatedconstant.INT_NBITS
 
-  * The [`F128Bits`] struct has been replaced by [`F128`]. In version 1 the
-    ordering was total ordering, not regular floating-point number ordering, but
-    in version 2 the ordering is similar to ordering for standard floating-point
-    numbers. Also, the underlying [`u128`] value is now accessible only through
-    the [`to_bits`] and [`from_bits`] methods.
+  * The deprecated [`F128Bits`] struct has been removed. It was replaced by
+    [`F128`] in version 1.18.0
 
     [`F128Bits`]: https://docs.rs/fixed/1/fixed/struct.F128Bits.html
-    [`from_bits`]: F128::from_bits
-    [`to_bits`]: F128::to_bits
 
   * For the [`Unwrapped`] wrapper, the methods [`from_str_binary`][u-fsb],
     [`from_str_octal`][u-fso] and [`from_str_hex`][u-fsh] return the value

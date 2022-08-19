@@ -5,69 +5,71 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-Version 2.0.0-alpha.4 (2022-08-03)
-==================================
-
-  * Version 1.17.0 was merged.
-  * The [`Unwrapped`][u-2-0a4] methods [`from_str_binary`][u-fsb-2-0a4],
-    [`from_str_octal`][u-fso-2-0a4] and [`from_str_hex`][u-fsh-2-0a4] return the
-    value directly instead of a [`Result`].
-  * The [`from_str_dec`][u-fsd-2-0a4] method was added to the
-    [`Unwrapped`][u-2-0a4] wrapper.
-
-[`Result`]: https://doc.rust-lang.org/nightly/core/result/enum.Result.html
-[u-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html
-[u-fsb-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_binary
-[u-fsd-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_dec
-[u-fsh-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_hex
-[u-fso-2-0a4]: https://docs.rs/fixed/2.0.0-alpha.4/fixed/struct.Unwrapped.html#method.from_str_octal
-
-Version 2.0.0-alpha.3 (2022-07-25)
-==================================
-
-  * Version 1.16.1 was merged.
-
-Version 2.0.0-alpha.2 (2022-03-04)
-==================================
-
-  * The [`Fixed`][tf-2-0a2] trait constraints have been relaxed, and the methods
-    which needed the strict constraints have been moved to the subtrait
-    [`FixedStrict`][tfs-2-0a2].
-  * `F128Bits` has been replaced by [`F128`][f128-2-0a2] which has standard
-    floating-point ordering and various classification methods and associated
-    constants.
-
-[f128-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/struct.F128.html
-[tf-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.Fixed.html
-[tfs-2-0a2]: https://docs.rs/fixed/2.0.0-alpha.2/fixed/traits/trait.FixedStrict.html
-
-Version 2.0.0-alpha.1 (2022-02-26)
+Version 2.0.0-alpha.5 (unreleased)
 ==================================
 
   * The crate now requires the nightly compiler with the [`generic_const_exprs`
     feature] enabled.
   * The crate now uses generic constant expressions to specify the number of
     fractional bits.
+  * The [`Fixed`][tf-2-0a5] trait constraints have been relaxed, and the methods
+    which needed the strict constraints have been moved to the subtrait
+    [`FixedStrict`][tfs-2-0a5].
+  * The `INT_NBITS` and `FRAC_NBITS` associated constants were replaced with
+    [`INT_BITS`][f-ib-2-0a5] and [`FRAC_BITS`][f-fb-2-0a5] which can be
+    negative.
+  * The deprecated `F128Bits` struct has been removed. It was replaced by
+    [`F128`][f128-2-0a5] in version 1.18.0.
+  * The [`Unwrapped`][u-2-0a5] methods [`from_str_binary`][u-fsb-2-0a5],
+    [`from_str_octal`][u-fso-2-0a5] and [`from_str_hex`][u-fsh-2-0a5] return the
+    value directly instead of a [`Result`].
   * The deprecated optional features `az` and `f16` were removed. These features
     had no effect, as the functionality they enabled is now always enabled.
-  * The `INT_NBITS` and `FRAC_NBITS` associated constants were replaced with
-    [`INT_BITS`][f-ib-2-0a1] and [`FRAC_BITS`][f-fb-2-0a1] which can be negative.
 
-[f-fb-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
-[f-ib-2-0a1]: https://docs.rs/fixed/2.0.0-alpha.1/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
+[f-fb-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
+[f-ib-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
+[f128-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.F128.html
+[tf-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/traits/trait.Fixed.html
+[tfs-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/traits/trait.FixedStrict.html
+[u-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Unwrapped.html
+[u-fsb-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Unwrapped.html#method.from_str_binary
+[u-fsh-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Unwrapped.html#method.from_str_hex
+[u-fso-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Unwrapped.html#method.from_str_octal
 
-Version 1.18.0 (unreleased)
+Version 1.18.0 (2022-08-19)
 ===========================
 
+  * Bug fix: checked division methods were panicking when dividing
+    [`MIN`][f-m-1-18] by <code>-[DELTA][f-d-1-18]</code> for fixed-point numbers
+    with zero integer bits, that is when all bits are fractional bits ([issue
+    51]).
+  * The following methods were added to all fixed-point numbers, to the
+    [`Fixed`][tf-1-18] trait, and to the [`Wrapping`][w-1-18] and
+    [`Unwrapped`][u-1-18] wrappers:
+      * [`int_log`][f-il-1-18], [`checked_int_log`][f-cil-1-18]
+  * The [`F128`][f128-1-18] struct was added to replace the
+    [`F128Bits`][f128b-1-18] struct which is now deprecated. [`F128`][f128-1-18]
+    has standard floating-point ordering and various classification methods and
+    associated constants.
+  * The [`from_str_dec`][u-fsd-1-18] method was added to the
+    [`Unwrapped`][u-1-18] wrapper.
   * The [`Contiguous`][bm-c-1] trait from the [*bytemuck* crate] was implemented
     for all fixed-point numbers, added as a supertrait to the [`Fixed`][tf-1-18]
     trait, and implemented for the [`Wrapping`][w-1-18] and
     [`Unwrapped`][u-1-18] wrappers.
 
 [bm-c-1]: https://docs.rs/bytemuck/^1/bytemuck/trait.Contiguous.html
+[f-cil-1-18]: https://docs.rs/fixed/~1.18/fixed/struct.FixedI32.html#method.checked_int_log
+[f-d-1-18]: https://docs.rs/fixed/~1.18/fixed/struct.FixedI32.html#associatedconstant.DELTA
+[f-il-1-18]: https://docs.rs/fixed/~1.18/fixed/struct.FixedI32.html#method.int_log
+[f-m-1-18]: https://docs.rs/fixed/~1.18/fixed/struct.FixedI32.html#associatedconstant.MIN
+[f128-1-18]: https://docs.rs/fixed/~1.18/fixed/struct.F128.html
+[f128b-1-18]: https://docs.rs/fixed/~1.18/fixed/struct.F128Bits.html
+[issue 51]: https://gitlab.com/tspiteri/fixed/-/issues/51
 [tf-1-18]: https://docs.rs/fixed/~1.18/fixed/traits/trait.Fixed.html
 [u-1-18]: https://docs.rs/fixed/~1.18/fixed/struct.Unwrapped.html
+[u-fsd-1-18]: https://docs.rs/fixed/~1.18/fixed/struct.Unwrapped.html#method.from_str_dec
 [w-1-18]: https://docs.rs/fixed/~1.18/fixed/struct.Wrapping.html
 
 Version 1.17.0 (2022-08-03)
