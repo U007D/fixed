@@ -1333,7 +1333,7 @@ impl<F: Fixed> Unwrapped<F> {
 }
 
 impl<F: FixedStrict> Unwrapped<F> {
-    /// Parses a string slice containing binary digits to return a fixed-point number.
+    /// Parses a string slice containing decimal digits to return a fixed-point number.
     ///
     /// Rounding is to the nearest, with ties rounded to even.
     ///
