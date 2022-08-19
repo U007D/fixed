@@ -2343,6 +2343,16 @@ where
     /// Panics if the fixed-point number is ≤&nbsp;0.
     fn int_log10(self) -> i32;
 
+    /// Integer logarithm to the specified base, rounded down.
+    ///
+    /// See also <code>FixedI32::[int\_log][FixedI32::int_log]</code> and
+    /// <code>FixedU32::[int\_log][FixedU32::int_log]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the fixed-point number is ≤&nbsp;0,  if the base is <&nbsp;2.
+    fn int_log(self, base: u32) -> i32;
+
     /// Checked integer base-10 logarithm, rounded down. Returns the
     /// logarithm or [`None`] if the fixed-point number is ≤&nbsp;0.
     ///
@@ -2351,6 +2361,16 @@ where
     /// and
     /// <code>FixedU32::[checked\_int\_log10][FixedU32::checked_int_log10]</code>.
     fn checked_int_log10(self) -> Option<i32>;
+
+    /// Checked integer logarithm to the specified base, rounded down. Returns
+    /// the logarithm or [`None`] if the fixed-point number is ≤&nbsp;0 or if
+    /// the base is <&nbsp;2.
+    ///
+    /// See also
+    /// <code>FixedI32::[checked\_int\_log][FixedI32::checked_int_log]</code>
+    /// and
+    /// <code>FixedU32::[checked\_int\_log][FixedU32::checked_int_log]</code>.
+    fn checked_int_log(self, base: u32) -> Option<i32>;
 
     /// Returns the reciprocal.
     ///
@@ -3999,7 +4019,9 @@ macro_rules! impl_fixed {
                 fn overflowing_from_str_hex(src: &str) -> Result<(Self, bool), ParseFixedError>
             }
             trait_delegate! { fn int_log10(self) -> i32 }
+            trait_delegate! { fn int_log(self, base: u32) -> i32 }
             trait_delegate! { fn checked_int_log10(self) -> Option<i32> }
+            trait_delegate! { fn checked_int_log(self, base: u32) -> Option<i32> }
             trait_delegate! { fn recip(self) -> Self }
             trait_delegate! { fn div_euclid(self, rhs: Self) -> Self }
             trait_delegate! { fn div_euclid_int(self, rhs: Self::Bits) -> Self }
