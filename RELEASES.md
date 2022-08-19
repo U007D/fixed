@@ -5,7 +5,7 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-Version 2.0.0-alpha.5 (unreleased)
+Version 2.0.0-alpha.5 (2022-08-20)
 ==================================
 
   * The crate now requires the nightly compiler with the [`generic_const_exprs`
@@ -27,15 +27,15 @@ Version 2.0.0-alpha.5 (unreleased)
     had no effect, as the functionality they enabled is now always enabled.
 
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
-[f-fb-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
-[f-ib-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
-[f128-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.F128.html
-[tf-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/traits/trait.Fixed.html
-[tfs-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/traits/trait.FixedStrict.html
-[u-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Unwrapped.html
-[u-fsb-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Unwrapped.html#method.from_str_binary
-[u-fsh-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Unwrapped.html#method.from_str_hex
-[u-fso-2-0a5]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Unwrapped.html#method.from_str_octal
+[f-fb-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
+[f-ib-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
+[f128-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.F128.html
+[tf-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/traits/trait.Fixed.html
+[tfs-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/traits/trait.FixedStrict.html
+[u-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.Unwrapped.html
+[u-fsb-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.Unwrapped.html#method.from_str_binary
+[u-fsh-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.Unwrapped.html#method.from_str_hex
+[u-fso-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.Unwrapped.html#method.from_str_octal
 
 Version 1.18.0 (2022-08-19)
 ===========================
