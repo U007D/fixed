@@ -37,7 +37,7 @@ Version 2.0.0-alpha.5 (2022-08-20)
 [u-fsh-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.Unwrapped.html#method.from_str_hex
 [u-fso-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.Unwrapped.html#method.from_str_octal
 
-Version 1.19.0 (unreleased)
+Version 1.19.0 (2022-08-29)
 ===========================
 
   * Bug fix: comparison of and conversion from subnormal floating-point numbers
