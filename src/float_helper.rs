@@ -182,7 +182,7 @@ macro_rules! make_helper {
 
             #[inline]
             pub fn kind(val: $Float) -> Kind {
-                let (neg, exp, mut mantissa) = parts(val);
+                let (neg, mut exp, mut mantissa) = parts(val);
                 if exp > EXP_MAX {
                     if mantissa == 0 {
                         return Kind::Infinite { neg };
@@ -193,6 +193,8 @@ macro_rules! make_helper {
                 // if not subnormal, add implicit bit
                 if exp >= EXP_MIN {
                     mantissa |= 1 << (PREC - 1);
+                } else {
+                    exp = EXP_MIN;
                 }
                 if mantissa == 0 {
                     return Kind::Finite {

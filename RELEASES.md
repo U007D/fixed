@@ -40,6 +40,8 @@ Version 2.0.0-alpha.5 (2022-08-20)
 Version 1.19.0 (unreleased)
 ===========================
 
+  * Bug fix: comparison of and conversion from subnormal floating-point numbers
+    to fixed-point numbers were off by a factor of 2.
   * The following associated constants were added to the [`FixedBits`][fb-1-19]
     trait:
       * [`MIN`][fb-mi-1-19], [`MAX`][fb-ma-1-19]
