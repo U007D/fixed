@@ -683,6 +683,7 @@ fixed_cmp_prim! { FixedU128(128, u128) }
 mod tests {
     use crate::*;
     use core::cmp::Ordering;
+    use half::{bf16, f16};
 
     #[test]
     fn cmp_signed() {
@@ -940,5 +941,115 @@ mod tests {
                 fixed.partial_cmp(&mhalf).map(Ordering::reverse)
             );
         }
+    }
+
+    #[test]
+    fn f16_consts() {
+        assert_eq!(f16::ZERO, FixedI16::<8>::ZERO);
+        assert_eq!(f16::NEG_ZERO, FixedI16::<8>::ZERO);
+        assert_eq!(f16::ZERO, f16::NEG_ZERO);
+        assert_eq!(f16::ONE, FixedI16::<8>::ONE);
+        assert_eq!(f16::NEG_ONE, FixedI16::<8>::NEG_ONE);
+
+        // min positive normal
+        assert_eq!(f16::MIN_POSITIVE, FixedI16::<14>::DELTA);
+        assert_eq!(f16::MIN_POSITIVE, FixedI16::<24>::from_bits(1 << 10));
+        // max subnormal
+        let max_subnormal = f16::from_bits(f16::MIN_POSITIVE.to_bits() - 1);
+        assert_eq!(max_subnormal, FixedI16::<24>::from_bits((1 << 10) - 1));
+        // min positive subnormal
+        assert_eq!(f16::from_bits(1), FixedI16::<24>::DELTA);
+
+        // max, min
+        assert_eq!(f16::MAX, FixedI16::<-5>::from_bits((1 << 11) - 1));
+        assert_eq!(f16::MIN, FixedI16::<-5>::from_bits(1 - (1 << 11)));
+    }
+
+    #[test]
+    fn bf16_consts() {
+        assert_eq!(bf16::ZERO, FixedI16::<8>::ZERO);
+        assert_eq!(bf16::NEG_ZERO, FixedI16::<8>::ZERO);
+        assert_eq!(bf16::ZERO, bf16::NEG_ZERO);
+        assert_eq!(bf16::ONE, FixedI16::<8>::ONE);
+        assert_eq!(bf16::NEG_ONE, FixedI16::<8>::NEG_ONE);
+
+        // min positive normal
+        assert_eq!(bf16::MIN_POSITIVE, FixedI16::<126>::DELTA);
+        assert_eq!(bf16::MIN_POSITIVE, FixedI16::<133>::from_bits(1 << 7));
+        // max subnormal
+        let max_subnormal = bf16::from_bits(bf16::MIN_POSITIVE.to_bits() - 1);
+        assert_eq!(max_subnormal, FixedI16::<133>::from_bits((1 << 7) - 1));
+        // min positive subnormal
+        assert_eq!(bf16::from_bits(1), FixedI16::<133>::DELTA);
+
+        // max, min
+        assert_eq!(bf16::MAX, FixedI16::<-120>::from_bits((1 << 8) - 1));
+        assert_eq!(bf16::MIN, FixedI16::<-120>::from_bits(1 - (1 << 8)));
+    }
+
+    #[test]
+    fn f32_consts() {
+        assert_eq!(0f32, FixedI32::<16>::ZERO);
+        assert_eq!(-0f32, FixedI32::<16>::ZERO);
+        assert_eq!(0f32, -0f32);
+        assert_eq!(1f32, FixedI32::<16>::ONE);
+        assert_eq!(-1f32, FixedI32::<16>::NEG_ONE);
+
+        // min positive normal
+        assert_eq!(f32::MIN_POSITIVE, FixedI32::<126>::DELTA);
+        assert_eq!(f32::MIN_POSITIVE, FixedI32::<149>::from_bits(1 << 23));
+        // max subnormal
+        let max_subnormal = f32::from_bits(f32::MIN_POSITIVE.to_bits() - 1);
+        assert_eq!(max_subnormal, FixedI32::<149>::from_bits((1 << 23) - 1));
+        // min positive subnormal
+        assert_eq!(f32::from_bits(1), FixedI32::<149>::DELTA);
+
+        // max, min
+        assert_eq!(f32::MAX, FixedI32::<-104>::from_bits((1 << 24) - 1));
+        assert_eq!(f32::MIN, FixedI32::<-104>::from_bits(1 - (1 << 24)));
+    }
+
+    #[test]
+    fn f64_consts() {
+        assert_eq!(0f64, FixedI64::<32>::ZERO);
+        assert_eq!(-0f64, FixedI64::<32>::ZERO);
+        assert_eq!(0f64, -0f64);
+        assert_eq!(1f64, FixedI64::<32>::ONE);
+        assert_eq!(-1f64, FixedI64::<32>::NEG_ONE);
+
+        // min positive normal
+        assert_eq!(f64::MIN_POSITIVE, FixedI64::<1022>::DELTA);
+        assert_eq!(f64::MIN_POSITIVE, FixedI64::<1074>::from_bits(1 << 52));
+        // max subnormal
+        let max_subnormal = f64::from_bits(f64::MIN_POSITIVE.to_bits() - 1);
+        assert_eq!(max_subnormal, FixedI64::<1074>::from_bits((1 << 52) - 1));
+        // min positive subnormal
+        assert_eq!(f64::from_bits(1), FixedI64::<1074>::DELTA);
+
+        // max, min
+        assert_eq!(f64::MAX, FixedI64::<-971>::from_bits((1 << 53) - 1));
+        assert_eq!(f64::MIN, FixedI64::<-971>::from_bits(1 - (1 << 53)));
+    }
+
+    #[test]
+    fn f128_consts() {
+        assert_eq!(F128::ZERO, FixedI128::<64>::ZERO);
+        assert_eq!(F128::NEG_ZERO, FixedI128::<64>::ZERO);
+        assert_eq!(F128::ZERO, F128::NEG_ZERO);
+        assert_eq!(F128::ONE, FixedI128::<64>::ONE);
+        assert_eq!(F128::NEG_ONE, FixedI128::<64>::NEG_ONE);
+
+        // min positive normal
+        assert_eq!(F128::MIN_POSITIVE, FixedI128::<16382>::DELTA);
+        assert_eq!(F128::MIN_POSITIVE, FixedI128::<16494>::from_bits(1 << 112));
+        // max subnormal
+        let max_subnormal = F128::from_bits(F128::MIN_POSITIVE.to_bits() - 1);
+        assert_eq!(max_subnormal, FixedI128::<16494>::from_bits((1 << 112) - 1));
+        // min positive subnormal
+        assert_eq!(F128::MIN_POSITIVE_SUB, FixedI128::<16494>::DELTA);
+
+        // max, min
+        assert_eq!(F128::MAX, FixedI128::<-16271>::from_bits((1 << 113) - 1));
+        assert_eq!(F128::MIN, FixedI128::<-16271>::from_bits(1 - (1 << 113)));
     }
 }
