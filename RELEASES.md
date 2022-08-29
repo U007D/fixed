@@ -5,37 +5,36 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-Version 2.0.0-alpha.5 (2022-08-20)
+Version 2.0.0-alpha.6 (2022-08-29)
 ==================================
 
   * The crate now requires the nightly compiler with the [`generic_const_exprs`
     feature] enabled.
   * The crate now uses generic constant expressions to specify the number of
     fractional bits.
-  * The [`Fixed`][tf-2-0a5] trait constraints have been relaxed, and the methods
+  * The [`Fixed`][tf-2-0a] trait constraints have been relaxed, and the methods
     which needed the strict constraints have been moved to the subtrait
-    [`FixedStrict`][tfs-2-0a5].
+    [`FixedStrict`][tfs-2-0a].
   * The `INT_NBITS` and `FRAC_NBITS` associated constants were replaced with
-    [`INT_BITS`][f-ib-2-0a5] and [`FRAC_BITS`][f-fb-2-0a5] which can be
-    negative.
+    [`INT_BITS`][f-ib-2-0a] and [`FRAC_BITS`][f-fb-2-0a] which can be negative.
   * The deprecated `F128Bits` struct has been removed. It was replaced by
-    [`F128`][f128-2-0a5] in version 1.18.0.
-  * The [`Unwrapped`][u-2-0a5] methods [`from_str_binary`][u-fsb-2-0a5],
-    [`from_str_octal`][u-fso-2-0a5] and [`from_str_hex`][u-fsh-2-0a5] return the
+    [`F128`][f128-2-0a] in version 1.18.0.
+  * The [`Unwrapped`][u-2-0a] methods [`from_str_binary`][u-fsb-2-0a],
+    [`from_str_octal`][u-fso-2-0a] and [`from_str_hex`][u-fsh-2-0a] return the
     value directly instead of a [`Result`].
   * The deprecated optional features `az` and `f16` were removed. These features
     had no effect, as the functionality they enabled is now always enabled.
 
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
-[f-fb-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
-[f-ib-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
-[f128-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.F128.html
-[tf-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/traits/trait.Fixed.html
-[tfs-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/traits/trait.FixedStrict.html
-[u-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.Unwrapped.html
-[u-fsb-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.Unwrapped.html#method.from_str_binary
-[u-fsh-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.Unwrapped.html#method.from_str_hex
-[u-fso-2-0a5]: https://docs.rs/fixed/2.0.0-alpha.5/fixed/struct.Unwrapped.html#method.from_str_octal
+[f-fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
+[f-ib-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
+[f128-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.F128.html
+[tf-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html
+[tfs-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.FixedStrict.html
+[u-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html
+[u-fsb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_binary
+[u-fsh-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_hex
+[u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_octal
 
 Version 1.19.0 (2022-08-29)
 ===========================
