@@ -133,6 +133,18 @@ The conversions supported cover the following cases.
 [u-fsh-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_hex
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_octal
 
+### Version 1.20.0 news (unreleased)
+
+  * The following associated constants were added to the [`F128`][f128-1-20]
+    struct:
+      * [`DIGITS`][f128-d-1-20]
+      * [`MIN_10_EXP`][f128-mi10e-1-20], [`MAX_10_EXP`][f128-ma10e-1-20]
+
+[f128-1-20]: https://docs.rs/fixed/~1.20/fixed/struct.F128.html
+[f128-d-1-20]: https://docs.rs/fixed/~1.20/fixed/struct.F128.html#associatedconstant.DIGITS
+[f128-ma10e-1-20]: https://docs.rs/fixed/~1.20/fixed/struct.F128.html#associatedconstant.MAX_10_EXP
+[f128-mi10e-1-20]: https://docs.rs/fixed/~1.20/fixed/struct.F128.html#associatedconstant.MIN_10_EXP
+
 ### Other releases
 
 Details on other releases can be found in [*RELEASES.md*].
