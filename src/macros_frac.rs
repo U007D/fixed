@@ -857,6 +857,9 @@ or if the base is <&nbsp;2.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::from_num(4).int_log(2), 2);
@@ -925,6 +928,9 @@ or if the base is <&nbsp;2.
 # Examples
 
 ```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, "<4>;
 assert_eq!(Fix::ZERO.checked_int_log(5), None);
