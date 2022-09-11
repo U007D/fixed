@@ -6447,6 +6447,32 @@ assert_eq!(
                     ($Fixed::from_bits(bits), overflow1 != overflow2)
                 }
             }
+
+            if_signed! {
+                $Signedness;
+
+                pub(crate) const TRY_ONE: Option<Self> = if 0 <= FRAC && FRAC < $nbits - 1 {
+                    Some(Self::DELTA.unwrapped_shl(FRAC as u32))
+                } else {
+                    None
+                };
+
+                pub(crate) const TRY_NEG_ONE: Option<Self> = if 0 <= FRAC && FRAC < $nbits {
+                    Some(Self::DELTA.unwrapped_neg().unwrapped_shl(FRAC as u32))
+                } else {
+                    None
+                };
+            }
+
+            if_unsigned! {
+                $Signedness;
+
+                pub(crate) const TRY_ONE: Option<Self> = if 0 <= FRAC && FRAC < $nbits {
+                    Some(Self::DELTA.unwrapped_shl(FRAC as u32))
+                } else {
+                    None
+                };
+            }
         }
     };
 }

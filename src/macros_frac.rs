@@ -2640,22 +2640,6 @@ assert_eq!(
                     }
                 }
             }
-
-            pub(crate) const TRY_ONE: Option<Self> =
-                if FRAC < $nbits - if_signed_unsigned!($Signedness, 1, 0) {
-                    Some(Self::DELTA.unwrapped_shl(FRAC as u32))
-                } else {
-                    None
-                };
-
-            if_signed! {
-                $Signedness;
-                pub(crate) const TRY_NEG_ONE: Option<Self> = if FRAC < $nbits {
-                    Some(Self::DELTA.unwrapped_neg().unwrapped_shl(FRAC as u32))
-                } else {
-                    None
-                };
-            }
         }
     };
 }
