@@ -671,6 +671,9 @@ where
     /// <code>FixedU32::[ZERO][FixedU32::ZERO]</code>.
     const ZERO: Self;
 
+    /// One if the fixed-point number can represent it, otherwise [`None`].
+    const TRY_ONE: Option<Self>;
+
     /// The difference between any two successive representable numbers, <i>Δ</i>.
     ///
     /// See also <code>FixedI32::[DELTA][FixedI32::DELTA]</code> and
@@ -2907,6 +2910,10 @@ pub trait FixedSigned: Fixed
 where
     Self: Neg<Output = Self>,
 {
+    /// Negative one if the fixed-point number can represent it, otherwise
+    /// [`None`].
+    const TRY_NEG_ONE: Option<Self>;
+
     /// Returns the number of bits required to represent the value.
     ///
     /// See also <code>FixedI32::[signed\_bits][FixedI32::signed_bits]</code>.
@@ -3825,6 +3832,7 @@ macro_rules! impl_fixed {
             type Signed = $IFixed<FRAC>;
             type Unsigned = $UFixed<FRAC>;
             const ZERO: Self = Self::ZERO;
+            const TRY_ONE: Option<Self> = Self::TRY_ONE;
             const DELTA: Self = Self::DELTA;
             const MIN: Self = Self::MIN;
             const MAX: Self = Self::MAX;
@@ -4072,6 +4080,7 @@ macro_rules! impl_fixed {
         if_signed! {
             $Signedness;
             impl<const FRAC: i32> FixedSigned for $Fixed<FRAC> {
+                const TRY_NEG_ONE: Option<Self> = Self::TRY_NEG_ONE;
                 trait_delegate! { fn signed_bits(self) -> u32 }
                 trait_delegate! { fn is_positive(self) -> bool }
                 trait_delegate! { fn is_negative(self) -> bool }
