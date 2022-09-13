@@ -1108,7 +1108,11 @@ impl<F: Fixed> Wrapping<F> {
     /// ```
     #[inline]
     #[must_use = "this returns the result of the operation, without modifying the original"]
-    pub fn mul_add(self, mul: Wrapping<F>, add: Wrapping<F>) -> Wrapping<F> {
+    pub fn mul_add<const MUL_FRAC: i32>(
+        self,
+        mul: Wrapping<F::FixedFrac<MUL_FRAC>>,
+        add: Wrapping<F>,
+    ) -> Wrapping<F> {
         Wrapping(self.0.wrapping_mul_add(mul.0, add.0))
     }
 
@@ -1134,7 +1138,11 @@ impl<F: Fixed> Wrapping<F> {
     /// assert_eq!(max.add_prod(max, three), max * 4);
     /// ```
     #[inline]
-    pub fn add_prod(self, a: Wrapping<F>, b: Wrapping<F>) -> Wrapping<F> {
+    pub fn add_prod<const A_FRAC: i32, const B_FRAC: i32>(
+        self,
+        a: Wrapping<F::FixedFrac<A_FRAC>>,
+        b: Wrapping<F::FixedFrac<B_FRAC>>,
+    ) -> Wrapping<F> {
         Wrapping(self.0.wrapping_add_prod(a.0, b.0))
     }
 
@@ -1161,7 +1169,11 @@ impl<F: Fixed> Wrapping<F> {
     /// assert_eq!(acc, Wrapping(I16F16::MAX) * 4);
     /// ```
     #[inline]
-    pub fn mul_acc(&mut self, a: Wrapping<F>, b: Wrapping<F>) {
+    pub fn mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
+        &mut self,
+        a: Wrapping<F::FixedFrac<A_FRAC>>,
+        b: Wrapping<F::FixedFrac<B_FRAC>>,
+    ) {
         self.0.wrapping_mul_acc(a.0, b.0);
     }
 

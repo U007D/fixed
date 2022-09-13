@@ -11,7 +11,7 @@
 // You should have recieved copies of the Apache License and the MIT
 // License along with the library. If not, see
 // <https://www.apache.org/licenses/LICENSE-2.0> and
-// <https://opensource.org/licenses/MIT>.
+// <https://opensource.org/licenses/MIT>
 
 /*!
 # Fixed-point numbers
@@ -379,6 +379,7 @@ shall be dual licensed as above, without any additional terms or conditions.
 #![doc(test(attr(deny(warnings))))]
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
 #![feature(generic_const_exprs)]
+#![feature(generic_associated_types)]
 #![allow(incomplete_features)]
 
 #[cfg(all(not(feature = "std"), test))]

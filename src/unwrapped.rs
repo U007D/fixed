@@ -1220,7 +1220,11 @@ impl<F: Fixed> Unwrapped<F> {
     #[inline]
     #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
-    pub fn mul_add(self, mul: Unwrapped<F>, add: Unwrapped<F>) -> Unwrapped<F> {
+    pub fn mul_add<const MUL_FRAC: i32>(
+        self,
+        mul: Unwrapped<F::FixedFrac<MUL_FRAC>>,
+        add: Unwrapped<F>,
+    ) -> Unwrapped<F> {
         Unwrapped(self.0.unwrapped_mul_add(mul.0, add.0))
     }
 
@@ -1259,7 +1263,11 @@ impl<F: Fixed> Unwrapped<F> {
     /// let _overflow = max.add_prod(max, Unwrapped(I16F16::from_num(3)));
     /// ```
     #[inline]
-    pub fn add_prod(self, a: Unwrapped<F>, b: Unwrapped<F>) -> Unwrapped<F> {
+    pub fn add_prod<const A_FRAC: i32, const B_FRAC: i32>(
+        self,
+        a: Unwrapped<F::FixedFrac<A_FRAC>>,
+        b: Unwrapped<F::FixedFrac<B_FRAC>>,
+    ) -> Unwrapped<F> {
         Unwrapped(self.0.unwrapped_add_prod(a.0, b.0))
     }
 
@@ -1297,7 +1305,11 @@ impl<F: Fixed> Unwrapped<F> {
     /// acc.mul_acc(Unwrapped(I16F16::MAX), Unwrapped(I16F16::from_num(3)));
     /// ```
     #[inline]
-    pub fn mul_acc(&mut self, a: Unwrapped<F>, b: Unwrapped<F>) {
+    pub fn mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
+        &mut self,
+        a: Unwrapped<F::FixedFrac<A_FRAC>>,
+        b: Unwrapped<F::FixedFrac<B_FRAC>>,
+    ) {
         self.0.unwrapped_mul_acc(a.0, b.0);
     }
 
