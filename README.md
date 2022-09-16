@@ -112,6 +112,8 @@ The conversions supported cover the following cases.
     parameters and return types that can be generic:
       * [`mul_add`][tf-mad-2-0a], [`add_prod`][tf-ap-2-0a],
         [`mul_acc`][tf-mac-2-0a]
+  * The following methods of the [`Fixed`][tf-2-0a] trait now have some
+    parameters and return types that can be generic:
       * [`checked_mul_add`][tf-cmad-2-0a], [`checked_add_prod`][tf-cap-2-0a],
         [`checked_mul_acc`][tf-cmac-2-0a]
       * [`saturating_mul_add`][tf-smad-2-0a],
