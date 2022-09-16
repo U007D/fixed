@@ -535,8 +535,32 @@ where
     /// [types]: crate::types
     type Unsigned: FixedUnsigned;
 
-    /// This type with a possible different number of bits.
-    type FixedFrac<const FRAC: i32>: Fixed<Bits = Self::Bits>;
+    /// A fixed-point number with the same uderlying bit representation.
+    ///
+    /// The number of fractional and integer bits can be different.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{traits::Fixed, types::I4F4};
+    ///
+    /// fn op<F: Fixed>(f: F) -> F {
+    ///     let num = F::Bits::try_from(64).ok().unwrap();
+    ///     // a requires more than 4 integer bits
+    ///     let a = F::FixedF::<0>::TRY_ONE.unwrap() * num;
+    ///     // b requires more than 4 fractional bits
+    ///     let b = F::FixedF::<6>::TRY_ONE.unwrap() / num;
+    ///
+    ///     // a * b = 1, so this effectively returns f + 1
+    ///     f.add_prod(a, b)
+    /// }
+    ///
+    /// assert_eq!(op(I4F4::from_num(2.5)), 3.5);
+    /// ```
+    type FixedF<const FRAC: i32>: Fixed<Bits = Self::Bits>;
 
     /// Returns a reference to `self` as [`FixedSigned`] if the type is signed,
     /// or [`None`] if it is unsigned.
@@ -1341,7 +1365,7 @@ where
     /// See also <code>FixedI32::[mul\_add][FixedI32::mul_add]</code> and
     /// <code>FixedU32::[mul\_add][FixedU32::mul_add]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn mul_add<const MUL_FRAC: i32>(self, mul: Self::FixedFrac<MUL_FRAC>, add: Self) -> Self;
+    fn mul_add<const MUL_FRAC: i32>(self, mul: Self::FixedF<MUL_FRAC>, add: Self) -> Self;
 
     /// Adds `self` to the product `a`&nbsp;×&nbsp;`b`.
     ///
@@ -1349,8 +1373,8 @@ where
     /// <code>FixedU32::[add\_prod][FixedU32::add_prod]</code>.
     fn add_prod<const A_FRAC: i32, const B_FRAC: i32>(
         self,
-        a: Self::FixedFrac<A_FRAC>,
-        b: Self::FixedFrac<B_FRAC>,
+        a: Self::FixedF<A_FRAC>,
+        b: Self::FixedF<B_FRAC>,
     ) -> Self;
 
     /// Multiply and accumulate. Adds (`a` × `b`) to `self`.
@@ -1359,8 +1383,8 @@ where
     /// <code>FixedU32::[mul\_acc][FixedU32::mul_acc]</code>.
     fn mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
         &mut self,
-        a: Self::FixedFrac<A_FRAC>,
-        b: Self::FixedFrac<B_FRAC>,
+        a: Self::FixedF<A_FRAC>,
+        b: Self::FixedF<B_FRAC>,
     );
 
     /// Remainder for Euclidean division.
@@ -1428,7 +1452,7 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn checked_mul_add<const MUL_FRAC: i32>(
         self,
-        mul: Self::FixedFrac<MUL_FRAC>,
+        mul: Self::FixedF<MUL_FRAC>,
         add: Self,
     ) -> Option<Self>;
 
@@ -1441,8 +1465,8 @@ where
     #[must_use = "this `Option` may be a `None` variant indicating overflow, which should be handled"]
     fn checked_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
         self,
-        a: Self::FixedFrac<A_FRAC>,
-        b: Self::FixedFrac<B_FRAC>,
+        a: Self::FixedF<A_FRAC>,
+        b: Self::FixedF<B_FRAC>,
     ) -> Option<Self>;
 
     /// Checked multiply and accumulate. Adds (`a` × `b`) to `self`, or returns
@@ -1455,8 +1479,8 @@ where
     #[must_use = "this `Option` may be a `None` variant indicating overflow, which should be handled"]
     fn checked_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
         &mut self,
-        a: Self::FixedFrac<A_FRAC>,
-        b: Self::FixedFrac<B_FRAC>,
+        a: Self::FixedF<A_FRAC>,
+        b: Self::FixedF<B_FRAC>,
     ) -> Option<()>;
 
     /// Checked remainder for Euclidean division. Returns the
@@ -1568,7 +1592,7 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn saturating_mul_add<const MUL_FRAC: i32>(
         self,
-        mul: Self::FixedFrac<MUL_FRAC>,
+        mul: Self::FixedF<MUL_FRAC>,
         add: Self,
     ) -> Self;
 
@@ -1580,8 +1604,8 @@ where
     /// <code>FixedU32::[saturating\_add\_prod][FixedU32::saturating_add_prod]</code>.
     fn saturating_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
         self,
-        a: Self::FixedFrac<A_FRAC>,
-        b: Self::FixedFrac<B_FRAC>,
+        a: Self::FixedF<A_FRAC>,
+        b: Self::FixedF<B_FRAC>,
     ) -> Self;
 
     /// Saturating multiply and add. Adds (`a` × `b`) to `self`, saturating on overflow.
@@ -1592,8 +1616,8 @@ where
     /// <code>FixedU32::[saturating\_mul\_acc][FixedU32::saturating_mul_acc]</code>.
     fn saturating_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
         &mut self,
-        a: Self::FixedFrac<A_FRAC>,
-        b: Self::FixedFrac<B_FRAC>,
+        a: Self::FixedF<A_FRAC>,
+        b: Self::FixedF<B_FRAC>,
     );
 
     /// Saturating multiplication by an integer. Returns the product, saturating on overflow.
@@ -1662,11 +1686,7 @@ where
     /// and
     /// <code>FixedU32::[wrapping\_mul\_add][FixedU32::wrapping_mul_add]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn wrapping_mul_add<const MUL_FRAC: i32>(
-        self,
-        mul: Self::FixedFrac<MUL_FRAC>,
-        add: Self,
-    ) -> Self;
+    fn wrapping_mul_add<const MUL_FRAC: i32>(self, mul: Self::FixedF<MUL_FRAC>, add: Self) -> Self;
 
     /// Adds `self` to the product `a`&nbsp;×&nbsp;`b`, wrapping on overflow.
     ///
@@ -1676,8 +1696,8 @@ where
     /// <code>FixedU32::[wrapping\_add\_prod][FixedU32::wrapping_add_prod]</code>.
     fn wrapping_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
         self,
-        a: Self::FixedFrac<A_FRAC>,
-        b: Self::FixedFrac<B_FRAC>,
+        a: Self::FixedF<A_FRAC>,
+        b: Self::FixedF<B_FRAC>,
     ) -> Self;
 
     /// Wrapping multiply and accumulate. Adds (`a` × `b`) to `self`, wrapping on overflow.
@@ -1688,8 +1708,8 @@ where
     /// <code>FixedU32::[wrapping\_mul\_acc][FixedU32::wrapping_mul_acc]</code>.
     fn wrapping_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
         &mut self,
-        a: Self::FixedFrac<A_FRAC>,
-        b: Self::FixedFrac<B_FRAC>,
+        a: Self::FixedF<A_FRAC>,
+        b: Self::FixedF<B_FRAC>,
     );
 
     /// Wrapping multiplication by an integer. Returns the product, wrapping on overflow.
@@ -1833,11 +1853,8 @@ where
     /// Panics if the result does not fit.
     #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
-    fn unwrapped_mul_add<const MUL_FRAC: i32>(
-        self,
-        mul: Self::FixedFrac<MUL_FRAC>,
-        add: Self,
-    ) -> Self;
+    fn unwrapped_mul_add<const MUL_FRAC: i32>(self, mul: Self::FixedF<MUL_FRAC>, add: Self)
+        -> Self;
 
     /// Adds `self` to the product `a`&nbsp;×&nbsp;`b`, panicking on overflow.
     ///
@@ -1852,8 +1869,8 @@ where
     #[track_caller]
     fn unwrapped_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
         self,
-        a: Self::FixedFrac<A_FRAC>,
-        b: Self::FixedFrac<B_FRAC>,
+        a: Self::FixedF<A_FRAC>,
+        b: Self::FixedF<B_FRAC>,
     ) -> Self;
 
     /// Unwrapped multiply and accumulate. Adds (`a` × `b`) to `self`, panicking on overflow.
@@ -1869,8 +1886,8 @@ where
     #[track_caller]
     fn unwrapped_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
         &mut self,
-        a: Self::FixedFrac<A_FRAC>,
-        b: Self::FixedFrac<B_FRAC>,
+        a: Self::FixedF<A_FRAC>,
+        b: Self::FixedF<B_FRAC>,
     );
 
     /// Unwrapped remainder for Euclidean division. Returns the
@@ -2033,7 +2050,7 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn overflowing_mul_add<const MUL_FRAC: i32>(
         self,
-        mul: Self::FixedFrac<MUL_FRAC>,
+        mul: Self::FixedF<MUL_FRAC>,
         add: Self,
     ) -> (Self, bool);
 
@@ -2049,8 +2066,8 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn overflowing_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
         self,
-        a: Self::FixedFrac<A_FRAC>,
-        b: Self::FixedFrac<B_FRAC>,
+        a: Self::FixedF<A_FRAC>,
+        b: Self::FixedF<B_FRAC>,
     ) -> (Self, bool);
 
     /// Overflowing multiply and accumulate. Adds (`a` × `b`) to `self`,
@@ -2063,8 +2080,8 @@ where
     #[must_use = "this returns whether overflow occurs; use `wrapping_mul_acc` if the flag is not needed"]
     fn overflowing_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
         &mut self,
-        a: Self::FixedFrac<A_FRAC>,
-        b: Self::FixedFrac<B_FRAC>,
+        a: Self::FixedF<A_FRAC>,
+        b: Self::FixedF<B_FRAC>,
     ) -> bool;
 
     /// Overflowing multiplication by an integer.
@@ -3904,7 +3921,7 @@ macro_rules! impl_fixed {
             type NonZeroBits = $NonZeroBits;
             type Signed = $IFixed<FRAC>;
             type Unsigned = $UFixed<FRAC>;
-            type FixedFrac<const F: i32> = $Fixed<F>;
+            type FixedF<const F: i32> = $Fixed<F>;
             const ZERO: Self = Self::ZERO;
             const TRY_ONE: Option<Self> = Self::TRY_ONE;
             const DELTA: Self = Self::DELTA;
@@ -3983,18 +4000,18 @@ macro_rules! impl_fixed {
             trait_delegate! { fn next_multiple_of(self, other: Self) -> Self }
             trait_delegate! { fn mul_add<const MUL_FRAC: i32>(
                 self,
-                mul: Self::FixedFrac<MUL_FRAC>,
+                mul: Self::FixedF<MUL_FRAC>,
                 add: Self,
             ) -> Self }
             trait_delegate! { fn add_prod<const A_FRAC: i32, const B_FRAC: i32>(
                 self,
-                a: Self::FixedFrac<A_FRAC>,
-                b: Self::FixedFrac<B_FRAC>,
+                a: Self::FixedF<A_FRAC>,
+                b: Self::FixedF<B_FRAC>,
             ) -> Self }
             trait_delegate! { fn mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
                 &mut self,
-                a: Self::FixedFrac<A_FRAC>,
-                b: Self::FixedFrac<B_FRAC>,
+                a: Self::FixedF<A_FRAC>,
+                b: Self::FixedF<B_FRAC>,
             ) }
             trait_delegate! { fn rem_euclid(self, rhs: Self) -> Self }
             trait_delegate! { fn checked_neg(self) -> Option<Self> }
@@ -4005,18 +4022,18 @@ macro_rules! impl_fixed {
             trait_delegate! { fn checked_next_multiple_of(self, other: Self) -> Option<Self> }
             trait_delegate! { fn checked_mul_add<const MUL_FRAC: i32>(
                 self,
-                mul: Self::FixedFrac<MUL_FRAC>,
+                mul: Self::FixedF<MUL_FRAC>,
                 add: Self,
             ) -> Option<Self> }
             trait_delegate! { fn checked_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
                 self,
-                a: Self::FixedFrac<A_FRAC>,
-                b: Self::FixedFrac<B_FRAC>,
+                a: Self::FixedF<A_FRAC>,
+                b: Self::FixedF<B_FRAC>,
             ) -> Option<Self> }
             trait_delegate! { fn checked_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
                 &mut self,
-                a: Self::FixedFrac<A_FRAC>,
-                b: Self::FixedFrac<B_FRAC>,
+                a: Self::FixedF<A_FRAC>,
+                b: Self::FixedF<B_FRAC>,
             ) -> Option<()> }
             trait_delegate! { fn checked_rem_euclid(self, rhs: Self) -> Option<Self> }
             trait_delegate! { fn checked_mul_int(self, rhs: Self::Bits) -> Option<Self> }
@@ -4031,18 +4048,18 @@ macro_rules! impl_fixed {
             trait_delegate! { fn saturating_next_multiple_of(self, other: Self) -> Self }
             trait_delegate! { fn saturating_mul_add<const MUL_FRAC: i32>(
                 self,
-                mul: Self::FixedFrac<MUL_FRAC>,
+                mul: Self::FixedF<MUL_FRAC>,
                 add: Self,
             ) -> Self }
             trait_delegate! { fn saturating_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
                 self,
-                a: Self::FixedFrac<A_FRAC>,
-                b: Self::FixedFrac<B_FRAC>,
+                a: Self::FixedF<A_FRAC>,
+                b: Self::FixedF<B_FRAC>,
             ) -> Self }
             trait_delegate! { fn saturating_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
                 &mut self,
-                a: Self::FixedFrac<A_FRAC>,
-                b: Self::FixedFrac<B_FRAC>,
+                a: Self::FixedF<A_FRAC>,
+                b: Self::FixedF<B_FRAC>,
             ) }
             trait_delegate! { fn saturating_mul_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn saturating_dist(self, other: Self) -> Self }
@@ -4053,18 +4070,18 @@ macro_rules! impl_fixed {
             trait_delegate! { fn wrapping_next_multiple_of(self, other: Self) -> Self }
             trait_delegate! { fn wrapping_mul_add<const MUL_FRAC: i32>(
                 self,
-                mul: Self::FixedFrac<MUL_FRAC>,
+                mul: Self::FixedF<MUL_FRAC>,
                 add: Self,
             ) -> Self }
             trait_delegate! { fn wrapping_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
                 self,
-                a: Self::FixedFrac<A_FRAC>,
-                b: Self::FixedFrac<B_FRAC>,
+                a: Self::FixedF<A_FRAC>,
+                b: Self::FixedF<B_FRAC>,
             ) -> Self }
             trait_delegate! { fn wrapping_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
                 &mut self,
-                a: Self::FixedFrac<A_FRAC>,
-                b: Self::FixedFrac<B_FRAC>,
+                a: Self::FixedF<A_FRAC>,
+                b: Self::FixedF<B_FRAC>,
             ) }
             trait_delegate! { fn wrapping_mul_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn wrapping_div_int(self, rhs: Self::Bits) -> Self }
@@ -4079,18 +4096,18 @@ macro_rules! impl_fixed {
             trait_delegate! { fn unwrapped_next_multiple_of(self, other: Self) -> Self }
             trait_delegate! { fn unwrapped_mul_add<const MUL_FRAC: i32>(
                 self,
-                mul: Self::FixedFrac<MUL_FRAC>,
+                mul: Self::FixedF<MUL_FRAC>,
                 add: Self,
             ) -> Self }
             trait_delegate! { fn unwrapped_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
                 self,
-                a: Self::FixedFrac<A_FRAC>,
-                b: Self::FixedFrac<B_FRAC>,
+                a: Self::FixedF<A_FRAC>,
+                b: Self::FixedF<B_FRAC>,
             ) -> Self }
             trait_delegate! { fn unwrapped_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
                 &mut self,
-                a: Self::FixedFrac<A_FRAC>,
-                b: Self::FixedFrac<B_FRAC>,
+                a: Self::FixedF<A_FRAC>,
+                b: Self::FixedF<B_FRAC>,
             ) }
             trait_delegate! { fn unwrapped_rem_euclid(self, rhs: Self) -> Self }
             trait_delegate! { fn unwrapped_mul_int(self, rhs: Self::Bits) -> Self }
@@ -4105,18 +4122,18 @@ macro_rules! impl_fixed {
             trait_delegate! { fn overflowing_next_multiple_of(self, other: Self) -> (Self, bool) }
             trait_delegate! { fn overflowing_mul_add<const MUL_FRAC: i32>(
                 self,
-                mul: Self::FixedFrac<MUL_FRAC>,
+                mul: Self::FixedF<MUL_FRAC>,
                 add: Self,
             ) -> (Self, bool) }
             trait_delegate! { fn overflowing_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
                 self,
-                a: Self::FixedFrac<A_FRAC>,
-                b: Self::FixedFrac<B_FRAC>,
+                a: Self::FixedF<A_FRAC>,
+                b: Self::FixedF<B_FRAC>,
             ) -> (Self, bool) }
             trait_delegate! { fn overflowing_mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
                 &mut self,
-                a: Self::FixedFrac<A_FRAC>,
-                b: Self::FixedFrac<B_FRAC>,
+                a: Self::FixedF<A_FRAC>,
+                b: Self::FixedF<B_FRAC>,
             ) -> bool }
             trait_delegate! { fn overflowing_mul_int(self, rhs: Self::Bits) -> (Self, bool) }
             trait_delegate! { fn overflowing_div_int(self, rhs: Self::Bits) -> (Self, bool) }
