@@ -13,7 +13,11 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
-use crate::traits::FixedEquiv;
+use crate::{
+    traits::{Fixed, FixedEquiv},
+    FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
+    FixedU8,
+};
 #[cfg(feature = "arbitrary")]
 use arbitrary::Arbitrary;
 use az::{
@@ -54,8 +58,9 @@ use num_traits::{
 use serde::{de::Deserialize, ser::Serialize};
 
 macro_rules! impl_bits {
-    ($Bits:ident) => {
+    ($Bits:ident, $Fixed:ident) => {
         impl FixedBits for $Bits {
+            type Fixed<const FRAC: i32> = $Fixed<FRAC>;
             const MIN: $Bits = $Bits::MIN;
             const MAX: $Bits = $Bits::MAX;
             const IS_SIGNED: bool = $Bits::MIN != 0;
@@ -126,7 +131,7 @@ where
     Self: Shl<u32, Output = Self> + ShlAssign<u32>,
     Self: Shr<u32, Output = Self> + ShrAssign<u32>,
     Self: Sum + Product,
-    Self: FixedEquiv,
+    Self: FixedEquiv<Equiv = Self::Fixed<0>>,
     Self: FixedBitsCast<i8> + FixedBitsCast<i16> + FixedBitsCast<i32>,
     Self: FixedBitsCast<i64> + FixedBitsCast<i128> + FixedBitsCast<isize>,
     Self: FixedBitsCast<u8> + FixedBitsCast<u16> + FixedBitsCast<u32>,
@@ -136,6 +141,34 @@ where
     Self: FixedBitsOptionalNum,
     Self: FixedBitsOptionalSerde,
 {
+    /// A fixed-point number with this type as the underlying bit representation.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{
+    ///     traits::{Fixed, FixedBits},
+    ///     types::I4F4,
+    /// };
+    ///
+    /// fn op<F: Fixed>(f: F) -> F {
+    ///     let num = F::Bits::try_from(64).ok().unwrap();
+    ///     // a requires more than 4 integer bits
+    ///     let a = <F::Bits as FixedBits>::Fixed::<0>::TRY_ONE.unwrap() * num;
+    ///     // b requires more than 4 fractional bits
+    ///     let b = <F::Bits as FixedBits>::Fixed::<6>::TRY_ONE.unwrap() / num;
+    ///
+    ///     // a * b = 1, so this effectively returns f + 1
+    ///     f.add_prod(a, b)
+    /// }
+    ///
+    /// assert_eq!(op(I4F4::from_num(2.5)), 3.5);
+    /// ```
+    type Fixed<const FRAC: i32>: Fixed<Bits = Self>;
+
     /// The smallest value that can be represented by this integer type.
     const MIN: Self;
 
@@ -166,16 +199,16 @@ where
 
 pub trait Sealed {}
 
-impl_bits! { i8 }
-impl_bits! { i16 }
-impl_bits! { i32 }
-impl_bits! { i64 }
-impl_bits! { i128 }
-impl_bits! { u8 }
-impl_bits! { u16 }
-impl_bits! { u32 }
-impl_bits! { u64 }
-impl_bits! { u128 }
+impl_bits! { i8, FixedI8 }
+impl_bits! { i16, FixedI16 }
+impl_bits! { i32, FixedI32 }
+impl_bits! { i64, FixedI64 }
+impl_bits! { i128, FixedI128 }
+impl_bits! { u8, FixedU8 }
+impl_bits! { u16, FixedU16 }
+impl_bits! { u32, FixedU32 }
+impl_bits! { u64, FixedU64 }
+impl_bits! { u128, FixedU128 }
 
 #[cfg(not(feature = "arbitrary"))]
 /// This trait is used to provide supertraits to the [`FixedBits`] trait

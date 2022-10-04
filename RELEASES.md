@@ -7,8 +7,8 @@ as-is, without any warranty. -->
 
 ### Version 2.0.0-alpha.7 news (unreleased)
 
-  * The new generic associated type [`FixedF`][tf-ff-2-0a] was added to the
-    [`Fixed`][tf-2-0a] trait.
+  * The new generic associated type [`Fixed`][fb-f-2-0a] was added to the
+    [`FixedBits`][fb-2-0a] trait.
   * The following methods of the [`Fixed`][tf-2-0a] trait and of the
     [`Wrapping`][w-2-0a] and [`Unwrapped`][u-2-0a] wrappers now have some
     parameters and return types that can be generic:
@@ -29,11 +29,12 @@ as-is, without any warranty. -->
         [`overflowing_add_prod`][tf-oap-2-0a],
         [`overflowing_mul_acc`][tf-omac-2-0a]
 
+[fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.FixedBits.html
+[fb-f-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.FixedBits.html#associatedtype.Fixed
 [tf-ap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.add_prod
 [tf-cap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.checked_add_prod
 [tf-cmac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.checked_mul_acc
 [tf-cmad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.checked_mul_add
-[tf-ff-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#associatedtype.FixedF
 [tf-mac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.mul_acc
 [tf-mad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.mul_add
 [tf-oap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.overflowing_add_prod

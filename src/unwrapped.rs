@@ -15,7 +15,7 @@
 
 use crate::{
     from_str::ParseFixedError,
-    traits::{Fixed, FixedSigned, FixedStrict, FixedUnsigned, FromFixed, ToFixed},
+    traits::{Fixed, FixedBits, FixedSigned, FixedStrict, FixedUnsigned, FromFixed, ToFixed},
     types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
@@ -1222,7 +1222,7 @@ impl<F: Fixed> Unwrapped<F> {
     #[must_use = "this returns the result of the operation, without modifying the original"]
     pub fn mul_add<const MUL_FRAC: i32>(
         self,
-        mul: Unwrapped<F::FixedF<MUL_FRAC>>,
+        mul: Unwrapped<<F::Bits as FixedBits>::Fixed<MUL_FRAC>>,
         add: Unwrapped<F>,
     ) -> Unwrapped<F> {
         Unwrapped(self.0.unwrapped_mul_add(mul.0, add.0))
@@ -1265,8 +1265,8 @@ impl<F: Fixed> Unwrapped<F> {
     #[inline]
     pub fn add_prod<const A_FRAC: i32, const B_FRAC: i32>(
         self,
-        a: Unwrapped<F::FixedF<A_FRAC>>,
-        b: Unwrapped<F::FixedF<B_FRAC>>,
+        a: Unwrapped<<F::Bits as FixedBits>::Fixed<A_FRAC>>,
+        b: Unwrapped<<F::Bits as FixedBits>::Fixed<B_FRAC>>,
     ) -> Unwrapped<F> {
         Unwrapped(self.0.unwrapped_add_prod(a.0, b.0))
     }
@@ -1307,8 +1307,8 @@ impl<F: Fixed> Unwrapped<F> {
     #[inline]
     pub fn mul_acc<const A_FRAC: i32, const B_FRAC: i32>(
         &mut self,
-        a: Unwrapped<F::FixedF<A_FRAC>>,
-        b: Unwrapped<F::FixedF<B_FRAC>>,
+        a: Unwrapped<<F::Bits as FixedBits>::Fixed<A_FRAC>>,
+        b: Unwrapped<<F::Bits as FixedBits>::Fixed<B_FRAC>>,
     ) {
         self.0.unwrapped_mul_acc(a.0, b.0);
     }
