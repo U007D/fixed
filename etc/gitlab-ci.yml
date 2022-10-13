@@ -31,6 +31,8 @@ x86_64-gnulinux:
   - rustup toolchain install --profile minimal nightly-$TARGET
   - cargo +nightly-$TARGET test --features "fail-on-warnings arbitrary borsh num-traits serde std"
   - cargo +nightly-$TARGET test --release --features "fail-on-warnings arbitrary borsh num-traits serde std"
+  only:
+  - ci
 
 i686-gnulinux:
   image: i386/rust:1
@@ -44,6 +46,8 @@ i686-gnulinux:
   - rustup toolchain install --profile minimal nightly-$TARGET
   - cargo +nightly-$TARGET test --features "fail-on-warnings arbitrary borsh num-traits serde std"
   - cargo +nightly-$TARGET test --release --features "fail-on-warnings arbitrary borsh num-traits serde std"
+  only:
+  - ci
 
 x86_64-gnulinux-tidy:
   image: amd64/rust:1
@@ -65,6 +69,8 @@ x86_64-gnulinux-tidy:
   - cargo +nightly-$TARGET clippy --all-targets --features "fail-on-warnings serde-str"
   - cargo +nightly-$TARGET clippy --all-targets --features "fail-on-warnings std"
   - cargo +nightly-$TARGET clippy --all-targets --features fail-on-warnings
+  only:
+  - ci
 
 i686-gnulinux-tidy:
   image: i386/rust:1
@@ -86,6 +92,8 @@ i686-gnulinux-tidy:
   - cargo +nightly-$TARGET clippy --all-targets --features "fail-on-warnings serde-str"
   - cargo +nightly-$TARGET clippy --all-targets --features "fail-on-warnings std"
   - cargo +nightly-$TARGET clippy --all-targets --features fail-on-warnings
+  only:
+  - ci
 
 x86_64-gnulinux-tarpaulin:
   image: amd64/rust:1
@@ -102,6 +110,8 @@ x86_64-gnulinux-tarpaulin:
   - stdbuf -oL cargo +nightly-$TARGET tarpaulin -v --ignore-tests --exclude-files build.rs --features "arbitrary borsh num-traits serde std" | tee tarpaulin.log
   - echo "Check that coverage not less than $REQ_COVERAGE%"
   - tail -1 tarpaulin.log | awk '{ if ($1 < '$REQ_COVERAGE') { exit 1 } }'
+  only:
+  - ci
 
 pages:
   image: amd64/rust:1
@@ -122,4 +132,4 @@ pages:
     paths:
     - public
   only:
-  - master
+  - www
