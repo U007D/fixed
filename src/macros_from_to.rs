@@ -842,10 +842,9 @@ assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
         /// # Examples
         ///
         /// ```rust
-        /// use fixed::types::extra::{U2, U4};
         #[doc = concat!("use fixed::", $s_fixed, ";")]
-        #[doc = concat!("type FixA = ", $s_fixed, "<U2>;")]
-        #[doc = concat!("type FixB = ", $s_fixed, "<U4>;")]
+        #[doc = concat!("type FixA = ", $s_fixed, "<2>;")]
+        #[doc = concat!("type FixB = ", $s_fixed, "<4>;")]
         /// const A: FixA = FixA::unwrapped_from_str("3.5");
         /// const B: FixB = FixB::const_from_fixed(A);
         /// assert_eq!(B, 3.5);
@@ -854,9 +853,8 @@ assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
         /// The following would fail to compile because of overflow.
         ///
         /// ```rust,compile_fail
-        /// use fixed::types::extra::{U2, U4};
         #[doc = concat!("use fixed::", $s_fixed, ";")]
-        #[doc = concat!("const _OVERFLOW: ", $s_fixed, "<U4> = ", $s_fixed, "::const_from_fixed(", $s_fixed, "::<U2>::MAX);")]
+        #[doc = concat!("const _OVERFLOW: ", $s_fixed, "<4> = ", $s_fixed, "::const_from_fixed(", $s_fixed, "::<2>::MAX);")]
         /// ```
         ///
         /// [`from_num`]: Self::from_num
