@@ -182,7 +182,7 @@ The conversions supported cover the following cases.
 [u-fsh-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_hex
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_octal
 
-### Version 1.20.0 news (unreleased)
+### Version 1.20.0 news (2022-11-08)
 
   * The [`TRY_ONE`][tf-to-1-20] associated constant was added to the
     [`Fixed`][tf-1-20] trait.

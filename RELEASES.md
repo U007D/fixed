@@ -85,7 +85,7 @@ Version 2.0.0-alpha.6 (2022-08-29)
 [u-fsh-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_hex
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_octal
 
-Version 1.20.0 (unreleased)
+Version 1.20.0 (2022-11-08)
 ===========================
 
   * The [`TRY_ONE`][tf-to-1-20] associated constant was added to the
