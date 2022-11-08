@@ -756,6 +756,7 @@ fixed! {
 /// ```rust
 /// #![feature(generic_const_exprs)]
 /// # #![allow(incomplete_features)]
+/// # #![allow(deprecated)]
 ///
 /// use fixed::{const_fixed_from_int, types::I16F16};
 /// const_fixed_from_int! {
@@ -774,6 +775,7 @@ fixed! {
 /// ```rust,compile_fail
 /// #![feature(generic_const_exprs)]
 /// # #![allow(incomplete_features)]
+/// # #![allow(deprecated)]
 ///
 /// use fixed::{const_fixed_from_int, types::I16F16};
 /// const_fixed_from_int! {
@@ -801,6 +803,7 @@ fixed! {
 /// [`I16F16`]: crate::types::I16F16
 /// [`from_num`]: FixedI32::from_num
 #[macro_export]
+#[deprecated(since = "1.20.0", note = "use the `const_from_int` method instead")]
 macro_rules! const_fixed_from_int {
     ($($vis:vis const $NAME:ident: $Fixed:ty = $int:expr;)*) => { $(
         $vis const $NAME: $Fixed = <$Fixed>::from_bits({
