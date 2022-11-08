@@ -126,7 +126,10 @@ The conversions supported cover the following cases.
       * [`overflowing_mul_add`][tf-omad-2-0a],
         [`overflowing_add_prod`][tf-oap-2-0a],
         [`overflowing_mul_acc`][tf-omac-2-0a]
+  * The deprecated `const_fixed_from_int` macro has been removed. It was
+    replaced by the [`const_from_int`][f-cfi-2-0a] method in version 1.20.0.
 
+[f-cfi-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#method.const_from_int
 [fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.FixedBits.html
 [fb-f-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.FixedBits.html#associatedtype.Fixed
 [tf-ap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.add_prod
