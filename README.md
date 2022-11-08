@@ -103,8 +103,26 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
-### Version 2.0.0-alpha.7 news (unreleased)
+### Version 2.0.0-alpha.7 news (2022-11-08)
 
+  * The crate now requires the nightly compiler with the [`generic_const_exprs`
+    feature] enabled.
+  * The crate now uses generic constant expressions to specify the number of
+    fractional bits.
+  * The [`Fixed`][tf-2-0a] trait constraints have been relaxed, and the methods
+    which needed the strict constraints have been moved to the subtrait
+    [`FixedStrict`][tfs-2-0a].
+  * The `INT_NBITS` and `FRAC_NBITS` associated constants were replaced with
+    [`INT_BITS`][f-ib-2-0a] and [`FRAC_BITS`][f-fb-2-0a] which can be negative.
+  * The [`Unwrapped`][u-2-0a] methods [`from_str_binary`][u-fsb-2-0a],
+    [`from_str_octal`][u-fso-2-0a] and [`from_str_hex`][u-fsh-2-0a] return the
+    value directly instead of a [`Result`].
+  * The deprecated `F128Bits` struct has been removed. It was replaced by
+    [`F128`][f128-2-0a] in version 1.18.0.
+  * The deprecated `const_fixed_from_int` macro has been removed. It was
+    replaced by the [`const_from_int`][f-cfi-2-0a] method in version 1.20.0.
+  * The deprecated optional features `az` and `f16` were removed. These features
+    had no effect, as the functionality they enabled is now always enabled.
   * The new generic associated type [`Fixed`][fb-f-2-0a] was added to the
     [`FixedBits`][fb-2-0a] trait.
   * The following methods of the [`Fixed`][tf-2-0a] trait and of the
@@ -126,61 +144,39 @@ The conversions supported cover the following cases.
       * [`overflowing_mul_add`][tf-omad-2-0a],
         [`overflowing_add_prod`][tf-oap-2-0a],
         [`overflowing_mul_acc`][tf-omac-2-0a]
-  * The deprecated `const_fixed_from_int` macro has been removed. It was
-    replaced by the [`const_from_int`][f-cfi-2-0a] method in version 1.20.0.
-
-[f-cfi-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#method.const_from_int
-[fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.FixedBits.html
-[fb-f-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.FixedBits.html#associatedtype.Fixed
-[tf-ap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.add_prod
-[tf-cap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.checked_add_prod
-[tf-cmac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.checked_mul_acc
-[tf-cmad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.checked_mul_add
-[tf-mac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.mul_acc
-[tf-mad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.mul_add
-[tf-oap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.overflowing_add_prod
-[tf-omac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.overflowing_mul_acc
-[tf-omad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.overflowing_mul_add
-[tf-sap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.saturating_add_prod
-[tf-smac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.saturating_mul_acc
-[tf-smad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.saturating_mul_add
-[tf-uap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.unwrapped_add_prod
-[tf-umac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.unwrapped_mul_acc
-[tf-umad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.unwrapped_mul_add
-[tf-wap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.wrapping_add_prod
-[tf-wmac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.wrapping_mul_acc
-[tf-wmad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html#tymethod.wrapping_mul_add
-[w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Wrapping.html
-
-### Version 2.0.0-alpha.6 news (2022-08-29)
-
-  * The crate now requires the nightly compiler with the [`generic_const_exprs`
-    feature] enabled.
-  * The crate now uses generic constant expressions to specify the number of
-    fractional bits.
-  * The [`Fixed`][tf-2-0a] trait constraints have been relaxed, and the methods
-    which needed the strict constraints have been moved to the subtrait
-    [`FixedStrict`][tfs-2-0a].
-  * The `INT_NBITS` and `FRAC_NBITS` associated constants were replaced with
-    [`INT_BITS`][f-ib-2-0a] and [`FRAC_BITS`][f-fb-2-0a] which can be negative.
-  * The deprecated `F128Bits` struct has been removed. It was replaced by
-    [`F128`][f128-2-0a] in version 1.18.0.
-  * The [`Unwrapped`][u-2-0a] methods [`from_str_binary`][u-fsb-2-0a],
-    [`from_str_octal`][u-fso-2-0a] and [`from_str_hex`][u-fsh-2-0a] return the
-    value directly instead of a [`Result`].
-  * The deprecated optional features `az` and `f16` were removed. These features
-    had no effect, as the functionality they enabled is now always enabled.
 
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
-[f-fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
-[f-ib-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
-[f128-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.F128.html
-[tf-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html
-[tfs-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.FixedStrict.html
-[u-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html
-[u-fsb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_binary
-[u-fsh-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_hex
-[u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_octal
+[f-cfi-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#method.const_from_int
+[f-fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
+[f-ib-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
+[f128-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.F128.html
+[fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.FixedBits.html
+[fb-f-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.FixedBits.html#associatedtype.Fixed
+[tf-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html
+[tf-ap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.add_prod
+[tf-cap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.checked_add_prod
+[tf-cmac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.checked_mul_acc
+[tf-cmad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.checked_mul_add
+[tf-mac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.mul_acc
+[tf-mad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.mul_add
+[tf-oap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.overflowing_add_prod
+[tf-omac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.overflowing_mul_acc
+[tf-omad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.overflowing_mul_add
+[tf-sap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.saturating_add_prod
+[tf-smac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.saturating_mul_acc
+[tf-smad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.saturating_mul_add
+[tf-uap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.unwrapped_add_prod
+[tf-umac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.unwrapped_mul_acc
+[tf-umad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.unwrapped_mul_add
+[tf-wap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.wrapping_add_prod
+[tf-wmac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.wrapping_mul_acc
+[tf-wmad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.wrapping_mul_add
+[tfs-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.FixedStrict.html
+[u-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html
+[u-fsb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html#method.from_str_binary
+[u-fsh-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html#method.from_str_hex
+[u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html#method.from_str_octal
+[w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Wrapping.html
 
 ### Version 1.20.0 news (2022-11-08)
 
@@ -326,7 +322,7 @@ crate, add it as a dependency inside [*Cargo.toml*]:
 
 ```toml
 [dependencies]
-fixed = "2.0.0-alpha.6"
+fixed = "2.0.0-alpha.7"
 ```
 
 This alpha version of the *fixed* crate requires the nightly compiler with the
@@ -358,7 +354,7 @@ To enable features, you can add the dependency like this to [*Cargo.toml*]:
 
 ```toml
 [dependencies.fixed]
-version = "2.0.0-alpha.6"
+version = "2.0.0-alpha.7"
 features = ["serde"]
 ```
 
@@ -399,32 +395,38 @@ To port from version 1 to version 2, the following is required:
     [`FixedStrict`]. For code that uses these trait methods, [`Fixed`] should be
     replaced by [`FixedStrict`].
 
-    [`Fixed`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.Fixed.html
-    [`FixedStrict`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.FixedStrict.html
+    [`Fixed`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html
+    [`FixedStrict`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.FixedStrict.html
 
   * The [`FRAC_NBITS`] and [`INT_NBITS`] associated constants of type [`u32`]
     were replaced by [`FRAC_BITS`] and [`INT_BITS`] of type [`i32`].
 
-    [`FRAC_BITS`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
+    [`FRAC_BITS`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
     [`FRAC_NBITS`]: https://docs.rs/fixed/1/fixed/struct.FixedI32.html#associatedconstant.FRAC_NBITS
-    [`INT_BITS`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
+    [`INT_BITS`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
     [`INT_NBITS`]: https://docs.rs/fixed/1/fixed/struct.FixedI32.html#associatedconstant.INT_NBITS
-
-  * The deprecated [`F128Bits`] struct has been removed. It was replaced by
-    [`F128`] in version 1.18.0
-
-    [`F128Bits`]: https://docs.rs/fixed/1/fixed/struct.F128Bits.html
-    [`F128`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.F128.html
 
   * For the [`Unwrapped`] wrapper, the methods [`from_str_binary`][u-fsb],
     [`from_str_octal`][u-fso] and [`from_str_hex`][u-fsh] return the value
     directly instead of a [`Result`].
 
     [`Result`]: https://doc.rust-lang.org/nightly/core/result/enum.Result.html
-    [`Unwrapped`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html
-    [u-fsb]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_binary
-    [u-fsh]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_hex
-    [u-fso]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.Unwrapped.html#method.from_str_octal
+    [`Unwrapped`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html
+    [u-fsb]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html#method.from_str_binary
+    [u-fsh]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html#method.from_str_hex
+    [u-fso]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html#method.from_str_octal
+
+  * The deprecated [`F128Bits`] struct has been removed. It was replaced by
+    [`F128`] in version 1.18.0
+
+    [`F128Bits`]: https://docs.rs/fixed/1/fixed/struct.F128Bits.html
+    [`F128`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.F128.html
+
+  * The deprecated [`const_fixed_from_int`] macro has been removed. It was
+    replaced by the [`const_from_int`][f-cfi] method in version 1.20.0.
+
+    [`const_fixed_from_int`]: https://docs.rs/fixed/1/fixed/macro.const_fixed_from_int.html
+    [f-cfi]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#method.const_from_int
 
   * The deprecated optional features `az` and `f16` were removed. These features
     had no effect, as their functionality has been unconditionally enabled since
@@ -457,49 +459,49 @@ shall be dual licensed as above, without any additional terms or conditions.
 [*num-traits* crate]: https://crates.io/crates/num-traits
 [*serde* crate]: https://crates.io/crates/serde
 [CORDIC]: https://en.wikipedia.org/wiki/CORDIC
-[FixedI32]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html
-[FixedU32]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedU32.html
+[FixedI32]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html
+[FixedU32]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedU32.html
 [LICENSE-APACHE]: https://www.apache.org/licenses/LICENSE-2.0
 [LICENSE-MIT]: https://opensource.org/licenses/MIT
 [`Binary`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Binary.html
 [`Display`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Display.html
 [`Error`]: https://doc.rust-lang.org/nightly/std/error/trait.Error.html
-[`FixedI128`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI128.html
-[`FixedI16`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI16.html
-[`FixedI32`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html
-[`FixedI64`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI64.html
-[`FixedI8`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI8.html
-[`FixedU128`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedU128.html
-[`FixedU16`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedU16.html
-[`FixedU32`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedU32.html
-[`FixedU64`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedU64.html
-[`FixedU8`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedU8.html
-[`FromFixed`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.FromFixed.html
+[`FixedI128`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI128.html
+[`FixedI16`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI16.html
+[`FixedI32`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html
+[`FixedI64`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI64.html
+[`FixedI8`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI8.html
+[`FixedU128`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedU128.html
+[`FixedU16`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedU16.html
+[`FixedU32`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedU32.html
+[`FixedU64`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedU64.html
+[`FixedU8`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedU8.html
+[`FromFixed`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.FromFixed.html
 [`FromStr`]: https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html
 [`From`]: https://doc.rust-lang.org/nightly/core/convert/trait.From.html
-[`I20F12`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/types/type.I20F12.html
-[`I4F12`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/types/type.I4F12.html
-[`I4F4`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/types/type.I4F4.html
+[`I20F12`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/types/type.I20F12.html
+[`I4F12`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/types/type.I4F12.html
+[`I4F4`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/types/type.I4F4.html
 [`Into`]: https://doc.rust-lang.org/nightly/core/convert/trait.Into.html
-[`LosslessTryFrom`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.LosslessTryFrom.html
-[`LosslessTryInto`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.LosslessTryInto.html
-[`LossyFrom`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.LossyFrom.html
-[`LossyInto`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.LossyInto.html
+[`LosslessTryFrom`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.LosslessTryFrom.html
+[`LosslessTryInto`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.LosslessTryInto.html
+[`LossyFrom`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.LossyFrom.html
+[`LossyInto`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.LossyInto.html
 [`LowerHex`]: https://doc.rust-lang.org/nightly/core/fmt/trait.LowerHex.html
 [`Octal`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Octal.html
-[`ParseFixedError`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.ParseFixedError.html
-[`ToFixed`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/traits/trait.ToFixed.html
-[`U20F12`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/types/type.U20F12.html
+[`ParseFixedError`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.ParseFixedError.html
+[`ToFixed`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.ToFixed.html
+[`U20F12`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/types/type.U20F12.html
 [`UpperHex`]: https://doc.rust-lang.org/nightly/core/fmt/trait.UpperHex.html
 [`az`]: https://docs.rs/az/^1/az/index.html
 [`bf16`]: https://docs.rs/half/^2/half/struct.bf16.html
 [`bytemuck`]: https://docs.rs/bytemuck/^1/bytemuck/index.html
-[`checked_from_num`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#method.checked_from_num
+[`checked_from_num`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#method.checked_from_num
 [`f16`]: https://docs.rs/half/^2/half/struct.f16.html
-[`from_num`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#method.from_num
-[`from_str_binary`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#method.from_str_binary
-[`from_str_hex`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#method.from_str_hex
-[`from_str_octal`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#method.from_str_octal
+[`from_num`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#method.from_num
+[`from_str_binary`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#method.from_str_binary
+[`from_str_hex`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#method.from_str_hex
+[`from_str_octal`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#method.from_str_octal
 [`i32`]: https://doc.rust-lang.org/nightly/core/primitive.i32.html
-[`to_num`]: https://docs.rs/fixed/2.0.0-alpha.6/fixed/struct.FixedI32.html#method.to_num
+[`to_num`]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#method.to_num
 [`u32`]: https://doc.rust-lang.org/nightly/core/primitive.u32.html

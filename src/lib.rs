@@ -217,7 +217,7 @@ crate, add it as a dependency inside [*Cargo.toml*]:
 
 ```toml
 [dependencies]
-fixed = "2.0.0-alpha.6"
+fixed = "2.0.0-alpha.7"
 ```
 
 This alpha version of the *fixed* crate requires the nightly compiler with the
@@ -249,7 +249,7 @@ To enable features, you can add the dependency like this to [*Cargo.toml*]:
 
 ```toml
 [dependencies.fixed]
-version = "2.0.0-alpha.6"
+version = "2.0.0-alpha.7"
 features = ["serde"]
 ```
 
@@ -302,11 +302,6 @@ To port from version 1 to version 2, the following is required:
     [`INT_BITS`]: FixedI32::INT_BITS
     [`INT_NBITS`]: https://docs.rs/fixed/1/fixed/struct.FixedI32.html#associatedconstant.INT_NBITS
 
-  * The deprecated [`F128Bits`] struct has been removed. It was replaced by
-    [`F128`] in version 1.18.0
-
-    [`F128Bits`]: https://docs.rs/fixed/1/fixed/struct.F128Bits.html
-
   * For the [`Unwrapped`] wrapper, the methods [`from_str_binary`][u-fsb],
     [`from_str_octal`][u-fso] and [`from_str_hex`][u-fsh] return the value
     directly instead of a [`Result`].
@@ -314,6 +309,17 @@ To port from version 1 to version 2, the following is required:
     [u-fsb]: Unwrapped#method.from_str_binary
     [u-fsh]: Unwrapped#method.from_str_hex
     [u-fso]: Unwrapped#method.from_str_octal
+
+  * The deprecated [`F128Bits`] struct has been removed. It was replaced by
+    [`F128`] in version 1.18.0
+
+    [`F128Bits`]: https://docs.rs/fixed/1/fixed/struct.F128Bits.html
+
+  * The deprecated [`const_fixed_from_int`] macro has been removed. It was
+    replaced by the [`const_from_int`][f-cfi] method in version 1.20.0.
+
+    [`const_fixed_from_int`]: https://docs.rs/fixed/1/fixed/macro.const_fixed_from_int.html
+    [f-cfi]: FixedI32#method.const_from_int
 
   * The deprecated optional features `az` and `f16` were removed. These features
     had no effect, as their functionality has been unconditionally enabled since
@@ -375,7 +381,7 @@ shall be dual licensed as above, without any additional terms or conditions.
 #![cfg_attr(not(feature = "std"), no_std)]
 #![warn(missing_docs)]
 #![warn(unsafe_op_in_unsafe_fn)]
-#![doc(html_root_url = "https://docs.rs/fixed/2.0.0-alpha.6")]
+#![doc(html_root_url = "https://docs.rs/fixed/2.0.0-alpha.7")]
 #![doc(test(attr(deny(warnings))))]
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
 #![feature(generic_const_exprs)]
