@@ -178,42 +178,16 @@ The conversions supported cover the following cases.
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Wrapping.html
 
-### Version 1.20.0 news (2022-11-08)
+### Version 1.21.0 news (unreleased)
 
-  * The [`TRY_ONE`][tf-to-1-20] associated constant was added to the
-    [`Fixed`][tf-1-20] trait.
-  * The [`TRY_NEG_ONE`][tfs-tno-1-20] associated constant was added to the
-    [`FixedSigned`][tfs-1-20] trait.
-  * The [`const_from_fixed`][f-cff-1-20] and [`const_from_int`][f-cfi-1-20]
-    methods were added to all fixed-point numbers.
-  * The [`const_fixed_from_int`][cffi-1-20] macro is now deprecated.
-  * The following associated constants were added to the [`F128`][f128-1-20]
-    struct:
-      * [`DIGITS`][f128-d-1-20]
-      * [`MIN_10_EXP`][f128-mi10e-1-20], [`MAX_10_EXP`][f128-ma10e-1-20]
-  * [`F128`][f128-1-20] now implements [`From`] for conversions from [`f64`],
-    [`f32`], [`f16`][half-2-f16] and [`bf16`][half-2-bf16].
-  * The <code>[fixed][cf-1-20]::[f128][mf128-1-20]::[consts][mf128c-1-20]</code>
-    module was added with [`F128`][f128-1-20] basic mathematical constants.
+  * The following methods were added to the [`F128`][f128-1-20] struct:
+      * [`min`][f128-min-1-21], [`max`][f128-max-1-21]
+      * [`clamp`][f128-c-1-21]
 
-[`f32`]: https://doc.rust-lang.org/nightly/core/primitive.f32.html
-[`f64`]: https://doc.rust-lang.org/nightly/core/primitive.f64.html
-[cf-1-20]: https://docs.rs/fixed/~1.20/fixed/index.html
-[cffi-1-20]: https://docs.rs/fixed/~1.20/fixed/macro.const_fixed_from_int.html
-[f-cff-1-20]: https://docs.rs/fixed/~1.20/fixed/struct.FixedI32.html#method.const_from_fixed
-[f-cfi-1-20]: https://docs.rs/fixed/~1.20/fixed/struct.FixedI32.html#method.const_from_int
-[f128-1-20]: https://docs.rs/fixed/~1.20/fixed/struct.F128.html
-[f128-d-1-20]: https://docs.rs/fixed/~1.20/fixed/struct.F128.html#associatedconstant.DIGITS
-[f128-ma10e-1-20]: https://docs.rs/fixed/~1.20/fixed/struct.F128.html#associatedconstant.MAX_10_EXP
-[f128-mi10e-1-20]: https://docs.rs/fixed/~1.20/fixed/struct.F128.html#associatedconstant.MIN_10_EXP
-[half-2-bf16]: https://docs.rs/half/^2/half/struct.bf16.html
-[half-2-f16]: https://docs.rs/half/^2/half/struct.f16.html
-[mf128-1-20]: https://docs.rs/fixed/~1.20/fixed/f128/index.html
-[mf128c-1-20]: https://docs.rs/fixed/~1.20/fixed/f128/consts/index.html
-[tf-1-20]: https://docs.rs/fixed/~1.20/fixed/traits/trait.Fixed.html
-[tf-to-1-20]: https://docs.rs/fixed/~1.20/fixed/traits/trait.Fixed.html#associatedconstant.TRY_ONE
-[tfs-1-20]: https://docs.rs/fixed/~1.20/fixed/traits/trait.FixedSigned.html
-[tfs-tno-1-20]: https://docs.rs/fixed/~1.20/fixed/traits/trait.FixedSigned.html#associatedconstant.TRY_NEG_ONE
+[f128-1-21]: https://docs.rs/fixed/~1.21/fixed/struct.F128.html
+[f128-c-1-21]: https://docs.rs/fixed/~1.21/fixed/struct.F128.html#method.clamp
+[f128-max-1-21]: https://docs.rs/fixed/~1.21/fixed/struct.F128.html#method.max
+[f128-min-1-21]: https://docs.rs/fixed/~1.21/fixed/struct.F128.html#method.min
 
 ### Other releases
 

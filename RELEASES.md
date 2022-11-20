@@ -81,6 +81,18 @@ Version 2.0.0-alpha.7 (2022-11-08)
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Wrapping.html
 
+Version 1.21.0 (unreleased)
+===========================
+
+  * The following methods were added to the [`F128`][f128-1-20] struct:
+      * [`min`][f128-min-1-21], [`max`][f128-max-1-21]
+      * [`clamp`][f128-c-1-21]
+
+[f128-1-21]: https://docs.rs/fixed/~1.21/fixed/struct.F128.html
+[f128-c-1-21]: https://docs.rs/fixed/~1.21/fixed/struct.F128.html#method.clamp
+[f128-max-1-21]: https://docs.rs/fixed/~1.21/fixed/struct.F128.html#method.max
+[f128-min-1-21]: https://docs.rs/fixed/~1.21/fixed/struct.F128.html#method.min
+
 Version 1.20.0 (2022-11-08)
 ===========================
 
