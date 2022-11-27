@@ -28,80 +28,80 @@ macro_rules! fixed_cmp_int {
         impl<const FRAC: i32> PartialEq<$Int> for $Fix<FRAC> {
             #[inline]
             fn eq(&self, rhs: &$Int) -> bool {
-                let rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
-                self.eq(&rhs)
+                let fixed_rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
+                PartialEq::eq(self, &fixed_rhs)
             }
         }
 
         impl<const FRAC: i32> PartialEq<$Fix<FRAC>> for $Int {
             #[inline]
             fn eq(&self, rhs: &$Fix<FRAC>) -> bool {
-                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-                slf.eq(rhs)
+                let fixed_lhs = $IntFixed::<0>::from_bits(*self as $IntAs);
+                PartialEq::eq(&fixed_lhs, rhs)
             }
         }
 
         impl<const FRAC: i32> PartialOrd<$Int> for $Fix<FRAC> {
             #[inline]
             fn partial_cmp(&self, rhs: &$Int) -> Option<Ordering> {
-                let rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
-                self.partial_cmp(&rhs)
+                let fixed_rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
+                PartialOrd::partial_cmp(self, &fixed_rhs)
             }
 
             #[inline]
             fn lt(&self, rhs: &$Int) -> bool {
-                let rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
-                self.lt(&rhs)
+                let fixed_rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
+                PartialOrd::lt(self, &fixed_rhs)
             }
 
             #[inline]
             fn le(&self, rhs: &$Int) -> bool {
-                let rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
-                self.le(&rhs)
+                let fixed_rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
+                PartialOrd::le(self, &fixed_rhs)
             }
 
             #[inline]
             fn gt(&self, rhs: &$Int) -> bool {
-                let rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
-                self.gt(&rhs)
+                let fixed_rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
+                PartialOrd::gt(self, &fixed_rhs)
             }
 
             #[inline]
             fn ge(&self, rhs: &$Int) -> bool {
-                let rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
-                self.ge(&rhs)
+                let fixed_rhs = $IntFixed::<0>::from_bits(*rhs as $IntAs);
+                PartialOrd::ge(self, &fixed_rhs)
             }
         }
 
         impl<const FRAC: i32> PartialOrd<$Fix<FRAC>> for $Int {
             #[inline]
             fn partial_cmp(&self, rhs: &$Fix<FRAC>) -> Option<Ordering> {
-                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-                slf.partial_cmp(rhs)
+                let fixed_lhs = $IntFixed::<0>::from_bits(*self as $IntAs);
+                PartialOrd::partial_cmp(&fixed_lhs, rhs)
             }
 
             #[inline]
             fn lt(&self, rhs: &$Fix<FRAC>) -> bool {
-                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-                slf.lt(rhs)
+                let fixed_lhs = $IntFixed::<0>::from_bits(*self as $IntAs);
+                PartialOrd::lt(&fixed_lhs, rhs)
             }
 
             #[inline]
             fn le(&self, rhs: &$Fix<FRAC>) -> bool {
-                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-                slf.le(rhs)
+                let fixed_lhs = $IntFixed::<0>::from_bits(*self as $IntAs);
+                PartialOrd::le(&fixed_lhs, rhs)
             }
 
             #[inline]
             fn gt(&self, rhs: &$Fix<FRAC>) -> bool {
-                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-                slf.gt(rhs)
+                let fixed_lhs = $IntFixed::<0>::from_bits(*self as $IntAs);
+                PartialOrd::gt(&fixed_lhs, rhs)
             }
 
             #[inline]
             fn ge(&self, rhs: &$Fix<FRAC>) -> bool {
-                let slf = $IntFixed::<0>::from_bits(*self as $IntAs);
-                slf.ge(rhs)
+                let fixed_lhs = $IntFixed::<0>::from_bits(*self as $IntAs);
+                PartialOrd::ge(&fixed_lhs, rhs)
             }
         }
     };
