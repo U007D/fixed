@@ -399,6 +399,7 @@ mod borshize;
 mod bytes;
 mod cast;
 mod cmp;
+mod cmp_fixed;
 pub mod consts;
 mod convert;
 mod debug_hex;
