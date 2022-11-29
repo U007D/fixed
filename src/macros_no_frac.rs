@@ -763,6 +763,7 @@ assert_eq!(Fix::from_num(0.1875).int_log2(), -3);
 ```
 ";
                 #[inline]
+                #[doc(alias("ilog2"))]
                 pub const fn int_log2(self) -> i32 {
                     match self.checked_int_log2() {
                         Some(ans) => ans,
@@ -792,6 +793,7 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log2(), Some(-3));
 ```
 ";
                 #[inline]
+                #[doc(alias("checked_ilog2"))]
                 pub const fn checked_int_log2(self) -> Option<i32> {
                     if self.to_bits() <= 0 {
                         None

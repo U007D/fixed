@@ -838,6 +838,7 @@ assert_eq!(", $s_fixed, "::<6>::from_num(0.09375).int_log10(), -2);
 ```
 ";
                 #[inline]
+                #[doc(alias("ilog10"))]
                 pub const fn int_log10(self) -> i32 {
                     match self.checked_int_log10() {
                         Some(ans) => ans,
@@ -869,6 +870,7 @@ assert_eq!(Fix::from_num(0.1875).int_log(5), -2);
 ```
 ";
                 #[inline]
+                #[doc(alias("ilog"))]
                 pub const fn int_log(self, base: u32) -> i32 {
                     match self.checked_int_log(base) {
                         Some(s) => s,
@@ -903,6 +905,7 @@ assert_eq!(", $s_fixed, "::<6>::from_num(0.09375).checked_int_log10(), Some(-2))
 ```
 ";
                 #[inline]
+                #[doc(alias("checked_ilog10"))]
                 pub const fn checked_int_log10(self) -> Option<i32> {
                     if self.to_bits() <= 0 {
                         return None;
@@ -941,6 +944,7 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log(5), Some(-2));
 ```
 ";
                 #[inline]
+                #[doc(alias("checked_ilog10"))]
                 pub const fn checked_int_log(self, base: u32) -> Option<i32> {
                     if self.to_bits() <= 0 || base < 2 {
                         return None;

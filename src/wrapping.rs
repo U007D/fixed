@@ -919,6 +919,7 @@ impl<F: Fixed> Wrapping<F> {
     ///
     /// Panics if the fixed-point number is ≤&nbsp;0.
     #[inline]
+    #[doc(alias("ilog2"))]
     pub fn int_log2(self) -> i32 {
         self.0.int_log2()
     }
@@ -1287,6 +1288,7 @@ impl<F: FixedStrict> Wrapping<F> {
     ///
     /// Panics if the fixed-point number is ≤&nbsp;0.
     #[inline]
+    #[doc(alias("ilog10"))]
     pub fn int_log10(self) -> i32 {
         self.0.int_log10()
     }
@@ -1300,6 +1302,7 @@ impl<F: FixedStrict> Wrapping<F> {
     ///
     /// Panics if the fixed-point number is ≤&nbsp;0 or if the base is <&nbsp;2.
     #[inline]
+    #[doc(alias("ilog"))]
     pub fn int_log(self, base: u32) -> i32 {
         self.0.int_log(base)
     }
