@@ -5,7 +5,7 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-Version 2.0.0-alpha.7 (2022-11-08)
+Version 2.0.0-alpha.8 (2022-12-24)
 ==================================
 
   * The crate now requires the nightly compiler with the [`generic_const_exprs`
@@ -49,37 +49,37 @@ Version 2.0.0-alpha.7 (2022-11-08)
         [`overflowing_mul_acc`][tf-omac-2-0a]
 
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
-[f-cfi-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#method.const_from_int
-[f-fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
-[f-ib-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
-[f128-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.F128.html
-[fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.FixedBits.html
-[fb-f-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.FixedBits.html#associatedtype.Fixed
-[tf-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html
-[tf-ap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.add_prod
-[tf-cap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.checked_add_prod
-[tf-cmac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.checked_mul_acc
-[tf-cmad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.checked_mul_add
-[tf-mac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.mul_acc
-[tf-mad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.mul_add
-[tf-oap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.overflowing_add_prod
-[tf-omac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.overflowing_mul_acc
-[tf-omad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.overflowing_mul_add
-[tf-sap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.saturating_add_prod
-[tf-smac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.saturating_mul_acc
-[tf-smad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.saturating_mul_add
-[tf-uap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.unwrapped_add_prod
-[tf-umac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.unwrapped_mul_acc
-[tf-umad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.unwrapped_mul_add
-[tf-wap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.wrapping_add_prod
-[tf-wmac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.wrapping_mul_acc
-[tf-wmad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.Fixed.html#tymethod.wrapping_mul_add
-[tfs-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/traits/trait.FixedStrict.html
-[u-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html
-[u-fsb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html#method.from_str_binary
-[u-fsh-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html#method.from_str_hex
-[u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Unwrapped.html#method.from_str_octal
-[w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.7/fixed/struct.Wrapping.html
+[f-cfi-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.FixedI32.html#method.const_from_int
+[f-fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
+[f-ib-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
+[f128-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.F128.html
+[fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.FixedBits.html
+[fb-f-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.FixedBits.html#associatedtype.Fixed
+[tf-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html
+[tf-ap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.add_prod
+[tf-cap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.checked_add_prod
+[tf-cmac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.checked_mul_acc
+[tf-cmad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.checked_mul_add
+[tf-mac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.mul_acc
+[tf-mad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.mul_add
+[tf-oap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.overflowing_add_prod
+[tf-omac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.overflowing_mul_acc
+[tf-omad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.overflowing_mul_add
+[tf-sap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.saturating_add_prod
+[tf-smac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.saturating_mul_acc
+[tf-smad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.saturating_mul_add
+[tf-uap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.unwrapped_add_prod
+[tf-umac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.unwrapped_mul_acc
+[tf-umad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.unwrapped_mul_add
+[tf-wap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.wrapping_add_prod
+[tf-wmac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.wrapping_mul_acc
+[tf-wmad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.Fixed.html#tymethod.wrapping_mul_add
+[tfs-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/traits/trait.FixedStrict.html
+[u-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.Unwrapped.html
+[u-fsb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.Unwrapped.html#method.from_str_binary
+[u-fsh-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.Unwrapped.html#method.from_str_hex
+[u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.Unwrapped.html#method.from_str_octal
+[w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.Wrapping.html
 
 Version 1.21.0 (2022-12-24)
 ===========================
