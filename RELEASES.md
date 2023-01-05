@@ -81,6 +81,13 @@ Version 2.0.0-alpha.8 (2022-12-24)
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.Wrapping.html
 
+Version 1.22.0 (unreleased)
+===========================
+
+  * The [`lit`][f-l-1-22] method was added to all fixed-point numbers.
+
+[f-l-1-22]: https://docs.rs/fixed/~1.22/fixed/struct.FixedI32.html#method.lit
+
 Version 1.21.0 (2022-12-24)
 ===========================
 

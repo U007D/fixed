@@ -178,22 +178,11 @@ The conversions supported cover the following cases.
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.Wrapping.html
 
-### Version 1.21.0 news (2022-12-24)
+### Version 1.22.0 news (unreleased)
 
-  * Comparisons involving fixed-point numbers now have more relaxed constraints
-    on the fractional bits generic parameter: now `Frac` only needs to implement
-    [`Unsigned`][uns-1-21].
-  * Better code should now be generated when comparing a fixed-point number to
-    another fixed-point number.
-  * The following methods were added to the [`F128`][f128-1-21] struct:
-      * [`min`][f128-min-1-21], [`max`][f128-max-1-21]
-      * [`clamp`][f128-c-1-21]
+  * The [`lit`][f-l-1-22] method was added to all fixed-point numbers.
 
-[f128-1-21]: https://docs.rs/fixed/~1.21/fixed/struct.F128.html
-[f128-c-1-21]: https://docs.rs/fixed/~1.21/fixed/struct.F128.html#method.clamp
-[f128-max-1-21]: https://docs.rs/fixed/~1.21/fixed/struct.F128.html#method.max
-[f128-min-1-21]: https://docs.rs/fixed/~1.21/fixed/struct.F128.html#method.min
-[uns-1-21]: https://docs.rs/fixed/~1.21/fixed/types/extra/trait.Unsigned.html
+[f-l-1-22]: https://docs.rs/fixed/~1.22/fixed/struct.FixedI32.html#method.lit
 
 ### Other releases
 
@@ -260,16 +249,18 @@ have less fractional bits, so we use [`from_num`] instead.
 
 ## Writing fixed-point constants and values literally
 
-The parsing methods are available as `const` functions.
+The [`lit`] method, which is available as a `const` function, can be used to
+parse literals. It supports underscores as separators, and prefixes `"0b"`,
+`"0o"` and `"0x"` for binary/octal/hexadecimal numbers.
 
 ```rust
 #![feature(generic_const_exprs)]
 
 use fixed::types::I16F16;
 
-const TWELVE_POINT_75: I16F16 = I16F16::unwrapped_from_str("12.75");
+const TWELVE_POINT_75: I16F16 = I16F16::lit("12.75");
 // 1.1 binary is 1.5 decimal
-const ONE_POINT_5: I16F16 = I16F16::unwrapped_from_str_binary("1.1");
+const ONE_POINT_5: I16F16 = I16F16::lit("0b_1.1");
 // 12.75 + 1.5 = 14.25
 let sum = TWELVE_POINT_75 + ONE_POINT_5;
 assert_eq!(sum, 14.25);
@@ -483,5 +474,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [`from_str_hex`]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.FixedI32.html#method.from_str_hex
 [`from_str_octal`]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.FixedI32.html#method.from_str_octal
 [`i32`]: https://doc.rust-lang.org/nightly/core/primitive.i32.html
+[`lit`]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.FixedI32.html#method.lit
 [`to_num`]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.FixedI32.html#method.to_num
 [`u32`]: https://doc.rust-lang.org/nightly/core/primitive.u32.html

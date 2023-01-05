@@ -28,6 +28,71 @@ macro_rules! fixed_frac {
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             comment! {
+                r#"Parses a fixed-point literal.
+
+Rounding is to the nearest, with ties rounded to even.
+
+This is similar to [`from_str`][Self::from_str] but accepts a prefix for setting
+the radix, and ignores underscores, such that the parsing is more similar to
+numeric literals in Rust code.
+
+Strings starting with `"0b"` are parsed as binary, strings starting with `"0o"`
+are parsed as octal, and strings starting with `"0x"` are parsed as hexadecimal.
+
+"#,
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    r#"The string can start with `"-"` for a negative number.
+
+"#,
+                },
+                "# Panics
+
+Panics if the number is not valid or overflows.
+
+# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
+assert_eq!(Fix::lit("1.75"), 1.75);
+assert_eq!(Fix::lit("1_.7_5_"), 1.75);
+assert_eq!(Fix::lit("0b_1.1_1"), 1.75);
+assert_eq!(Fix::lit("0o_1.6"), 1.75);
+assert_eq!(Fix::lit("0x1.C"), 1.75);
+"#,
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    r#"assert_eq!(Fix::lit("-0x1.C"), -1.75);
+"#,
+                },
+                "```
+
+This method is useful to write constant fixed-point literals.
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", $s_fixed, ";
+type Fix = ", $s_fixed, r#"<4>;
+const ONE_AND_HALF: Fix = Fix::lit("1.5");
+assert_eq!(ONE_AND_HALF, 1.5);
+```
+"#;
+                #[inline]
+                pub const fn lit(src: &str) -> $Fixed<FRAC> {
+                    match from_str::$Inner::lit(src, FRAC as u32) {
+                        Some(s) => $Fixed::from_bits(s),
+                        None => panic!("invalid literal"),
+                    }
+                }
+            }
+
+            comment! {
                 "Parses a string slice containing decimal digits to return a fixed-point number.
 
 Rounding is to the nearest, with ties rounded to even.
