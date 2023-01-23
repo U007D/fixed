@@ -84,8 +84,10 @@ Version 2.0.0-alpha.8 (2022-12-24)
 Version 1.22.0 (unreleased)
 ===========================
 
-  * String parsing now supports an optional exponent.
-  * The [`lit`][f-l-1-22] method was added to all fixed-point numbers.
+  * String parsing now supports an optional exponent for all supported radices.
+  * The [`lit`][f-l-1-22] method was added to all fixed-point numbers. This is
+    useful to write fixed-point numbers literally in code and also works in
+    constant context.
 
 [f-l-1-22]: https://docs.rs/fixed/~1.22/fixed/struct.FixedI32.html#method.lit
 
