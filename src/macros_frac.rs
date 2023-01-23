@@ -28,7 +28,7 @@ macro_rules! fixed_frac {
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             comment! {
-                r#"Parses a fixed-point literal.
+                "Parses a fixed-point literal.
 
 Rounding is to the nearest, with ties rounded to even.
 
@@ -36,17 +36,25 @@ This is similar to [`from_str`][Self::from_str] but accepts a prefix for setting
 the radix, and ignores underscores, such that the parsing is more similar to
 numeric literals in Rust code.
 
-Strings starting with `"0b"` are parsed as binary, strings starting with `"0o"`
-are parsed as octal, and strings starting with `"0x"` are parsed as hexadecimal.
-
-"#,
+",
                 if_signed_else_empty_str! {
                     $Signedness;
                     r#"The string can start with `"-"` for a negative number.
 
 "#,
                 },
-                "# Panics
+                r#"Strings starting with `"0b"` are parsed as binary, strings
+starting with `"0o"` are parsed as octal, and strings starting with `"0x"` are
+parsed as hexadecimal.
+
+Exponents are supported as well. For decimal, binary and octal numbers, the
+separator `'e'` or `'E'` can be used to start an exponent, which is then
+followed by an optional sign `'+'` or `'-'`, and then by a decimal number which
+is the exponent. For hexadecimal numbers, since `'e'` and `'E'` are hexadecimal
+digits, the separator `'@'` has to be used instead. The separator `'@'` is
+accepted for all radices.
+
+# Panics
 
 Panics if the number is not valid or overflows.
 
@@ -56,7 +64,7 @@ Panics if the number is not valid or overflows.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
+use fixed::"#, $s_fixed, ";
 type Fix = ", $s_fixed, r#"<4>;
 assert_eq!(Fix::lit("1.75"), 1.75);
 assert_eq!(Fix::lit("1_.7_5_"), 1.75);
@@ -69,7 +77,13 @@ assert_eq!(Fix::lit("0x1.C"), 1.75);
                     r#"assert_eq!(Fix::lit("-0x1.C"), -1.75);
 "#,
                 },
-                "```
+                r#"
+assert_eq!(Fix::lit("17.5e-1"), 1.75);
+assert_eq!(Fix::lit("0_.017_5_e+0_2"), 1.75);
+assert_eq!(Fix::lit("0b_111e-2"), 1.75);
+assert_eq!(Fix::lit("0o_.16E1"), 1.75);
+assert_eq!(Fix::lit("0x0.1C@1"), 1.75);
+```
 
 This method is useful to write constant fixed-point literals.
 
@@ -77,7 +91,7 @@ This method is useful to write constant fixed-point literals.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
+use fixed::"#, $s_fixed, ";
 type Fix = ", $s_fixed, r#"<4>;
 const ONE_AND_HALF: Fix = Fix::lit("1.5");
 assert_eq!(ONE_AND_HALF, 1.5);
@@ -105,19 +119,17 @@ Rounding is to the nearest, with ties rounded to even.
 
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, r#"<4>;
-// 1.75 is 1.11 in binary
-let f = Fix::from_str("1.75");
-let check = Fix::from_bits(0b111 << (4 - 2));
-assert_eq!(f, Ok(check));
+assert_eq!(Fix::from_str("1.75"), Ok(Fix::from_num(1.75)));
 "#,
                 if_signed_else_empty_str! {
                     $Signedness;
-                    r#"let neg = Fix::from_str("-1.75");
-assert_eq!(neg, Ok(-check));
+                    r#"assert_eq!(Fix::from_str("-1.75"), Ok(Fix::from_num(-1.75)));
 "#,
                 },
-                "```
-";
+                r#"assert_eq!(Fix::from_str("0.00625E+3"), Ok(Fix::from_num(6.25)));
+assert_eq!(Fix::from_str("1.25e-1"), Ok(Fix::from_num(0.125)));
+```
+"#;
                 #[inline]
                 pub const fn from_str(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                     match from_str::$Inner::from_str_radix(src, 10, FRAC as u32) {
@@ -140,19 +152,20 @@ Rounding is to the nearest, with ties rounded to even.
 
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, r#"<4>;
-// 1.75 is 1.11 in binary
-let f = Fix::from_str_binary("1.11");
-let check = Fix::from_bits(0b111 << (4 - 2));
-assert_eq!(f, Ok(check));
+// 1.11 in binary is 1.75
+assert_eq!(Fix::from_str_binary("1.11"), Ok(Fix::from_num(1.75)));
 "#,
-                if_signed_else_empty_str! {
-                    $Signedness;
-                    r#"let neg = Fix::from_str_binary("-1.11");
-assert_eq!(neg, Ok(-check));
+            if_signed_else_empty_str! {
+                $Signedness;
+                r#"assert_eq!(Fix::from_str_binary("-1.11"), Ok(Fix::from_num(-1.75)));
 "#,
-                },
-                "```
-";
+            },
+            r#"
+// 111.0101 in binary is 7.3125
+assert_eq!(Fix::from_str_binary("1.110101e2"), Ok(Fix::from_num(7.3125)));
+assert_eq!(Fix::from_str_binary("11101.01e-2"), Ok(Fix::from_num(7.3125)));
+```
+"#;
                 #[inline]
                 pub const fn from_str_binary(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                     match from_str::$Inner::from_str_radix(src, 2, FRAC as u32) {
@@ -180,14 +193,15 @@ let f = Fix::from_str_octal("1.6");
 let check = Fix::from_bits(0b111 << (4 - 2));
 assert_eq!(f, Ok(check));
 "#,
-                if_signed_else_empty_str! {
-                    $Signedness;
-                    r#"let neg = Fix::from_str_octal("-1.6");
+            if_signed_else_empty_str! {
+                $Signedness;
+                r#"let neg = Fix::from_str_octal("-1.6");
 assert_eq!(neg, Ok(-check));
 "#,
-                },
-                "```
-";
+            },
+            r#"assert_eq!(Fix::from_str_octal("160e-2"), Ok(check));
+```
+"#;
                 #[inline]
                 pub const fn from_str_octal(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                     match from_str::$Inner::from_str_radix(src, 8, FRAC as u32) {
@@ -200,6 +214,10 @@ assert_eq!(neg, Ok(-check));
             comment! {
                 "Parses a string slice containing hexadecimal digits to return a fixed-point number.
 
+Since `'E'` is a valid hexadecimal digit, it cannot be used as a separator to
+start an exponent; the `'@'` character can be used instead. The `'@'` character
+can be used as an exponent separator for other radices as well.
+
 Rounding is to the nearest, with ties rounded to even.
 
 # Examples
@@ -210,19 +228,18 @@ Rounding is to the nearest, with ties rounded to even.
 
 use fixed::", $s_fixed, ";
 type Fix = ", $s_fixed, r#"<4>;
-// 1.75 is 1.11 in binary, 1.C in hexadecimal
-let f = Fix::from_str_hex("1.C");
-let check = Fix::from_bits(0b111 << (4 - 2));
-assert_eq!(f, Ok(check));
+// 1.C in hexadecimal is 1.75
+assert_eq!(Fix::from_str_hex("1.C"), Ok(Fix::from_num(1.75)));
 "#,
-                if_signed_else_empty_str! {
-                    $Signedness;
-                    r#"let neg = Fix::from_str_hex("-1.C");
-assert_eq!(neg, Ok(-check));
+            if_signed_else_empty_str! {
+                $Signedness;
+                r#"assert_eq!(Fix::from_str_hex("-1.C"), Ok(Fix::from_num(-1.75)));
 "#,
-                },
-                "```
-";
+            },
+            r#"assert_eq!(Fix::from_str_hex("1C@-1"), Ok(Fix::from_num(1.75)));
+assert_eq!(Fix::from_str_hex(".01C@+2"), Ok(Fix::from_num(1.75)));
+```
+"#;
                 #[inline]
                 pub const fn from_str_hex(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
                     match from_str::$Inner::from_str_radix(src, 16, FRAC as u32) {
