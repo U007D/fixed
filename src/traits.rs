@@ -34,7 +34,7 @@ use az::OverflowingCastFrom;
 use borsh::{BorshDeserialize, BorshSerialize};
 use bytemuck::{self, Contiguous, Pod, TransparentWrapper};
 use core::{
-    fmt::{Binary, Debug, Display, LowerHex, Octal, UpperHex},
+    fmt::{Binary, Debug, Display, LowerExp, LowerHex, Octal, UpperExp, UpperHex},
     hash::Hash,
     iter::{Product, Sum},
     mem::size_of,
@@ -2147,7 +2147,8 @@ where
 /// [`FixedU32`], [`FixedU64`], and [`FixedU128`].
 pub trait FixedStrict: Fixed
 where
-    Self: Display + Binary + Octal + LowerHex + UpperHex,
+    Self: Debug + Display + LowerExp + UpperExp,
+    Self: Binary + Octal + LowerHex + UpperHex,
     Self: FromStr<Err = ParseFixedError>,
     Self: Div<Output = Self> + DivAssign,
     Self: Rem<<Self as Fixed>::Bits, Output = Self> + RemAssign<<Self as Fixed>::Bits>,

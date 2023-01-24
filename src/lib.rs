@@ -105,8 +105,9 @@ The conversions supported cover the following cases.
     [`from_str_binary`], [`from_str_octal`] and [`from_str_hex`] methods. The
     result is rounded to the nearest, with ties rounded to even.
   * Fixed-point numbers can be converted to strings using [`Display`],
-    [`Binary`], [`Octal`], [`LowerHex`] and [`UpperHex`]. The output is rounded
-    to the nearest, with ties rounded to even.
+    [`Binary`], [`Octal`], [`LowerHex`], [`UpperHex`], [`LowerExp`] and
+    [`UpperExp`]. The output is rounded to the nearest, with ties rounded to
+    even.
   * All fixed-point numbers are plain old data, so [`bytemuck`] bit casting
     conversions can be used.
 
@@ -349,9 +350,11 @@ shall be dual licensed as above, without any additional terms or conditions.
 [`LosslessTryInto`]: traits::LosslessTryInto
 [`LossyFrom`]: traits::LossyFrom
 [`LossyInto`]: traits::LossyInto
+[`LowerExp`]: core::fmt::LowerExp
 [`LowerHex`]: core::fmt::LowerHex
 [`Octal`]: core::fmt::Octal
 [`U20F12`]: types::U20F12
+[`UpperExp`]: core::fmt::UpperExp
 [`UpperHex`]: core::fmt::UpperHex
 [`bf16`]: half::bf16
 [`checked_from_num`]: FixedI32::checked_from_num
