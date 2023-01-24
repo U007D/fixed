@@ -1845,49 +1845,49 @@ impl<F: FixedStrict> Display for Wrapping<F> {
     }
 }
 
-impl<F: FixedStrict> Debug for Wrapping<F> {
+impl<F: Fixed> Debug for Wrapping<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Debug::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> Binary for Wrapping<F> {
+impl<F: FixedStrict> Binary for Wrapping<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Binary::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> Octal for Wrapping<F> {
+impl<F: FixedStrict> Octal for Wrapping<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Octal::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> LowerHex for Wrapping<F> {
+impl<F: FixedStrict> LowerHex for Wrapping<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         LowerHex::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> UpperHex for Wrapping<F> {
+impl<F: FixedStrict> UpperHex for Wrapping<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         UpperHex::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> LowerExp for Wrapping<F> {
+impl<F: FixedStrict> LowerExp for Wrapping<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         LowerExp::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> UpperExp for Wrapping<F> {
+impl<F: FixedStrict> UpperExp for Wrapping<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         UpperExp::fmt(&self.0, f)

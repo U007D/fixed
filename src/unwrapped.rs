@@ -2226,56 +2226,56 @@ impl<F: FixedStrict> Display for Unwrapped<F> {
     }
 }
 
-impl<F: FixedStrict> Debug for Unwrapped<F> {
+impl<F: Fixed> Debug for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Debug::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> Binary for Unwrapped<F> {
+impl<F: FixedStrict> Binary for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Binary::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> Octal for Unwrapped<F> {
+impl<F: FixedStrict> Octal for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Octal::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> LowerHex for Unwrapped<F> {
+impl<F: FixedStrict> LowerHex for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         LowerHex::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> UpperHex for Unwrapped<F> {
+impl<F: FixedStrict> UpperHex for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         UpperHex::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> LowerExp for Unwrapped<F> {
+impl<F: FixedStrict> LowerExp for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         LowerExp::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> UpperExp for Unwrapped<F> {
+impl<F: FixedStrict> UpperExp for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         UpperExp::fmt(&self.0, f)
     }
 }
 
-impl<F: Fixed> From<F> for Unwrapped<F> {
+impl<F: FixedStrict> From<F> for Unwrapped<F> {
     /// Wraps a fixed-point number.
     #[inline]
     fn from(src: F) -> Unwrapped<F> {
