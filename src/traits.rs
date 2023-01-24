@@ -2147,7 +2147,7 @@ where
 /// [`FixedU32`], [`FixedU64`], and [`FixedU128`].
 pub trait FixedStrict: Fixed
 where
-    Self: Debug + Display + LowerExp + UpperExp,
+    Self: Display + LowerExp + UpperExp,
     Self: Binary + Octal + LowerHex + UpperHex,
     Self: FromStr<Err = ParseFixedError>,
     Self: Div<Output = Self> + DivAssign,
