@@ -81,7 +81,7 @@ Version 2.0.0-alpha.8 (2022-12-24)
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.8/fixed/struct.Wrapping.html
 
-Version 1.22.0 (unreleased)
+Version 1.22.0 (2023-01-25)
 ===========================
 
   * String parsing now supports an optional exponent for all supported radices.
@@ -95,11 +95,15 @@ Version 1.22.0 (unreleased)
   * The [`Wrapping`][w-1-22] and [`Unwrapped`][u-1-22] wrappers now implement
     [`Binary`], [`Octal`], [`LowerHex`], [`UpperHex`], [`LowerExp`] and
     [`UpperExp`].
+  * The implementation of [`Debug`] for fixed-point numbers now has more relaxed
+    constraints on the fractional bits generic parameter: now `Frac` only needs
+    to implement [`Unsigned`][uns-1-22].
 
 [f-l-1-22]: https://docs.rs/fixed/~1.22/fixed/struct.FixedI32.html#method.lit
 [fb-1-22]: https://docs.rs/fixed/~1.22/fixed/traits/trait.FixedBits.html
 [tf-1-22]: https://docs.rs/fixed/~1.22/fixed/traits/trait.Fixed.html
 [u-1-22]: https://docs.rs/fixed/~1.22/fixed/struct.Unwrapped.html
+[uns-1-22]: https://docs.rs/fixed/~1.22/fixed/types/extra/trait.Unsigned.html
 [w-1-22]: https://docs.rs/fixed/~1.22/fixed/struct.Wrapping.html
 
 Version 1.21.0 (2022-12-24)
