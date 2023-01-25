@@ -203,7 +203,7 @@ crate, add it as a dependency inside [*Cargo.toml*]:
 
 ```toml
 [dependencies]
-fixed = "2.0.0-alpha.8"
+fixed = "2.0.0-alpha.9"
 ```
 
 This alpha version of the *fixed* crate requires the nightly compiler with the
@@ -235,7 +235,7 @@ To enable features, you can add the dependency like this to [*Cargo.toml*]:
 
 ```toml
 [dependencies.fixed]
-version = "2.0.0-alpha.8"
+version = "2.0.0-alpha.9"
 features = ["serde"]
 ```
 
@@ -369,7 +369,7 @@ shall be dual licensed as above, without any additional terms or conditions.
 #![cfg_attr(not(feature = "std"), no_std)]
 #![warn(missing_docs)]
 #![warn(unsafe_op_in_unsafe_fn)]
-#![doc(html_root_url = "https://docs.rs/fixed/2.0.0-alpha.8")]
+#![doc(html_root_url = "https://docs.rs/fixed/2.0.0-alpha.9")]
 #![doc(test(attr(deny(warnings))))]
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
 #![feature(generic_const_exprs)]
