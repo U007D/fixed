@@ -107,10 +107,11 @@ assert_eq!(ONE_AND_HALF, 1.5);
 ```
 "#;
                 #[inline]
+                #[track_caller]
                 pub const fn lit(src: &str) -> $Fixed<FRAC> {
                     match from_str::$Inner::lit(src, FRAC as u32) {
-                        Some(s) => $Fixed::from_bits(s),
-                        None => panic!("invalid literal"),
+                        Ok(s) => $Fixed::from_bits(s),
+                        Err(e) => panic!("{}", e.lit_message()),
                     }
                 }
             }
