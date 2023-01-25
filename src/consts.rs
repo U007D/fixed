@@ -27,10 +27,10 @@ number, and are rounded down at that precision.
 
 use fixed::{consts, types::I4F28};
 let tau = I4F28::from_num(consts::TAU);
-println!("τ = 2π with eight binary places is {:.8b}", tau);
-assert_eq!(format!("{:.8b}", tau), "110.01001000");
-println!("τ = 2π with eight decimal places is {:.8}", tau);
-assert_eq!(format!("{:.8}", tau), "6.28318531");
+println!("τ = 2π with eight binary places is {tau:.8b}");
+assert_eq!(format!("{tau:.8b}"), "110.01001000");
+println!("τ = 2π with eight decimal places is {tau:.8}");
+assert_eq!(format!("{tau:.8}"), "6.28318531");
 ```
 */
 
@@ -54,7 +54,7 @@ fn decimal_string(val: &Float, prec: i32) -> String {
     let val = val.clone() * Integer::from(Integer::u_pow_u(10, shift));
     let int = val.to_integer_round(Round::Down).unwrap().0;
     let padding = "0".repeat(usize::try_from(-floor_log10.min(0)).unwrap());
-    let mut s = format!("{}{}", padding, int);
+    let mut s = format!("{padding}{int}");
     s.insert(1, '.');
     s
 }
@@ -62,7 +62,7 @@ fn decimal_string(val: &Float, prec: i32) -> String {
 fn hex_bits(val: &Float, frac_bits: i32) -> String {
     let val = val.clone() << frac_bits;
     let int = val.to_integer_round(Round::Down).unwrap().0;
-    let mut s = format!("0x{:016X}", int);
+    let mut s = format!("0x{int:016X}");
     for i in 0..7 {
         s.insert(6 + 5 * i, '_');
     }
