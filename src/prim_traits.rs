@@ -526,6 +526,7 @@ Panics if `self` is [NaN].
 [NaN]: ", stringify!($Float), "::is_nan
 ";
                 #[inline]
+                #[track_caller]
                 fn saturating_to_fixed<F: Fixed>(self) -> F {
                     if self.is_nan() {
                         panic!("NaN");

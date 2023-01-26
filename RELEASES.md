@@ -81,6 +81,13 @@ Version 2.0.0-alpha.9 (2023-01-25)
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.9/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.9/fixed/struct.Wrapping.html
 
+Version 1.22.1 (2023-01-26)
+===========================
+
+  * The errors from the [`lit`][f-l-1-22] method have been improved.
+  * The `track_caller` attribute is now applied to many more inline functions
+    that can panic.
+
 Version 1.22.0 (2023-01-25)
 ===========================
 
@@ -89,9 +96,9 @@ Version 1.22.0 (2023-01-25)
     useful to write fixed-point numbers literally in code and also works in
     constant context.
   * All fixed-point numbers now implement [`LowerExp`] and [`UpperExp`].
-  * [`Binary`], [`Octal`], [`LowerHex`], [`UpperHex`], [`LowerExp`] and
-    [`UpperExp`] are now supertraits of the [`Fixed`][tf-1-22] and
-    [`FixedBits`][fb-1-22] traits.
+  * The [`Fixed`][tf-1-22] and [`FixedBits`][fb-1-22] traits now have the added
+    supertraits [`Binary`], [`Octal`], [`LowerHex`], [`UpperHex`], [`LowerExp`]
+    and [`UpperExp`].
   * The [`Wrapping`][w-1-22] and [`Unwrapped`][u-1-22] wrappers now implement
     [`Binary`], [`Octal`], [`LowerHex`], [`UpperHex`], [`LowerExp`] and
     [`UpperExp`].
