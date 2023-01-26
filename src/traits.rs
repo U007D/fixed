@@ -1261,6 +1261,7 @@ where
     ///
     /// Panics if the fixed-point number is ≤&nbsp;0.
     #[doc(alias("ilog2"))]
+    #[track_caller]
     fn int_log2(self) -> i32;
 
     /// Checked integer base-2 logarithm, rounded down. Returns the
@@ -1332,6 +1333,7 @@ where
     /// # Panics
     ///
     /// Panics if `other` is zero.
+    #[track_caller]
     #[must_use]
     fn next_multiple_of(self, other: Self) -> Self;
 
@@ -1374,6 +1376,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn rem_euclid(self, rhs: Self) -> Self;
 
@@ -1559,6 +1562,7 @@ where
     /// # Panics
     ///
     /// Panics if `other` is zero.
+    #[track_caller]
     #[must_use]
     fn saturating_next_multiple_of(self, other: Self) -> Self;
 
@@ -1655,6 +1659,7 @@ where
     /// # Panics
     ///
     /// Panics if `other` is zero.
+    #[track_caller]
     #[must_use]
     fn wrapping_next_multiple_of(self, other: Self) -> Self;
 
@@ -1716,6 +1721,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn wrapping_div_int(self, rhs: Self::Bits) -> Self;
 
@@ -1957,6 +1963,7 @@ where
     /// See also
     /// <code>FixedI32::[unwrapped\_dist][FixedI32::unwrapped_dist]</code> and
     /// <code>FixedU32::[unwrapped\_dist][FixedU32::unwrapped_dist]</code>.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn unwrapped_dist(self, other: Self) -> Self;
 
@@ -2021,6 +2028,7 @@ where
     /// # Panics
     ///
     /// Panics if `other` is zero.
+    #[track_caller]
     fn overflowing_next_multiple_of(self, other: Self) -> (Self, bool);
 
     /// Overflowing multiply  and add.
@@ -2097,6 +2105,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn overflowing_div_int(self, rhs: Self::Bits) -> (Self, bool);
 
@@ -2285,6 +2294,7 @@ where
     /// # Panics
     ///
     /// Panics if the value does not fit or if there is a parsing error.
+    #[track_caller]
     fn unwrapped_from_str(src: &str) -> Self;
 
     /// Parses a string slice containing binary digits to return a
@@ -2300,6 +2310,7 @@ where
     /// # Panics
     ///
     /// Panics if the value does not fit or if there is a parsing error.
+    #[track_caller]
     fn unwrapped_from_str_binary(src: &str) -> Self;
 
     /// Parses a string slice containing octal digits to return a
@@ -2315,6 +2326,7 @@ where
     /// # Panics
     ///
     /// Panics if the value does not fit or if there is a parsing error.
+    #[track_caller]
     fn unwrapped_from_str_octal(src: &str) -> Self;
 
     /// Parses a string slice containing hexadecimal digits to return a
@@ -2330,6 +2342,7 @@ where
     /// # Panics
     ///
     /// Panics if the value does not fit or if there is a parsing error.
+    #[track_caller]
     fn unwrapped_from_str_hex(src: &str) -> Self;
 
     /// Parses a string slice containing decimal digits to return a
@@ -2401,6 +2414,7 @@ where
     ///
     /// Panics if the fixed-point number is ≤&nbsp;0.
     #[doc(alias("ilog10"))]
+    #[track_caller]
     fn int_log10(self) -> i32;
 
     /// Integer logarithm to the specified base, rounded down.
@@ -2412,6 +2426,7 @@ where
     ///
     /// Panics if the fixed-point number is ≤&nbsp;0 or if the base is <&nbsp;2.
     #[doc(alias("ilog"))]
+    #[track_caller]
     fn int_log(self, base: u32) -> i32;
 
     /// Checked integer base-10 logarithm, rounded down. Returns the
@@ -2443,6 +2458,7 @@ where
     /// # Panics
     ///
     /// Panics if `self` is zero.
+    #[track_caller]
     #[must_use]
     fn recip(self) -> Self;
 
@@ -2454,6 +2470,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero or if the division results in overflow.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn div_euclid(self, rhs: Self) -> Self;
 
@@ -2466,6 +2483,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero or if the division results in overflow.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn div_euclid_int(self, rhs: Self::Bits) -> Self;
 
@@ -2478,6 +2496,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero or if the division results in overflow.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn rem_euclid_int(self, rhs: Self::Bits) -> Self;
 
@@ -2485,6 +2504,7 @@ where
     ///
     /// See also <code>FixedI32::[lerp][FixedI32::lerp]</code> and
     /// <code>FixedU32::[lerp][FixedU32::lerp]</code>.
+    #[track_caller]
     #[must_use]
     fn lerp(self, start: Self, end: Self) -> Self;
 
@@ -2501,6 +2521,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn overflowing_div(self, rhs: Self) -> (Self, bool);
 
@@ -2518,6 +2539,7 @@ where
     /// # Panics
     ///
     /// Panics if `self` is zero.
+    #[track_caller]
     fn overflowing_recip(self) -> (Self, bool);
 
     /// Overflowing Euclidean division.
@@ -2534,6 +2556,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn overflowing_div_euclid(self, rhs: Self) -> (Self, bool);
 
@@ -2629,6 +2652,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn saturating_div(self, rhs: Self) -> Self;
 
@@ -2642,6 +2666,7 @@ where
     /// # Panics
     ///
     /// Panics if `self` is zero.
+    #[track_caller]
     #[must_use]
     fn saturating_recip(self) -> Self;
 
@@ -2655,6 +2680,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn saturating_div_euclid(self, rhs: Self) -> Self;
 
@@ -2669,6 +2695,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn saturating_div_euclid_int(self, rhs: Self::Bits) -> Self;
 
@@ -2683,6 +2710,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn saturating_rem_euclid_int(self, rhs: Self::Bits) -> Self;
 
@@ -2711,6 +2739,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn wrapping_div(self, rhs: Self) -> Self;
 
@@ -2723,6 +2752,7 @@ where
     /// # Panics
     ///
     /// Panics if `self` is zero.
+    #[track_caller]
     #[must_use]
     fn wrapping_recip(self) -> Self;
 
@@ -2736,6 +2766,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn wrapping_div_euclid(self, rhs: Self) -> Self;
 
@@ -2752,6 +2783,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn wrapping_div_euclid_int(self, rhs: Self::Bits) -> Self;
 
@@ -2766,6 +2798,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn wrapping_rem_euclid_int(self, rhs: Self::Bits) -> Self;
 
@@ -2883,6 +2916,7 @@ where
     /// See also
     /// <code>FixedI32::[unwrapped\_lerp][FixedI32::unwrapped_lerp]</code> and
     /// <code>FixedU32::[unwrapped\_lerp][FixedU32::unwrapped_lerp]</code>.
+    #[track_caller]
     #[must_use]
     fn unwrapped_lerp(self, start: Self, end: Self) -> Self;
 
@@ -2896,6 +2930,7 @@ where
     /// <code>FixedI32::[unwrapped\_inv\_lerp][FixedI32::unwrapped_inv_lerp]</code>
     /// and
     /// <code>FixedU32::[unwrapped\_inv\_lerp][FixedU32::unwrapped_inv_lerp]</code>.
+    #[track_caller]
     #[must_use]
     fn unwrapped_inv_lerp(self, start: Self, end: Self) -> Self;
 
@@ -2913,6 +2948,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn overflowing_div_euclid_int(self, rhs: Self::Bits) -> (Self, bool);
 
@@ -2930,6 +2966,7 @@ where
     /// # Panics
     ///
     /// Panics if the divisor is zero.
+    #[track_caller]
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn overflowing_rem_euclid_int(self, rhs: Self::Bits) -> (Self, bool);
 
@@ -3025,6 +3062,7 @@ where
     /// be returned in those cases, but it is not considered a
     /// breaking change if in the future it panics; using this method
     /// when 1 and &minus;1 cannot be represented is almost certainly a bug.
+    #[track_caller]
     #[must_use]
     fn signum(self) -> Self;
 
@@ -3593,6 +3631,7 @@ pub trait FromFixed {
     /// [`wrapping_from_fixed`] instead.
     ///
     /// [`wrapping_from_fixed`]: FromFixed::wrapping_from_fixed
+    #[track_caller]
     fn from_fixed<F: Fixed>(src: F) -> Self;
 
     /// Converts from a fixed-point number if it fits, otherwise returns [`None`].
@@ -4319,6 +4358,7 @@ macro_rules! impl_fixed {
             ///
             /// [`wrapping_from_fixed`]: FromFixed::wrapping_from_fixed
             #[inline]
+            #[track_caller]
             fn from_fixed<F: Fixed>(src: F) -> Self {
                 let (wrapped, overflow) = $Fixed::fixed_from_bits(src.to_bits(), F::FRAC_BITS);
                 debug_assert!(!overflow, "overflow");
@@ -4385,6 +4425,7 @@ macro_rules! impl_fixed {
             /// Panics if the value does not fit, even when debug
             /// assertions are not enabled.
             #[inline]
+            #[track_caller]
             fn unwrapped_from_fixed<F: Fixed>(src: F) -> Self {
                 match $Fixed::fixed_from_bits(src.to_bits(), F::FRAC_BITS) {
                     (val, false) => val,
@@ -4409,6 +4450,7 @@ macro_rules! impl_fixed {
             ///
             /// [`wrapping_to_fixed`]: ToFixed::wrapping_to_fixed
             #[inline]
+            #[track_caller]
             fn to_fixed<F: Fixed>(self) -> F {
                 FromFixed::from_fixed(self)
             }
@@ -4457,6 +4499,7 @@ macro_rules! impl_fixed {
             /// Panics if the value does not fit, even when debug
             /// assertions are not enabled.
             #[inline]
+            #[track_caller]
             fn unwrapped_to_fixed<F: Fixed>(self) -> F {
                 FromFixed::unwrapped_from_fixed(self)
             }

@@ -202,6 +202,7 @@ assert_eq!(Fix::from_num(2.5).ceil(), Fix::from_num(3));
 [`wrapping_ceil`]: Self::wrapping_ceil
 ";
             #[inline]
+            #[track_caller]
             #[must_use]
             pub const fn ceil(self) -> $Fixed<FRAC> {
                 let (ceil, overflow) = self.overflowing_ceil();
@@ -248,6 +249,7 @@ assert_eq!(Fix::from_num(2.5).floor(), Fix::from_num(2));
 [`wrapping_floor`]: Self::wrapping_floor
 ";
             #[inline]
+            #[track_caller]
             #[must_use]
             pub const fn floor(self) -> $Fixed<FRAC> {
                 let (floor, overflow) = self.overflowing_floor();
@@ -288,6 +290,7 @@ assert_eq!(Fix::from_num(2.5).round(), Fix::from_num(3));
 [`wrapping_round`]: Self::wrapping_round
 ";
             #[inline]
+            #[track_caller]
             #[must_use]
             pub const fn round(self) -> $Fixed<FRAC> {
                 let (round, overflow) = self.overflowing_round();
@@ -323,6 +326,7 @@ assert_eq!(Fix::from_num(3.5).round_ties_to_even(), Fix::from_num(4));
 [`wrapping_round_ties_to_even`]: Self::wrapping_round_ties_to_even
 ";
             #[inline]
+            #[track_caller]
             #[must_use]
             pub const fn round_ties_to_even(self) -> $Fixed<FRAC> {
                 let (round, overflow) = self.overflowing_round_ties_to_even();
