@@ -179,36 +179,10 @@ The conversions supported cover the following cases.
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.9/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.9/fixed/struct.Wrapping.html
 
-### Version 1.22.1 news (2023-01-26)
+### Version 1.23.0 news (unreleased)
 
-  * The errors from the [`lit`][f-l-1-22] method have been improved.
-  * The `track_caller` attribute is now applied to many more inline functions
-    that can panic.
-
-### Version 1.22.0 news (2023-01-25)
-
-  * String parsing now supports an optional exponent for all supported radices.
-  * The [`lit`][f-l-1-22] method was added to all fixed-point numbers. This is
-    useful to write fixed-point numbers literally in code and also works in
-    constant context.
-  * All fixed-point numbers now implement [`LowerExp`] and [`UpperExp`].
-  * The [`Fixed`][tf-1-22] and [`FixedBits`][fb-1-22] traits now have the added
-    supertraits [`Binary`], [`Octal`], [`LowerHex`], [`UpperHex`], [`LowerExp`]
-    and [`UpperExp`].
-  * The [`Wrapping`][w-1-22] and [`Unwrapped`][u-1-22] wrappers now implement
-    [`Binary`], [`Octal`], [`LowerHex`], [`UpperHex`], [`LowerExp`] and
-    [`UpperExp`].
-  * The implementation of [`Debug`] for fixed-point numbers now has more relaxed
-    constraints on the fractional bits generic parameter: now `Frac` only needs
-    to implement [`Unsigned`][uns-1-22].
-
-[`Debug`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html
-[f-l-1-22]: https://docs.rs/fixed/~1.22/fixed/struct.FixedI32.html#method.lit
-[fb-1-22]: https://docs.rs/fixed/~1.22/fixed/traits/trait.FixedBits.html
-[tf-1-22]: https://docs.rs/fixed/~1.22/fixed/traits/trait.Fixed.html
-[u-1-22]: https://docs.rs/fixed/~1.22/fixed/struct.Unwrapped.html
-[uns-1-22]: https://docs.rs/fixed/~1.22/fixed/types/extra/trait.Unsigned.html
-[w-1-22]: https://docs.rs/fixed/~1.22/fixed/struct.Wrapping.html
+  * String parsing of binary, octal and hexadecimal strings now supports base-2
+    exponents starting with the separator “`p`” or “`P`”.
 
 ### Other releases
 

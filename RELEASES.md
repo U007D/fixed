@@ -81,6 +81,12 @@ Version 2.0.0-alpha.9 (2023-01-25)
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.9/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.9/fixed/struct.Wrapping.html
 
+Version 1.23.0 (unreleased)
+===========================
+
+  * String parsing of binary, octal and hexadecimal strings now supports base-2
+    exponents starting with the separator “`p`” or “`P`”.
+
 Version 1.22.1 (2023-01-26)
 ===========================
 
