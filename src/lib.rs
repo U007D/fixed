@@ -18,7 +18,7 @@
 
 **Alpha:** This is an alpha release of the new major version 2.0.0 that makes
 use of const generics instead of the [*typenum*
-crate](https://crates.io/crate/typenum). This version requires the nightly
+crate](https://crates.io/crates/typenum). This version requires the nightly
 compiler with the [`generic_const_exprs` feature] enabled. The stable version
 2.0.0 itself will not be released before the [`generic_const_exprs` feature] is
 stabilized. See the documentation for [porting from version 1 to version 2].
