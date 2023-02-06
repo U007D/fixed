@@ -179,7 +179,7 @@ The conversions supported cover the following cases.
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.9/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.9/fixed/struct.Wrapping.html
 
-### Version 1.23.0 news (unreleased)
+### Version 1.23.0 news (2023-02-06)
 
   * String parsing of binary, octal and hexadecimal strings now supports base-2
     exponents starting with the separator “`p`” or “`P`”.
