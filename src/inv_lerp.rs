@@ -125,9 +125,8 @@ pub const fn i128(v: i128, start: i128, end: i128, frac_bits: u32) -> (i128, boo
     } else {
         (start.wrapping_sub(end) as u128, true)
     };
-    let range_abs = match NonZeroU128::new(range_abs) {
-        Some(s) => s,
-        None => panic!("empty range"),
+    let Some(range_abs) = NonZeroU128::new(range_abs) else {
+        panic!("empty range");
     };
     let neg = diff_neg != range_neg;
     if neg {
@@ -189,9 +188,8 @@ pub const fn u128(v: u128, start: u128, end: u128, frac_bits: u32) -> (u128, boo
     } else {
         (start - end, true)
     };
-    let range_abs = match NonZeroU128::new(range_abs) {
-        Some(s) => s,
-        None => panic!("empty range"),
+    let Some(range_abs) = NonZeroU128::new(range_abs) else {
+        panic!("empty range");
     };
     let neg = diff_neg != range_neg;
     if neg {

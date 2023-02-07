@@ -57,9 +57,8 @@ impl<'a> Bytes<'a> {
 
     #[inline]
     pub const fn split_at(self, mid: usize) -> (Bytes<'a>, Bytes<'a>) {
-        let end_len = match self.len().checked_sub(mid) {
-            Some(s) => s,
-            None => panic!("index out of bounds"),
+        let Some(end_len) = self.len().checked_sub(mid) else {
+            panic!("index out of bounds");
         };
         (
             Bytes {
@@ -184,9 +183,8 @@ impl<'a> DigitsUnds<'a> {
 
     #[inline]
     pub const fn split_first(self) -> Option<(u8, DigitsUnds<'a>)> {
-        let (first, mut rem_bytes) = match self.bytes.split_first() {
-            Some(s) => s,
-            None => return None,
+        let Some((first, mut rem_bytes)) = self.bytes.split_first() else {
+            return None;
         };
 
         // first byte is never underscore
@@ -210,9 +208,8 @@ impl<'a> DigitsUnds<'a> {
 
     #[inline]
     pub const fn split_last(self) -> Option<(DigitsUnds<'a>, u8)> {
-        let (mut rem_bytes, last) = match self.bytes.split_last() {
-            Some(s) => s,
-            None => return None,
+        let Some((mut rem_bytes, last)) = self.bytes.split_last() else {
+            return None;
         };
 
         // last byte is never underscore

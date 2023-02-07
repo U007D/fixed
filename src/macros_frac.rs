@@ -1401,9 +1401,8 @@ assert_eq!(Fix::MAX.checked_div_euclid(Fix::from_num(0.25)), None);
                     if_signed! {
                         $Signedness;
                         if self.unwrapped_rem(rhs).is_negative() {
-                            let neg_one = match Self::TRY_NEG_ONE {
-                                Some(s) => s,
-                                None => return None,
+                            let Some(neg_one) = Self::TRY_NEG_ONE else {
+                                return None;
                             };
                             return if rhs.is_positive() {
                                 q.checked_add(neg_one)
@@ -1513,9 +1512,8 @@ assert_eq!(Fix::from_num(7.5).checked_div_euclid_int(0), None);
                     if_signed! {
                         $Signedness;
                         if self.unwrapped_rem_int(rhs).is_negative() {
-                            let neg_one = match Self::TRY_NEG_ONE {
-                                Some(s) => s,
-                                None => return None,
+                            let Some(neg_one) = Self::TRY_NEG_ONE else {
+                                return None;
                             };
                             return if rhs.is_positive() {
                                 q.checked_add(neg_one)
@@ -1562,9 +1560,8 @@ assert_eq!(Fix::from_num(-7.5).checked_rem_euclid_int(20), None);
                 pub const fn checked_rem_euclid_int(self, rhs: $Inner) -> Option<$Fixed<FRAC>> {
                     if_signed! {
                         $Signedness;
-                        let rem = match self.checked_rem_int(rhs){
-                            Some(s) => s,
-                            None => return None,
+                        let Some(rem) = self.checked_rem_int(rhs) else {
+                            return None;
                         };
                         if !rem.is_negative() {
                             return Some(rem);
@@ -2595,9 +2592,8 @@ assert_eq!(Fix::MAX.overflowing_div_euclid(Fix::from_num(0.25)), (wrapped, true)
                     if_signed! {
                         $Signedness;
                         if self.unwrapped_rem(rhs).is_negative() {
-                            let neg_one = match Self::TRY_NEG_ONE {
-                                Some(s) => s,
-                                None => return (q, true),
+                            let Some(neg_one) = Self::TRY_NEG_ONE else {
+                                return (q, true);
                             };
                             let (q, overflow2) = if rhs.is_positive() {
                                 q.overflowing_add(neg_one)
@@ -2656,9 +2652,8 @@ assert_eq!(Fix::MIN.overflowing_div_euclid_int(-1), (wrapped, true));
                     if_signed! {
                         $Signedness;
                         if self.unwrapped_rem_int(rhs).is_negative() {
-                            let neg_one = match Self::TRY_NEG_ONE {
-                                Some(s) => s,
-                                None => return (q, true),
+                            let Some(neg_one) = Self::TRY_NEG_ONE else {
+                                return (q, true);
                             };
                             let (q, overflow2) = if rhs.is_positive() {
                                 q.overflowing_add(neg_one)
