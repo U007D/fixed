@@ -6,7 +6,7 @@
 # without any warranty.
 
 variables:
-  MSRV: 1.65.0
+  MSRV: 1.67.0
 
 before_script:
   - getconf LONG_BIT

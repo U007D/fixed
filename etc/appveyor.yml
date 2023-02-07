@@ -12,7 +12,7 @@ branches:
     - www
 
 environment:
-  MSRV: 1.65.0
+  MSRV: 1.67.0
   matrix:
     - TARGET: x86_64-pc-windows-msvc
     - TARGET: x86_64-pc-windows-gnu

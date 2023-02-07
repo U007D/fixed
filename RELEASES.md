@@ -80,6 +80,10 @@ as-is, without any warranty. -->
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.10/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.10/fixed/struct.Wrapping.html
 
+# Version 1.24.0 (unreleased)
+
+  * The crate now requires rustc version 1.67.0 or later.
+
 # Version 1.23.0 (2023-02-06)
 
   * String parsing of binary, octal and hexadecimal strings now supports base-2
