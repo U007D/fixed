@@ -2321,7 +2321,7 @@ assert_eq!(Fix::MAX.checked_add(Fix::ONE), None);
                 pub const fn checked_add(self, rhs: $Fixed<FRAC>) -> Option<$Fixed<FRAC>> {
                     match self.to_bits().checked_add(rhs.to_bits()) {
                         None => None,
-                        Some(bits) => Some(Self::from_bits(bits)),
+                        Some(bits) => Some($Fixed::from_bits(bits)),
                     }
                 }
             }
@@ -2346,7 +2346,7 @@ assert_eq!(Fix::MIN.checked_sub(Fix::ONE), None);
                 pub const fn checked_sub(self, rhs: $Fixed<FRAC>) -> Option<$Fixed<FRAC>> {
                     match self.to_bits().checked_sub(rhs.to_bits()) {
                         None => None,
-                        Some(bits) => Some(Self::from_bits(bits)),
+                        Some(bits) => Some($Fixed::from_bits(bits)),
                     }
                 }
             }
@@ -3000,9 +3000,9 @@ assert!(Fix::MAX.checked_next_power_of_two().is_none());
                     self,
                     rhs: $UFixed<FRAC>,
                 ) -> Option<$Fixed<FRAC>> {
-                    match self.overflowing_add_unsigned(rhs) {
-                        (ans, false) => Some(ans),
-                        (_, true) => None,
+                    match self.to_bits().checked_add_unsigned(rhs.to_bits()) {
+                        None => None,
+                        Some(bits) => Some($Fixed::from_bits(bits)),
                     }
                 }
 
@@ -3030,9 +3030,9 @@ assert!(Fix::MAX.checked_next_power_of_two().is_none());
                     self,
                     rhs: $UFixed<FRAC>,
                 ) -> Option<$Fixed<FRAC>> {
-                    match self.overflowing_sub_unsigned(rhs) {
-                        (ans, false) => Some(ans),
-                        (_, true) => None,
+                    match self.to_bits().checked_sub_unsigned(rhs.to_bits()) {
+                        None => None,
+                        Some(bits) => Some($Fixed::from_bits(bits)),
                     }
                 }
             }
@@ -3060,9 +3060,9 @@ assert!(Fix::MAX.checked_next_power_of_two().is_none());
                 #[inline]
                 #[must_use]
                 pub const fn checked_add_signed(self, rhs: $IFixed<FRAC>) -> Option<$Fixed<FRAC>> {
-                    match self.overflowing_add_signed(rhs) {
-                        (ans, false) => Some(ans),
-                        (_, true) => None,
+                    match self.to_bits().checked_add_signed(rhs.to_bits()) {
+                        None => None,
+                        Some(bits) => Some($Fixed::from_bits(bits)),
                     }
                 }
 
@@ -3158,14 +3158,7 @@ assert_eq!(Fix::MAX.saturating_add(Fix::ONE), Fix::MAX);
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub const fn saturating_add(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                    match self.overflowing_add(rhs) {
-                        (val, false) => val,
-                        (_, true) => if_signed_unsigned!(
-                            $Signedness,
-                            if self.is_negative() { Self::MIN } else { Self::MAX },
-                            Self::MAX,
-                        ),
-                    }
+                    $Fixed::from_bits(self.to_bits().saturating_add(rhs.to_bits()))
                 }
             }
 
@@ -3194,18 +3187,7 @@ assert_eq!(Fix::ZERO.saturating_sub(Fix::ONE), Fix::ZERO);",
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub const fn saturating_sub(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                    match self.overflowing_sub(rhs) {
-                        (val, false) => val,
-                        (_, true) => if_signed_unsigned!(
-                            $Signedness,
-                            if self.to_bits() < rhs.to_bits() {
-                                Self::MIN
-                            } else {
-                                Self::MAX
-                            },
-                            Self::MIN,
-                        ),
-                    }
+                    $Fixed::from_bits(self.to_bits().saturating_sub(rhs.to_bits()))
                 }
             }
 
@@ -3700,10 +3682,7 @@ assert_eq!(Fix::MAX.saturating_inv_lerp::<4>(Fix::from_num(0.5), Fix::ZERO), Fix
                 #[inline]
                 #[must_use]
                 pub const fn saturating_add_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
-                    match self.overflowing_add_unsigned(rhs) {
-                        (ans, false) => ans,
-                        (_, true) => $Fixed::MAX,
-                    }
+                    $Fixed::from_bits(self.to_bits().saturating_add_unsigned(rhs.to_bits()))
                 }
 
                 /// Saturating subtraction with an unsigned fixed-point number.
@@ -3724,10 +3703,7 @@ assert_eq!(Fix::MAX.saturating_inv_lerp::<4>(Fix::from_num(0.5), Fix::ZERO), Fix
                 #[inline]
                 #[must_use]
                 pub const fn saturating_sub_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
-                    match self.overflowing_sub_unsigned(rhs) {
-                        (ans, false) => ans,
-                        (_, true) => $Fixed::MIN,
-                    }
+                    $Fixed::from_bits(self.to_bits().saturating_sub_unsigned(rhs.to_bits()))
                 }
             }
 
@@ -3752,16 +3728,7 @@ assert_eq!(Fix::MAX.saturating_inv_lerp::<4>(Fix::from_num(0.5), Fix::ZERO), Fix
                 #[inline]
                 #[must_use]
                 pub const fn saturating_add_signed(self, rhs: $IFixed<FRAC>) -> $Fixed<FRAC> {
-                    match self.overflowing_add_signed(rhs) {
-                        (ans, false) => ans,
-                        (_, true) => {
-                            if rhs.is_negative() {
-                                $Fixed::ZERO
-                            } else {
-                                $Fixed::MAX
-                            }
-                        }
-                    }
+                    $Fixed::from_bits(self.to_bits().saturating_add_signed(rhs.to_bits()))
                 }
 
                 /// Saturating subtraction with a signed fixed-point number.
@@ -3856,7 +3823,7 @@ assert_eq!(Fix::MAX.wrapping_add(Fix::ONE), ",
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub const fn wrapping_add(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                    Self::from_bits(self.to_bits().wrapping_add(rhs.to_bits()))
+                    $Fixed::from_bits(self.to_bits().wrapping_add(rhs.to_bits()))
                 }
             }
 
@@ -3886,7 +3853,7 @@ assert_eq!(Fix::ZERO",
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub const fn wrapping_sub(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
-                    Self::from_bits(self.to_bits().wrapping_sub(rhs.to_bits()))
+                    $Fixed::from_bits(self.to_bits().wrapping_sub(rhs.to_bits()))
                 }
             }
 
@@ -4405,8 +4372,7 @@ assert_eq!(Fix::MAX.wrapping_next_power_of_two(), 0);
                 #[inline]
                 #[must_use]
                 pub const fn wrapping_add_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
-                    let (ans, _) = self.overflowing_add_unsigned(rhs);
-                    ans
+                    $Fixed::from_bits(self.to_bits().wrapping_add_unsigned(rhs.to_bits()))
                 }
 
                 /// Wrapping subtraction with an unsigned fixed-point number.
@@ -4427,8 +4393,7 @@ assert_eq!(Fix::MAX.wrapping_next_power_of_two(), 0);
                 #[inline]
                 #[must_use]
                 pub const fn wrapping_sub_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
-                    let (ans, _) = self.overflowing_sub_unsigned(rhs);
-                    ans
+                    $Fixed::from_bits(self.to_bits().wrapping_sub_unsigned(rhs.to_bits()))
                 }
             }
 
@@ -4452,8 +4417,7 @@ assert_eq!(Fix::MAX.wrapping_next_power_of_two(), 0);
                 #[inline]
                 #[must_use]
                 pub const fn wrapping_add_signed(self, rhs: $IFixed<FRAC>) -> $Fixed<FRAC> {
-                    let (ans, _) = self.overflowing_add_signed(rhs);
-                    ans
+                    $Fixed::from_bits(self.to_bits().wrapping_add_signed(rhs.to_bits()))
                 }
 
                 /// Wrapping subtraction with a signed fixed-point number.
@@ -5490,9 +5454,10 @@ let _overflow = Fix::MAX.unwrapped_next_power_of_two();
                 #[track_caller]
                 #[must_use]
                 pub const fn unwrapped_add_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
-                    let (ans, overflow) = self.overflowing_add_unsigned(rhs);
-                    assert!(!overflow, "overflow");
-                    ans
+                    match self.checked_add_unsigned(rhs) {
+                        Some(s) => s,
+                        None => panic!("overflow"),
+                    }
                 }
 
                 /// Unwrapped subtraction with an unsigned fixed-point number.
@@ -5529,9 +5494,10 @@ let _overflow = Fix::MAX.unwrapped_next_power_of_two();
                 #[track_caller]
                 #[must_use]
                 pub const fn unwrapped_sub_unsigned(self, rhs: $UFixed<FRAC>) -> $Fixed<FRAC> {
-                    let (ans, overflow) = self.overflowing_sub_unsigned(rhs);
-                    assert!(!overflow, "overflow");
-                    ans
+                    match self.checked_sub_unsigned(rhs) {
+                        Some(s) => s,
+                        None => panic!("overflow"),
+                    }
                 }
             }
 
@@ -5571,9 +5537,10 @@ let _overflow = Fix::MAX.unwrapped_next_power_of_two();
                 #[track_caller]
                 #[must_use]
                 pub const fn unwrapped_add_signed(self, rhs: $IFixed<FRAC>) -> $Fixed<FRAC> {
-                    let (ans, overflow) = self.overflowing_add_signed(rhs);
-                    assert!(!overflow, "overflow");
-                    ans
+                    match self.checked_add_signed(rhs) {
+                        Some(s) => s,
+                        None => panic!("overflow"),
+                    }
                 }
 
                 /// Unwrapped subtraction with a signed fixed-point number.
@@ -5610,9 +5577,10 @@ let _overflow = Fix::MAX.unwrapped_next_power_of_two();
                 #[track_caller]
                 #[must_use]
                 pub const fn unwrapped_sub_signed(self, rhs: $IFixed<FRAC>) -> $Fixed<FRAC> {
-                    let (ans, overflow) = self.overflowing_sub_signed(rhs);
-                    assert!(!overflow, "overflow");
-                    ans
+                    match self.checked_sub_signed(rhs) {
+                        Some(s) => s,
+                        None => panic!("overflow"),
+                    }
                 }
             }
 
@@ -5683,7 +5651,7 @@ assert_eq!(Fix::MAX.overflowing_add(Fix::ONE), (",
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub const fn overflowing_add(self, rhs: $Fixed<FRAC>) -> ($Fixed<FRAC>, bool) {
                     let (ans, o) = self.to_bits().overflowing_add(rhs.to_bits());
-                    (Self::from_bits(ans), o)
+                    ($Fixed::from_bits(ans), o)
                 }
             }
 
@@ -6364,11 +6332,8 @@ assert_eq!(
                     self,
                     rhs: $UFixed<FRAC>,
                 ) -> ($Fixed<FRAC>, bool) {
-                    let signed_rhs = rhs.to_bits() as $Inner;
-                    let overflow1 = signed_rhs < 0;
-                    let (bits, overflow2) = self.to_bits().overflowing_add(signed_rhs);
-                    // if both overflow1 and overflow2, then they cancel each other out
-                    ($Fixed::from_bits(bits), overflow1 != overflow2)
+                    let (ans, o) = self.to_bits().overflowing_add_unsigned(rhs.to_bits());
+                    ($Fixed::from_bits(ans), o)
                 }
 
                 /// Overflowing subtraction with an unsigned fixed-point number.
@@ -6401,11 +6366,8 @@ assert_eq!(
                     self,
                     rhs: $UFixed<FRAC>,
                 ) -> ($Fixed<FRAC>, bool) {
-                    let signed_rhs = rhs.to_bits() as $Inner;
-                    let overflow1 = signed_rhs < 0;
-                    let (bits, overflow2) = self.to_bits().overflowing_sub(signed_rhs);
-                    // if both overflow1 and overflow2, then they cancel each other out
-                    ($Fixed::from_bits(bits), overflow1 != overflow2)
+                    let (ans, o) = self.to_bits().overflowing_sub_unsigned(rhs.to_bits());
+                    ($Fixed::from_bits(ans), o)
                 }
             }
 
@@ -6441,11 +6403,8 @@ assert_eq!(
                     self,
                     rhs: $IFixed<FRAC>,
                 ) -> ($Fixed<FRAC>, bool) {
-                    let unsigned_rhs = rhs.to_bits() as $Inner;
-                    let overflow1 = rhs.is_negative();
-                    let (bits, overflow2) = self.to_bits().overflowing_add(unsigned_rhs);
-                    // if both overflow1 and overflow2, then they cancel each other out
-                    ($Fixed::from_bits(bits), overflow1 != overflow2)
+                    let (ans, o) = self.to_bits().overflowing_add_signed(rhs.to_bits());
+                    ($Fixed::from_bits(ans), o)
                 }
 
                 /// Overflowing subtraction with a signed fixed-point number.
