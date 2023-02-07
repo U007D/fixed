@@ -740,9 +740,8 @@ pub mod u128 {
         if frac_nbits == 0 {
             return lhs.overflowing_div(rhs);
         }
-        let rhs = match NonZeroU128::new(rhs) {
-            Some(nz) => nz,
-            None => panic!("division by zero"),
+        let Some(rhs) = NonZeroU128::new(rhs) else {
+            panic!("division by zero");
         };
         overflowing_div_nz(lhs, rhs, frac_nbits)
     }
@@ -823,9 +822,8 @@ pub mod i128 {
         if frac_nbits == 0 {
             return lhs.overflowing_div(rhs);
         }
-        let rhs = match NonZeroI128::new(rhs) {
-            Some(nz) => nz,
-            None => panic!("division by zero"),
+        let Some(rhs) = NonZeroI128::new(rhs) else {
+            panic!("division by zero");
         };
         overflowing_div_nz(lhs, rhs, frac_nbits)
     }
@@ -1158,9 +1156,8 @@ mod tests {
                 let a16 = U16F16::from_bits(a);
                 let a31 = U31F1::from_bits(a);
                 let a32 = U32F0::from_bits(a);
-                let nz = match NonZeroU32::new(b) {
-                    Some(s) => s,
-                    None => continue,
+                let Some(nz) = NonZeroU32::new(b) else {
+                    continue;
                 };
                 assert_eq!(a0 / nz, a0 / b);
                 assert_eq!(a0 % nz, a0 % b);
@@ -1200,9 +1197,8 @@ mod tests {
                 let a16 = I16F16::from_bits(a);
                 let a31 = I31F1::from_bits(a);
                 let a32 = I32F0::from_bits(a);
-                let nz = match NonZeroI32::new(b) {
-                    Some(s) => s,
-                    None => continue,
+                let Some(nz) = NonZeroI32::new(b) else {
+                    continue;
                 };
                 assert_eq!(a0 % nz, a0 % b);
                 assert_eq!(a1 % nz, a1 % b);

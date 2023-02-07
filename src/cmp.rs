@@ -126,9 +126,8 @@ where
 {
     debug_assert!(lhs_frac >= rhs_frac);
     let rhs_shl = lhs_frac.wrapping_sub(rhs_frac) as u32;
-    let rhs_zero = match U::try_from(0u32) {
-        Ok(zero) => zero,
-        Err(_) => unreachable!(),
+    let Ok(rhs_zero) = U::try_from(0u32) else {
+        unreachable!();
     };
     if rhs_abs == rhs_zero {
         Some(rhs_zero)
@@ -171,9 +170,8 @@ where
     Rhs: Copy + Eq + TryFrom<u32> + TryFrom<Lhs> + Shl<u32, Output = Rhs> + Shr<u32, Output = Rhs>,
 {
     if lhs.bits >= rhs.bits {
-        let rhs_abs = match Lhs::try_from(rhs.abs) {
-            Ok(abs) => abs,
-            Err(_) => unreachable!(),
+        let Ok(rhs_abs) = Lhs::try_from(rhs.abs) else {
+            unreachable!();
         };
         let rhs = Value {
             neg: rhs.neg,
@@ -183,9 +181,8 @@ where
         };
         float_eq_even(lhs, rhs)
     } else {
-        let lhs_abs = match Rhs::try_from(lhs.abs) {
-            Ok(abs) => abs,
-            Err(_) => unreachable!(),
+        let Ok(lhs_abs) = Rhs::try_from(lhs.abs) else {
+            unreachable!();
         };
         let lhs = Value {
             neg: lhs.neg,
@@ -241,9 +238,8 @@ where
     Rhs: Copy + Ord + TryFrom<u32> + TryFrom<Lhs> + Shl<u32, Output = Rhs> + Shr<u32, Output = Rhs>,
 {
     if lhs.bits >= rhs.bits {
-        let rhs_abs = match Lhs::try_from(rhs.abs) {
-            Ok(abs) => abs,
-            Err(_) => unreachable!(),
+        let Ok(rhs_abs) = Lhs::try_from(rhs.abs) else {
+            unreachable!();
         };
         let rhs = Value {
             neg: rhs.neg,
@@ -253,9 +249,8 @@ where
         };
         float_cmp_even(lhs, rhs)
     } else {
-        let lhs_abs = match Rhs::try_from(lhs.abs) {
-            Ok(abs) => abs,
-            Err(_) => unreachable!(),
+        let Ok(lhs_abs) = Rhs::try_from(lhs.abs) else {
+            unreachable!();
         };
         let lhs = Value {
             neg: lhs.neg,

@@ -500,9 +500,8 @@ macro_rules! unsigned {
             } else {
                 (digits, false)
             };
-            let (first_digit, mut rem_digits) = match digits.split_first() {
-                Some(s) => s,
-                None => unreachable!(),
+            let Some((first_digit, mut rem_digits)) = digits.split_first() else {
+                unreachable!();
             };
             let mut acc = from_byte(first_digit - b'0');
             if digits.len() == max_digits {
@@ -589,9 +588,8 @@ macro_rules! unsigned {
             } else {
                 (digits, false)
             };
-            let (first_digit, mut rem_digits) = match digits.split_first() {
-                Some(s) => s,
-                None => unreachable!(),
+            let Some((first_digit, mut rem_digits)) = digits.split_first() else {
+                unreachable!();
             };
             let mut acc = from_byte(unchecked_hex_digit(first_digit));
             if digits.len() == max_digits {
@@ -691,9 +689,8 @@ macro_rules! unsigned {
             } else {
                 Round::Floor
             };
-            let floor = match dec_to_bin(val, nbits, round) {
-                Some(floor) => floor,
-                None => return None,
+            let Some(floor) = dec_to_bin(val, nbits, round) else {
+                return None;
             };
             if is_short {
                 return Some(floor);
@@ -740,9 +737,8 @@ macro_rules! unsigned {
             if tie && !is_odd(floor) {
                 return Some(floor);
             }
-            let next_up = match floor.checked_add(1) {
-                Some(s) => s,
-                None => return None,
+            let Some(next_up) = floor.checked_add(1) else  {
+                return None;
             };
             if dump_bits != 0 && next_up >> nbits != 0 {
                 None
@@ -868,9 +864,8 @@ pub mod u128 {
         debug_assert!(nbits <= 128);
         let fives = 5u128.pow(54);
         let denom = fives * 2;
-        let denom = match NonZeroU128::new(denom) {
-            None => unreachable!(),
-            Some(nz) => nz,
+        let Some(denom) = NonZeroU128::new(denom) else {
+            unreachable!();
         };
         // we need to combine (10^27*hi + lo) << (128 - 54 + 1)
         let hi_e27 = int256::wide_mul_u128(hi, 10u128.pow(27));
@@ -975,9 +970,8 @@ struct BitExp {
 
 impl BitExp {
     const fn new(bit_exp: u32, frac: DigitsExp) -> Option<BitExp> {
-        let exp = match NonZeroU32::new(bit_exp) {
-            Some(s) => s,
-            None => return None,
+        let Some(exp) = NonZeroU32::new(bit_exp) else {
+            return None;
         };
         let first_frac_digit = match frac.split_first() {
             Some((digit, _)) => digit,
@@ -1270,9 +1264,8 @@ const fn parse_bounds(bytes: Bytes, radix: u32, sep: Sep) -> Result<Parse<'_>, P
     } else {
         0
     };
-    let (int, frac) = match DigitsExp::new_int_frac(int, frac, exp) {
-        Some(s) => s,
-        None => return Err(ParseErrorKind::ExpOverflow),
+    let Some((int, frac)) = DigitsExp::new_int_frac(int, frac, exp) else {
+        return Err(ParseErrorKind::ExpOverflow);
     };
     let bit_exp = BitExp::new(bit_exp, frac);
     Ok(Parse {
