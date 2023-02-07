@@ -16,7 +16,7 @@ keywords = ["dsp", "embedded", "fixed", "math", "numerics"]
 categories = ["algorithms", "embedded", "mathematics", "no-std"]
 license = "MIT/Apache-2.0"
 edition = "2021"
-rust-version = "1.61"
+rust-version = "1.67"
 
 [features]
 fail-on-warnings = []

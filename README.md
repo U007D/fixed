@@ -103,6 +103,10 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
+### Version 1.24.0 news (unreleased)
+
+  * The crate now requires rustc version 1.67.0 or later.
+
 ### Version 1.23.0 news (2023-02-06)
 
   * String parsing of binary, octal and hexadecimal strings now supports base-2
@@ -260,7 +264,7 @@ crate, add it as a dependency inside [*Cargo.toml*]:
 fixed = "1.23"
 ```
 
-The *fixed* crate requires rustc version 1.61.0 or later.
+The *fixed* crate requires rustc version 1.67.0 or later.
 
 ## Optional features
 

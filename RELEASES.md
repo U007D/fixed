@@ -5,6 +5,10 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
+# Version 1.24.0 (unreleased)
+
+  * The crate now requires rustc version 1.67.0 or later.
+
 # Version 1.23.0 (2023-02-06)
 
   * String parsing of binary, octal and hexadecimal strings now supports base-2
