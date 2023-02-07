@@ -19,7 +19,7 @@ macro_rules! fixed_frac {
             $Inner:ident[$s_inner:expr], $LeEqU:tt, $s_nbits:expr,
             $s_nbits_m1:expr, $s_nbits_m4:expr
         ),
-        $UFixed:ident, $UInner:ident, $Signedness:tt
+        $UFixed:ident, $UInner:ident, $NonZeroUInner:ident, $Signedness:tt
     ) => {
         /// The implementation of items in this block depends on the
         /// number of fractional bits `Frac`.
@@ -185,9 +185,13 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log2(), Some(-3));
                 #[doc(alias("checked_ilog2"))]
                 pub const fn checked_int_log2(self) -> Option<i32> {
                     if self.to_bits() <= 0 {
-                        None
-                    } else {
-                        Some(Self::INT_NBITS as i32 - 1 - self.leading_zeros() as i32)
+                        return None;
+                    }
+                    // Since self > 0, we can work with unsigned.
+                    let bits = self.to_bits() as $UInner;
+                    match $NonZeroUInner::new(bits) {
+                        None => None,
+                        Some(s) => Some(s.ilog2() as i32 - Self::FRAC_NBITS as i32),
                     }
                 }
             }
@@ -221,8 +225,8 @@ assert_eq!(", $s_fixed, "::<U6>::from_num(0.09375).checked_int_log10(), Some(-2)
                     let bits = self.to_bits() as $UInner;
                     if Self::FRAC_NBITS < $UInner::BITS {
                         let int = bits >> Self::FRAC_NBITS;
-                        if int != 0 {
-                            return Some(log10::int_part::$UInner(int));
+                        if let Some(non_zero) = $NonZeroUInner::new(int) {
+                            return Some(non_zero.ilog10() as i32);
                         }
                     }
                     let frac = bits << Self::INT_NBITS;
