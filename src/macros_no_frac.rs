@@ -22,7 +22,7 @@ macro_rules! fixed_no_frac {
         $nbytes:expr, $nbits:expr, $nbits_m1:expr,
         $bytes_val:expr, $rev_bytes_val:expr, $be_bytes:expr, $le_bytes:expr,
         $IFixed:ident[$s_ifixed:expr], $UFixed:ident[$s_ufixed:expr],
-        $IInner:ty, $UInner:ty, $Signedness:tt,
+        $IInner:ty, $UInner:ty, $NonZeroUInner:ident, $Signedness:tt,
         $HasDouble:tt, $s_nbits_2:expr,
         $Double:ident[$s_double:expr], $DoubleInner:ty, $IDouble:ident, $IDoubleInner:ty
     ) => {
@@ -797,9 +797,13 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log2(), Some(-3));
                 #[doc(alias("checked_ilog2"))]
                 pub const fn checked_int_log2(self) -> Option<i32> {
                     if self.to_bits() <= 0 {
-                        None
-                    } else {
-                        Self::INT_BITS.checked_add(-1 - self.leading_zeros() as i32)
+                        return None;
+                    }
+                    // Since self > 0, we can work with unsigned.
+                    let bits = self.to_bits() as $UInner;
+                    match $NonZeroUInner::new(bits) {
+                        None => None,
+                        Some(s) => (s.ilog2() as i32).checked_sub(Self::FRAC_BITS),
                     }
                 }
             }

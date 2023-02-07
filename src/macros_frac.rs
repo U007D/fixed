@@ -19,7 +19,7 @@ macro_rules! fixed_frac {
             $Inner:ident[$s_inner:expr], $nbits:expr, $s_nbits:expr,
             $s_nbits_m1:expr, $s_nbits_m4:expr
         ),
-        $UFixed:ident, $UInner:ident, $Signedness:tt
+        $UFixed:ident, $UInner:ident, $NonZeroUInner:ident, $Signedness:tt
     ) => {
         /// The items in this block are implemented for
         #[doc = concat!("0&nbsp;≤&nbsp;`FRAC`&nbsp;≤&nbsp;", $s_nbits, ".")]
@@ -1043,8 +1043,8 @@ assert_eq!(", $s_fixed, "::<6>::from_num(0.09375).checked_int_log10(), Some(-2))
                     let bits = self.to_bits() as $UInner;
                     if Self::FRAC_BITS < $UInner::BITS as i32 {
                         let int = bits >> Self::FRAC_BITS;
-                        if int != 0 {
-                            return Some(log10::int_part::$UInner(int));
+                        if let Some(non_zero) = $NonZeroUInner::new(int) {
+                            return Some(non_zero.ilog10() as i32);
                         }
                     }
                     let frac = bits << Self::INT_BITS;

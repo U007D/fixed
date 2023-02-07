@@ -427,6 +427,7 @@ use crate::{
     types::extra::{If, True},
 };
 use core::hash::{Hash, Hasher};
+use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8};
 
 /// A prelude to import useful traits.
 ///
@@ -485,7 +486,8 @@ macro_rules! fixed {
         ),
         $nbytes:expr, $nbits:expr, $nbits_m1:expr,
         $bytes_val:expr, $rev_bytes_val:expr, $be_bytes:expr, $le_bytes:expr,
-        $IFixed:ident, $UFixed:ident, $IInner:ident, $UInner:ident, $Signedness:tt,
+        $IFixed:ident, $UFixed:ident,
+        $IInner:ident, $UInner:ident, $NonZeroUInner:ident, $Signedness:tt,
         $nbits_cm3:expr, $nbits_cm2:expr, $nbits_cm1:expr,
         $nbits_c0:expr, $nbits_c1:expr, $nbits_c2:expr, $nbits_c3:expr,
         $HasDouble:tt, $s_nbits_2:expr,
@@ -500,7 +502,7 @@ macro_rules! fixed {
             $nbytes, $nbits, $nbits_m1,
             $bytes_val, $rev_bytes_val, $be_bytes, $le_bytes,
             $IFixed[stringify!($IFixed)], $UFixed[stringify!($UFixed)],
-            $IInner, $UInner, $Signedness,
+            $IInner, $UInner, $NonZeroUInner, $Signedness,
             $nbits_cm3, $nbits_cm2, $nbits_cm1, $nbits_c0, $nbits_c1, $nbits_c2, $nbits_c3,
             $HasDouble, $s_nbits_2,
             $Double[stringify!($Double)], $DoubleInner, $IDouble, $IDoubleInner
@@ -515,7 +517,7 @@ macro_rules! fixed {
         $nbytes:expr, $nbits:expr, $nbits_m1:expr,
         $bytes_val:expr, $rev_bytes_val:expr, $be_bytes:expr, $le_bytes:expr,
         $IFixed:ident[$s_ifixed:expr], $UFixed:ident[$s_ufixed:expr],
-        $IInner:ident, $UInner:ident, $Signedness:tt,
+        $IInner:ident, $UInner:ident, $NonZeroUInner:ident, $Signedness:tt,
         $nbits_cm3:expr, $nbits_cm2:expr, $nbits_cm1:expr,
         $nbits_c0:expr, $nbits_c1:expr, $nbits_c2:expr, $nbits_c3:expr,
         $HasDouble:tt, $s_nbits_2:expr,
@@ -619,14 +621,14 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
             ),
             $nbytes, $nbits, $nbits_m1, $bytes_val, $rev_bytes_val, $be_bytes, $le_bytes,
             $IFixed[$s_ifixed], $UFixed[$s_ufixed],
-            $IInner, $UInner, $Signedness,
+            $IInner, $UInner, $NonZeroUInner, $Signedness,
             $HasDouble, $s_nbits_2,
             $Double[$s_double], $DoubleInner, $IDouble, $IDoubleInner
         }
         // inherent methods that require FRAC bounds, and cannot be const
         fixed_frac! {
             $Fixed[$s_fixed]($Inner[$s_inner], $nbits, $s_nbits, $s_nbits_m1, $s_nbits_m4),
-            $UFixed, $UInner, $Signedness
+            $UFixed, $UInner, $NonZeroUInner, $Signedness
         }
         fixed_const! {
             $Fixed[$s_fixed]($nbits, $s_nbits, $s_nbits_m1, $s_nbits_m2, $s_nbits_m3, $s_nbits_m4),
@@ -640,7 +642,7 @@ fixed! {
     "An eight",
     FixedU8(u8, "8", "9", "7", "6", "5", "4"),
     1, 8, 7, "0x12", "0x12", "[0x12]", "[0x12]",
-    FixedI8, FixedU8, i8, u8, Unsigned,
+    FixedI8, FixedU8, i8, u8, NonZeroU8, Unsigned,
     11, 10, 9, 8, 7, 6, 5,
     True, "16", FixedU16, u16, FixedI16, i16
 }
@@ -648,7 +650,7 @@ fixed! {
     "A 16",
     FixedU16(u16, "16", "17", "15", "14", "13", "12"),
     2, 16, 15, "0x1234", "0x3412", "[0x12, 0x34]", "[0x34, 0x12]",
-    FixedI16, FixedU16, i16, u16, Unsigned,
+    FixedI16, FixedU16, i16, u16, NonZeroU16, Unsigned,
     19, 18, 17, 16, 15, 14, 13,
     True, "32", FixedU32, u32, FixedI32, i32
 }
@@ -656,7 +658,7 @@ fixed! {
     "A 32",
     FixedU32(u32, "32", "33", "31", "30", "29", "28"),
     4, 32, 31, "0x1234_5678", "0x7856_3412", "[0x12, 0x34, 0x56, 0x78]", "[0x78, 0x56, 0x34, 0x12]",
-    FixedI32, FixedU32, i32, u32, Unsigned,
+    FixedI32, FixedU32, i32, u32, NonZeroU32, Unsigned,
     35, 34, 33, 32, 31, 30, 29,
     True, "64", FixedU64, u64, FixedI64, i64
 }
@@ -666,7 +668,7 @@ fixed! {
     8, 64, 63, "0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412",
     "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0x0F]",
     "[0x0F, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
-    FixedI64, FixedU64, i64, u64, Unsigned,
+    FixedI64, FixedU64, i64, u64, NonZeroU64, Unsigned,
     67, 66, 65, 64, 63, 62, 61,
     True, "128", FixedU128, u128, FixedI128, i128
 }
@@ -679,7 +681,7 @@ fixed! {
      0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]",
     "[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, \
      0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
-    FixedI128, FixedU128, i128, u128, Unsigned,
+    FixedI128, FixedU128, i128, u128, NonZeroU128, Unsigned,
     131, 130, 129, 128, 127, 126, 125,
     False, "128", FixedU128, u128, FixedI128, i128
 }
@@ -687,7 +689,7 @@ fixed! {
     "An eight",
     FixedI8(i8, "8", "9", "7", "6", "5", "4"),
     1, 8, 7, "0x12", "0x12", "[0x12]", "[0x12]",
-    FixedI8, FixedU8, i8, u8, Signed,
+    FixedI8, FixedU8, i8, u8, NonZeroU8, Signed,
     10, 9, 8, 7, 6, 5, 4,
     True, "16", FixedI16, i16, FixedI16, i16
 }
@@ -695,7 +697,7 @@ fixed! {
     "A 16",
     FixedI16(i16, "16", "17", "15", "14", "13", "12"),
     2, 16, 15, "0x1234", "0x3412", "[0x12, 0x34]", "[0x34, 0x12]",
-    FixedI16, FixedU16, i16, u16, Signed,
+    FixedI16, FixedU16, i16, u16, NonZeroU16, Signed,
     18, 17, 16, 15, 14, 13, 12,
     True, "32", FixedI32, i32, FixedI32, i32
 }
@@ -703,7 +705,7 @@ fixed! {
     "A 32",
     FixedI32(i32, "32", "33", "31", "30", "29", "28"),
     4, 32, 31, "0x1234_5678", "0x7856_3412", "[0x12, 0x34, 0x56, 0x78]", "[0x78, 0x56, 0x34, 0x12]",
-    FixedI32, FixedU32, i32, u32, Signed,
+    FixedI32, FixedU32, i32, u32, NonZeroU32, Signed,
     34, 33, 32, 31, 30, 29, 28,
     True, "64", FixedI64, i64, FixedI64, i64
 }
@@ -713,7 +715,7 @@ fixed! {
     8, 64, 63, "0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412",
     "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0x0F]",
     "[0x0F, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
-    FixedI64, FixedU64, i64, u64, Signed,
+    FixedI64, FixedU64, i64, u64, NonZeroU64, Signed,
     66, 65, 64, 63, 62, 61, 60,
     True, "128", FixedI128, i128, FixedI128, i128
 }
@@ -726,7 +728,7 @@ fixed! {
      0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]",
     "[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, \
      0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
-    FixedI128, FixedU128, i128, u128, Signed,
+    FixedI128, FixedU128, i128, u128, NonZeroU128, Signed,
     130, 129, 128, 127, 126, 125, 124,
     False, "128", FixedI128, i128, FixedI128, i128
 }
