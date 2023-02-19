@@ -182,6 +182,11 @@ The conversions supported cover the following cases.
 ### Version 1.24.0 news (unreleased)
 
   * The crate now requires rustc version 1.67.0 or later.
+  * The [*half* crate] dependency is now satisfied by [version 1.8][half-1-8] as
+    well as [version 2][half-2].
+
+[half-1-8]: https://docs.rs/half/^1.8/half/index.html
+[half-2]: https://docs.rs/half/^2/half/index.html
 
 ### Other releases
 
