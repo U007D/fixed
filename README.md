@@ -108,7 +108,11 @@ The conversions supported cover the following cases.
   * Bug fix: comparison of signed and unsigned numbers where the signed number
     was wider than the unsigned number was truncating bits from the signed
     number ([issue 57]).
+  * The [*half* crate] dependency is now satisfied by [version 1.8][half-1-8] as
+    well as [version 2][half-2].
 
+[half-1-8]: https://docs.rs/half/^1.8/half/index.html
+[half-2]: https://docs.rs/half/^2/half/index.html
 [issue 57]: https://gitlab.com/tspiteri/fixed/-/issues/57
 
 ### Version 1.23.0 news (2023-02-06)
