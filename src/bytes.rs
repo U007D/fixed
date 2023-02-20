@@ -85,12 +85,12 @@ impl<'a> Bytes<'a> {
     }
 
     #[inline]
-    pub const fn split_last(self) -> Option<(Bytes<'a>, u8)> {
+    const fn split_last(self) -> Option<(u8, Bytes<'a>)> {
         if self.is_empty() {
             None
         } else {
             let (rest, last) = self.split_at(self.len() - 1);
-            Some((rest, last.index(0)))
+            Some((last.index(0), rest))
         }
     }
 }
@@ -207,8 +207,8 @@ impl<'a> DigitsUnds<'a> {
     }
 
     #[inline]
-    pub const fn split_last(self) -> Option<(DigitsUnds<'a>, u8)> {
-        let Some((mut rem_bytes, last)) = self.bytes.split_last() else {
+    const fn split_last(self) -> Option<(u8, DigitsUnds<'a>)> {
+        let Some((last, mut rem_bytes)) = self.bytes.split_last() else {
             return None;
         };
 
@@ -216,18 +216,18 @@ impl<'a> DigitsUnds<'a> {
         debug_assert!(last != b'_');
 
         // skip over underscores between first part and last digit
-        while let Some((rem, byte)) = rem_bytes.split_last() {
+        while let Some((byte, rem)) = rem_bytes.split_last() {
             if byte != b'_' {
                 break;
             }
             rem_bytes = rem;
         }
         Some((
+            last,
             DigitsUnds {
                 bytes: rem_bytes,
                 digits: self.digits - 1,
             },
-            last,
         ))
     }
 
@@ -241,14 +241,14 @@ impl<'a> DigitsUnds<'a> {
         (zeros, rem)
     }
 
-    const fn split_trailing_zeros(self) -> (DigitsUnds<'a>, usize) {
+    const fn split_trailing_zeros(self) -> (usize, DigitsUnds<'a>) {
         let mut zeros = 0;
         let mut rem = self;
-        while let Some((rest, b'0')) = rem.split_last() {
+        while let Some((b'0', rest)) = rem.split_last() {
             zeros += 1;
             rem = rest;
         }
-        (rem, zeros)
+        (zeros, rem)
     }
 }
 
@@ -270,7 +270,7 @@ impl<'a> DigitsExp<'a> {
 
     const fn new1(digits: DigitsUnds<'a>) -> DigitsExp<'a> {
         let (leading_zeros, rest) = digits.split_leading_zeros();
-        let (rest, trailing_zeros) = rest.split_trailing_zeros();
+        let (trailing_zeros, rest) = rest.split_trailing_zeros();
         DigitsExp {
             leading_zeros,
             part1: rest,
@@ -289,9 +289,9 @@ impl<'a> DigitsExp<'a> {
         } else {
             digits2
         };
-        let (digits2, mut trailing_zeros) = digits2.split_trailing_zeros();
+        let (mut trailing_zeros, digits2) = digits2.split_trailing_zeros();
         if digits2.is_empty() {
-            let (new_digits1, more_trailing_zeros) = digits1.split_trailing_zeros();
+            let (more_trailing_zeros, new_digits1) = digits1.split_trailing_zeros();
             trailing_zeros += more_trailing_zeros;
             digits1 = new_digits1;
         }
