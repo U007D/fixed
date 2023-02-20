@@ -15,6 +15,7 @@
 
 use core::slice;
 
+// TODO: remove when slice::split_at is usable in const context
 pub const fn slice_split_at<T>(slice: &[T], mid: usize) -> (&[T], &[T]) {
     let len = slice.len();
     let ptr = slice.as_ptr();
