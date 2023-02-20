@@ -14,7 +14,7 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
-    bytes::{Bytes, DigitsExp, DigitsUnds},
+    bytes::{self, DigitsExp, DigitsUnds},
     types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
@@ -94,10 +94,8 @@ use std::error::Error;
 //       - pub const fn overflowing_from_str_radix
 macro_rules! all {
     ($Single:ident) => {
-        use crate::{
-            bytes::Bytes,
-            from_str::{ParseErrorKind, ParseFixedError, Sep},
-        };
+        use crate::bytes;
+        use crate::from_str::{ParseErrorKind, ParseFixedError, Sep};
 
         #[inline]
         pub const fn from_str_radix(
@@ -156,7 +154,7 @@ macro_rules! all {
             radix: u32,
             frac_nbits: u32,
         ) -> Result<($Single, bool), ParseFixedError> {
-            let bytes = Bytes::new(s.as_bytes());
+            let bytes = s.as_bytes();
             match from_str(bytes, radix, Sep::Error, frac_nbits) {
                 Ok(val) => Ok(val),
                 Err(kind) => Err(ParseFixedError { kind }),
@@ -178,7 +176,7 @@ macro_rules! signed {
             all! { $Single }
 
             pub(super) const fn from_str(
-                bytes: Bytes,
+                bytes: &[u8],
                 radix: u32,
                 sep: Sep,
                 frac_nbits: u32,
@@ -202,14 +200,14 @@ macro_rules! signed {
             }
 
             pub const fn lit(s: &str, frac_nbits: u32) -> Result<$Single, ParseFixedError> {
-                let mut bytes = Bytes::new(s.as_bytes());
+                let mut bytes = s.as_bytes();
                 if bytes.is_empty() {
                     return Err(ParseFixedError {
                         kind: ParseErrorKind::NoDigits,
                     });
                 }
-                let neg = if bytes.index(0) == b'-' {
-                    bytes = bytes.split_at(1).1;
+                let neg = if bytes[0] == b'-' {
+                    bytes = bytes::slice_split_at(bytes, 1).1;
                     true
                 } else {
                     false
@@ -266,7 +264,7 @@ macro_rules! unsigned {
         all! { $Uns }
 
         pub(super) const fn from_str(
-            bytes: Bytes,
+            bytes: &[u8],
             radix: u32,
             sep: Sep,
             frac_nbits: u32,
@@ -285,21 +283,21 @@ macro_rules! unsigned {
 
         #[inline]
         pub const fn lit(s: &str, frac_nbits: u32) -> Result<$Uns, ParseFixedError> {
-            match lit_no_sign(Bytes::new(s.as_bytes()), frac_nbits) {
+            match lit_no_sign(s.as_bytes(), frac_nbits) {
                 Ok(val) => Ok(val),
                 Err(kind) => Err(ParseFixedError { kind }),
             }
         }
 
         pub(super) const fn lit_no_sign(
-            mut bytes: Bytes,
+            mut bytes: &[u8],
             frac_nbits: u32,
         ) -> Result<$Uns, ParseErrorKind> {
             if bytes.is_empty() {
                 return Err(ParseErrorKind::NoDigits);
             }
-            let radix = if bytes.len() >= 2 && bytes.index(0) == b'0' {
-                match bytes.index(1) {
+            let radix = if bytes.len() >= 2 && bytes[0] == b'0' {
+                match bytes[1] {
                     b'b' => 2,
                     b'o' => 8,
                     b'x' => 16,
@@ -309,7 +307,7 @@ macro_rules! unsigned {
                 10
             };
             if radix != 10 {
-                bytes = bytes.split_at(2).1;
+                bytes = bytes::slice_split_at(bytes, 2).1;
                 while let Some((b'_', rest)) = bytes.split_first() {
                     bytes = rest;
                 }
@@ -325,7 +323,7 @@ macro_rules! unsigned {
         }
 
         pub(super) const fn get_int_frac(
-            bytes: Bytes,
+            bytes: &[u8],
             radix: u32,
             sep: Sep,
             int_nbits: u32,
@@ -1090,7 +1088,7 @@ impl Error for ParseFixedError {
 
 // Zeros at start of int and at end of frac are trimmed.
 // Leading underscores for either int or frac are never accepted, even for Sep::Skip.
-const fn parse_bounds(bytes: Bytes, radix: u32, sep: Sep) -> Result<Parse<'_>, ParseErrorKind> {
+const fn parse_bounds(bytes: &[u8], radix: u32, sep: Sep) -> Result<Parse<'_>, ParseErrorKind> {
     let mut sign: Option<bool> = None;
     let mut int_start: Option<usize> = None;
     let mut point: Option<usize> = None;
@@ -1105,7 +1103,7 @@ const fn parse_bounds(bytes: Bytes, radix: u32, sep: Sep) -> Result<Parse<'_>, P
 
     let mut next_index = 0;
     let mut rem_bytes = bytes;
-    while let Some((byte, rem)) = rem_bytes.split_first() {
+    while let Some((&byte, rem)) = rem_bytes.split_first() {
         let index = next_index;
         next_index += 1;
         rem_bytes = rem;
@@ -1231,20 +1229,20 @@ const fn parse_bounds(bytes: Bytes, radix: u32, sep: Sep) -> Result<Parse<'_>, P
     };
     let int = match (int_start, point, exp_sep) {
         (Some(begin), Some(end), _) | (Some(begin), None, Some(end)) => {
-            let (up_to_end, _) = bytes.split_at(end);
-            let (_, from_begin) = up_to_end.split_at(begin);
+            let (up_to_end, _) = bytes::slice_split_at(bytes, end);
+            let (_, from_begin) = bytes::slice_split_at(up_to_end, begin);
             DigitsUnds::new(from_begin)
         }
         (Some(begin), None, None) => {
-            let (_, from_begin) = bytes.split_at(begin);
+            let (_, from_begin) = bytes::slice_split_at(bytes, begin);
             DigitsUnds::new(from_begin)
         }
         (None, _, _) => DigitsUnds::EMPTY,
     };
     let frac = match (point, frac_end) {
         (Some(point), Some(end)) => {
-            let (up_to_end, _) = bytes.split_at(end);
-            let (_, from_after_point) = up_to_end.split_at(point + 1);
+            let (up_to_end, _) = bytes::slice_split_at(bytes, end);
+            let (_, from_after_point) = bytes::slice_split_at(up_to_end, point + 1);
             DigitsUnds::new(from_after_point)
         }
         _ => DigitsUnds::EMPTY,
@@ -1319,7 +1317,7 @@ impl_from_str! { FixedU128, 128 }
 #[cfg(test)]
 mod tests {
     use crate::{
-        bytes::{Bytes, DigitsExp},
+        bytes::DigitsExp,
         from_str::{self, parse_bounds, Parse, ParseErrorKind, ParseFixedError, Round, Sep},
         types::*,
     };
@@ -1544,7 +1542,7 @@ mod tests {
 
     #[track_caller]
     fn check_parse_bounds_ok(bytes: &str, radix: u32, sep: Sep, check: (bool, &str, &str, u32)) {
-        let bytes = Bytes::new(bytes.as_bytes());
+        let bytes = bytes.as_bytes();
         let Parse {
             neg,
             int,
@@ -1568,7 +1566,7 @@ mod tests {
 
     #[track_caller]
     fn check_parse_bounds_err(bytes: &str, radix: u32, sep: Sep, check: ParseErrorKind) {
-        let bytes = Bytes::new(bytes.as_bytes());
+        let bytes = bytes.as_bytes();
         let kind = parse_bounds(bytes, radix, sep).unwrap_err();
         assert_eq!(kind, check);
     }

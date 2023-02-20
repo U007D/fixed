@@ -13,104 +13,37 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
-use core::marker::PhantomData;
+use core::slice;
 
-// TODO: remove unsafe by making Bytes a transparent wrapper over &[u8] once
-// slice::split_at is supported in const context.
-
-#[derive(Clone, Copy, Debug)]
-pub struct Bytes<'a> {
-    ptr: *const u8,
-    len: usize,
-    phantom: PhantomData<&'a [u8]>,
-}
-
-impl<'a> Bytes<'a> {
-    pub const EMPTY: Bytes<'a> = Bytes::new(&[]);
-
-    #[inline]
-    pub const fn new(bytes: &'a [u8]) -> Bytes<'a> {
-        Bytes {
-            ptr: bytes.as_ptr(),
-            len: bytes.len(),
-            phantom: PhantomData,
-        }
-    }
-
-    #[inline]
-    pub const fn len(self) -> usize {
-        self.len
-    }
-
-    #[inline]
-    pub const fn is_empty(self) -> bool {
-        self.len == 0
-    }
-
-    #[inline]
-    pub const fn index(self, index: usize) -> u8 {
-        assert!(index < self.len, "index out of bounds");
-        let ptr = self.ptr.wrapping_add(index);
-        // SAFETY: points to a valid slice, and bounds already checked
-        unsafe { *ptr }
-    }
-
-    #[inline]
-    pub const fn split_at(self, mid: usize) -> (Bytes<'a>, Bytes<'a>) {
-        let Some(end_len) = self.len().checked_sub(mid) else {
-            panic!("index out of bounds");
-        };
+pub const fn slice_split_at<T>(slice: &[T], mid: usize) -> (&[T], &[T]) {
+    let len = slice.len();
+    let ptr = slice.as_ptr();
+    assert!(mid <= len);
+    // SAFETY: `[ptr; mid]` and `[mid; len]` are inside `slice`
+    unsafe {
         (
-            Bytes {
-                ptr: self.ptr,
-                len: mid,
-                phantom: PhantomData,
-            },
-            Bytes {
-                ptr: self.ptr.wrapping_add(mid),
-                len: end_len,
-                phantom: PhantomData,
-            },
+            slice::from_raw_parts(ptr, mid),
+            slice::from_raw_parts(ptr.add(mid), len - mid),
         )
-    }
-
-    #[inline]
-    pub const fn split_first(self) -> Option<(u8, Bytes<'a>)> {
-        if self.is_empty() {
-            None
-        } else {
-            let (first, rest) = self.split_at(1);
-            Some((first.index(0), rest))
-        }
-    }
-
-    #[inline]
-    const fn split_last(self) -> Option<(u8, Bytes<'a>)> {
-        if self.is_empty() {
-            None
-        } else {
-            let (rest, last) = self.split_at(self.len() - 1);
-            Some((last.index(0), rest))
-        }
     }
 }
 
 // Kept trimmed: no underscores at beginning or end of slice
 #[derive(Clone, Copy, Debug)]
 pub struct DigitsUnds<'a> {
-    bytes: Bytes<'a>,
+    bytes: &'a [u8],
     digits: usize,
 }
 
 impl<'a> DigitsUnds<'a> {
-    pub const EMPTY: DigitsUnds<'a> = DigitsUnds::new(Bytes::EMPTY);
+    pub const EMPTY: DigitsUnds<'a> = DigitsUnds::new(&[]);
 
-    pub const fn new(bytes: Bytes<'a>) -> DigitsUnds<'a> {
+    pub const fn new(bytes: &'a [u8]) -> DigitsUnds<'a> {
         let mut digits = 0;
         let mut leading_unds = 0;
         let mut trailing_unds = 0;
         let mut rem_bytes = bytes;
-        while let Some((byte, rem)) = rem_bytes.split_first() {
+        while let Some((&byte, rem)) = rem_bytes.split_first() {
             rem_bytes = rem;
 
             if byte == b'_' {
@@ -123,8 +56,8 @@ impl<'a> DigitsUnds<'a> {
                 trailing_unds = 0;
             }
         }
-        let without_trailing_unds = bytes.split_at(bytes.len() - trailing_unds).0;
-        let without_leading_unds = without_trailing_unds.split_at(leading_unds).1;
+        let without_trailing_unds = slice_split_at(bytes, bytes.len() - trailing_unds).0;
+        let without_leading_unds = slice_split_at(without_trailing_unds, leading_unds).1;
         DigitsUnds {
             bytes: without_leading_unds,
             digits,
@@ -145,7 +78,7 @@ impl<'a> DigitsUnds<'a> {
         let mut remaining_digits = mid;
         let mut unds = 0;
         let mut rem_bytes = self.bytes;
-        while let Some((byte, rem)) = rem_bytes.split_first() {
+        while let Some((&byte, rem)) = rem_bytes.split_first() {
             rem_bytes = rem;
 
             if byte != b'_' {
@@ -161,12 +94,12 @@ impl<'a> DigitsUnds<'a> {
             panic!("index out of bounds");
         }
         let first = DigitsUnds {
-            bytes: self.bytes.split_at(mid + unds).0,
+            bytes: slice_split_at(self.bytes, mid + unds).0,
             digits: mid,
         };
 
         // skip over underscores between first part and last part
-        while let Some((byte, rem)) = rem_bytes.split_first() {
+        while let Some((&byte, rem)) = rem_bytes.split_first() {
             if byte != b'_' {
                 break;
             }
@@ -183,7 +116,7 @@ impl<'a> DigitsUnds<'a> {
 
     #[inline]
     pub const fn split_first(self) -> Option<(u8, DigitsUnds<'a>)> {
-        let Some((first, mut rem_bytes)) = self.bytes.split_first() else {
+        let Some((&first, mut rem_bytes)) = self.bytes.split_first() else {
             return None;
         };
 
@@ -191,7 +124,7 @@ impl<'a> DigitsUnds<'a> {
         debug_assert!(first != b'_');
 
         // skip over underscores between first digit and last part
-        while let Some((byte, rem)) = rem_bytes.split_first() {
+        while let Some((&byte, rem)) = rem_bytes.split_first() {
             if byte != b'_' {
                 break;
             }
@@ -208,7 +141,7 @@ impl<'a> DigitsUnds<'a> {
 
     #[inline]
     const fn split_last(self) -> Option<(u8, DigitsUnds<'a>)> {
-        let Some((last, mut rem_bytes)) = self.bytes.split_last() else {
+        let Some((&last, mut rem_bytes)) = self.bytes.split_last() else {
             return None;
         };
 
@@ -216,7 +149,7 @@ impl<'a> DigitsUnds<'a> {
         debug_assert!(last != b'_');
 
         // skip over underscores between first part and last digit
-        while let Some((byte, rem)) = rem_bytes.split_last() {
+        while let Some((&byte, rem)) = rem_bytes.split_last() {
             if byte != b'_' {
                 break;
             }
