@@ -103,7 +103,7 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
-### Version 1.23.1 news (unreleased)
+### Version 1.23.1 news (2023-03-14)
 
   * Bug fix: comparison of signed and unsigned numbers where the signed number
     was wider than the unsigned number was truncating bits from the signed
