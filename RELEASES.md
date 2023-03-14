@@ -8,10 +8,17 @@ as-is, without any warranty. -->
 # Version 1.24.0 (unreleased)
 
   * The crate now requires rustc version 1.67.0 or later.
+
+# Version 1.23.1 (2023-03-14)
+
+  * Bug fix: comparison of signed and unsigned numbers where the signed number
+    was wider than the unsigned number was truncating bits from the signed
+    number ([issue 57]).
   * The [*half* crate] dependency is now satisfied by [version 1.8][half-1-8] as
     well as [version 2][half-2].
 
 [half-1-8]: https://docs.rs/half/^1.8/half/index.html
+[issue 57]: https://gitlab.com/tspiteri/fixed/-/issues/57
 
 # Version 1.23.0 (2023-02-06)
 
