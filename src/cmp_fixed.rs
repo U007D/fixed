@@ -20,9 +20,11 @@ use crate::{
 };
 use core::cmp::Ordering;
 
+// Works by converting the signed number to unsigned, but does not change size
+// of either number.
 macro_rules! diff_sign {
-    ($Sig:ident, $Uns:ident($UnsInner:ident)) => {
-        impl<FracLhs: Unsigned, FracRhs: Unsigned> PartialEq<$Sig<FracRhs>> for $Uns<FracLhs> {
+    ($Sig:ident($Uns:ident, $UnsInner:ident), $OtherUns:ident) => {
+        impl<FracLhs: Unsigned, FracRhs: Unsigned> PartialEq<$Sig<FracRhs>> for $OtherUns<FracLhs> {
             #[inline]
             fn eq(&self, rhs: &$Sig<FracRhs>) -> bool {
                 if rhs.is_negative() {
@@ -33,9 +35,9 @@ macro_rules! diff_sign {
             }
         }
 
-        impl<FracLhs: Unsigned, FracRhs: Unsigned> PartialEq<$Uns<FracRhs>> for $Sig<FracLhs> {
+        impl<FracLhs: Unsigned, FracRhs: Unsigned> PartialEq<$OtherUns<FracRhs>> for $Sig<FracLhs> {
             #[inline]
-            fn eq(&self, rhs: &$Uns<FracRhs>) -> bool {
+            fn eq(&self, rhs: &$OtherUns<FracRhs>) -> bool {
                 if self.is_negative() {
                     return false;
                 }
@@ -44,7 +46,9 @@ macro_rules! diff_sign {
             }
         }
 
-        impl<FracLhs: Unsigned, FracRhs: Unsigned> PartialOrd<$Sig<FracRhs>> for $Uns<FracLhs> {
+        impl<FracLhs: Unsigned, FracRhs: Unsigned> PartialOrd<$Sig<FracRhs>>
+            for $OtherUns<FracLhs>
+        {
             #[inline]
             fn partial_cmp(&self, rhs: &$Sig<FracRhs>) -> Option<Ordering> {
                 if rhs.is_negative() {
@@ -91,9 +95,11 @@ macro_rules! diff_sign {
             }
         }
 
-        impl<FracLhs: Unsigned, FracRhs: Unsigned> PartialOrd<$Uns<FracRhs>> for $Sig<FracLhs> {
+        impl<FracLhs: Unsigned, FracRhs: Unsigned> PartialOrd<$OtherUns<FracRhs>>
+            for $Sig<FracLhs>
+        {
             #[inline]
-            fn partial_cmp(&self, rhs: &$Uns<FracRhs>) -> Option<Ordering> {
+            fn partial_cmp(&self, rhs: &$OtherUns<FracRhs>) -> Option<Ordering> {
                 if self.is_negative() {
                     return Some(Ordering::Less);
                 }
@@ -102,7 +108,7 @@ macro_rules! diff_sign {
             }
 
             #[inline]
-            fn lt(&self, rhs: &$Uns<FracRhs>) -> bool {
+            fn lt(&self, rhs: &$OtherUns<FracRhs>) -> bool {
                 if self.is_negative() {
                     return true;
                 }
@@ -111,7 +117,7 @@ macro_rules! diff_sign {
             }
 
             #[inline]
-            fn le(&self, rhs: &$Uns<FracRhs>) -> bool {
+            fn le(&self, rhs: &$OtherUns<FracRhs>) -> bool {
                 if self.is_negative() {
                     return true;
                 }
@@ -120,7 +126,7 @@ macro_rules! diff_sign {
             }
 
             #[inline]
-            fn gt(&self, rhs: &$Uns<FracRhs>) -> bool {
+            fn gt(&self, rhs: &$OtherUns<FracRhs>) -> bool {
                 if self.is_negative() {
                     return false;
                 }
@@ -129,7 +135,7 @@ macro_rules! diff_sign {
             }
 
             #[inline]
-            fn ge(&self, rhs: &$Uns<FracRhs>) -> bool {
+            fn ge(&self, rhs: &$OtherUns<FracRhs>) -> bool {
                 if self.is_negative() {
                     return false;
                 }
@@ -139,21 +145,23 @@ macro_rules! diff_sign {
         }
     };
 
-    ($Sig:ident) => {
-        diff_sign! { $Sig, FixedU8(u8) }
-        diff_sign! { $Sig, FixedU16(u16) }
-        diff_sign! { $Sig, FixedU32(u32) }
-        diff_sign! { $Sig, FixedU64(u64) }
-        diff_sign! { $Sig, FixedU128(u128) }
+    ($Sig:ident($Uns:ident, $UnsInner:ident)) => {
+        diff_sign! { $Sig($Uns, $UnsInner), FixedU8 }
+        diff_sign! { $Sig($Uns, $UnsInner), FixedU16 }
+        diff_sign! { $Sig($Uns, $UnsInner), FixedU32 }
+        diff_sign! { $Sig($Uns, $UnsInner), FixedU64 }
+        diff_sign! { $Sig($Uns, $UnsInner), FixedU128 }
     };
 }
 
-diff_sign! { FixedI8 }
-diff_sign! { FixedI16 }
-diff_sign! { FixedI32 }
-diff_sign! { FixedI64 }
-diff_sign! { FixedI128 }
+diff_sign! { FixedI8(FixedU8, u8) }
+diff_sign! { FixedI16(FixedU16, u16) }
+diff_sign! { FixedI32(FixedU32, u32) }
+diff_sign! { FixedI64(FixedU64, u64) }
+diff_sign! { FixedI128(FixedU128, u128) }
 
+// Both numbers must have the same sign (both signed or both unsigned). Works by
+// widening the narrow number to have the same width as the wide number.
 macro_rules! diff_size {
     ($Nar:ident, $Wid:ident($WidInner:ident)) => {
         impl<FracLhs: Unsigned, FracRhs: Unsigned> PartialEq<$Nar<FracRhs>> for $Wid<FracLhs> {
@@ -477,3 +485,14 @@ cmp! { FixedU16(u16) }
 cmp! { FixedU32(u32) }
 cmp! { FixedU64(u64) }
 cmp! { FixedU128(u128) }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn issue_57() {
+        use crate::types::I80F48;
+        let a: u64 = 66000;
+        let b: u64 = 1000;
+        assert!(I80F48::from(a) > b);
+    }
+}

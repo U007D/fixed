@@ -103,6 +103,14 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
+### Version 1.23.1 news (unreleased)
+
+  * Bug fix: comparison of signed and unsigned numbers where the signed number
+    was wider than the unsigned number was truncating bits from the signed
+    number ([issue 57]).
+
+[issue 57]: https://gitlab.com/tspiteri/fixed/-/issues/57
+
 ### Version 1.23.0 news (2023-02-06)
 
   * String parsing of binary, octal and hexadecimal strings now supports base-2
