@@ -88,6 +88,14 @@ as-is, without any warranty. -->
 
 [half-1-8]: https://docs.rs/half/^1.8/half/index.html
 
+# Version 1.23.1 (unreleased)
+
+  * Bug fix: comparison of signed and unsigned numbers where the signed number
+    was wider than the unsigned number was truncating bits from the signed
+    number ([issue 57]).
+
+[issue 57]: https://gitlab.com/tspiteri/fixed/-/issues/57
+
 # Version 1.23.0 (2023-02-06)
 
   * String parsing of binary, octal and hexadecimal strings now supports base-2
