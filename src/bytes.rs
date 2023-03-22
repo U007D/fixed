@@ -100,10 +100,7 @@ impl<'a> DigitsUnds<'a> {
         };
 
         // skip over underscores between first part and last part
-        while let Some((&byte, rem)) = rem_bytes.split_first() {
-            if byte != b'_' {
-                break;
-            }
+        while let Some((&b'_', rem)) = rem_bytes.split_first() {
             rem_bytes = rem;
         }
         (
@@ -125,10 +122,7 @@ impl<'a> DigitsUnds<'a> {
         debug_assert!(first != b'_');
 
         // skip over underscores between first digit and last part
-        while let Some((&byte, rem)) = rem_bytes.split_first() {
-            if byte != b'_' {
-                break;
-            }
+        while let Some((&b'_', rem)) = rem_bytes.split_first() {
             rem_bytes = rem;
         }
         Some((
@@ -150,10 +144,7 @@ impl<'a> DigitsUnds<'a> {
         debug_assert!(last != b'_');
 
         // skip over underscores between first part and last digit
-        while let Some((&byte, rem)) = rem_bytes.split_last() {
-            if byte != b'_' {
-                break;
-            }
+        while let Some((&b'_', rem)) = rem_bytes.split_last() {
             rem_bytes = rem;
         }
         Some((
