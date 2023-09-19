@@ -1125,6 +1125,7 @@ impl<F: Fixed> Wrapping<F> {
     /// assert_eq!(max.add_prod(max, three), max * 4);
     /// ```
     #[inline]
+    #[must_use]
     pub fn add_prod(self, a: Wrapping<F>, b: Wrapping<F>) -> Wrapping<F> {
         Wrapping(self.0.wrapping_add_prod(a.0, b.0))
     }

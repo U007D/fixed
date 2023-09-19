@@ -89,6 +89,7 @@ assert_eq!(Fix::from_num(0.1875).int_log2(), -3);
                 #[inline]
                 #[track_caller]
                 #[doc(alias("ilog2"))]
+                #[must_use]
                 pub const fn int_log2(self) -> i32 {
                     match self.checked_int_log2() {
                         Some(s) => s,
@@ -120,6 +121,7 @@ assert_eq!(", $s_fixed, "::<U6>::from_num(0.09375).int_log10(), -2);
                 #[inline]
                 #[track_caller]
                 #[doc(alias("ilog10"))]
+                #[must_use]
                 pub const fn int_log10(self) -> i32 {
                     match self.checked_int_log10() {
                         Some(s) => s,
@@ -150,6 +152,7 @@ assert_eq!(Fix::from_num(0.1875).int_log(5), -2);
                 #[inline]
                 #[track_caller]
                 #[doc(alias("ilog"))]
+                #[must_use]
                 pub const fn int_log(self, base: u32) -> i32 {
                     match self.checked_int_log(base) {
                         Some(s) => s,
@@ -183,6 +186,7 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log2(), Some(-3));
 ";
                 #[inline]
                 #[doc(alias("checked_ilog2"))]
+                #[must_use]
                 pub const fn checked_int_log2(self) -> Option<i32> {
                     if self.to_bits() <= 0 {
                         return None;
@@ -217,6 +221,7 @@ assert_eq!(", $s_fixed, "::<U6>::from_num(0.09375).checked_int_log10(), Some(-2)
 ";
                 #[inline]
                 #[doc(alias("checked_ilog10"))]
+                #[must_use]
                 pub const fn checked_int_log10(self) -> Option<i32> {
                     if self.to_bits() <= 0 {
                         return None;
@@ -254,6 +259,7 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log(5), Some(-2));
 ";
                 #[inline]
                 #[doc(alias("checked_ilog"))]
+                #[must_use]
                 pub const fn checked_int_log(self, base: u32) -> Option<i32> {
                     if self.to_bits() <= 0 || base < 2 {
                         return None;
@@ -619,6 +625,7 @@ assert_eq!(Fix::from_num(2.0).lerp(start, end), 5);
 ";
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn lerp<RangeFrac>(
                     self,
                     start: $Fixed<RangeFrac>,
@@ -667,6 +674,7 @@ assert_eq!(ZeroIntBits::from_num(-0.5).checked_signum(), None);
 ```
 ";
                     #[inline]
+                    #[must_use]
                     pub const fn checked_signum(self) -> Option<$Fixed<Frac>> {
                         match self.overflowing_signum() {
                             (ans, false) => Some(ans),
@@ -738,6 +746,7 @@ assert_eq!(Fix::ZERO.checked_recip(), None);
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn checked_recip(self) -> Option<$Fixed<Frac>> {
                     if self.to_bits() == 0 {
                         None
@@ -1118,6 +1127,7 @@ assert_eq!(Fix::from_num(1.5).checked_lerp(Fix::ZERO, Fix::MAX), None);
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn checked_lerp<RangeFrac>(
                     self,
                     start: $Fixed<RangeFrac>,
@@ -1569,6 +1579,7 @@ assert_eq!(Fix::from_num(3.0).saturating_lerp(Fix::MAX, Fix::ZERO), Fix::MIN);
                 "```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn saturating_lerp<RangeFrac>(
                     self,
                     start: $Fixed<RangeFrac>,
@@ -1909,6 +1920,7 @@ assert_eq!(
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn wrapping_lerp<RangeFrac>(
                     self,
                     start: $Fixed<RangeFrac>,
@@ -2403,6 +2415,7 @@ let _overflow = Fix::from_num(1.5).unwrapped_lerp(Fix::ZERO, Fix::MAX);
 ";
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn unwrapped_lerp<RangeFrac>(
                     self,
                     start: $Fixed<RangeFrac>,
@@ -2449,6 +2462,7 @@ assert_eq!(ZeroIntBits::from_num(-0.5).overflowing_signum(), (ZeroIntBits::ZERO,
 ```
 ";
                     #[inline]
+                    #[must_use]
                     pub const fn overflowing_signum(self) -> ($Fixed<Frac>, bool) {
                         if self.to_bits() == 0 {
                             ($Fixed::ZERO, false)
@@ -2546,6 +2560,7 @@ assert_eq!(Small::from_num(0.25).overflowing_recip(), (Small::ZERO, true));
 ";
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn overflowing_recip(self) -> ($Fixed<Frac>, bool) {
                     if let Some(one) = Self::TRY_ONE {
                         return one.overflowing_div(self);
@@ -2905,6 +2920,7 @@ assert_eq!(
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn overflowing_lerp<RangeFrac>(
                     self,
                     start: $Fixed<RangeFrac>,

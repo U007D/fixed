@@ -160,7 +160,7 @@ impl Buffer {
     }
 
     fn encode_digits(&mut self, upper: bool) {
-        for digit in self.digits[..1 + self.int_digits + self.frac_digits].iter_mut() {
+        for digit in &mut self.digits[..1 + self.int_digits + self.frac_digits] {
             if *digit < 10 {
                 *digit += b'0';
             } else {
@@ -206,12 +206,16 @@ impl Buffer {
         } else {
             2
         };
-        let end_zeros = fmt.precision().map(|x| x - self.frac_digits).unwrap_or(0);
+        let end_zeros = fmt.precision().map_or(0, |x| x - self.frac_digits);
         let has_frac = self.frac_digits > 0 || end_zeros > 0;
 
         let digits_width = 1 + self.int_digits + self.frac_digits - abs_begin;
-        let req_width =
-            sign.len() + prefix.len() + digits_width + has_frac as usize + end_zeros + self.exp_len;
+        let req_width = sign.len()
+            + prefix.len()
+            + digits_width
+            + usize::from(has_frac)
+            + end_zeros
+            + self.exp_len;
         let pad = fmt
             .width()
             .and_then(|w| w.checked_sub(req_width))
@@ -335,7 +339,7 @@ where
         }
         let digit_bits = format.digit_bits();
         let compl_digit_bits = Self::BITS - digit_bits;
-        for b in buf.frac().iter_mut() {
+        for b in &mut *buf.frac() {
             debug_assert!(frac != Self::ZERO);
             *b = (frac >> compl_digit_bits).wrapping_as::<u8>();
             frac = frac << digit_bits;
@@ -972,8 +976,8 @@ mod tests {
             let (ifix, ufix) = (I4F4::from_bits(u as i8), U4F4::from_bits(u));
             let (iflo, uflo) = (ifix.to_num::<f32>(), ufix.to_num::<f32>());
             let (sifix, sufix) = (ifix.to_string(), ufix.to_string());
-            let pifix = sifix.find('.').map(|p| sifix.len() - 1 - p).unwrap_or(0);
-            let pufix = sufix.find('.').map(|p| sufix.len() - 1 - p).unwrap_or(0);
+            let pifix = sifix.find('.').map_or(0, |p| sifix.len() - 1 - p);
+            let pufix = sufix.find('.').map_or(0, |p| sufix.len() - 1 - p);
             let (siflo, suflo) = (format!("{iflo:.pifix$}"), format!("{uflo:.pufix$}"));
             assert_eq!(sifix, siflo);
             assert_eq!(sufix, suflo);

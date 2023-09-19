@@ -275,13 +275,13 @@ macro_rules! fixed_cmp_float {
                     bits: $Inner::BITS,
                     frac_bits: Frac::to_i32(),
                 };
-                let (rhs_neg, rhs_abs, rhs_frac) = match float_helper::$Float::kind(*rhs) {
-                    Kind::Finite {
-                        neg,
-                        abs,
-                        frac_bits,
-                    } => (neg, abs, frac_bits),
-                    _ => return false,
+                let Kind::Finite {
+                    neg: rhs_neg,
+                    abs: rhs_abs,
+                    frac_bits: rhs_frac,
+                } = float_helper::$Float::kind(*rhs)
+                else {
+                    return false;
                 };
                 let rhs = Value {
                     neg: rhs_neg,

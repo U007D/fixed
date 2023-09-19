@@ -664,9 +664,8 @@ macro_rules! mul_div_widen {
                 // Overflow at this stage can only occur for signed when
                 // frac_nbits == NBITS, lhs == MIN, and rhs == -1.
                 // In that case, wrapped answer is $Double::MIN as $Single == 0
-                let quot2 = match lhs2.overflowing_div(rhs2) {
-                    (q, false) => q,
-                    (_, true) => return (0, true),
+                let (quot2, false) = lhs2.overflowing_div(rhs2) else {
+                    return (0, true);
                 };
                 let quot = quot2 as $Single;
                 let overflow = if_signed_unsigned!(

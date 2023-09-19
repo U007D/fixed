@@ -571,6 +571,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// ```
     #[inline]
     #[track_caller]
+    #[must_use]
     pub fn from_str_dec(src: &str) -> Unwrapped<F> {
         Unwrapped(F::unwrapped_from_str(src))
     }
@@ -1319,6 +1320,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// ```
     #[inline]
     #[track_caller]
+    #[must_use]
     pub fn add_prod(self, a: Unwrapped<F>, b: Unwrapped<F>) -> Unwrapped<F> {
         Unwrapped(self.0.unwrapped_add_prod(a.0, b.0))
     }

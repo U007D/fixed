@@ -600,10 +600,7 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
         impl<Frac> Clone for $Fixed<Frac> {
             #[inline]
             fn clone(&self) -> $Fixed<Frac> {
-                $Fixed {
-                    bits: self.bits,
-                    phantom: PhantomData,
-                }
+                *self
             }
         }
 

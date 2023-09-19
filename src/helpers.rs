@@ -87,9 +87,8 @@ macro_rules! impl_sealed {
                     FloatKind::Finite { neg, .. } => neg,
                 };
                 let saturated = if neg { Self::MIN } else { Self::MAX };
-                let conv = match src.kind {
-                    FloatKind::Finite { conv, .. } => conv,
-                    _ => return saturated,
+                let FloatKind::Finite { conv, .. } = src.kind else {
+                    return saturated;
                 };
                 if conv.overflow {
                     return saturated;

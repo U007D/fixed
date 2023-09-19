@@ -316,13 +316,13 @@ pub const fn div_rem_i256_i128_no_overflow(n: I256, d: NonZeroI128) -> (I256, i1
 
     let (q_abs, r_abs) = div_rem_u256_u128(n_abs, d_abs);
 
-    let q = if n_neg != d_neg {
-        let (ql, overflow) = q_abs.lo.overflowing_neg();
-        let qh = q_abs.hi.wrapping_neg().wrapping_sub(overflow as u128) as i128;
-        I256 { lo: ql, hi: qh }
-    } else {
+    let q = if n_neg == d_neg {
         let ql = q_abs.lo;
         let qh = q_abs.hi as i128;
+        I256 { lo: ql, hi: qh }
+    } else {
+        let (ql, overflow) = q_abs.lo.overflowing_neg();
+        let qh = q_abs.hi.wrapping_neg().wrapping_sub(overflow as u128) as i128;
         I256 { lo: ql, hi: qh }
     };
     let r = if n_neg {
@@ -390,10 +390,10 @@ mod tests {
             assert!(rem >= 0);
         }
 
-        if (num.hi < 0) != (den < 0) {
-            assert!(quot.hi <= 0);
-        } else {
+        if (num.hi < 0) == (den < 0) {
             assert!(quot.hi >= 0);
+        } else {
+            assert!(quot.hi <= 0);
         }
     }
 

@@ -180,6 +180,7 @@ impl F128 {
     /// assert!(!F128::from_bits(infinity_bits).is_finite());
     /// ```
     #[inline]
+    #[must_use]
     pub const fn from_bits(bits: u128) -> F128 {
         F128 { bits }
     }
@@ -194,24 +195,28 @@ impl F128 {
     /// assert_ne!(F128::ONE.to_bits(), 1u128);
     /// ```
     #[inline]
+    #[must_use]
     pub const fn to_bits(self) -> u128 {
         self.bits
     }
 
     /// Creates a number from a byte array in big-endian byte order.
     #[inline]
+    #[must_use]
     pub const fn from_be_bytes(bytes: [u8; 16]) -> F128 {
         F128::from_bits(u128::from_be_bytes(bytes))
     }
 
     /// Creates a number from a byte array in little-endian byte order.
     #[inline]
+    #[must_use]
     pub const fn from_le_bytes(bytes: [u8; 16]) -> F128 {
         F128::from_bits(u128::from_le_bytes(bytes))
     }
 
     /// Creates a number from a byte array in native-endian byte order.
     #[inline]
+    #[must_use]
     pub const fn from_ne_bytes(bytes: [u8; 16]) -> F128 {
         F128::from_bits(u128::from_ne_bytes(bytes))
     }
@@ -219,6 +224,7 @@ impl F128 {
     /// Returns the memory representation of the number as a byte array in
     /// big-endian byte order.
     #[inline]
+    #[must_use]
     pub const fn to_be_bytes(self) -> [u8; 16] {
         self.to_bits().to_be_bytes()
     }
@@ -226,6 +232,7 @@ impl F128 {
     /// Returns the memory representation of the number as a byte array in
     /// little-endian byte order.
     #[inline]
+    #[must_use]
     pub const fn to_le_bytes(self) -> [u8; 16] {
         self.to_bits().to_le_bytes()
     }
@@ -233,6 +240,7 @@ impl F128 {
     /// Returns the memory representation of the number as a byte array in
     /// native-endian byte order.
     #[inline]
+    #[must_use]
     pub const fn to_ne_bytes(self) -> [u8; 16] {
         self.to_bits().to_ne_bytes()
     }
@@ -251,6 +259,7 @@ impl F128 {
     /// assert!(!F128::NEG_INFINITY.is_nan());
     /// ```
     #[inline]
+    #[must_use]
     pub const fn is_nan(self) -> bool {
         (self.to_bits() & !SIGN_MASK) > EXP_MASK
     }
@@ -269,6 +278,7 @@ impl F128 {
     /// assert!(!F128::NAN.is_infinite());
     /// ```
     #[inline]
+    #[must_use]
     pub const fn is_infinite(self) -> bool {
         (self.to_bits() & !SIGN_MASK) == EXP_MASK
     }
@@ -288,6 +298,7 @@ impl F128 {
     /// assert!(!F128::NAN.is_finite());
     /// ```
     #[inline]
+    #[must_use]
     pub const fn is_finite(self) -> bool {
         (self.to_bits() & EXP_MASK) != EXP_MASK
     }
@@ -306,6 +317,7 @@ impl F128 {
     /// assert!(!F128::NAN.is_zero());
     /// ```
     #[inline]
+    #[must_use]
     pub const fn is_zero(self) -> bool {
         (self.to_bits() & !SIGN_MASK) == 0
     }
@@ -323,6 +335,7 @@ impl F128 {
     /// assert!(!F128::MIN_POSITIVE.is_subnormal());
     /// ```
     #[inline]
+    #[must_use]
     pub const fn is_subnormal(self) -> bool {
         let abs = self.to_bits() & !SIGN_MASK;
         0 < abs && abs < F128::MIN_POSITIVE.to_bits()
@@ -345,6 +358,7 @@ impl F128 {
     /// assert!(!F128::NAN.is_normal());
     /// ```
     #[inline]
+    #[must_use]
     pub const fn is_normal(self) -> bool {
         let abs = self.to_bits() & !SIGN_MASK;
         F128::MIN_POSITIVE.to_bits() <= abs && abs <= F128::MAX.to_bits()
@@ -368,6 +382,7 @@ impl F128 {
     /// assert_eq!(F128::NAN.classify(), FpCategory::Nan);
     /// ```
     #[inline]
+    #[must_use]
     pub const fn classify(self) -> FpCategory {
         let exp = self.to_bits() & EXP_MASK;
         let mant = self.to_bits() & MANT_MASK;
@@ -409,6 +424,7 @@ impl F128 {
     /// assert!(F128::NAN.abs().is_nan());
     /// ```
     #[inline]
+    #[must_use]
     pub const fn abs(self) -> F128 {
         F128::from_bits(self.to_bits() & !SIGN_MASK)
     }
@@ -432,6 +448,7 @@ impl F128 {
     /// assert!(F128::NAN.signum().is_nan());
     /// ```
     #[inline]
+    #[must_use]
     pub const fn signum(self) -> F128 {
         if self.is_nan() {
             self
@@ -459,6 +476,7 @@ impl F128 {
     /// assert!(F128::NAN.copysign(F128::NEG_ONE).is_sign_negative());
     /// ```
     #[inline]
+    #[must_use]
     pub const fn copysign(self, sign: F128) -> F128 {
         F128::from_bits((self.to_bits() & !SIGN_MASK) | (sign.to_bits() & SIGN_MASK))
     }
@@ -480,6 +498,7 @@ impl F128 {
     /// assert!(!F128::NEG_INFINITY.is_sign_positive());
     /// ```
     #[inline]
+    #[must_use]
     pub const fn is_sign_positive(self) -> bool {
         (self.to_bits() & SIGN_MASK) == 0
     }
@@ -501,6 +520,7 @@ impl F128 {
     /// assert!(!F128::INFINITY.is_sign_negative());
     /// ```
     #[inline]
+    #[must_use]
     pub const fn is_sign_negative(self) -> bool {
         (self.to_bits() & SIGN_MASK) != 0
     }
@@ -517,6 +537,7 @@ impl F128 {
     /// assert_eq!(F128::ZERO.max(F128::ONE), F128::ONE);
     /// ```
     #[inline]
+    #[must_use]
     pub const fn max(self, other: F128) -> F128 {
         if self.is_nan() || matches!(partial_cmp(&self, &other), Some(Ordering::Less)) {
             other
@@ -537,6 +558,7 @@ impl F128 {
     /// assert_eq!(F128::ZERO.min(F128::ONE), F128::ZERO);
     /// ```
     #[inline]
+    #[must_use]
     pub const fn min(self, other: F128) -> F128 {
         if self.is_nan() || matches!(partial_cmp(&self, &other), Some(Ordering::Greater)) {
             other
@@ -567,9 +589,10 @@ impl F128 {
     /// ```
     #[inline]
     #[track_caller]
+    #[must_use]
     pub const fn clamp(mut self, min: F128, max: F128) -> F128 {
         match partial_cmp(&min, &max) {
-            Some(Ordering::Less) | Some(Ordering::Equal) => {}
+            Some(Ordering::Less | Ordering::Equal) => {}
             _ => panic!("need min <= max"),
         }
         if matches!(partial_cmp(&self, &min), Some(Ordering::Less)) {
@@ -615,6 +638,7 @@ impl F128 {
     /// assert_eq!(neg_zero.total_cmp(&pos_zero), Ordering::Less);
     /// ```
     #[inline]
+    #[must_use]
     pub const fn total_cmp(&self, other: &F128) -> Ordering {
         let a = self.to_bits();
         let b = other.to_bits();
