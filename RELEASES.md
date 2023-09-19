@@ -5,7 +5,7 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-# Version 1.24.0 (unreleased)
+# Version 1.24.0 (2023-09-19)
 
   * The crate now requires rustc version 1.71.0 or later.
   * The [`saturating_div_int`][f-sdi-1-24] method was added to all fixed-point
