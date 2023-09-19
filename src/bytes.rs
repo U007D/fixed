@@ -13,22 +13,6 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
-use core::slice;
-
-// TODO: remove when slice::split_at is usable in const context
-pub const fn slice_split_at<T>(slice: &[T], mid: usize) -> (&[T], &[T]) {
-    let len = slice.len();
-    let ptr = slice.as_ptr();
-    assert!(mid <= len);
-    // SAFETY: `[ptr; mid]` and `[mid; len]` are inside `slice`
-    unsafe {
-        (
-            slice::from_raw_parts(ptr, mid),
-            slice::from_raw_parts(ptr.add(mid), len - mid),
-        )
-    }
-}
-
 // Kept trimmed: no underscores at beginning or end of slice
 #[derive(Clone, Copy, Debug)]
 pub struct DigitsUnds<'a> {
@@ -57,8 +41,8 @@ impl<'a> DigitsUnds<'a> {
                 trailing_unds = 0;
             }
         }
-        let without_trailing_unds = slice_split_at(bytes, bytes.len() - trailing_unds).0;
-        let without_leading_unds = slice_split_at(without_trailing_unds, leading_unds).1;
+        let without_trailing_unds = bytes.split_at(bytes.len() - trailing_unds).0;
+        let without_leading_unds = without_trailing_unds.split_at(leading_unds).1;
         DigitsUnds {
             bytes: without_leading_unds,
             digits,
@@ -95,7 +79,7 @@ impl<'a> DigitsUnds<'a> {
             panic!("index out of bounds");
         }
         let first = DigitsUnds {
-            bytes: slice_split_at(self.bytes, mid + unds).0,
+            bytes: self.bytes.split_at(mid + unds).0,
             digits: mid,
         };
 
