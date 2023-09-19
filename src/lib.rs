@@ -447,6 +447,7 @@ mod lerp;
 mod log;
 mod log10;
 mod prim_traits;
+mod saturating;
 #[cfg(feature = "serde")]
 mod serdeize;
 pub mod traits;
@@ -458,7 +459,8 @@ mod wrapping;
 #[cfg(feature = "num-traits")]
 pub use crate::impl_num_traits::RadixParseFixedError;
 pub use crate::{
-    f128::private::F128, from_str::ParseFixedError, unwrapped::Unwrapped, wrapping::Wrapping,
+    f128::private::F128, from_str::ParseFixedError, saturating::Saturating, unwrapped::Unwrapped,
+    wrapping::Wrapping,
 };
 use crate::{
     traits::{FromFixed, ToFixed},
