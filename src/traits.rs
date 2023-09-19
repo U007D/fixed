@@ -2199,6 +2199,21 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn saturating_mul_int(self, rhs: Self::Bits) -> Self;
 
+    /// Saturating division by an integer. Returns the quotient, saturating on overflow.
+    ///
+    /// Overflow can only occur when dividing the minimum value by &minus;1.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_div\_int][FixedI32::saturating_div_int]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_div\_int][FixedU32::saturating_div_int]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn saturating_div_int(self, rhs: Self::Bits) -> Self;
+
     /// Saturating Euclidean division by an integer. Returns the
     /// quotient, saturating on overflow.
     ///
@@ -4114,6 +4129,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn saturating_mul_acc(&mut self, a: Self, b: Self) }
             trait_delegate! { fn saturating_div_euclid(self, rhs: Self) -> Self }
             trait_delegate! { fn saturating_mul_int(self, rhs: Self::Bits) -> Self }
+            trait_delegate! { fn saturating_div_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn saturating_div_euclid_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn saturating_rem_euclid_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn saturating_dist(self, other: Self) -> Self }

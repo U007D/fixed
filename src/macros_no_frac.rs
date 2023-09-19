@@ -2647,6 +2647,47 @@ assert_eq!(Fix::MAX.saturating_mul_int(2), Fix::MAX);
                 }
             }
 
+            comment! {
+                "Saturating division by an integer. Returns the quotient",
+                if_signed_unsigned!(
+                    $Signedness,
+                    ", saturating on overflow.
+
+Overflow can only occur when dividing the minimum value by &minus;1.",
+                    ".
+
+Can never overflow for unsigned values.",
+                ),
+                "
+
+# Panics
+
+Panics if the divisor is zero.
+
+# Examples
+
+```rust
+use fixed::{types::extra::U4, ", $s_fixed, "};
+type Fix = ", $s_fixed, "<U4>;
+// 1.5 is binary 1.1
+let one_point_5 = Fix::from_bits(0b11 << (4 - 1));
+assert_eq!(Fix::from_num(3).saturating_div_int(2), one_point_5);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "assert_eq!(Fix::MIN.saturating_div_int(-1), Fix::MAX);
+",
+                },
+                "```
+";
+                #[inline]
+                #[track_caller]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn saturating_div_int(self, rhs: $Inner) -> $Fixed<Frac> {
+                    Self::from_bits(self.to_bits().saturating_div(rhs))
+                }
+            }
+
             if_signed! {
                 $Signedness;
                 comment! {
