@@ -10,8 +10,10 @@ as-is, without any warranty. -->
   * The crate now requires rustc version 1.67.0 or later.
   * The [`saturating_div_int`][f-sdi-1-24] method was added to all fixed-point
     numbers and to the [`Fixed`][tf-1-24] trait.
+  * The [`Saturating`][s-1-24] wrapper was added.
 
 [f-sdi-1-24]: https://docs.rs/fixed/~1.24/fixed/struct.FixedI32.html#method.saturating_div_int
+[s-1-24]: https://docs.rs/fixed/~1.24/fixed/struct.Saturating.html
 [tf-1-24]: https://docs.rs/fixed/~1.24/fixed/traits/trait.Fixed.html
 
 # Version 1.23.1 (2023-03-14)
