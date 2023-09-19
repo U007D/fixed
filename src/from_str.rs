@@ -14,7 +14,7 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::{
-    bytes::{self, DigitsExp, DigitsUnds},
+    bytes::{DigitsExp, DigitsUnds},
     types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
@@ -94,7 +94,6 @@ use std::error::Error;
 //       - pub const fn overflowing_from_str_radix
 macro_rules! all {
     ($Single:ident) => {
-        use crate::bytes;
         use crate::from_str::{ParseErrorKind, ParseFixedError, Sep};
 
         #[inline]
@@ -207,7 +206,7 @@ macro_rules! signed {
                     });
                 }
                 let neg = if bytes[0] == b'-' {
-                    bytes = bytes::slice_split_at(bytes, 1).1;
+                    bytes = bytes.split_at(1).1;
                     true
                 } else {
                     false
@@ -307,7 +306,7 @@ macro_rules! unsigned {
                 10
             };
             if radix != 10 {
-                bytes = bytes::slice_split_at(bytes, 2).1;
+                bytes = bytes.split_at(2).1;
                 while let Some((b'_', rest)) = bytes.split_first() {
                     bytes = rest;
                 }
@@ -1229,20 +1228,20 @@ const fn parse_bounds(bytes: &[u8], radix: u32, sep: Sep) -> Result<Parse<'_>, P
     };
     let int = match (int_start, point, exp_sep) {
         (Some(begin), Some(end), _) | (Some(begin), None, Some(end)) => {
-            let (up_to_end, _) = bytes::slice_split_at(bytes, end);
-            let (_, from_begin) = bytes::slice_split_at(up_to_end, begin);
+            let (up_to_end, _) = bytes.split_at(end);
+            let (_, from_begin) = up_to_end.split_at(begin);
             DigitsUnds::new(from_begin)
         }
         (Some(begin), None, None) => {
-            let (_, from_begin) = bytes::slice_split_at(bytes, begin);
+            let (_, from_begin) = bytes.split_at(begin);
             DigitsUnds::new(from_begin)
         }
         (None, _, _) => DigitsUnds::EMPTY,
     };
     let frac = match (point, frac_end) {
         (Some(point), Some(end)) => {
-            let (up_to_end, _) = bytes::slice_split_at(bytes, end);
-            let (_, from_after_point) = bytes::slice_split_at(up_to_end, point + 1);
+            let (up_to_end, _) = bytes.split_at(end);
+            let (_, from_after_point) = up_to_end.split_at(point + 1);
             DigitsUnds::new(from_after_point)
         }
         _ => DigitsUnds::EMPTY,
