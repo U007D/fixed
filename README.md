@@ -179,7 +179,7 @@ The conversions supported cover the following cases.
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.11/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.11/fixed/struct.Wrapping.html
 
-### Version 1.24.0 news (unreleased)
+### Version 1.24.0 news (2023-09-19)
 
   * The crate now requires rustc version 1.71.0 or later.
   * The [`saturating_div_int`][f-sdi-1-24] method was added to all fixed-point
