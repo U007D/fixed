@@ -339,7 +339,7 @@ where
         }
         let digit_bits = format.digit_bits();
         let compl_digit_bits = Self::BITS - digit_bits;
-        for b in buf.frac().iter_mut() {
+        for b in &mut *buf.frac() {
             debug_assert!(frac != Self::ZERO);
             *b = (frac >> compl_digit_bits).wrapping_as::<u8>();
             frac = frac << digit_bits;
