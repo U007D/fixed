@@ -7,7 +7,7 @@ as-is, without any warranty. -->
 
 # Version 1.24.0 (unreleased)
 
-  * The crate now requires rustc version 1.67.0 or later.
+  * The crate now requires rustc version 1.71.0 or later.
   * The [`saturating_div_int`][f-sdi-1-24] method was added to all fixed-point
     numbers and to the [`Fixed`][tf-1-24] trait.
   * The [`Saturating`][s-1-24] wrapper was added.
