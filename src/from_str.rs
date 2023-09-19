@@ -1056,7 +1056,7 @@ impl ParseFixedError {
     }
 
     #[inline]
-    pub(crate) const fn message(&self) -> &'static str {
+    pub(crate) const fn message(self) -> &'static str {
         use self::ParseErrorKind::*;
         match self.kind {
             InvalidDigit => "invalid digit found in string",
@@ -1419,7 +1419,7 @@ mod tests {
         for i in 0..limit {
             let ans = from_str::u8::dec_to_bin(i, 8, Round::Nearest);
             let approx = two_pow * f64::from(i) / f64::from(limit);
-            let error = (ans.map(f64::from).unwrap_or(two_pow) - approx).abs();
+            let error = (ans.map_or(two_pow, f64::from) - approx).abs();
             assert!(
                 error <= 0.5,
                 "i {i} ans {ans:?}  approx {approx} error {error}"
@@ -1434,7 +1434,7 @@ mod tests {
         for i in 0..limit {
             let ans = from_str::u16::dec_to_bin(i, 16, Round::Nearest);
             let approx = two_pow * f64::from(i) / f64::from(limit);
-            let error = (ans.map(f64::from).unwrap_or(two_pow) - approx).abs();
+            let error = (ans.map_or(two_pow, f64::from) - approx).abs();
             assert!(
                 error <= 0.5,
                 "i {i} ans {ans:?}  approx {approx} error {error}"
@@ -1459,7 +1459,7 @@ mod tests {
             ] {
                 let ans = from_str::u32::dec_to_bin(i, 32, Round::Nearest);
                 let approx = two_pow * i as f64 / limit as f64;
-                let error = (ans.map(f64::from).unwrap_or(two_pow) - approx).abs();
+                let error = (ans.map_or(two_pow, f64::from) - approx).abs();
                 assert!(
                     error <= 0.5,
                     "i {i} ans {ans:?}  approx {approx} error {error}"
@@ -1485,7 +1485,7 @@ mod tests {
             ] {
                 let ans = from_str::u64::dec_to_bin(i, 64, Round::Nearest);
                 let approx = two_pow * i as f64 / limit as f64;
-                let error = (ans.map(|x| x as f64).unwrap_or(two_pow) - approx).abs();
+                let error = (ans.map_or(two_pow, |x| x as f64) - approx).abs();
                 assert!(
                     error <= 0.5,
                     "i {i} ans {ans:?}  approx {approx} error {error}"
@@ -1557,7 +1557,7 @@ mod tests {
                 assert_eq!(bit_exp.exp.get(), check.3);
                 assert_eq!(
                     bit_exp.first_frac_digit,
-                    frac.split_first().map(|x| x.0).unwrap_or(b'0')
+                    frac.split_first().map_or(b'0', |x| x.0)
                 );
             }
             None => assert_eq!(0, check.3),

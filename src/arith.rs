@@ -706,11 +706,11 @@ macro_rules! mul_div_widen {
                     $Signedness;
                     // If frac_nbits >= NBITS2 - 1, the only shifted products possible are -1 and 0.
                     if frac_nbits >= NBITS2 - 1 {
-                        if m1 != 0 && m2 != 0 && (m1.is_negative() != m2.is_negative()) {
-                            return add.overflowing_sub(1);
+                        return if m1 != 0 && m2 != 0 && (m1.is_negative() != m2.is_negative()) {
+                            add.overflowing_sub(1)
                         } else {
-                            return (add, false);
-                        }
+                            (add, false)
+                        };
                     }
                 }
                 if_unsigned! {
@@ -767,9 +767,8 @@ macro_rules! mul_div_widen {
                 // Overflow at this stage can only occur for signed when
                 // frac_nbits == NBITS, lhs == MIN, and rhs == -1.
                 // In that case, wrapped answer is $Double::MIN as $Single == 0
-                let quot2 = match lhs2.overflowing_div(rhs2) {
-                    (q, false) => q,
-                    (_, true) => return (0, true),
+                let (quot2, false) = lhs2.overflowing_div(rhs2) else {
+                    return (0, true);
                 };
                 let quot = quot2 as $Single;
                 let overflow = if_signed_unsigned!(
@@ -907,7 +906,7 @@ pub mod i128 {
                 (shifted, overflow1 || overflow2)
             }
         } else if frac_nbits >= 256 {
-            let val = if (lhs < 0) != (rhs < 0) { -1 } else { 0 };
+            let val = if (lhs < 0) == (rhs < 0) { 0 } else { -1 };
             (val, false)
         } else {
             let prod = int256::wide_mul_i128(lhs, rhs);
@@ -941,11 +940,11 @@ pub mod i128 {
 
         // If frac_nbits >= 255, the only shifted products possible are -1 and 0.
         if frac_nbits >= 255 {
-            if m1 != 0 && m2 != 0 && (m1.is_negative() != m2.is_negative()) {
-                return add.overflowing_sub(1);
+            return if m1 != 0 && m2 != 0 && (m1.is_negative() != m2.is_negative()) {
+                add.overflowing_sub(1)
             } else {
-                return (add, false);
-            }
+                (add, false)
+            };
         }
 
         let mut prod = int256::wide_mul_i128(m1, m2);

@@ -1352,6 +1352,7 @@ where
     ///
     /// See also <code>FixedI32::[add\_prod][FixedI32::add_prod]</code> and
     /// <code>FixedU32::[add\_prod][FixedU32::add_prod]</code>.
+    #[must_use]
     fn add_prod<const A_FRAC: i32, const B_FRAC: i32>(
         self,
         a: <Self::Bits as FixedBits>::Fixed<A_FRAC>,
@@ -1585,6 +1586,7 @@ where
     /// <code>FixedI32::[saturating\_add\_prod][FixedI32::saturating_add_prod]</code>
     /// and
     /// <code>FixedU32::[saturating\_add\_prod][FixedU32::saturating_add_prod]</code>.
+    #[must_use]
     fn saturating_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
         self,
         a: <Self::Bits as FixedBits>::Fixed<A_FRAC>,
@@ -1682,6 +1684,7 @@ where
     /// <code>FixedI32::[wrapping\_add\_prod][FixedI32::wrapping_add_prod]</code>
     /// and
     /// <code>FixedU32::[wrapping\_add\_prod][FixedU32::wrapping_add_prod]</code>.
+    #[must_use]
     fn wrapping_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
         self,
         a: <Self::Bits as FixedBits>::Fixed<A_FRAC>,
@@ -1859,6 +1862,7 @@ where
     ///
     /// Panics if the result does not fit.
     #[track_caller]
+    #[must_use]
     fn unwrapped_add_prod<const A_FRAC: i32, const B_FRAC: i32>(
         self,
         a: <Self::Bits as FixedBits>::Fixed<A_FRAC>,

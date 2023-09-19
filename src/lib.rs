@@ -630,7 +630,7 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
         impl<const FRAC: i32> Clone for $Fixed<FRAC> {
             #[inline]
             fn clone(&self) -> $Fixed<FRAC> {
-                $Fixed { bits: self.bits }
+                *self
             }
         }
 

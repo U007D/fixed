@@ -39,25 +39,25 @@ impl ToFixed for bool {
     #[inline]
     #[track_caller]
     fn to_fixed<F: Fixed>(self) -> F {
-        ToFixed::to_fixed(self as u8)
+        ToFixed::to_fixed(u8::from(self))
     }
 
     /// Converts a [`bool`] to a fixed-point number if it fits, otherwise returns [`None`].
     #[inline]
     fn checked_to_fixed<F: Fixed>(self) -> Option<F> {
-        ToFixed::checked_to_fixed(self as u8)
+        ToFixed::checked_to_fixed(u8::from(self))
     }
 
     /// Convert a [`bool`] to a fixed-point number, saturating if it does not fit.
     #[inline]
     fn saturating_to_fixed<F: Fixed>(self) -> F {
-        ToFixed::saturating_to_fixed(self as u8)
+        ToFixed::saturating_to_fixed(u8::from(self))
     }
 
     /// Converts a [`bool`] to a fixed-point number, wrapping if it does not fit.
     #[inline]
     fn wrapping_to_fixed<F: Fixed>(self) -> F {
-        ToFixed::wrapping_to_fixed(self as u8)
+        ToFixed::wrapping_to_fixed(u8::from(self))
     }
 
     /// Converts a [`bool`] to a fixed-point number.
@@ -67,7 +67,7 @@ impl ToFixed for bool {
     /// wrapped value is returned.
     #[inline]
     fn overflowing_to_fixed<F: Fixed>(self) -> (F, bool) {
-        ToFixed::overflowing_to_fixed(self as u8)
+        ToFixed::overflowing_to_fixed(u8::from(self))
     }
 
     /// Converts a [`bool`] to a fixed-point number, panicking if it
@@ -80,7 +80,7 @@ impl ToFixed for bool {
     #[inline]
     #[track_caller]
     fn unwrapped_to_fixed<F: Fixed>(self) -> F {
-        ToFixed::unwrapped_to_fixed(self as u8)
+        ToFixed::unwrapped_to_fixed(u8::from(self))
     }
 }
 

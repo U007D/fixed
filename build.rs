@@ -30,7 +30,7 @@ fn main() {
     };
 }
 
-#[derive(PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 struct Optional(bool);
 
 impl Environment {

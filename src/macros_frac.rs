@@ -114,6 +114,7 @@ assert_eq!(ONE_AND_HALF, 1.5);
 "#;
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn lit(src: &str) -> $Fixed<FRAC> {
                     match from_str::$Inner::lit(src, FRAC as u32) {
                         Ok(s) => $Fixed::from_bits(s),
@@ -967,6 +968,7 @@ assert_eq!(", $s_fixed, "::<6>::from_num(0.09375).int_log10(), -2);
                 #[doc(alias("ilog10"))]
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn int_log10(self) -> i32 {
                     match self.checked_int_log10() {
                         Some(ans) => ans,
@@ -1000,6 +1002,7 @@ assert_eq!(Fix::from_num(0.1875).int_log(5), -2);
                 #[doc(alias("ilog"))]
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn int_log(self, base: u32) -> i32 {
                     match self.checked_int_log(base) {
                         Some(s) => s,
@@ -1035,6 +1038,7 @@ assert_eq!(", $s_fixed, "::<6>::from_num(0.09375).checked_int_log10(), Some(-2))
 ";
                 #[inline]
                 #[doc(alias("checked_ilog10"))]
+                #[must_use]
                 pub const fn checked_int_log10(self) -> Option<i32> {
                     if self.to_bits() <= 0 {
                         return None;
@@ -1075,6 +1079,7 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log(5), Some(-2));
 ";
                 #[inline]
                 #[doc(alias("checked_ilog10"))]
+                #[must_use]
                 pub const fn checked_int_log(self, base: u32) -> Option<i32> {
                     if self.to_bits() <= 0 || base < 2 {
                         return None;
@@ -1293,6 +1298,7 @@ assert_eq!(Fix::from_num(2.0).lerp(start, end), 5);
 ";
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn lerp<const RANGE_FRAC: i32>(
                     self,
                     start: $Fixed<RANGE_FRAC>,
@@ -1356,6 +1362,7 @@ assert_eq!(Fix::ZERO.checked_recip(), None);
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn checked_recip(self) -> Option<$Fixed<FRAC>> {
                     if self.to_bits() == 0 {
                         None
@@ -1623,6 +1630,7 @@ assert_eq!(Fix::from_num(1.5).checked_lerp(Fix::ZERO, Fix::MAX), None);
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn checked_lerp<const RANGE_FRAC: i32>(
                     self,
                     start: $Fixed<RANGE_FRAC>,
@@ -1896,6 +1904,7 @@ assert_eq!(Fix::from_num(3.0).saturating_lerp(Fix::MAX, Fix::ZERO), Fix::MIN);
                 "```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn saturating_lerp<const RANGE_FRAC: i32>(
                     self,
                     start: $Fixed<RANGE_FRAC>,
@@ -2124,6 +2133,7 @@ assert_eq!(
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn wrapping_lerp<const RANGE_FRAC: i32>(
                     self,
                     start: $Fixed<RANGE_FRAC>,
@@ -2450,6 +2460,7 @@ let _overflow = Fix::from_num(1.5).unwrapped_lerp(Fix::ZERO, Fix::MAX);
 ";
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn unwrapped_lerp<const RANGE_FRAC: i32>(
                     self,
                     start: $Fixed<RANGE_FRAC>,
@@ -2523,6 +2534,7 @@ assert_eq!(Small::from_num(0.25).overflowing_recip(), (Small::ZERO, true));
 ";
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn overflowing_recip(self) -> ($Fixed<FRAC>, bool) {
                     if let Some(one) = Self::TRY_ONE {
                         return one.overflowing_div(self);
@@ -2780,6 +2792,7 @@ assert_eq!(
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn overflowing_lerp<const RANGE_FRAC: i32>(
                     self,
                     start: $Fixed<RANGE_FRAC>,

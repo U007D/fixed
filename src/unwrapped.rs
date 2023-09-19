@@ -358,6 +358,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// );
     /// ```
     #[inline]
+    #[must_use]
     pub fn from_be_bytes(bytes: [u8; size_of::<F>()]) -> Self {
         Unwrapped(F::from_be_bytes(bytes))
     }
@@ -383,6 +384,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// );
     /// ```
     #[inline]
+    #[must_use]
     pub fn from_le_bytes(bytes: [u8; size_of::<F>()]) -> Self {
         Unwrapped(F::from_le_bytes(bytes))
     }
@@ -412,6 +414,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// );
     /// ```
     #[inline]
+    #[must_use]
     pub fn from_ne_bytes(bytes: [u8; size_of::<F>()]) -> Self {
         Unwrapped(F::from_ne_bytes(bytes))
     }
@@ -1269,6 +1272,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// ```
     #[inline]
     #[track_caller]
+    #[must_use]
     pub fn add_prod<const A_FRAC: i32, const B_FRAC: i32>(
         self,
         a: Unwrapped<<F::Bits as FixedBits>::Fixed<A_FRAC>>,
@@ -1388,6 +1392,7 @@ impl<F: FixedStrict> Unwrapped<F> {
     /// ```
     #[inline]
     #[track_caller]
+    #[must_use]
     pub fn from_str_dec(src: &str) -> Unwrapped<F> {
         Unwrapped(F::unwrapped_from_str(src))
     }
@@ -1427,6 +1432,7 @@ impl<F: FixedStrict> Unwrapped<F> {
     /// ```
     #[inline]
     #[track_caller]
+    #[must_use]
     pub fn from_str_binary(src: &str) -> Unwrapped<F> {
         Unwrapped(F::unwrapped_from_str_binary(src))
     }
@@ -1466,6 +1472,7 @@ impl<F: FixedStrict> Unwrapped<F> {
     /// ```
     #[inline]
     #[track_caller]
+    #[must_use]
     pub fn from_str_octal(src: &str) -> Unwrapped<F> {
         Unwrapped(F::unwrapped_from_str_octal(src))
     }
@@ -1505,6 +1512,7 @@ impl<F: FixedStrict> Unwrapped<F> {
     /// ```
     #[inline]
     #[track_caller]
+    #[must_use]
     pub fn from_str_hex(src: &str) -> Unwrapped<F> {
         Unwrapped(F::unwrapped_from_str_hex(src))
     }

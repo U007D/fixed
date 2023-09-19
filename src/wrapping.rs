@@ -355,6 +355,7 @@ impl<F: Fixed> Wrapping<F> {
     /// );
     /// ```
     #[inline]
+    #[must_use]
     pub fn from_be_bytes(bytes: [u8; size_of::<F>()]) -> Self {
         Wrapping(F::from_be_bytes(bytes))
     }
@@ -380,6 +381,7 @@ impl<F: Fixed> Wrapping<F> {
     /// );
     /// ```
     #[inline]
+    #[must_use]
     pub fn from_le_bytes(bytes: [u8; size_of::<F>()]) -> Self {
         Wrapping(F::from_le_bytes(bytes))
     }
@@ -409,6 +411,7 @@ impl<F: Fixed> Wrapping<F> {
     /// );
     /// ```
     #[inline]
+    #[must_use]
     pub fn from_ne_bytes(bytes: [u8; size_of::<F>()]) -> Self {
         Wrapping(F::from_ne_bytes(bytes))
     }
@@ -1145,6 +1148,7 @@ impl<F: Fixed> Wrapping<F> {
     /// assert_eq!(max.add_prod(max, three), max * 4);
     /// ```
     #[inline]
+    #[must_use]
     pub fn add_prod<const A_FRAC: i32, const B_FRAC: i32>(
         self,
         a: Wrapping<<F::Bits as FixedBits>::Fixed<A_FRAC>>,

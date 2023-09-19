@@ -82,13 +82,13 @@ impl<'a> DigitsUnds<'a> {
         while let Some((&byte, rem)) = rem_bytes.split_first() {
             rem_bytes = rem;
 
-            if byte != b'_' {
+            if byte == b'_' {
+                unds += 1;
+            } else {
                 remaining_digits -= 1;
                 if remaining_digits == 0 {
                     break;
                 }
-            } else {
-                unds += 1;
             }
         }
         if remaining_digits > 0 {
@@ -245,37 +245,31 @@ impl<'a> DigitsExp<'a> {
         let (mut int, mut frac) = if exp == 0 {
             (DigitsExp::new1(int), DigitsExp::new1(frac))
         } else if exp < 0 {
-            match abs_exp.checked_sub(int.len()) {
-                Some(extra_zeros) => {
-                    let mut frac = DigitsExp::new2(int, frac);
-                    frac.trailing_zeros = 0;
-                    if extra_zeros > usize::MAX - frac.len() {
-                        return None;
-                    }
-                    frac.leading_zeros += extra_zeros;
-                    (DigitsExp::EMPTY, frac)
+            if let Some(extra_zeros) = abs_exp.checked_sub(int.len()) {
+                let mut frac = DigitsExp::new2(int, frac);
+                frac.trailing_zeros = 0;
+                if extra_zeros > usize::MAX - frac.len() {
+                    return None;
                 }
-                None => {
-                    let int = int.split_at(int.len() - abs_exp);
-                    (DigitsExp::new1(int.0), DigitsExp::new2(int.1, frac))
-                }
+                frac.leading_zeros += extra_zeros;
+                (DigitsExp::EMPTY, frac)
+            } else {
+                let int = int.split_at(int.len() - abs_exp);
+                (DigitsExp::new1(int.0), DigitsExp::new2(int.1, frac))
             }
         } else {
             // exp > 0
-            match abs_exp.checked_sub(frac.len()) {
-                Some(extra_zeros) => {
-                    let mut int = DigitsExp::new2(int, frac);
-                    int.leading_zeros = 0;
-                    if extra_zeros > usize::MAX - int.len() {
-                        return None;
-                    }
-                    int.trailing_zeros += extra_zeros;
-                    (int, DigitsExp::EMPTY)
+            if let Some(extra_zeros) = abs_exp.checked_sub(frac.len()) {
+                let mut int = DigitsExp::new2(int, frac);
+                int.leading_zeros = 0;
+                if extra_zeros > usize::MAX - int.len() {
+                    return None;
                 }
-                None => {
-                    let frac = frac.split_at(abs_exp);
-                    (DigitsExp::new2(int, frac.0), DigitsExp::new1(frac.1))
-                }
+                int.trailing_zeros += extra_zeros;
+                (int, DigitsExp::EMPTY)
+            } else {
+                let frac = frac.split_at(abs_exp);
+                (DigitsExp::new2(int, frac.0), DigitsExp::new1(frac.1))
             }
         };
         int.leading_zeros = 0;

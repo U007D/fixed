@@ -234,6 +234,7 @@ assert_eq!(Fix::from_bits(0b10_0000), 2);
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn from_bits(bits: $Inner) -> $Fixed<FRAC> {
                     $Fixed { bits }
                 }
@@ -256,6 +257,7 @@ assert_eq!(Fix::from_num(2).to_bits(), 0b10_0000);
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn to_bits(self) -> $Inner {
                     self.bits
                 }
@@ -281,6 +283,7 @@ if cfg!(target_endian = \"big\") {
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn from_be(f: $Fixed<FRAC>) -> $Fixed<FRAC> {
                     $Fixed::from_bits(<$Inner>::from_be(f.to_bits()))
                 }
@@ -306,6 +309,7 @@ if cfg!(target_endian = \"little\") {
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn from_le(f: $Fixed<FRAC>) -> $Fixed<FRAC> {
                     $Fixed::from_bits(<$Inner>::from_le(f.to_bits()))
                 }
@@ -405,6 +409,7 @@ assert_eq!(
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn from_be_bytes(bytes: [u8; $nbytes]) -> $Fixed<FRAC> {
                     $Fixed::from_bits(<$Inner>::from_be_bytes(bytes))
                 }
@@ -429,6 +434,7 @@ assert_eq!(
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn from_le_bytes(bytes: [u8; $nbytes]) -> $Fixed<FRAC> {
                     $Fixed::from_bits(<$Inner>::from_le_bytes(bytes))
                 }
@@ -457,6 +463,7 @@ assert_eq!(
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn from_ne_bytes(bytes: [u8; $nbytes]) -> $Fixed<FRAC> {
                     $Fixed::from_bits(<$Inner>::from_ne_bytes(bytes))
                 }
@@ -482,6 +489,7 @@ assert_eq!(
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn to_be_bytes(self) -> [u8; $nbytes] {
                     self.to_bits().to_be_bytes()
                 }
@@ -507,6 +515,7 @@ assert_eq!(
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn to_le_bytes(self) -> [u8; $nbytes] {
                     self.to_bits().to_le_bytes()
                 }
@@ -536,6 +545,7 @@ assert_eq!(
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn to_ne_bytes(self) -> [u8; $nbytes] {
                     self.to_bits().to_ne_bytes()
                 }
@@ -562,6 +572,7 @@ assert_eq!(f.count_ones(), 3);
 ";
                 #[inline]
                 #[doc(alias("popcount", "popcnt"))]
+                #[must_use]
                 pub const fn count_ones(self) -> u32 {
                     self.to_bits().count_ones()
                 }
@@ -584,6 +595,7 @@ assert_eq!(f.count_zeros(), 3);
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn count_zeros(self) -> u32 {
                     self.to_bits().count_zeros()
                 }
@@ -607,6 +619,7 @@ assert_eq!(f.leading_ones(), ", $s_nbits, " - 6);
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn leading_ones(self) -> u32 {
                     (!self.to_bits()).leading_zeros()
                 }
@@ -629,6 +642,7 @@ assert_eq!(f.leading_zeros(), ", $s_nbits, " - 6);
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn leading_zeros(self) -> u32 {
                     self.to_bits().leading_zeros()
                 }
@@ -651,6 +665,7 @@ assert_eq!(f.trailing_ones(), 5);
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn trailing_ones(self) -> u32 {
                     (!self.to_bits()).trailing_zeros()
                 }
@@ -673,6 +688,7 @@ assert_eq!(f.trailing_zeros(), 5);
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn trailing_zeros(self) -> u32 {
                     self.to_bits().trailing_zeros()
                 }
@@ -698,6 +714,7 @@ assert_eq!(Fix::from_num(3).significant_bits(), 6);      // “__11.0000”
 ```
 ";
                     #[inline]
+                    #[must_use]
                     pub const fn significant_bits(self) -> u32 {
                         $Inner::BITS - self.leading_zeros()
                     }
@@ -730,6 +747,7 @@ assert_eq!(Fix::from_num(3).signed_bits(), 7);       // “_011.0000”
 ```
 ";
                     #[inline]
+                    #[must_use]
                     pub const fn signed_bits(self) -> u32 {
                         let leading = if self.is_negative() {
                             self.leading_ones()
@@ -765,6 +783,7 @@ assert_eq!(Fix::from_num(0.1875).int_log2(), -3);
                 #[doc(alias("ilog2"))]
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn int_log2(self) -> i32 {
                     match self.checked_int_log2() {
                         Some(ans) => ans,
@@ -795,6 +814,7 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log2(), Some(-3));
 ";
                 #[inline]
                 #[doc(alias("checked_ilog2"))]
+                #[must_use]
                 pub const fn checked_int_log2(self) -> Option<i32> {
                     if self.to_bits() <= 0 {
                         return None;
@@ -897,6 +917,7 @@ assert!(!Fix::from_num(5).is_zero());
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn is_zero(self) -> bool {
                     self.to_bits() == 0
                 }
@@ -921,6 +942,7 @@ assert!(!Fix::from_num(-5).is_positive());
 ```
 ";
                     #[inline]
+                    #[must_use]
                     pub const fn is_positive(self) -> bool {
                         self.to_bits().is_positive()
                     }
@@ -943,6 +965,7 @@ assert!(Fix::from_num(-5).is_negative());
 ```
 ";
                     #[inline]
+                    #[must_use]
                     pub const fn is_negative(self) -> bool {
                         self.to_bits().is_negative()
                     }
@@ -972,6 +995,7 @@ assert!(half.is_power_of_two());
 ```
 ";
                     #[inline]
+                    #[must_use]
                     pub const fn is_power_of_two(self) -> bool {
                         self.to_bits().is_power_of_two()
                     }
@@ -1618,6 +1642,7 @@ assert_eq!(Fix::MIN.unsigned_abs(), min_as_unsigned);
 ```
 ";
                     #[inline]
+                    #[must_use]
                     pub const fn unsigned_abs(self) -> $UFixed<FRAC> {
                         $UFixed::from_bits(self.to_bits().unsigned_abs())
                     }
@@ -1901,6 +1926,7 @@ assert_eq!(Fix::from_num(5).inv_lerp::<4>(start, end), 2);
 ";
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn inv_lerp<const RET_FRAC: i32>(
                     self,
                     start: $Fixed<FRAC>,
@@ -2293,6 +2319,7 @@ assert_eq!(Fix::from_num(5).checked_neg(), None);",
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn checked_neg(self) -> Option<$Fixed<FRAC>> {
                     match self.to_bits().checked_neg() {
                         None => None,
@@ -2745,6 +2772,7 @@ assert_eq!(Fix::MIN.checked_abs(), None);
 ```
 ";
                     #[inline]
+                    #[must_use]
                     pub const fn checked_abs(self) -> Option<$Fixed<FRAC>> {
                         match self.to_bits().checked_abs() {
                             None => None,
@@ -2836,6 +2864,7 @@ assert_eq!(ZeroIntBits::from_num(-0.5).checked_signum(), None);
 ```
 ";
                     #[inline]
+                    #[must_use]
                     pub const fn checked_signum(self) -> Option<$Fixed<FRAC>> {
                         match self.overflowing_signum() {
                             (ans, false) => Some(ans),
@@ -2922,6 +2951,7 @@ assert_eq!(Fix::MAX.checked_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5)), None);
 [number of fractional bits]: Self::FRAC_BITS
 ";
                 #[inline]
+                #[must_use]
                 pub const fn checked_inv_lerp<const RET_FRAC: i32>(
                     self,
                     start: $Fixed<FRAC>,
@@ -2965,6 +2995,7 @@ assert!(Fix::MAX.checked_next_power_of_two().is_none());
 ```
 ";
                     #[inline]
+                    #[must_use]
                     pub const fn checked_next_power_of_two(self) -> Option<$Fixed<FRAC>> {
                         match self.to_bits().checked_next_power_of_two() {
                             Some(bits) => Some(Self::from_bits(bits)),
@@ -3631,6 +3662,7 @@ assert_eq!(Fix::MAX.saturating_inv_lerp::<4>(Fix::from_num(0.5), Fix::ZERO), Fix
 ";
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn saturating_inv_lerp<const RET_FRAC: i32>(
                     self,
                     start: $Fixed<FRAC>,
@@ -4301,6 +4333,7 @@ assert_eq!(
 ";
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn wrapping_inv_lerp<const RET_FRAC: i32>(
                     self,
                     start: $Fixed<FRAC>,
@@ -5351,6 +5384,7 @@ let _overflow = Fix::MAX.unwrapped_inv_lerp::<4>(Fix::ZERO, Fix::from_num(0.5));
 ";
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn unwrapped_inv_lerp<const RET_FRAC: i32>(
                     self,
                     start: $Fixed<FRAC>,
@@ -5620,6 +5654,7 @@ assert_eq!(Fix::from_num(5).overflowing_neg(), (Fix::from_bits(neg_five_bits), t
 ```
 ";
                 #[inline]
+                #[must_use]
                 pub const fn overflowing_neg(self) -> ($Fixed<FRAC>, bool) {
                     let (ans, o) = self.to_bits().overflowing_neg();
                     (Self::from_bits(ans), o)
@@ -6018,6 +6053,7 @@ assert_eq!(Fix::MIN.overflowing_abs(), (Fix::MIN, true));
 ```
 ";
                     #[inline]
+                    #[must_use]
                     pub const fn overflowing_abs(self) -> ($Fixed<FRAC>, bool) {
                         let (ans, o) = self.to_bits().overflowing_abs();
                         (Self::from_bits(ans), o)
@@ -6118,6 +6154,7 @@ assert_eq!(ZeroIntBits::from_num(-0.5).overflowing_signum(), (ZeroIntBits::ZERO,
 ```
 ";
                     #[inline]
+                    #[must_use]
                     pub const fn overflowing_signum(self) -> ($Fixed<FRAC>, bool) {
                         if self.to_bits() == 0 {
                             return ($Fixed::ZERO, false);
@@ -6282,6 +6319,7 @@ assert_eq!(
 ";
                 #[inline]
                 #[track_caller]
+                #[must_use]
                 pub const fn overflowing_inv_lerp<const RET_FRAC: i32>(
                     self,
                     start: $Fixed<FRAC>,

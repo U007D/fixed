@@ -154,6 +154,7 @@ assert_eq!(",
 ";
             #[inline]
             #[track_caller]
+            #[must_use]
             pub fn to_num<Dst: FromFixed>(self) -> Dst {
                 Dst::from_fixed(self)
             }
@@ -290,6 +291,7 @@ assert_eq!(one_point_625.checked_to_num::<f32>(), Some(1.625f32));
 [`f16`]: half::f16
 ";
             #[inline]
+            #[must_use]
             pub fn checked_to_num<Dst: FromFixed>(self) -> Option<Dst> {
                 Dst::checked_from_fixed(self)
             }
@@ -427,6 +429,7 @@ assert_eq!(one_point_625.saturating_to_num::<f32>(), 1.625f32);
 [`f16`]: half::f16
 ";
             #[inline]
+            #[must_use]
             pub fn saturating_to_num<Dst: FromFixed>(self) -> Dst {
                 Dst::saturating_from_fixed(self)
             }
@@ -556,6 +559,7 @@ assert_eq!(one_point_625.wrapping_to_num::<f32>(), 1.625f32);
 [`f16`]: half::f16
 ";
             #[inline]
+            #[must_use]
             pub fn wrapping_to_num<Dst: FromFixed>(self) -> Dst {
                 Dst::wrapping_from_fixed(self)
             }
@@ -680,6 +684,7 @@ let _overflow = Fix::MAX.unwrapped_to_num::<TooFewIntBits>();
 ";
             #[inline]
             #[track_caller]
+            #[must_use]
             pub fn unwrapped_to_num<Dst: FromFixed>(self) -> Dst {
                 match Dst::overflowing_from_fixed(self) {
                     (_, true) => panic!("overflow"),
@@ -821,6 +826,7 @@ assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
 [`f16`]: half::f16
 ";
             #[inline]
+            #[must_use]
             pub fn overflowing_to_num<Dst: FromFixed>(self) -> (Dst, bool) {
                 Dst::overflowing_from_fixed(self)
             }

@@ -61,11 +61,10 @@ macro_rules! impl_fixed_from_bits {
                         let (widened, overflow): ($InnerI, bool) = src.overflowing_cast();
                         debug_assert!(!overflow);
                         return $Fixed::fixed_from_bits(widened, src_frac);
-                    } else {
-                        let (widened, overflow): ($InnerU, bool) = src.overflowing_cast();
-                        debug_assert!(!overflow);
-                        return $Fixed::fixed_from_bits(widened, src_frac);
                     }
+                    let (widened, overflow): ($InnerU, bool) = src.overflowing_cast();
+                    debug_assert!(!overflow);
+                    return $Fixed::fixed_from_bits(widened, src_frac);
                 }
 
                 match src_shift(FRAC, src_frac, src_bits) {
