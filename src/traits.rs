@@ -1614,6 +1614,22 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn saturating_mul_int(self, rhs: Self::Bits) -> Self;
 
+    /// Saturating division by an integer. Returns the quotient, saturating on overflow.
+    ///
+    /// Overflow can only occur when dividing the minimum value by &minus;1.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_div\_int][FixedI32::saturating_div_int]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_div\_int][FixedU32::saturating_div_int]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the divisor is zero.
+    #[track_caller]
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn saturating_div_int(self, rhs: Self::Bits) -> Self;
+
     /// Saturating distance. Returns the distance from `self` to `other`,
     /// saturating on overflow.
     ///
@@ -4095,6 +4111,7 @@ macro_rules! impl_fixed {
                 b: <Self::Bits as FixedBits>::Fixed<B_FRAC>,
             ) }
             trait_delegate! { fn saturating_mul_int(self, rhs: Self::Bits) -> Self }
+            trait_delegate! { fn saturating_div_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn saturating_dist(self, other: Self) -> Self }
             trait_delegate! { fn wrapping_neg(self) -> Self }
             trait_delegate! { fn wrapping_add(self, rhs: Self) -> Self }

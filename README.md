@@ -182,6 +182,11 @@ The conversions supported cover the following cases.
 ### Version 1.24.0 news (unreleased)
 
   * The crate now requires rustc version 1.67.0 or later.
+  * The [`saturating_div_int`][f-sdi-1-24] method was added to all fixed-point
+    numbers and to the [`Fixed`][tf-1-24] trait.
+
+[f-sdi-1-24]: https://docs.rs/fixed/~1.24/fixed/struct.FixedI32.html#method.saturating_div_int
+[tf-1-24]: https://docs.rs/fixed/~1.24/fixed/traits/trait.Fixed.html
 
 ### Other releases
 
