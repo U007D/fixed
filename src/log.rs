@@ -13,13 +13,30 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
+#[derive(Clone, Copy, Debug)]
+pub struct Base(u32);
+
+impl Base {
+    pub const fn new(base: u32) -> Option<Base> {
+        if base >= 2 {
+            Some(Base(base))
+        } else {
+            None
+        }
+    }
+
+    pub const fn get(self) -> u32 {
+        self.0
+    }
+}
+
 macro_rules! impl_int_part {
-    ($u:ident) => {
-        pub const fn $u(val: $u, base: u32) -> i32 {
+    ($u:ident, $NZ:ident) => {
+        pub const fn $u(val: $NZ, base: Base) -> i32 {
             const MAX_TABLE_SIZE: usize = (u32::BITS - $u::BITS.leading_zeros() - 2) as usize;
 
-            debug_assert!(val > 0);
-            debug_assert!(base >= 2);
+            let val = val.get();
+            let base = base.get();
 
             let baseu = base as $u;
             if baseu as u32 != base || val < baseu {
@@ -60,20 +77,23 @@ macro_rules! impl_int_part {
 }
 
 pub mod int_part {
-    impl_int_part! { u8 }
-    impl_int_part! { u16 }
-    impl_int_part! { u32 }
-    impl_int_part! { u64 }
-    impl_int_part! { u128 }
+    use crate::log::Base;
+    use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8};
+
+    impl_int_part! { u8, NonZeroU8 }
+    impl_int_part! { u16, NonZeroU16 }
+    impl_int_part! { u32, NonZeroU32 }
+    impl_int_part! { u64, NonZeroU64 }
+    impl_int_part! { u128, NonZeroU128 }
 }
 
 macro_rules! impl_frac_part {
-    ($u:ident) => {
-        pub const fn $u(val: $u, base: u32) -> i32 {
+    ($u:ident, $NZ:ident) => {
+        pub const fn $u(val: $NZ, base: Base) -> i32 {
             const MAX_TABLE_SIZE: usize = (u32::BITS - $u::BITS.leading_zeros() - 2) as usize;
 
-            debug_assert!(val > 0);
-            debug_assert!(base >= 2);
+            let val = val.get();
+            let base = base.get();
 
             let baseu = base as $u;
             if baseu as u32 != base || val.checked_mul(baseu).is_none() {
@@ -114,30 +134,40 @@ macro_rules! impl_frac_part {
 }
 
 pub mod frac_part {
-    impl_frac_part! { u8 }
-    impl_frac_part! { u16 }
-    impl_frac_part! { u32 }
-    impl_frac_part! { u64 }
-    impl_frac_part! { u128 }
+    use crate::log::Base;
+    use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8};
+
+    impl_frac_part! { u8, NonZeroU8 }
+    impl_frac_part! { u16, NonZeroU16 }
+    impl_frac_part! { u32, NonZeroU32 }
+    impl_frac_part! { u64, NonZeroU64 }
+    impl_frac_part! { u128, NonZeroU128 }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::log;
+    use crate::log::Base;
+    use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8};
 
     // these tests require the maximum table sizes
     #[test]
     fn check_table_size_is_sufficient() {
-        assert_eq!(log::int_part::u8(u8::MAX, 2), 7);
-        assert_eq!(log::int_part::u16(u16::MAX, 2), 15);
-        assert_eq!(log::int_part::u32(u32::MAX, 2), 31);
-        assert_eq!(log::int_part::u64(u64::MAX, 2), 63);
-        assert_eq!(log::int_part::u128(u128::MAX, 2), 127);
+        let bin = Base::new(2).unwrap();
 
-        assert_eq!(log::frac_part::u8(1, 2), -8);
-        assert_eq!(log::frac_part::u16(1, 2), -16);
-        assert_eq!(log::frac_part::u32(1, 2), -32);
-        assert_eq!(log::frac_part::u64(1, 2), -64);
-        assert_eq!(log::frac_part::u128(1, 2), -128);
+        assert_eq!(log::int_part::u8(NonZeroU8::MAX, bin), 7);
+        assert_eq!(log::int_part::u16(NonZeroU16::MAX, bin), 15);
+        assert_eq!(log::int_part::u32(NonZeroU32::MAX, bin), 31);
+        assert_eq!(log::int_part::u64(NonZeroU64::MAX, bin), 63);
+        assert_eq!(log::int_part::u128(NonZeroU128::MAX, bin), 127);
+
+        assert_eq!(log::frac_part::u8(NonZeroU8::new(1).unwrap(), bin), -8);
+        assert_eq!(log::frac_part::u16(NonZeroU16::new(1).unwrap(), bin), -16);
+        assert_eq!(log::frac_part::u32(NonZeroU32::new(1).unwrap(), bin), -32);
+        assert_eq!(log::frac_part::u64(NonZeroU64::new(1).unwrap(), bin), -64);
+        assert_eq!(
+            log::frac_part::u128(NonZeroU128::new(1).unwrap(), bin),
+            -128
+        );
     }
 }

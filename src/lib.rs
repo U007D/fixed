@@ -463,6 +463,7 @@ pub use crate::{
     wrapping::Wrapping,
 };
 use crate::{
+    log::Base,
     traits::{FromFixed, ToFixed},
     types::extra::{If, True},
 };

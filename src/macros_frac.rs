@@ -1052,7 +1052,12 @@ assert_eq!(", $s_fixed, "::<6>::from_num(0.09375).checked_int_log10(), Some(-2))
                         }
                     }
                     let frac = bits << Self::INT_BITS;
-                    Some(log10::frac_part::$UInner(frac))
+                    debug_assert!(frac != 0);
+                    // SAFETY: at this point, we know that self.to_bits() > 0,
+                    // and that the integer bits are zero, so the fractional
+                    // bits must be non-zero.
+                    let non_zero = unsafe { $NonZeroUInner::new_unchecked(frac) };
+                    Some(log10::frac_part::$UInner(non_zero))
                 }
             }
 
@@ -1081,19 +1086,27 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log(5), Some(-2));
                 #[doc(alias("checked_ilog10"))]
                 #[must_use]
                 pub const fn checked_int_log(self, base: u32) -> Option<i32> {
-                    if self.to_bits() <= 0 || base < 2 {
+                    if self.to_bits() <= 0 {
                         return None;
                     }
+                    let Some(base) = Base::new(base) else {
+                        return None;
+                    };
                     // Use unsigned representation.
                     let bits = self.to_bits() as $UInner;
                     if Self::FRAC_BITS < $UInner::BITS as i32 {
                         let int = bits >> Self::FRAC_BITS;
-                        if int != 0 {
-                            return Some(log::int_part::$UInner(int, base));
+                        if let Some(non_zero) = $NonZeroUInner::new(int) {
+                            return Some(log::int_part::$UInner(non_zero, base));
                         }
                     }
                     let frac = bits << Self::INT_BITS;
-                    Some(log::frac_part::$UInner(frac, base))
+                    debug_assert!(frac != 0);
+                    // SAFETY: at this point, we know that self.to_bits() > 0,
+                    // and that the integer bits are zero, so the fractional
+                    // bits must be non-zero.
+                    let non_zero = unsafe { $NonZeroUInner::new_unchecked(frac) };
+                    Some(log::frac_part::$UInner(non_zero, base))
                 }
             }
 
