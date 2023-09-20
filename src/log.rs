@@ -33,7 +33,7 @@ impl Base {
 macro_rules! impl_int_part {
     ($u:ident, $NZ:ident) => {
         pub const fn $u(val: $NZ, base: Base) -> i32 {
-            const MAX_TABLE_SIZE: usize = (u32::BITS - $u::BITS.leading_zeros() - 2) as usize;
+            const MAX_TABLE_SIZE: usize = ($u::BITS.ilog2() - 1) as usize;
 
             let val = val.get();
             let base = base.get();
@@ -47,7 +47,7 @@ macro_rules! impl_int_part {
             let mut base_powers: [$u; MAX_TABLE_SIZE] = [0; MAX_TABLE_SIZE];
 
             let mut i = 0;
-            let mut partial_log = 1;
+            let mut partial_log = 1u32;
             let mut partial_val = baseu;
 
             loop {
@@ -71,7 +71,7 @@ macro_rules! impl_int_part {
                     }
                 }
             }
-            return partial_log;
+            return partial_log as i32;
         }
     };
 }
@@ -90,7 +90,7 @@ pub mod int_part {
 macro_rules! impl_frac_part {
     ($u:ident, $NZ:ident) => {
         pub const fn $u(val: $NZ, base: Base) -> i32 {
-            const MAX_TABLE_SIZE: usize = (u32::BITS - $u::BITS.leading_zeros() - 2) as usize;
+            const MAX_TABLE_SIZE: usize = ($u::BITS.ilog2() - 1) as usize;
 
             let val = val.get();
             let base = base.get();
@@ -104,7 +104,7 @@ macro_rules! impl_frac_part {
             let mut base_powers: [$u; MAX_TABLE_SIZE] = [0; MAX_TABLE_SIZE];
 
             let mut i = 0;
-            let mut partial_log = 1;
+            let mut partial_log = 1u32;
             let mut partial_val = baseu;
 
             loop {
@@ -128,7 +128,7 @@ macro_rules! impl_frac_part {
                     }
                 }
             }
-            return -1 - partial_log;
+            return -1 - partial_log as i32;
         }
     };
 }
