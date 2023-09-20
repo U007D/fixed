@@ -424,6 +424,7 @@ pub use crate::{
     wrapping::Wrapping,
 };
 use crate::{
+    log::Base,
     traits::{FromFixed, ToFixed},
     types::extra::{
         Diff, IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, Sum, True, Unsigned, U0,
