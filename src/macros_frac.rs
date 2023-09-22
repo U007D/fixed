@@ -15,17 +15,17 @@
 
 macro_rules! fixed_frac {
     (
-        $Fixed:ident[$s_fixed:expr](
-            $Inner:ident[$s_inner:expr], $nbits:expr, $s_nbits:expr,
-            $s_nbits_m1:expr, $s_nbits_m4:expr
-        ),
-        $UFixed:ident, $UInner:ident, $NonZeroUInner:ident, $Signedness:tt
+        {Self, Inner} = {$Self:ident, $Inner:ident},
+        Signedness = $Signedness:ident,
+        {nm4, nm1, n} = {$nm4:literal, $nm1:literal, $n:literal},
+        {USelf, UInner} = {$USelf:ident, $UInner:ident},
+        NonZeroUInner = $NonZeroUInner:ident,
     ) => {
         /// The items in this block are implemented for
-        #[doc = concat!("0&nbsp;≤&nbsp;`FRAC`&nbsp;≤&nbsp;", $s_nbits, ".")]
-        impl<const FRAC: i32> $Fixed<FRAC>
+        #[doc = concat!("0&nbsp;≤&nbsp;`FRAC`&nbsp;≤&nbsp;", $n, ".")]
+        impl<const FRAC: i32> $Self<FRAC>
         where
-            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
+            If<{ (0 <= FRAC) & (FRAC <= $n) }>: True,
         {
             comment! {
                 "Parses a fixed-point literal.
@@ -70,8 +70,8 @@ Panics if the number is not valid or overflows.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::"#, $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::"#, stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 
 assert_eq!(Fix::lit("1.75"), 1.75);
 assert_eq!(Fix::lit("1_.7_5_"), 1.75);
@@ -106,8 +106,8 @@ This method is useful to write constant fixed-point literals.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::"#, $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::"#, stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 const ONE_AND_HALF: Fix = Fix::lit("1.5");
 assert_eq!(ONE_AND_HALF, 1.5);
 ```
@@ -115,9 +115,9 @@ assert_eq!(ONE_AND_HALF, 1.5);
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn lit(src: &str) -> $Fixed<FRAC> {
+                pub const fn lit(src: &str) -> $Self<FRAC> {
                     match from_str::$Inner::lit(src, FRAC as u32) {
-                        Ok(s) => $Fixed::from_bits(s),
+                        Ok(s) => $Self::from_bits(s),
                         Err(e) => panic!("{}", e.lit_message()),
                     }
                 }
@@ -139,8 +139,8 @@ value is scaled by 10 to the power of the exponent.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 assert_eq!(Fix::from_str("1.75"), Ok(Fix::from_num(1.75)));
 "#,
                 if_signed_else_empty_str! {
@@ -153,9 +153,9 @@ assert_eq!(Fix::from_str("1.25e-1"), Ok(Fix::from_num(0.125)));
 ```
 "#;
                 #[inline]
-                pub const fn from_str(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                pub const fn from_str(src: &str) -> Result<$Self<FRAC>, ParseFixedError> {
                     match from_str::$Inner::from_str_radix(src, 10, FRAC as u32) {
-                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Ok(bits) => Ok($Self::from_bits(bits)),
                         Err(e) => Err(e),
                     }
                 }
@@ -181,8 +181,8 @@ radix is 2, base-2 exponents are equivalent to the other form of exponent.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 // 1.11 in binary is 1.75
 assert_eq!(Fix::from_str_binary("1.11"), Ok(Fix::from_num(1.75)));
 "#,
@@ -198,9 +198,9 @@ assert_eq!(Fix::from_str_binary("11101.01e-2"), Ok(Fix::from_num(7.3125)));
 ```
 "#;
                 #[inline]
-                pub const fn from_str_binary(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                pub const fn from_str_binary(src: &str) -> Result<$Self<FRAC>, ParseFixedError> {
                     match from_str::$Inner::from_str_radix(src, 2, FRAC as u32) {
-                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Ok(bits) => Ok($Self::from_bits(bits)),
                         Err(e) => Err(e),
                     }
                 }
@@ -226,8 +226,8 @@ parsed value is scaled by 2 to the power of the exponent. For example, for octal
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 // 1.75 is 1.11 in binary, 1.6 in octal
 let f = Fix::from_str_octal("1.6");
 let check = Fix::from_bits(0b111 << (4 - 2));
@@ -243,9 +243,9 @@ assert_eq!(neg, Ok(-check));
 ```
 "#;
                 #[inline]
-                pub const fn from_str_octal(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                pub const fn from_str_octal(src: &str) -> Result<$Self<FRAC>, ParseFixedError> {
                     match from_str::$Inner::from_str_radix(src, 8, FRAC as u32) {
-                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Ok(bits) => Ok($Self::from_bits(bits)),
                         Err(e) => Err(e),
                     }
                 }
@@ -272,8 +272,8 @@ hexadecimal “`P8`” means ×2⁸, and is equivalent to “`E2`” which means
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 // 1.C in hexadecimal is 1.75
 assert_eq!(Fix::from_str_hex("1.C"), Ok(Fix::from_num(1.75)));
 "#,
@@ -287,9 +287,9 @@ assert_eq!(Fix::from_str_hex(".01C@+2"), Ok(Fix::from_num(1.75)));
 ```
 "#;
                 #[inline]
-                pub const fn from_str_hex(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                pub const fn from_str_hex(src: &str) -> Result<$Self<FRAC>, ParseFixedError> {
                     match from_str::$Inner::from_str_radix(src, 16, FRAC as u32) {
-                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Ok(bits) => Ok($Self::from_bits(bits)),
                         Err(e) => Err(e),
                     }
                 }
@@ -324,9 +324,9 @@ assert_eq!(U8F8::saturating_from_str("-1"), Ok(U8F8::ZERO));
                 #[inline]
                 pub const fn saturating_from_str(
                     src: &str,
-                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                ) -> Result<$Self<FRAC>, ParseFixedError> {
                     match from_str::$Inner::saturating_from_str_radix(src, 10, FRAC as u32) {
-                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Ok(bits) => Ok($Self::from_bits(bits)),
                         Err(e) => Err(e),
                     }
                 }
@@ -361,9 +361,9 @@ assert_eq!(U8F8::saturating_from_str_binary("-1"), Ok(U8F8::ZERO));
                 #[inline]
                 pub const fn saturating_from_str_binary(
                     src: &str,
-                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                ) -> Result<$Self<FRAC>, ParseFixedError> {
                     match from_str::$Inner::saturating_from_str_radix(src, 2, FRAC as u32) {
-                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Ok(bits) => Ok($Self::from_bits(bits)),
                         Err(e) => Err(e),
                     }
                 }
@@ -398,9 +398,9 @@ assert_eq!(U8F8::saturating_from_str_octal("-1"), Ok(U8F8::ZERO));
                 #[inline]
                 pub const fn saturating_from_str_octal(
                     src: &str,
-                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                ) -> Result<$Self<FRAC>, ParseFixedError> {
                     match from_str::$Inner::saturating_from_str_radix(src, 8, FRAC as u32) {
-                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Ok(bits) => Ok($Self::from_bits(bits)),
                         Err(e) => Err(e),
                     }
                 }
@@ -435,9 +435,9 @@ assert_eq!(U8F8::saturating_from_str_hex("-1"), Ok(U8F8::ZERO));
                 #[inline]
                 pub const fn saturating_from_str_hex(
                     src: &str,
-                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                ) -> Result<$Self<FRAC>, ParseFixedError> {
                     match from_str::$Inner::saturating_from_str_radix(src, 16, FRAC as u32) {
-                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Ok(bits) => Ok($Self::from_bits(bits)),
                         Err(e) => Err(e),
                     }
                 }
@@ -472,9 +472,9 @@ assert_eq!(U8F8::wrapping_from_str("-9999.5"), Ok(U8F8::from_num(240.5)));
                 "```
 ";
                 #[inline]
-                pub const fn wrapping_from_str(src: &str) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                pub const fn wrapping_from_str(src: &str) -> Result<$Self<FRAC>, ParseFixedError> {
                     match from_str::$Inner::wrapping_from_str_radix(src, 10, FRAC as u32) {
-                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Ok(bits) => Ok($Self::from_bits(bits)),
                         Err(e) => Err(e),
                     }
                 }
@@ -511,9 +511,9 @@ assert_eq!(U8F8::wrapping_from_str_binary("-101100111000.1"), Ok(check.wrapping_
                 #[inline]
                 pub const fn wrapping_from_str_binary(
                     src: &str,
-                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                ) -> Result<$Self<FRAC>, ParseFixedError> {
                     match from_str::$Inner::wrapping_from_str_radix(src, 2, FRAC as u32) {
-                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Ok(bits) => Ok($Self::from_bits(bits)),
                         Err(e) => Err(e),
                     }
                 }
@@ -550,9 +550,9 @@ assert_eq!(U8F8::wrapping_from_str_octal("-7165.4"), Ok(check.wrapping_neg()));
                 #[inline]
                 pub const fn wrapping_from_str_octal(
                     src: &str,
-                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                ) -> Result<$Self<FRAC>, ParseFixedError> {
                     match from_str::$Inner::wrapping_from_str_radix(src, 8, FRAC as u32) {
-                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Ok(bits) => Ok($Self::from_bits(bits)),
                         Err(e) => Err(e),
                     }
                 }
@@ -589,9 +589,9 @@ assert_eq!(U8F8::wrapping_from_str_hex("-C0F.FE"), Ok(check.wrapping_neg()));
                 #[inline]
                 pub const fn wrapping_from_str_hex(
                     src: &str,
-                ) -> Result<$Fixed<FRAC>, ParseFixedError> {
+                ) -> Result<$Self<FRAC>, ParseFixedError> {
                     match from_str::$Inner::wrapping_from_str_radix(src, 16, FRAC as u32) {
-                        Ok(bits) => Ok($Fixed::from_bits(bits)),
+                        Ok(bits) => Ok($Self::from_bits(bits)),
                         Err(e) => Err(e),
                     }
                 }
@@ -613,8 +613,8 @@ Panics if the value does not fit or if there is a parsing error.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 // 1.75 is 1.11 in binary
 let f = Fix::unwrapped_from_str("1.75");
 assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
@@ -626,16 +626,16 @@ The following panics because of a parsing error.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::"#, $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::"#, stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 let _error = Fix::unwrapped_from_str("1.75.");
 ```
 "#;
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn unwrapped_from_str(src: &str) -> $Fixed<FRAC> {
-                    match $Fixed::from_str(src) {
+                pub const fn unwrapped_from_str(src: &str) -> $Self<FRAC> {
+                    match $Self::from_str(src) {
                         Ok(o) => o,
                         Err(e) => panic!("{}", e.message()),
                     }
@@ -658,8 +658,8 @@ Panics if the value does not fit or if there is a parsing error.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 // 1.75 is 1.11 in binary
 let f = Fix::unwrapped_from_str_binary("1.11");
 assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
@@ -671,16 +671,16 @@ The following panics because of a parsing error.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::"#, $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::"#, stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 let _error = Fix::unwrapped_from_str_binary("1.2");
 ```
 "#;
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn unwrapped_from_str_binary(src: &str) -> $Fixed<FRAC> {
-                    match $Fixed::from_str_binary(src) {
+                pub const fn unwrapped_from_str_binary(src: &str) -> $Self<FRAC> {
+                    match $Self::from_str_binary(src) {
                         Ok(o) => o,
                         Err(e) => panic!("{}", e.message()),
                     }
@@ -703,8 +703,8 @@ Panics if the value does not fit or if there is a parsing error.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 // 1.75 is 1.11 in binary, 1.6 in octal
 let f = Fix::unwrapped_from_str_octal("1.6");
 assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
@@ -716,16 +716,16 @@ The following panics because of a parsing error.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::"#, $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::"#, stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 let _error = Fix::unwrapped_from_str_octal("1.8");
 ```
 "#;
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn unwrapped_from_str_octal(src: &str) -> $Fixed<FRAC> {
-                    match $Fixed::from_str_octal(src) {
+                pub const fn unwrapped_from_str_octal(src: &str) -> $Self<FRAC> {
+                    match $Self::from_str_octal(src) {
                         Ok(o) => o,
                         Err(e) => panic!("{}", e.message()),
                     }
@@ -748,8 +748,8 @@ Panics if the value does not fit or if there is a parsing error.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 // 1.75 is 1.11 in binary, 1.C in hexadecimal
 let f = Fix::unwrapped_from_str_hex("1.C");
 assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
@@ -761,16 +761,16 @@ The following panics because of a parsing error.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::"#, $s_fixed, ";
-type Fix = ", $s_fixed, r#"<4>;
+use fixed::"#, stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<4>;
 let _error = Fix::unwrapped_from_str_hex("1.G");
 ```
 "#;
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn unwrapped_from_str_hex(src: &str) -> $Fixed<FRAC> {
-                    match $Fixed::from_str_hex(src) {
+                pub const fn unwrapped_from_str_hex(src: &str) -> $Self<FRAC> {
+                    match $Self::from_str_hex(src) {
                         Ok(o) => o,
                         Err(e) => panic!("{}", e.message()),
                     }
@@ -811,9 +811,9 @@ assert_eq!(U8F8::overflowing_from_str("9999.5"), Ok((U8F8::from_num(15.5), true)
                 #[inline]
                 pub const fn overflowing_from_str(
                     src: &str,
-                ) -> Result<($Fixed<FRAC>, bool), ParseFixedError> {
+                ) -> Result<($Self<FRAC>, bool), ParseFixedError> {
                     match from_str::$Inner::overflowing_from_str_radix(src, 10, FRAC as u32) {
-                        Ok((bits, overflow)) => Ok(($Fixed::from_bits(bits), overflow)),
+                        Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
                         Err(e) => Err(e),
                     }
                 }
@@ -853,9 +853,9 @@ assert_eq!(U8F8::overflowing_from_str_binary("101100111000.1"), Ok((check, true)
                 #[inline]
                 pub const fn overflowing_from_str_binary(
                     src: &str,
-                ) -> Result<($Fixed<FRAC>, bool), ParseFixedError> {
+                ) -> Result<($Self<FRAC>, bool), ParseFixedError> {
                     match from_str::$Inner::overflowing_from_str_radix(src, 2, FRAC as u32) {
-                        Ok((bits, overflow)) => Ok(($Fixed::from_bits(bits), overflow)),
+                        Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
                         Err(e) => Err(e),
                     }
                 }
@@ -895,9 +895,9 @@ assert_eq!(U8F8::overflowing_from_str_octal("7165.4"), Ok((check, true)));
                 #[inline]
                 pub const fn overflowing_from_str_octal(
                     src: &str,
-                ) -> Result<($Fixed<FRAC>, bool), ParseFixedError> {
+                ) -> Result<($Self<FRAC>, bool), ParseFixedError> {
                     match from_str::$Inner::overflowing_from_str_radix(src, 8, FRAC as u32) {
-                        Ok((bits, overflow)) => Ok(($Fixed::from_bits(bits), overflow)),
+                        Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
                         Err(e) => Err(e),
                     }
                 }
@@ -937,9 +937,9 @@ assert_eq!(U8F8::overflowing_from_str_hex("C0F.FE"), Ok((check, true)));
                 #[inline]
                 pub const fn overflowing_from_str_hex(
                     src: &str,
-                ) -> Result<($Fixed<FRAC>, bool), ParseFixedError> {
+                ) -> Result<($Self<FRAC>, bool), ParseFixedError> {
                     match from_str::$Inner::overflowing_from_str_radix(src, 16, FRAC as u32) {
-                        Ok((bits, overflow)) => Ok(($Fixed::from_bits(bits), overflow)),
+                        Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
                         Err(e) => Err(e),
                     }
                 }
@@ -958,11 +958,11 @@ Panics if the fixed-point number is ", if_signed_unsigned!($Signedness, "≤&nbs
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-assert_eq!(", $s_fixed, "::<2>::from_num(10).int_log10(), 1);
-assert_eq!(", $s_fixed, "::<2>::from_num(9.75).int_log10(), 0);
-assert_eq!(", $s_fixed, "::<6>::from_num(0.109375).int_log10(), -1);
-assert_eq!(", $s_fixed, "::<6>::from_num(0.09375).int_log10(), -2);
+use fixed::", stringify!($Self), ";
+assert_eq!(", stringify!($Self), "::<2>::from_num(10).int_log10(), 1);
+assert_eq!(", stringify!($Self), "::<2>::from_num(9.75).int_log10(), 0);
+assert_eq!(", stringify!($Self), "::<6>::from_num(0.109375).int_log10(), -1);
+assert_eq!(", stringify!($Self), "::<6>::from_num(0.09375).int_log10(), -2);
 ```
 ";
                 #[doc(alias("ilog10"))]
@@ -991,8 +991,8 @@ or if the base is <&nbsp;2.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(4).int_log(2), 2);
 assert_eq!(Fix::from_num(5.75).int_log(5), 1);
 assert_eq!(Fix::from_num(0.25).int_log(5), -1);
@@ -1028,12 +1028,12 @@ Returns the logarithm or [`None`] if the fixed-point number is
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-assert_eq!(", $s_fixed, "::<2>::ZERO.checked_int_log10(), None);
-assert_eq!(", $s_fixed, "::<2>::from_num(10).checked_int_log10(), Some(1));
-assert_eq!(", $s_fixed, "::<2>::from_num(9.75).checked_int_log10(), Some(0));
-assert_eq!(", $s_fixed, "::<6>::from_num(0.109375).checked_int_log10(), Some(-1));
-assert_eq!(", $s_fixed, "::<6>::from_num(0.09375).checked_int_log10(), Some(-2));
+use fixed::", stringify!($Self), ";
+assert_eq!(", stringify!($Self), "::<2>::ZERO.checked_int_log10(), None);
+assert_eq!(", stringify!($Self), "::<2>::from_num(10).checked_int_log10(), Some(1));
+assert_eq!(", stringify!($Self), "::<2>::from_num(9.75).checked_int_log10(), Some(0));
+assert_eq!(", stringify!($Self), "::<6>::from_num(0.109375).checked_int_log10(), Some(-1));
+assert_eq!(", stringify!($Self), "::<6>::from_num(0.09375).checked_int_log10(), Some(-2));
 ```
 ";
                 #[inline]
@@ -1073,8 +1073,8 @@ or if the base is <&nbsp;2.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::ZERO.checked_int_log(5), None);
 assert_eq!(Fix::from_num(4).checked_int_log(2), Some(2));
 assert_eq!(Fix::from_num(5.75).checked_int_log(5), Some(1));
@@ -1129,8 +1129,8 @@ change if in the future it panics; if wrapping is required use
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(2).recip(), Fix::from_num(0.5));
 ```
 
@@ -1139,7 +1139,7 @@ assert_eq!(Fix::from_num(2).recip(), Fix::from_num(0.5));
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn recip(self) -> $Fixed<FRAC> {
+                pub const fn recip(self) -> $Self<FRAC> {
                     let (ans, overflow) = self.overflowing_recip();
                     debug_assert!(!overflow, "overflow");
                     ans
@@ -1165,8 +1165,8 @@ in the future it panics; if wrapping is required use
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(7.5).div_euclid(Fix::from_num(2)), Fix::from_num(3));
 ",
                 if_signed_else_empty_str! {
@@ -1181,7 +1181,7 @@ assert_eq!(Fix::from_num(7.5).div_euclid(Fix::from_num(2)), Fix::from_num(3));
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn div_euclid(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                pub const fn div_euclid(self, rhs: $Self<FRAC>) -> $Self<FRAC> {
                     let (ans, overflow) = self.overflowing_div_euclid(rhs);
                     debug_assert!(!overflow, "overflow");
                     ans
@@ -1212,8 +1212,8 @@ use [`wrapping_div_euclid_int`] instead.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(7.5).div_euclid_int(2), Fix::from_num(3));
 ",
                 if_signed_else_empty_str! {
@@ -1228,7 +1228,7 @@ assert_eq!(Fix::from_num(7.5).div_euclid_int(2), Fix::from_num(3));
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn div_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                pub const fn div_euclid_int(self, rhs: $Inner) -> $Self<FRAC> {
                     let (ans, overflow) = self.overflowing_div_euclid_int(rhs);
                     debug_assert!(!overflow, "overflow");
                     ans
@@ -1248,8 +1248,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(7.5).rem_euclid_int(2), Fix::from_num(1.5));
 ",
                 if_signed_else_empty_str! {
@@ -1262,7 +1262,7 @@ assert_eq!(Fix::from_num(7.5).rem_euclid_int(2), Fix::from_num(1.5));
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn rem_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                pub const fn rem_euclid_int(self, rhs: $Inner) -> $Self<FRAC> {
                     let (ans, overflow) = self.overflowing_rem_euclid_int(rhs);
                     debug_assert!(!overflow, "overflow");
                     ans
@@ -1291,8 +1291,8 @@ required use [`wrapping_lerp`] instead.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 let start = Fix::from_num(2);
 let end = Fix::from_num(3.5);
 ",
@@ -1314,9 +1314,9 @@ assert_eq!(Fix::from_num(2.0).lerp(start, end), 5);
                 #[must_use]
                 pub const fn lerp<const RANGE_FRAC: i32>(
                     self,
-                    start: $Fixed<RANGE_FRAC>,
-                    end: $Fixed<RANGE_FRAC>,
-                ) -> $Fixed<RANGE_FRAC> {
+                    start: $Self<RANGE_FRAC>,
+                    end: $Self<RANGE_FRAC>,
+                ) -> $Self<RANGE_FRAC> {
                     let (ans, overflow) = lerp::$Inner(
                         self.to_bits(),
                         start.to_bits(),
@@ -1324,7 +1324,7 @@ assert_eq!(Fix::from_num(2.0).lerp(start, end), 5);
                         FRAC as u32,
                     );
                     debug_assert!(!overflow, "overflow");
-                    $Fixed::from_bits(ans)
+                    $Self::from_bits(ans)
                 }
             }
 
@@ -1338,15 +1338,15 @@ the divisor is zero or on overflow.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::MAX.checked_div(Fix::ONE), Some(Fix::MAX));
 assert_eq!(Fix::MAX.checked_div(Fix::ONE / 2), None);
 ```
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn checked_div(self, rhs: $Fixed<FRAC>) -> Option<$Fixed<FRAC>> {
+                pub const fn checked_div(self, rhs: $Self<FRAC>) -> Option<$Self<FRAC>> {
                     if rhs.to_bits() == 0 {
                         return None;
                     }
@@ -1368,15 +1368,15 @@ assert_eq!(Fix::MAX.checked_div(Fix::ONE / 2), None);
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(2).checked_recip(), Some(Fix::from_num(0.5)));
 assert_eq!(Fix::ZERO.checked_recip(), None);
 ```
 ";
                 #[inline]
                 #[must_use]
-                pub const fn checked_recip(self) -> Option<$Fixed<FRAC>> {
+                pub const fn checked_recip(self) -> Option<$Self<FRAC>> {
                     if self.to_bits() == 0 {
                         None
                     } else {
@@ -1398,8 +1398,8 @@ assert_eq!(Fix::ZERO.checked_recip(), None);
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(7.5).checked_div_euclid(Fix::from_num(2)), Some(Fix::from_num(3)));
 assert_eq!(Fix::from_num(7.5).checked_div_euclid(Fix::ZERO), None);
 assert_eq!(Fix::MAX.checked_div_euclid(Fix::from_num(0.25)), None);
@@ -1413,7 +1413,7 @@ assert_eq!(Fix::MAX.checked_div_euclid(Fix::from_num(0.25)), None);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn checked_div_euclid(self, rhs: $Fixed<FRAC>) -> Option<$Fixed<FRAC>> {
+                pub const fn checked_div_euclid(self, rhs: $Self<FRAC>) -> Option<$Self<FRAC>> {
                     let q = match self.checked_div(rhs) {
                         Some(s) => s.round_to_zero(),
                         None => return None,
@@ -1445,8 +1445,8 @@ Returns the remainder, or [`None`] if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(3.75).checked_rem_int(2), Some(Fix::from_num(1.75)));
 assert_eq!(Fix::from_num(3.75).checked_rem_int(0), None);
 ",
@@ -1459,8 +1459,8 @@ assert_eq!(Fix::from_num(3.75).checked_rem_int(0), None);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn checked_rem_int(self, rhs: $Inner) -> Option<$Fixed<FRAC>> {
-                    // Overflow converting rhs to $Fixed<FRAC> means that either
+                pub const fn checked_rem_int(self, rhs: $Inner) -> Option<$Self<FRAC>> {
+                    // Overflow converting rhs to $Self<FRAC> means that either
                     //   * |rhs| > |self|, and so remainder is self, or
                     //   * self is signed min with at least one integer bit,
                     //     and the value of rhs is -self, so remainder is 0.
@@ -1510,8 +1510,8 @@ quotient, or [`None`] if the divisor is zero",
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(7.5).checked_div_euclid_int(2), Some(Fix::from_num(3)));
 assert_eq!(Fix::from_num(7.5).checked_div_euclid_int(0), None);
 ",
@@ -1524,7 +1524,7 @@ assert_eq!(Fix::from_num(7.5).checked_div_euclid_int(0), None);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn checked_div_euclid_int(self, rhs: $Inner) -> Option<$Fixed<FRAC>> {
+                pub const fn checked_div_euclid_int(self, rhs: $Inner) -> Option<$Self<FRAC>> {
                     let q = match self.checked_div_int(rhs) {
                         Some(s) => s.round_to_zero(),
                         None => return None,
@@ -1561,8 +1561,8 @@ Returns the remainder, or [`None`] if the divisor is zero",
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<", $s_nbits_m4, ">;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<", $nm4, ">;
 assert_eq!(Fix::from_num(7.5).checked_rem_euclid_int(2), Some(Fix::from_num(1.5)));
 assert_eq!(Fix::from_num(7.5).checked_rem_euclid_int(0), None);
 ",
@@ -1577,7 +1577,7 @@ assert_eq!(Fix::from_num(-7.5).checked_rem_euclid_int(20), None);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn checked_rem_euclid_int(self, rhs: $Inner) -> Option<$Fixed<FRAC>> {
+                pub const fn checked_rem_euclid_int(self, rhs: $Inner) -> Option<$Self<FRAC>> {
                     if_signed! {
                         $Signedness;
                         let Some(rem) = self.checked_rem_int(rhs) else {
@@ -1636,8 +1636,8 @@ performed if `self` is not in the range 0&nbsp;≤&nbsp;<i>x</i>&nbsp;≤&nbsp;1
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(0.5).checked_lerp(Fix::ZERO, Fix::MAX), Some(Fix::MAX / 2));
 assert_eq!(Fix::from_num(1.5).checked_lerp(Fix::ZERO, Fix::MAX), None);
 ```
@@ -1646,11 +1646,11 @@ assert_eq!(Fix::from_num(1.5).checked_lerp(Fix::ZERO, Fix::MAX), None);
                 #[must_use]
                 pub const fn checked_lerp<const RANGE_FRAC: i32>(
                     self,
-                    start: $Fixed<RANGE_FRAC>,
-                    end: $Fixed<RANGE_FRAC>,
-                ) -> Option<$Fixed<RANGE_FRAC>> {
+                    start: $Self<RANGE_FRAC>,
+                    end: $Self<RANGE_FRAC>,
+                ) -> Option<$Self<RANGE_FRAC>> {
                     match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC as u32) {
-                        (bits, false) => Some($Fixed::from_bits(bits)),
+                        (bits, false) => Some($Self::from_bits(bits)),
                         (_, true) => None,
                     }
                 }
@@ -1669,8 +1669,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 let one_half = Fix::ONE / 2;
 assert_eq!(Fix::ONE.saturating_div(Fix::from_num(2)), one_half);
 assert_eq!(Fix::MAX.saturating_div(one_half), Fix::MAX);
@@ -1679,7 +1679,7 @@ assert_eq!(Fix::MAX.saturating_div(one_half), Fix::MAX);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn saturating_div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                pub const fn saturating_div(self, rhs: $Self<FRAC>) -> $Self<FRAC> {
                     match arith::$Inner::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32)
                     {
                         (ans, false) => Self::from_bits(ans),
@@ -1712,9 +1712,9 @@ Panics if the fixed-point number is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
+use fixed::", stringify!($Self), ";
 // only one integer bit
-type Fix = ", $s_fixed, "<", $s_nbits_m1, ">;
+type Fix = ", stringify!($Self), "<", $nm1, ">;
 assert_eq!(Fix::from_num(0.25).saturating_recip(), Fix::MAX);
 ",
                 if_signed_else_empty_str! {
@@ -1727,7 +1727,7 @@ assert_eq!(Fix::from_num(0.25).saturating_recip(), Fix::MAX);
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn saturating_recip(self) -> $Fixed<FRAC> {
+                pub const fn saturating_recip(self) -> $Self<FRAC> {
                     match self.overflowing_recip() {
                         (ans, false) => ans,
                         (_, true) => {
@@ -1759,8 +1759,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(7.5).saturating_div_euclid(Fix::from_num(2)), Fix::from_num(3));
 assert_eq!(Fix::MAX.saturating_div_euclid(Fix::from_num(0.25)), Fix::MAX);
 ",
@@ -1775,7 +1775,7 @@ assert_eq!(Fix::MIN.saturating_div_euclid(Fix::from_num(0.25)), Fix::MIN);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn saturating_div_euclid(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                pub const fn saturating_div_euclid(self, rhs: $Self<FRAC>) -> $Self<FRAC> {
                     match self.overflowing_div_euclid(rhs) {
                         (val, false) => val,
                         (_, true) => {
@@ -1816,8 +1816,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(7.5).saturating_div_euclid_int(2), Fix::from_num(3));
 ",
                 if_signed_else_empty_str! {
@@ -1831,11 +1831,11 @@ assert_eq!(Fix::MIN.saturating_div_euclid_int(-1), Fix::MAX);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn saturating_div_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                pub const fn saturating_div_euclid_int(self, rhs: $Inner) -> $Self<FRAC> {
                     // dividing by integer can never result in something < MIN
                     match self.overflowing_div_euclid_int(rhs) {
                         (val, false) => val,
-                        (_, true) => $Fixed::MAX,
+                        (_, true) => $Self::MAX,
                     }
                 }
             }
@@ -1861,8 +1861,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<", $s_nbits_m4, ">;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<", $nm4, ">;
 assert_eq!(Fix::from_num(7.5).saturating_rem_euclid_int(2), Fix::from_num(1.5));
 ",
                 if_signed_else_empty_str! {
@@ -1877,10 +1877,10 @@ assert_eq!(Fix::from_num(-7.5).saturating_rem_euclid_int(20), Fix::MAX);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn saturating_rem_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                pub const fn saturating_rem_euclid_int(self, rhs: $Inner) -> $Self<FRAC> {
                     match self.overflowing_rem_euclid_int(rhs) {
                         (val, false) => val,
-                        (_, true) => $Fixed::MAX,
+                        (_, true) => $Self::MAX,
                     }
                 }
             }
@@ -1901,8 +1901,8 @@ performed if `self` is not in the range 0&nbsp;≤&nbsp;<i>x</i>&nbsp;≤&nbsp;1
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(0.5).saturating_lerp(Fix::ZERO, Fix::MAX), Fix::MAX / 2);
 assert_eq!(Fix::from_num(1.5).saturating_lerp(Fix::ZERO, Fix::MAX), Fix::MAX);
 ",
@@ -1920,22 +1920,22 @@ assert_eq!(Fix::from_num(3.0).saturating_lerp(Fix::MAX, Fix::ZERO), Fix::MIN);
                 #[must_use]
                 pub const fn saturating_lerp<const RANGE_FRAC: i32>(
                     self,
-                    start: $Fixed<RANGE_FRAC>,
-                    end: $Fixed<RANGE_FRAC>,
-                ) -> $Fixed<RANGE_FRAC> {
+                    start: $Self<RANGE_FRAC>,
+                    end: $Self<RANGE_FRAC>,
+                ) -> $Self<RANGE_FRAC> {
                     match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC as u32) {
-                        (bits, false) => $Fixed::from_bits(bits),
+                        (bits, false) => $Self::from_bits(bits),
                         (_, true) => if_signed_unsigned!(
                             $Signedness,
                             if self.is_negative() == (end.to_bits() < start.to_bits()) {
-                                $Fixed::MAX
+                                $Self::MAX
                             } else {
-                                $Fixed::MIN
+                                $Self::MIN
                             },
                             if end.to_bits() < start.to_bits() {
-                                $Fixed::MIN
+                                $Self::MIN
                             } else {
-                                $Fixed::MAX
+                                $Self::MAX
                             },
                         ),
                     }
@@ -1955,8 +1955,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 let one_point_5 = Fix::from_bits(0b11 << (4 - 1));
 assert_eq!(Fix::from_num(3).wrapping_div(Fix::from_num(2)), one_point_5);
 let quarter = Fix::ONE / 4;
@@ -1967,7 +1967,7 @@ assert_eq!(Fix::MAX.wrapping_div(quarter), wrapped);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn wrapping_div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                pub const fn wrapping_div(self, rhs: $Self<FRAC>) -> $Self<FRAC> {
                     let (ans, _) =
                         arith::$Inner::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32);
                     Self::from_bits(ans)
@@ -1988,16 +1988,16 @@ Panics if the fixed-point number is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
+use fixed::", stringify!($Self), ";
 // only one integer bit
-type Fix = ", $s_fixed, "<", $s_nbits_m1, ">;
+type Fix = ", stringify!($Self), "<", $nm1, ">;
 assert_eq!(Fix::from_num(0.25).wrapping_recip(), Fix::ZERO);
 ```
 ";
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn wrapping_recip(self) -> $Fixed<FRAC> {
+                pub const fn wrapping_recip(self) -> $Self<FRAC> {
                     let (ans, _) = self.overflowing_recip();
                     ans
                 }
@@ -2016,8 +2016,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(7.5).wrapping_div_euclid(Fix::from_num(2)), Fix::from_num(3));
 let wrapped = Fix::MAX.wrapping_mul_int(4).round_to_zero();
 assert_eq!(Fix::MAX.wrapping_div_euclid(Fix::from_num(0.25)), wrapped);
@@ -2026,7 +2026,7 @@ assert_eq!(Fix::MAX.wrapping_div_euclid(Fix::from_num(0.25)), wrapped);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn wrapping_div_euclid(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                pub const fn wrapping_div_euclid(self, rhs: $Self<FRAC>) -> $Self<FRAC> {
                     self.overflowing_div_euclid(rhs).0
                 }
             }
@@ -2054,8 +2054,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(7.5).wrapping_div_euclid_int(2), Fix::from_num(3));
 ",
                 if_signed_else_empty_str! {
@@ -2070,7 +2070,7 @@ assert_eq!(Fix::MIN.wrapping_div_euclid_int(-1), wrapped);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn wrapping_div_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                pub const fn wrapping_div_euclid_int(self, rhs: $Inner) -> $Self<FRAC> {
                     self.overflowing_div_euclid_int(rhs).0
                 }
             }
@@ -2099,8 +2099,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<", $s_nbits_m4, ">;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<", $nm4, ">;
 assert_eq!(Fix::from_num(7.5).wrapping_rem_euclid_int(2), Fix::from_num(1.5));
 ",
                 if_signed_else_empty_str! {
@@ -2115,7 +2115,7 @@ assert_eq!(Fix::from_num(-7.5).wrapping_rem_euclid_int(20), Fix::from_num(-3.5))
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn wrapping_rem_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                pub const fn wrapping_rem_euclid_int(self, rhs: $Inner) -> $Self<FRAC> {
                     self.overflowing_rem_euclid_int(rhs).0
                 }
             }
@@ -2136,8 +2136,8 @@ performed if `self` is not in the range 0&nbsp;≤&nbsp;<i>x</i>&nbsp;≤&nbsp;1
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(0.5).wrapping_lerp(Fix::ZERO, Fix::MAX), Fix::MAX / 2);
 assert_eq!(
     Fix::from_num(1.5).wrapping_lerp(Fix::ZERO, Fix::MAX),
@@ -2149,12 +2149,12 @@ assert_eq!(
                 #[must_use]
                 pub const fn wrapping_lerp<const RANGE_FRAC: i32>(
                     self,
-                    start: $Fixed<RANGE_FRAC>,
-                    end: $Fixed<RANGE_FRAC>,
-                ) -> $Fixed<RANGE_FRAC> {
+                    start: $Self<RANGE_FRAC>,
+                    end: $Self<RANGE_FRAC>,
+                ) -> $Self<RANGE_FRAC> {
                     let (bits, _) =
                         lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC as u32);
-                    $Fixed::from_bits(bits)
+                    $Self::from_bits(bits)
                 }
             }
 
@@ -2171,8 +2171,8 @@ Panics if the divisor is zero or if the division results in overflow.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 let one_point_5 = Fix::from_bits(0b11 << (4 - 1));
 assert_eq!(Fix::from_num(3).unwrapped_div(Fix::from_num(2)), one_point_5);
 ```
@@ -2183,8 +2183,8 @@ The following panics because of overflow.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 let quarter = Fix::ONE / 4;
 let _overflow = Fix::MAX.unwrapped_div(quarter);
 ```
@@ -2192,7 +2192,7 @@ let _overflow = Fix::MAX.unwrapped_div(quarter);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn unwrapped_div(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                pub const fn unwrapped_div(self, rhs: $Self<FRAC>) -> $Self<FRAC> {
                     match self.overflowing_div(rhs) {
                         (_, true) => panic!("overflow"),
                         (ans, false) => ans,
@@ -2214,15 +2214,15 @@ Panics if the fixed-point number is zero or on overflow.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(0.25).unwrapped_recip(), Fix::from_num(4));
 ```
 ";
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn unwrapped_recip(self) -> $Fixed<FRAC> {
+                pub const fn unwrapped_recip(self) -> $Self<FRAC> {
                     match self.overflowing_recip() {
                         (_, true) => panic!("overflow"),
                         (ans, false) => ans,
@@ -2243,8 +2243,8 @@ Panics if the divisor is zero or if the division results in overflow.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(7.5).unwrapped_div_euclid(Fix::from_num(2)), Fix::from_num(3));
 ```
 
@@ -2254,15 +2254,15 @@ The following panics because of overflow.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 let _overflow = Fix::MAX.unwrapped_div_euclid(Fix::from_num(0.25));
 ```
 ";
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn unwrapped_div_euclid(self, rhs: $Fixed<FRAC>) -> $Fixed<FRAC> {
+                pub const fn unwrapped_div_euclid(self, rhs: $Self<FRAC>) -> $Self<FRAC> {
                     match self.overflowing_div_euclid(rhs) {
                         (_, true) => panic!("overflow"),
                         (ans, false) => ans,
@@ -2284,8 +2284,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(3.75).unwrapped_rem_int(2), Fix::from_num(1.75));
 ```
 
@@ -2295,15 +2295,15 @@ The following panics because the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 let _divisor_is_zero = Fix::from_num(3.75).unwrapped_rem_int(0);
 ```
 ";
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn unwrapped_rem_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                pub const fn unwrapped_rem_int(self, rhs: $Inner) -> $Self<FRAC> {
                     match self.checked_rem_int(rhs) {
                         Some(ans) => ans,
                         None => panic!("division by zero"),
@@ -2339,8 +2339,8 @@ Panics if the divisor is zero",
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(7.5).unwrapped_div_euclid_int(2), Fix::from_num(3));
 ",
                 if_signed_else_empty_str! {
@@ -2354,8 +2354,8 @@ The following panics because of overflow.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 let _overflow = Fix::MIN.unwrapped_div_euclid_int(-1);
 ",
                 },
@@ -2364,7 +2364,7 @@ let _overflow = Fix::MIN.unwrapped_div_euclid_int(-1);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn unwrapped_div_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                pub const fn unwrapped_div_euclid_int(self, rhs: $Inner) -> $Self<FRAC> {
                     match self.overflowing_div_euclid_int(rhs) {
                         (_, true) => panic!("overflow"),
                         (ans, false) => ans,
@@ -2401,8 +2401,8 @@ Panics if the divisor is zero",
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<", $s_nbits_m4, ">;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<", $nm4, ">;
 assert_eq!(Fix::from_num(7.5).unwrapped_rem_euclid_int(2), Fix::from_num(1.5));
 ",
                 if_signed_else_empty_str! {
@@ -2416,8 +2416,8 @@ The following panics because of overflow.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<", $s_nbits_m4, ">;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<", $nm4, ">;
 // -8 ≤ Fix < 8, so the answer 12.5 overflows
 let _overflow = Fix::from_num(-7.5).unwrapped_rem_euclid_int(20);
 ",
@@ -2427,7 +2427,7 @@ let _overflow = Fix::from_num(-7.5).unwrapped_rem_euclid_int(20);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn unwrapped_rem_euclid_int(self, rhs: $Inner) -> $Fixed<FRAC> {
+                pub const fn unwrapped_rem_euclid_int(self, rhs: $Inner) -> $Self<FRAC> {
                     match self.overflowing_rem_euclid_int(rhs) {
                         (_, true) => panic!("overflow"),
                         (ans, false) => ans,
@@ -2455,8 +2455,8 @@ Panics if the result overflows.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(0.5).unwrapped_lerp(Fix::ZERO, Fix::MAX), Fix::MAX / 2);
 ```
 
@@ -2466,8 +2466,8 @@ The following panics because of overflow.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 let _overflow = Fix::from_num(1.5).unwrapped_lerp(Fix::ZERO, Fix::MAX);
 ```
 ";
@@ -2476,11 +2476,11 @@ let _overflow = Fix::from_num(1.5).unwrapped_lerp(Fix::ZERO, Fix::MAX);
                 #[must_use]
                 pub const fn unwrapped_lerp<const RANGE_FRAC: i32>(
                     self,
-                    start: $Fixed<RANGE_FRAC>,
-                    end: $Fixed<RANGE_FRAC>,
-                ) -> $Fixed<RANGE_FRAC> {
+                    start: $Self<RANGE_FRAC>,
+                    end: $Self<RANGE_FRAC>,
+                ) -> $Self<RANGE_FRAC> {
                     match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC as u32) {
-                        (bits, false) => $Fixed::from_bits(bits),
+                        (bits, false) => $Self::from_bits(bits),
                         (_, true) => panic!("overflow"),
                     }
                 }
@@ -2502,8 +2502,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 let one_point_5 = Fix::from_bits(0b11 << (4 - 1));
 assert_eq!(Fix::from_num(3).overflowing_div(Fix::from_num(2)), (one_point_5, false));
 let quarter = Fix::ONE / 4;
@@ -2514,7 +2514,7 @@ assert_eq!(Fix::MAX.overflowing_div(quarter), (wrapped, true));
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn overflowing_div(self, rhs: $Fixed<FRAC>) -> ($Fixed<FRAC>, bool) {
+                pub const fn overflowing_div(self, rhs: $Self<FRAC>) -> ($Self<FRAC>, bool) {
                     let (ans, overflow) =
                         arith::$Inner::overflowing_div(self.to_bits(), rhs.to_bits(), FRAC as u32);
                     (Self::from_bits(ans), overflow)
@@ -2537,10 +2537,10 @@ Panics if the fixed-point number is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 // only one integer bit
-type Small = ", $s_fixed, "<", $s_nbits_m1, ">;
+type Small = ", stringify!($Self), "<", $nm1, ">;
 assert_eq!(Fix::from_num(0.25).overflowing_recip(), (Fix::from_num(4), false));
 assert_eq!(Small::from_num(0.25).overflowing_recip(), (Small::ZERO, true));
 ```
@@ -2548,16 +2548,16 @@ assert_eq!(Small::from_num(0.25).overflowing_recip(), (Small::ZERO, true));
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn overflowing_recip(self) -> ($Fixed<FRAC>, bool) {
+                pub const fn overflowing_recip(self) -> ($Self<FRAC>, bool) {
                     if let Some(one) = Self::TRY_ONE {
                         return one.overflowing_div(self);
                     }
                     if_signed! {
                         $Signedness;
                         let (neg, abs) = int_helper::$Inner::neg_abs(self.to_bits());
-                        let uns_abs = $UFixed::<FRAC>::from_bits(abs);
+                        let uns_abs = $USelf::<FRAC>::from_bits(abs);
                         let (uns_wrapped, overflow1) = uns_abs.overflowing_recip();
-                        let wrapped = $Fixed::<FRAC>::from_bits(uns_wrapped.to_bits() as $Inner);
+                        let wrapped = $Self::<FRAC>::from_bits(uns_wrapped.to_bits() as $Inner);
                         let overflow2 = wrapped.is_negative();
                         if wrapped.to_bits() == $Inner::MIN && neg {
                             return (wrapped, overflow1);
@@ -2597,8 +2597,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 let check = Fix::from_num(3);
 assert_eq!(Fix::from_num(7.5).overflowing_div_euclid(Fix::from_num(2)), (check, false));
 let wrapped = Fix::MAX.wrapping_mul_int(4).round_to_zero();
@@ -2610,8 +2610,8 @@ assert_eq!(Fix::MAX.overflowing_div_euclid(Fix::from_num(0.25)), (wrapped, true)
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub const fn overflowing_div_euclid(
                     self,
-                    rhs: $Fixed<FRAC>,
-                ) -> ($Fixed<FRAC>, bool) {
+                    rhs: $Self<FRAC>,
+                ) -> ($Self<FRAC>, bool) {
                     let (mut q, overflow) = self.overflowing_div(rhs);
                     q = q.round_to_zero();
                     if_signed! {
@@ -2655,8 +2655,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(Fix::from_num(7.5).overflowing_div_euclid_int(2), (Fix::from_num(3), false));
 ",
                 if_signed_else_empty_str! {
@@ -2671,7 +2671,7 @@ assert_eq!(Fix::MIN.overflowing_div_euclid_int(-1), (wrapped, true));
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn overflowing_div_euclid_int(self, rhs: $Inner) -> ($Fixed<FRAC>, bool) {
+                pub const fn overflowing_div_euclid_int(self, rhs: $Inner) -> ($Self<FRAC>, bool) {
                     let (mut q, overflow) = self.overflowing_div_int(rhs);
                     q = q.round_to_zero();
                     if_signed! {
@@ -2717,8 +2717,8 @@ Panics if the divisor is zero.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<", $s_nbits_m4, ">;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<", $nm4, ">;
 assert_eq!(Fix::from_num(7.5).overflowing_rem_euclid_int(2), (Fix::from_num(1.5), false));
 ",
                 if_signed_else_empty_str! {
@@ -2733,7 +2733,7 @@ assert_eq!(Fix::from_num(-7.5).overflowing_rem_euclid_int(20), (Fix::from_num(-3
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn overflowing_rem_euclid_int(self, rhs: $Inner) -> ($Fixed<FRAC>, bool) {
+                pub const fn overflowing_rem_euclid_int(self, rhs: $Inner) -> ($Self<FRAC>, bool) {
                     if_signed! {
                         $Signedness;
                         let rem = self.unwrapped_rem_int(rhs);
@@ -2792,8 +2792,8 @@ performed if `self` is not in the range 0&nbsp;≤&nbsp;<i>x</i>&nbsp;≤&nbsp;1
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
 assert_eq!(
     Fix::from_num(0.5).overflowing_lerp(Fix::ZERO, Fix::MAX),
     (Fix::MAX / 2, false)
@@ -2808,12 +2808,12 @@ assert_eq!(
                 #[must_use]
                 pub const fn overflowing_lerp<const RANGE_FRAC: i32>(
                     self,
-                    start: $Fixed<RANGE_FRAC>,
-                    end: $Fixed<RANGE_FRAC>,
-                ) -> ($Fixed<RANGE_FRAC>, bool) {
+                    start: $Self<RANGE_FRAC>,
+                    end: $Self<RANGE_FRAC>,
+                ) -> ($Self<RANGE_FRAC>, bool) {
                     match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), FRAC as u32)
                     {
-                        (bits, overflow) => ($Fixed::from_bits(bits), overflow),
+                        (bits, overflow) => ($Self::from_bits(bits), overflow),
                     }
                 }
             }

@@ -14,7 +14,11 @@
 // <https://opensource.org/licenses/MIT>.
 
 macro_rules! fixed_from_to {
-    ($Fixed:ident[$s_fixed:expr]($Inner:ident[$s_inner:expr], $s_nbits:expr), $Signedness:tt) => {
+    (
+        {Self, Inner} = {$Self:ident, $Inner:ident},
+        Signedness = $Signedness:ident,
+        n = $n:literal,
+    ) => {
         comment! {
             r#"Creates a fixed-point number from another number.
 
@@ -47,8 +51,8 @@ it panics; if wrapping is required use [`wrapping_from_num`] instead.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::{types::I16F16, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<4>;
+use fixed::{types::I16F16, "#, stringify!($Self), "};
+type Fix = ", stringify!($Self), "<4>;
 
 // 1.75 is 1.11 in binary
 let src = I16F16::from_bits(0b111 << (16 - 2));
@@ -80,7 +84,7 @@ assert_eq!(Fix::from_num(",
 ";
             #[inline]
             #[track_caller]
-            pub fn from_num<Src: ToFixed>(src: Src) -> $Fixed<FRAC> {
+            pub fn from_num<Src: ToFixed>(src: Src) -> $Self<FRAC> {
                 src.to_fixed()
             }
         }
@@ -116,8 +120,8 @@ it panics; if wrapping is required use [`wrapping_to_num`] instead.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::{types::I30F2, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<4>;
+use fixed::{types::I30F2, "#, stringify!($Self), "};
+type Fix = ", stringify!($Self), "<4>;
 
 // 1.75 is 1.11 in binary
 let src = Fix::from_bits(0b111 << (4 - 2));
@@ -184,22 +188,22 @@ The other number can be:
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::{types::I16F16, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<4>;
+use fixed::{types::I16F16, "#, stringify!($Self), "};
+type Fix = ", stringify!($Self), "<4>;
 
 // 1.75 is 1.11 in binary
 let src = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(Fix::checked_from_num(src), Some(Fix::from_bits(0b111 << (4 - 2))));
-let too_large = ", $s_fixed, "::<2>::MAX;
+let too_large = ", stringify!($Self), "::<2>::MAX;
 assert!(Fix::checked_from_num(too_large).is_none());
 
 assert_eq!(Fix::checked_from_num(3), Some(Fix::from_bits(3 << 4)));
-let too_large = ", $s_inner, "::MAX;
+let too_large = ", stringify!($Inner), "::MAX;
 assert!(Fix::checked_from_num(too_large).is_none());
 let too_small = ",
             if_signed_unsigned!(
                 $Signedness,
-                concat!($s_inner, "::MIN"),
+                concat!(stringify!($Inner), "::MIN"),
                 "-1",
             ),
             ";
@@ -223,7 +227,7 @@ assert!(Fix::checked_from_num(std::f64::NAN).is_none());
 [`f16`]: half::f16
 ";
             #[inline]
-            pub fn checked_from_num<Src: ToFixed>(src: Src) -> Option<$Fixed<FRAC>> {
+            pub fn checked_from_num<Src: ToFixed>(src: Src) -> Option<$Self<FRAC>> {
                 src.checked_to_fixed()
             }
         }
@@ -253,14 +257,14 @@ The other number can be:
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::{types::I16F16, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<4>;
+use fixed::{types::I16F16, "#, stringify!($Self), "};
+type Fix = ", stringify!($Self), "<4>;
 
 // 1.75 is 1.11 in binary
 let src = Fix::from_bits(0b111 << (4 - 2));
 let expected = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(src.checked_to_num::<I16F16>(), Some(expected));
-type TooFewIntBits = ", $s_fixed, "<6>;
+type TooFewIntBits = ", stringify!($Self), "<6>;
 assert!(Fix::MAX.checked_to_num::<TooFewIntBits>().is_none());
 
 // 2.5 is 10.1 in binary
@@ -273,14 +277,14 @@ assert_eq!(",
                 "two_point_5.checked_to_num::<i64>(), Some(2",
             ),
             "));
-type AllInt = ", $s_fixed, "<0>;
+type AllInt = ", stringify!($Self), "<0>;
 assert!(AllInt::",
             if_signed_unsigned!(
                 $Signedness,
                 "from_bits(-1).checked_to_num::<u",
                 "MAX.checked_to_num::<i",
             ),
-            $s_nbits, ">().is_none());
+            $n, ">().is_none());
 
 // 1.625 is 1.101 in binary
 let one_point_625 = Fix::from_bits(0b1101 << (4 - 3));
@@ -325,20 +329,20 @@ This method panics if the value is a floating-point [NaN].
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::{types::I16F16, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<4>;
+use fixed::{types::I16F16, "#, stringify!($Self), "};
+type Fix = ", stringify!($Self), "<4>;
 
 // 1.75 is 1.11 in binary
 let src = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(Fix::saturating_from_num(src), Fix::from_bits(0b111 << (4 - 2)));
-let too_large = ", $s_fixed, "::<2>::MAX;
+let too_large = ", stringify!($Self), "::<2>::MAX;
 assert_eq!(Fix::saturating_from_num(too_large), Fix::MAX);
 
 assert_eq!(Fix::saturating_from_num(3), Fix::from_bits(3 << 4));
 let too_small = ",
             if_signed_unsigned!(
                 $Signedness,
-                concat!($s_inner, "::MIN"),
+                concat!(stringify!($Inner), "::MIN"),
                 "-1",
             ),
             ";
@@ -364,7 +368,7 @@ assert_eq!(Fix::saturating_from_num(std::f64::NEG_INFINITY), Fix::MIN);
 ";
             #[inline]
             #[track_caller]
-            pub fn saturating_from_num<Src: ToFixed>(src: Src) -> $Fixed<FRAC> {
+            pub fn saturating_from_num<Src: ToFixed>(src: Src) -> $Self<FRAC> {
                 src.saturating_to_fixed()
             }
         }
@@ -394,28 +398,28 @@ The other number can be:
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::{types::I16F16, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<4>;
+use fixed::{types::I16F16, "#, stringify!($Self), "};
+type Fix = ", stringify!($Self), "<4>;
 
 // 1.75 is 1.11 in binary
 let src = Fix::from_bits(0b111 << (4 - 2));
 let expected = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(src.saturating_to_num::<I16F16>(), expected);
-type TooFewIntBits = ", $s_fixed, "<6>;
+type TooFewIntBits = ", stringify!($Self), "<6>;
 let saturated = Fix::MAX.saturating_to_num::<TooFewIntBits>();
 assert_eq!(saturated, TooFewIntBits::MAX);
 
 // 2.5 is 10.1 in binary
 let two_point_5 = Fix::from_bits(0b101 << (4 - 1));
 assert_eq!(two_point_5.saturating_to_num::<i32>(), 2);
-type AllInt = ", $s_fixed, "<0>;
+type AllInt = ", stringify!($Self), "<0>;
 assert_eq!(",
             if_signed_unsigned!(
                 $Signedness,
-                concat!("AllInt::from_bits(-1).saturating_to_num::<u", $s_nbits, ">(), 0"),
+                concat!("AllInt::from_bits(-1).saturating_to_num::<u", $n, ">(), 0"),
                 concat!(
-                    "AllInt::MAX.saturating_to_num::<i", $s_nbits, ">(), ",
-                    "i", $s_nbits, "::MAX",
+                    "AllInt::MAX.saturating_to_num::<i", $n, ">(), ",
+                    "i", $n, "::MAX",
                 ),
             ),
             ");
@@ -463,28 +467,28 @@ For floating-point numbers, panics if the value is not [finite].
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::{types::I16F16, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<4>;
+use fixed::{types::I16F16, "#, stringify!($Self), "};
+type Fix = ", stringify!($Self), "<4>;
 
 // 1.75 is 1.11 in binary
 let src = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(Fix::wrapping_from_num(src), Fix::from_bits(0b111 << (4 - 2)));
-// integer 0b1101 << (", $s_nbits, " - 7) will wrap to fixed-point 1010...
-let too_large = ", $s_fixed, "::<0>::from_bits(0b1101 << (", $s_nbits, " - 7));
-let wrapped = Fix::from_bits(0b1010 << (", $s_nbits, " - 4));
+// integer 0b1101 << (", $n, " - 7) will wrap to fixed-point 1010...
+let too_large = ", stringify!($Self), "::<0>::from_bits(0b1101 << (", $n, " - 7));
+let wrapped = Fix::from_bits(0b1010 << (", $n, " - 4));
 assert_eq!(Fix::wrapping_from_num(too_large), wrapped);
 
-// integer 0b1101 << (", $s_nbits, " - 7) will wrap to fixed-point 1010...
-let large: ", $s_inner, " = 0b1101 << (", $s_nbits, " - 7);
-let wrapped = Fix::from_bits(0b1010 << (", $s_nbits, " - 4));
+// integer 0b1101 << (", $n, " - 7) will wrap to fixed-point 1010...
+let large: ", stringify!($Inner), " = 0b1101 << (", $n, " - 7);
+let wrapped = Fix::from_bits(0b1010 << (", $n, " - 4));
 assert_eq!(Fix::wrapping_from_num(large), wrapped);
 
 // 1.75 is 1.11 in binary
 let expected = Fix::from_bits(0b111 << (4 - 2));
 assert_eq!(Fix::wrapping_from_num(1.75f32), expected);
-// 1.75 << (", $s_nbits, " - 4) wraps to binary 11000...
-let large = 1.75 * 2f32.powi(", $s_nbits, " - 4);
-let wrapped = Fix::from_bits(0b1100 << (", $s_nbits, " - 4));
+// 1.75 << (", $n, " - 4) wraps to binary 11000...
+let large = 1.75 * 2f32.powi(", $n, " - 4);
+let wrapped = Fix::from_bits(0b1100 << (", $n, " - 4));
 assert_eq!(Fix::wrapping_from_num(large), wrapped);
 ```
 
@@ -494,7 +498,7 @@ assert_eq!(Fix::wrapping_from_num(large), wrapped);
 ";
             #[inline]
             #[track_caller]
-            pub fn wrapping_from_num<Src: ToFixed>(src: Src) -> $Fixed<FRAC> {
+            pub fn wrapping_from_num<Src: ToFixed>(src: Src) -> $Self<FRAC> {
                 src.wrapping_to_fixed()
             }
         }
@@ -524,29 +528,29 @@ The other number can be:
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::{types::I16F16, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<4>;
+use fixed::{types::I16F16, "#, stringify!($Self), "};
+type Fix = ", stringify!($Self), "<4>;
 
 // 1.75 is 1.11 in binary
 let src = Fix::from_bits(0b111 << (4 - 2));
 let expected = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(src.wrapping_to_num::<I16F16>(), expected);
-type TooFewIntBits = ", $s_fixed, "<6>;
+type TooFewIntBits = ", stringify!($Self), "<6>;
 let wrapped = TooFewIntBits::from_bits(Fix::MAX.to_bits() << 2);
 assert_eq!(Fix::MAX.wrapping_to_num::<TooFewIntBits>(), wrapped);
 
 // 2.5 is 10.1 in binary
 let two_point_5 = Fix::from_bits(0b101 << (4 - 1));
 assert_eq!(two_point_5.wrapping_to_num::<i32>(), 2);
-type AllInt = ", $s_fixed, "<0>;
+type AllInt = ", stringify!($Self), "<0>;
 assert_eq!(",
             if_signed_unsigned!(
                 $Signedness,
                 concat!(
-                    "AllInt::from_bits(-1).wrapping_to_num::<u", $s_nbits, ">(), ",
-                    "u", $s_nbits, "::MAX",
+                    "AllInt::from_bits(-1).wrapping_to_num::<u", $n, ">(), ",
+                    "u", $n, "::MAX",
                 ),
-                concat!("AllInt::MAX.wrapping_to_num::<i", $s_nbits, ">(), -1"),
+                concat!("AllInt::MAX.wrapping_to_num::<i", $n, ">(), -1"),
             ),
             ");
 
@@ -595,8 +599,8 @@ For floating-point numbers, also panics if the value is not [finite].
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::{types::I16F16, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<4>;
+use fixed::{types::I16F16, "#, stringify!($Self), "};
+type Fix = ", stringify!($Self), "<4>;
 
 // 1.75 is 1.11 in binary
 let src = I16F16::from_bits(0b111 << (16 - 2));
@@ -609,9 +613,9 @@ The following panics because of overflow.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-let too_large = ", $s_fixed, "::<0>::from_bits(0b1101 << (", $s_nbits, " - 7));
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
+let too_large = ", stringify!($Self), "::<0>::from_bits(0b1101 << (", $n, " - 7));
 let _overflow = Fix::unwrapped_from_num(too_large);
 ```
 
@@ -621,7 +625,7 @@ let _overflow = Fix::unwrapped_from_num(too_large);
 ";
             #[inline]
             #[track_caller]
-            pub fn unwrapped_from_num<Src: ToFixed>(src: Src) -> $Fixed<FRAC> {
+            pub fn unwrapped_from_num<Src: ToFixed>(src: Src) -> $Self<FRAC> {
                 match src.overflowing_to_fixed() {
                     (_, true) => panic!("overflow"),
                     (ans, false) => ans,
@@ -658,8 +662,8 @@ Panics if the value does not fit.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::{types::I16F16, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<4>;
+use fixed::{types::I16F16, "#, stringify!($Self), "};
+type Fix = ", stringify!($Self), "<4>;
 
 // 1.75 is 1.11 in binary
 let src = Fix::from_bits(0b111 << (4 - 2));
@@ -673,9 +677,9 @@ The following panics because of overflow.
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::", $s_fixed, ";
-type Fix = ", $s_fixed, "<4>;
-type TooFewIntBits = ", $s_fixed, "<6>;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
+type TooFewIntBits = ", stringify!($Self), "<6>;
 let _overflow = Fix::MAX.unwrapped_to_num::<TooFewIntBits>();
 ```
 
@@ -724,30 +728,30 @@ For floating-point numbers, panics if the value is not [finite].
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::{types::I16F16, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<4>;
+use fixed::{types::I16F16, "#, stringify!($Self), "};
+type Fix = ", stringify!($Self), "<4>;
 
 // 1.75 is 1.11 in binary
 let src = I16F16::from_bits(0b111 << (16 - 2));
 let expected = Fix::from_bits(0b111 << (4 - 2));
 assert_eq!(Fix::overflowing_from_num(src), (expected, false));
-// integer 0b1101 << (", $s_nbits, " - 7) will wrap to fixed-point 1010...
-let too_large = ", $s_fixed, "::<0>::from_bits(0b1101 << (", $s_nbits, " - 7));
-let wrapped = Fix::from_bits(0b1010 << (", $s_nbits, " - 4));
+// integer 0b1101 << (", $n, " - 7) will wrap to fixed-point 1010...
+let too_large = ", stringify!($Self), "::<0>::from_bits(0b1101 << (", $n, " - 7));
+let wrapped = Fix::from_bits(0b1010 << (", $n, " - 4));
 assert_eq!(Fix::overflowing_from_num(too_large), (wrapped, true));
 
 assert_eq!(Fix::overflowing_from_num(3), (Fix::from_bits(3 << 4), false));
-// integer 0b1101 << (", $s_nbits, " - 7) will wrap to fixed-point 1010...
-let large: ", $s_inner, " = 0b1101 << (", $s_nbits, " - 7);
-let wrapped = Fix::from_bits(0b1010 << (", $s_nbits, " - 4));
+// integer 0b1101 << (", $n, " - 7) will wrap to fixed-point 1010...
+let large: ", stringify!($Inner), " = 0b1101 << (", $n, " - 7);
+let wrapped = Fix::from_bits(0b1010 << (", $n, " - 4));
 assert_eq!(Fix::overflowing_from_num(large), (wrapped, true));
 
 // 1.75 is 1.11 in binary
 let expected = Fix::from_bits(0b111 << (4 - 2));
 assert_eq!(Fix::overflowing_from_num(1.75f32), (expected, false));
-// 1.75 << (", $s_nbits, " - 4) wraps to binary 11000...
-let large = 1.75 * 2f32.powi(", $s_nbits, " - 4);
-let wrapped = Fix::from_bits(0b1100 << (", $s_nbits, " - 4));
+// 1.75 << (", $n, " - 4) wraps to binary 11000...
+let large = 1.75 * 2f32.powi(", $n, " - 4);
+let wrapped = Fix::from_bits(0b1100 << (", $n, " - 4));
 assert_eq!(Fix::overflowing_from_num(large), (wrapped, true));
 ```
 
@@ -757,7 +761,7 @@ assert_eq!(Fix::overflowing_from_num(large), (wrapped, true));
 ";
             #[inline]
             #[track_caller]
-            pub fn overflowing_from_num<Src: ToFixed>(src: Src) -> ($Fixed<FRAC>, bool) {
+            pub fn overflowing_from_num<Src: ToFixed>(src: Src) -> ($Self<FRAC>, bool) {
                 src.overflowing_to_fixed()
             }
         }
@@ -789,33 +793,33 @@ The other number can be:
 #![feature(generic_const_exprs)]
 # #![allow(incomplete_features)]
 
-use fixed::{types::I16F16, "#, $s_fixed, "};
-type Fix = ", $s_fixed, "<4>;
+use fixed::{types::I16F16, "#, stringify!($Self), "};
+type Fix = ", stringify!($Self), "<4>;
 
 // 1.75 is 1.11 in binary
 let src = Fix::from_bits(0b111 << (4 - 2));
 let expected = I16F16::from_bits(0b111 << (16 - 2));
 assert_eq!(src.overflowing_to_num::<I16F16>(), (expected, false));
-type TooFewIntBits = ", $s_fixed, "<6>;
+type TooFewIntBits = ", stringify!($Self), "<6>;
 let wrapped = TooFewIntBits::from_bits(Fix::MAX.to_bits() << 2);
 assert_eq!(Fix::MAX.overflowing_to_num::<TooFewIntBits>(), (wrapped, true));
 
 // 2.5 is 10.1 in binary
 let two_point_5 = Fix::from_bits(0b101 << (4 - 1));
 assert_eq!(two_point_5.overflowing_to_num::<i32>(), (2, false));
-let does_not_fit = ", $s_fixed, "::<0>::",
+let does_not_fit = ", stringify!($Self), "::<0>::",
             if_signed_unsigned!($Signedness, "from_bits(-1)", "MAX"),
             ";
 let wrapped = ",
             if_signed_unsigned!(
                 $Signedness,
-                concat!("1u", $s_nbits, ".wrapping_neg()"),
-                concat!("-1i", $s_nbits),
+                concat!("1u", $n, ".wrapping_neg()"),
+                concat!("-1i", $n),
             ),
             ";
 assert_eq!(does_not_fit.overflowing_to_num::<",
             if_signed_unsigned!($Signedness, "u", "i"),
-            $s_nbits, ">(), (wrapped, true));
+            $n, ">(), (wrapped, true));
 
 // 1.625 is 1.101 in binary
 let one_point_625 = Fix::from_bits(0b1101 << (4 - 3));
@@ -836,7 +840,7 @@ assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
         /// underlying integer type. Usable in constant context.
         ///
         /// This is equivalent to the [`unwrapped_from_num`] method with
-        #[doc = concat!("<code>[", $s_fixed, "]&lt;OtherFrac></code>")]
+        #[doc = concat!("<code>[", stringify!($Self), "]&lt;OtherFrac></code>")]
         /// as its generic parameter, but can also be used in constant context.
         /// Unless required in constant context, use [`unwrapped_from_num`] or
         /// [`from_num`] instead.
@@ -853,9 +857,9 @@ assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
         /// # Examples
         ///
         /// ```rust
-        #[doc = concat!("use fixed::", $s_fixed, ";")]
-        #[doc = concat!("type FixA = ", $s_fixed, "<2>;")]
-        #[doc = concat!("type FixB = ", $s_fixed, "<4>;")]
+        #[doc = concat!("use fixed::", stringify!($Self), ";")]
+        #[doc = concat!("type FixA = ", stringify!($Self), "<2>;")]
+        #[doc = concat!("type FixB = ", stringify!($Self), "<4>;")]
         /// const A: FixA = FixA::unwrapped_from_str("3.5");
         /// const B: FixB = FixB::const_from_fixed(A);
         /// assert_eq!(B, 3.5);
@@ -864,8 +868,12 @@ assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
         /// The following would fail to compile because of overflow.
         ///
         /// ```rust,compile_fail
-        #[doc = concat!("use fixed::", $s_fixed, ";")]
-        #[doc = concat!("const _OVERFLOW: ", $s_fixed, "<4> = ", $s_fixed, "::const_from_fixed(", $s_fixed, "::<2>::MAX);")]
+        #[doc = concat!("use fixed::", stringify!($Self), ";")]
+        #[doc = concat!(
+            "const _OVERFLOW: ", stringify!($Self), "<4> = ",
+            stringify!($Self), "::const_from_fixed(",
+            stringify!($Self), "::<2>::MAX);"
+        )]
         /// ```
         ///
         /// [`from_num`]: Self::from_num
@@ -873,7 +881,7 @@ assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
         #[inline]
         #[track_caller]
         #[must_use]
-        pub const fn const_from_fixed<const SRC_FRAC: i32>(src: $Fixed<SRC_FRAC>) -> $Fixed<FRAC> {
+        pub const fn const_from_fixed<const SRC_FRAC: i32>(src: $Self<SRC_FRAC>) -> $Self<FRAC> {
             let shift_left = FRAC - SRC_FRAC;
             let nbits = $Inner::BITS as i32;
             let src_bits = src.to_bits();
@@ -897,11 +905,11 @@ assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
         }
 
         /// Creates a fixed-point number from the underlying integer type
-        #[doc = concat!("[`", $s_inner, "`].")]
+        #[doc = concat!("[`", stringify!($Inner), "`].")]
         /// Usable in constant context.
         ///
         /// This is equivalent to the [`unwrapped_from_num`] method with
-        #[doc = concat!("[`", $s_inner, "`]")]
+        #[doc = concat!("[`", stringify!($Inner), "`]")]
         /// as its generic parameter, but can also be used in constant context.
         /// Unless required in constant context, use [`unwrapped_from_num`] or
         /// [`from_num`] instead.
@@ -921,8 +929,8 @@ assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
         /// #![feature(generic_const_exprs)]
         /// # #![allow(incomplete_features)]
         ///
-        #[doc = concat!("use fixed::", $s_fixed, ";")]
-        #[doc = concat!("type Fix = ", $s_fixed, "<4>;")]
+        #[doc = concat!("use fixed::", stringify!($Self), ";")]
+        #[doc = concat!("type Fix = ", stringify!($Self), "<4>;")]
         /// const FIVE: Fix = Fix::const_from_int(5);
         /// assert_eq!(FIVE, 5);
         /// ```
@@ -933,8 +941,10 @@ assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
         /// #![feature(generic_const_exprs)]
         /// # #![allow(incomplete_features)]
         ///
-        #[doc = concat!("use fixed::", $s_fixed, ";")]
-        #[doc = concat!("const _OVERFLOW: ", $s_fixed, "<4> = ", $s_fixed, "::const_from_int(", $s_inner, "::MAX);")]
+        #[doc = concat!("use fixed::", stringify!($Self), ";")]
+        #[doc = concat!(
+            "const _OVERFLOW: ", stringify!($Self), "<4> = ", stringify!($Self), "::const_from_int(", stringify!($Inner), "::MAX);"
+        )]
         /// ```
         ///
         /// [`from_num`]: Self::from_num
@@ -942,8 +952,8 @@ assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
         #[inline]
         #[track_caller]
         #[must_use]
-        pub const fn const_from_int(src: $Inner) -> $Fixed<FRAC> {
-            Self::const_from_fixed($Fixed::<0>::from_bits(src))
+        pub const fn const_from_int(src: $Inner) -> $Self<FRAC> {
+            Self::const_from_fixed($Self::<0>::from_bits(src))
         }
     };
 }
