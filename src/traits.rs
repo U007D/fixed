@@ -3950,7 +3950,7 @@ macro_rules! trait_delegate {
 macro_rules! impl_fixed {
     (
         $Fixed:ident, $IFixed:ident, $UFixed:ident, $LeEqU:ident, $Bits:ident, $NonZeroBits:ident,
-        $Signedness:tt
+        $Signedness:ident
     ) => {
         impl<Frac: $LeEqU> FixedOptionalFeatures for $Fixed<Frac> {}
 

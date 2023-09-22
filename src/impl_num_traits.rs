@@ -78,7 +78,7 @@ impl Error for RadixParseFixedError {
 }
 
 macro_rules! impl_traits {
-    ($Fixed:ident, $LeEqU:ident, $OneMaxFrac:ident, $Signedness:tt) => {
+    ($Fixed:ident, $LeEqU:ident, $OneMaxFrac:ident, $Signedness:ident) => {
         impl<Frac> Bounded for $Fixed<Frac> {
             #[inline]
             fn min_value() -> Self {

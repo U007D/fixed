@@ -57,7 +57,7 @@ pub trait Sealed: Copy {
     fn overflowing_from_float_helper(_: Private, src: FromFloatHelper) -> (Self, bool);
 }
 macro_rules! impl_sealed {
-    ($Fixed:ident($LeEqU:ident, $Signedness:tt, $Inner:ident)) => {
+    ($Fixed:ident($LeEqU:ident, $Signedness:ident, $Inner:ident)) => {
         impl<Frac: $LeEqU> Sealed for $Fixed<Frac> {
             #[inline]
             fn to_fixed_helper(

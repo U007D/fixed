@@ -15,24 +15,25 @@
 
 macro_rules! fixed_frac {
     (
-        $Fixed:ident[$s_fixed:expr](
-            $Inner:ident[$s_inner:expr], $LeEqU:tt, $s_nbits:expr,
-            $s_nbits_m1:expr, $s_nbits_m4:expr
-        ),
-        $UFixed:ident, $UInner:ident, $NonZeroUInner:ident, $Signedness:tt
+        {Self, Inner} = {$Self:ident, $Inner:ident},
+        Signedness = $Signedness:ident,
+        LeEqU = $LeEqU:ident,
+        {nm4, nm1, n} = {$nm4:literal, $nm1:literal, $n:literal},
+        {USelf, UInner} = {$USelf:ident, $UInner:ident},
+        NonZeroUInner = $NonZeroUInner:ident,
     ) => {
         /// The implementation of items in this block depends on the
         /// number of fractional bits `Frac`.
-        impl<Frac: $LeEqU> $Fixed<Frac> {
+        impl<Frac: $LeEqU> $Self<Frac> {
             comment! {
                 "The number of integer bits.
 
 # Examples
 
 ```rust
-use fixed::{types::extra::U6, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U6>;
-assert_eq!(Fix::INT_NBITS, ", $s_nbits, " - 6);
+use fixed::{types::extra::U6, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U6>;
+assert_eq!(Fix::INT_NBITS, ", $n, " - 6);
 ```
 ";
                 pub const INT_NBITS: u32 = $Inner::BITS - Self::FRAC_NBITS;
@@ -44,8 +45,8 @@ assert_eq!(Fix::INT_NBITS, ", $s_nbits, " - 6);
 # Examples
 
 ```rust
-use fixed::{types::extra::U6, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U6>;
+use fixed::{types::extra::U6, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U6>;
 assert_eq!(Fix::FRAC_NBITS, 6);
 ```
 ";
@@ -65,8 +66,17 @@ assert_eq!(Fix::FRAC_NBITS, 6);
             const FRAC_MSB: $Inner =
                 Self::FRAC_MASK ^ ((Self::FRAC_MASK as $UInner) >> 1) as $Inner;
 
-            fixed_from_to! { $Fixed[$s_fixed]($Inner[$s_inner], $LeEqU, $s_nbits), $Signedness }
-            fixed_round! { $Fixed[$s_fixed]($s_nbits), $Signedness }
+            fixed_from_to! {
+                {Self, Inner} = {$Self, $Inner},
+                Signedness = $Signedness,
+                LeEqU = $LeEqU,
+                n = $n,
+            }
+            fixed_round! {
+                Self = $Self,
+                Signedness = $Signedness,
+                n = $n,
+            }
 
             comment! {
                 "Integer base-2 logarithm, rounded down.
@@ -78,8 +88,8 @@ Panics if the fixed-point number is ", if_signed_unsigned!($Signedness, "≤&nbs
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(4).int_log2(), 2);
 assert_eq!(Fix::from_num(3.9375).int_log2(), 1);
 assert_eq!(Fix::from_num(0.25).int_log2(), -2);
@@ -110,12 +120,12 @@ Panics if the fixed-point number is ", if_signed_unsigned!($Signedness, "≤&nbs
 ```rust
 use fixed::{
     types::extra::{U2, U6},
-    ", $s_fixed, ",
+    ", stringify!($Self), ",
 };
-assert_eq!(", $s_fixed, "::<U2>::from_num(10).int_log10(), 1);
-assert_eq!(", $s_fixed, "::<U2>::from_num(9.75).int_log10(), 0);
-assert_eq!(", $s_fixed, "::<U6>::from_num(0.109375).int_log10(), -1);
-assert_eq!(", $s_fixed, "::<U6>::from_num(0.09375).int_log10(), -2);
+assert_eq!(", stringify!($Self), "::<U2>::from_num(10).int_log10(), 1);
+assert_eq!(", stringify!($Self), "::<U2>::from_num(9.75).int_log10(), 0);
+assert_eq!(", stringify!($Self), "::<U6>::from_num(0.109375).int_log10(), -1);
+assert_eq!(", stringify!($Self), "::<U6>::from_num(0.09375).int_log10(), -2);
 ```
 ";
                 #[inline]
@@ -141,8 +151,8 @@ or if the base is <&nbsp;2.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(4).int_log(2), 2);
 assert_eq!(Fix::from_num(5.75).int_log(5), 1);
 assert_eq!(Fix::from_num(0.25).int_log(5), -1);
@@ -175,8 +185,8 @@ Returns the logarithm or [`None`] if the fixed-point number is
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::ZERO.checked_int_log2(), None);
 assert_eq!(Fix::from_num(4).checked_int_log2(), Some(2));
 assert_eq!(Fix::from_num(3.9375).checked_int_log2(), Some(1));
@@ -210,13 +220,13 @@ Returns the logarithm or [`None`] if the fixed-point number is
 ```rust
 use fixed::{
     types::extra::{U2, U6},
-    ", $s_fixed, ",
+    ", stringify!($Self), ",
 };
-assert_eq!(", $s_fixed, "::<U2>::ZERO.checked_int_log10(), None);
-assert_eq!(", $s_fixed, "::<U2>::from_num(10).checked_int_log10(), Some(1));
-assert_eq!(", $s_fixed, "::<U2>::from_num(9.75).checked_int_log10(), Some(0));
-assert_eq!(", $s_fixed, "::<U6>::from_num(0.109375).checked_int_log10(), Some(-1));
-assert_eq!(", $s_fixed, "::<U6>::from_num(0.09375).checked_int_log10(), Some(-2));
+assert_eq!(", stringify!($Self), "::<U2>::ZERO.checked_int_log10(), None);
+assert_eq!(", stringify!($Self), "::<U2>::from_num(10).checked_int_log10(), Some(1));
+assert_eq!(", stringify!($Self), "::<U2>::from_num(9.75).checked_int_log10(), Some(0));
+assert_eq!(", stringify!($Self), "::<U6>::from_num(0.109375).checked_int_log10(), Some(-1));
+assert_eq!(", stringify!($Self), "::<U6>::from_num(0.09375).checked_int_log10(), Some(-2));
 ```
 ";
                 #[inline]
@@ -253,8 +263,8 @@ or if the base is <&nbsp;2.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::ZERO.checked_int_log(5), None);
 assert_eq!(Fix::from_num(4).checked_int_log(2), Some(2));
 assert_eq!(Fix::from_num(5.75).checked_int_log(5), Some(1));
@@ -311,8 +321,8 @@ represented is almost certainly a bug.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(5).signum(), 1);
 assert_eq!(Fix::ZERO.signum(), 0);
 assert_eq!(Fix::from_num(-5).signum(), -1);
@@ -321,7 +331,7 @@ assert_eq!(Fix::from_num(-5).signum(), -1);
                     #[inline]
                     #[track_caller]
                     #[must_use]
-                    pub const fn signum(self) -> $Fixed<Frac> {
+                    pub const fn signum(self) -> $Self<Frac> {
                         let (ans, overflow) = self.overflowing_signum();
                         debug_assert!(!overflow, "overflow");
                         ans
@@ -345,8 +355,8 @@ change if in the future it panics; if wrapping is required use
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2).recip(), Fix::from_num(0.5));
 ```
 
@@ -355,7 +365,7 @@ assert_eq!(Fix::from_num(2).recip(), Fix::from_num(0.5));
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn recip(self) -> $Fixed<Frac> {
+                pub const fn recip(self) -> $Self<Frac> {
                     let (ans, overflow) = self.overflowing_recip();
                     debug_assert!(!overflow, "overflow");
                     ans
@@ -378,8 +388,8 @@ in the future it panics; if wrapping is required use
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(7.5).div_euclid(Fix::from_num(2)), Fix::from_num(3));
 ",
                 if_signed_else_empty_str! {
@@ -394,7 +404,7 @@ assert_eq!(Fix::from_num(7.5).div_euclid(Fix::from_num(2)), Fix::from_num(3));
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn div_euclid(self, rhs: $Fixed<Frac>) -> $Fixed<Frac> {
+                pub const fn div_euclid(self, rhs: $Self<Frac>) -> $Self<Frac> {
                     let (ans, overflow) = self.overflowing_div_euclid(rhs);
                     debug_assert!(!overflow, "overflow");
                     ans
@@ -422,8 +432,8 @@ use [`wrapping_div_euclid_int`] instead.
                 "# Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(7.5).div_euclid_int(2), Fix::from_num(3));
 ",
                 if_signed_else_empty_str! {
@@ -438,7 +448,7 @@ assert_eq!(Fix::from_num(7.5).div_euclid_int(2), Fix::from_num(3));
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn div_euclid_int(self, rhs: $Inner) -> $Fixed<Frac> {
+                pub const fn div_euclid_int(self, rhs: $Inner) -> $Self<Frac> {
                     let (ans, overflow) = self.overflowing_div_euclid_int(rhs);
                     debug_assert!(!overflow, "overflow");
                     ans
@@ -474,8 +484,8 @@ required use [`wrapping_add_prod`] instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(3).add_prod(Fix::from_num(4), Fix::from_num(0.5)), 5);
 ",
                 if_signed_else_empty_str! {
@@ -494,9 +504,9 @@ assert_eq!((-Fix::MAX).add_prod(Fix::MAX, Fix::from_num(1.5)), Fix::MAX / 2);
                 #[must_use]
                 pub const fn add_prod<AFrac: $LeEqU, BFrac: $LeEqU>(
                     self,
-                    a: $Fixed<AFrac>,
-                    b: $Fixed<BFrac>,
-                ) -> $Fixed<Frac> {
+                    a: $Self<AFrac>,
+                    b: $Self<BFrac>,
+                ) -> $Self<Frac> {
                     let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         a.to_bits(),
                         b.to_bits(),
@@ -537,8 +547,8 @@ instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let mut acc = Fix::from_num(3);
 acc.mul_acc(Fix::from_num(4), Fix::from_num(0.5));
 assert_eq!(acc, 5);
@@ -561,8 +571,8 @@ assert_eq!(acc, Fix::MAX / 2);
                 #[track_caller]
                 pub fn mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
                     &mut self,
-                    a: $Fixed<AFrac>,
-                    b: $Fixed<BFrac>,
+                    a: $Self<AFrac>,
+                    b: $Self<BFrac>,
                 ) {
                     *self = self.add_prod(a, b);
                 }
@@ -578,8 +588,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(7.5).rem_euclid_int(2), Fix::from_num(1.5));
 ",
                 if_signed_else_empty_str! {
@@ -592,7 +602,7 @@ assert_eq!(Fix::from_num(7.5).rem_euclid_int(2), Fix::from_num(1.5));
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn rem_euclid_int(self, rhs: $Inner) -> $Fixed<Frac> {
+                pub const fn rem_euclid_int(self, rhs: $Inner) -> $Self<Frac> {
                     let (ans, overflow) = self.overflowing_rem_euclid_int(rhs);
                     debug_assert!(!overflow, "overflow");
                     ans
@@ -618,8 +628,8 @@ required use [`wrapping_lerp`] instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let start = Fix::from_num(2);
 let end = Fix::from_num(3.5);
 ",
@@ -641,9 +651,9 @@ assert_eq!(Fix::from_num(2.0).lerp(start, end), 5);
                 #[must_use]
                 pub const fn lerp<RangeFrac>(
                     self,
-                    start: $Fixed<RangeFrac>,
-                    end: $Fixed<RangeFrac>,
-                ) -> $Fixed<RangeFrac> {
+                    start: $Self<RangeFrac>,
+                    end: $Self<RangeFrac>,
+                ) -> $Self<RangeFrac> {
                     let (ans, overflow) = lerp::$Inner(
                         self.to_bits(),
                         start.to_bits(),
@@ -651,7 +661,7 @@ assert_eq!(Fix::from_num(2.0).lerp(start, end), 5);
                         Frac::U32,
                     );
                     debug_assert!(!overflow, "overflow");
-                    $Fixed::from_bits(ans)
+                    $Self::from_bits(ans)
                 }
             }
 
@@ -671,16 +681,16 @@ Overflow can only occur
 
 ```rust
 use fixed::{
-    types::extra::{U4, U", $s_nbits_m1, ", U", $s_nbits, "},
-    ", $s_fixed, ",
+    types::extra::{U4, U", $nm1, ", U", $n, "},
+    ", stringify!($Self), ",
 };
-type Fix = ", $s_fixed, "<U4>;
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(5).checked_signum(), Some(Fix::ONE));
 assert_eq!(Fix::ZERO.checked_signum(), Some(Fix::ZERO));
 assert_eq!(Fix::from_num(-5).checked_signum(), Some(Fix::NEG_ONE));
 
-type OneIntBit = ", $s_fixed, "<U", $s_nbits_m1, ">;
-type ZeroIntBits = ", $s_fixed, "<U", $s_nbits, ">;
+type OneIntBit = ", stringify!($Self), "<U", $nm1, ">;
+type ZeroIntBits = ", stringify!($Self), "<U", $n, ">;
 assert_eq!(OneIntBit::from_num(0.5).checked_signum(), None);
 assert_eq!(ZeroIntBits::from_num(0.25).checked_signum(), None);
 assert_eq!(ZeroIntBits::from_num(-0.5).checked_signum(), None);
@@ -688,7 +698,7 @@ assert_eq!(ZeroIntBits::from_num(-0.5).checked_signum(), None);
 ";
                     #[inline]
                     #[must_use]
-                    pub const fn checked_signum(self) -> Option<$Fixed<Frac>> {
+                    pub const fn checked_signum(self) -> Option<$Self<Frac>> {
                         match self.overflowing_signum() {
                             (ans, false) => Some(ans),
                             (_, true) => None,
@@ -703,15 +713,15 @@ assert_eq!(ZeroIntBits::from_num(-0.5).checked_signum(), None);
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::MAX.checked_mul(Fix::ONE), Some(Fix::MAX));
 assert_eq!(Fix::MAX.checked_mul(Fix::from_num(2)), None);
 ```
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn checked_mul(self, rhs: $Fixed<Frac>) -> Option<$Fixed<Frac>> {
+                pub const fn checked_mul(self, rhs: $Self<Frac>) -> Option<$Self<Frac>> {
                     match arith::$Inner::overflowing_mul(self.to_bits(), rhs.to_bits(), Frac::U32) {
                         (ans, false) => Some(Self::from_bits(ans)),
                         (_, true) => None,
@@ -726,15 +736,15 @@ the divisor is zero or on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::MAX.checked_div(Fix::ONE), Some(Fix::MAX));
 assert_eq!(Fix::MAX.checked_div(Fix::ONE / 2), None);
 ```
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn checked_div(self, rhs: $Fixed<Frac>) -> Option<$Fixed<Frac>> {
+                pub const fn checked_div(self, rhs: $Self<Frac>) -> Option<$Self<Frac>> {
                     if rhs.to_bits() == 0 {
                         return None;
                     }
@@ -752,15 +762,15 @@ assert_eq!(Fix::MAX.checked_div(Fix::ONE / 2), None);
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2).checked_recip(), Some(Fix::from_num(0.5)));
 assert_eq!(Fix::ZERO.checked_recip(), None);
 ```
 ";
                 #[inline]
                 #[must_use]
-                pub const fn checked_recip(self) -> Option<$Fixed<Frac>> {
+                pub const fn checked_recip(self) -> Option<$Self<Frac>> {
                     if self.to_bits() == 0 {
                         None
                     } else {
@@ -779,8 +789,8 @@ assert_eq!(Fix::ZERO.checked_recip(), None);
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(7.5).checked_div_euclid(Fix::from_num(2)), Some(Fix::from_num(3)));
 assert_eq!(Fix::from_num(7.5).checked_div_euclid(Fix::ZERO), None);
 assert_eq!(Fix::MAX.checked_div_euclid(Fix::from_num(0.25)), None);
@@ -794,7 +804,7 @@ assert_eq!(Fix::MAX.checked_div_euclid(Fix::from_num(0.25)), None);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn checked_div_euclid(self, rhs: $Fixed<Frac>) -> Option<$Fixed<Frac>> {
+                pub const fn checked_div_euclid(self, rhs: $Self<Frac>) -> Option<$Self<Frac>> {
                     let q = match self.checked_div(rhs) {
                         Some(s) => s.round_to_zero(),
                         None => return None,
@@ -835,8 +845,8 @@ overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(
     Fix::from_num(3).checked_add_prod(Fix::from_num(4), Fix::from_num(0.5)),
     Some(Fix::from_num(5))
@@ -858,9 +868,9 @@ assert_eq!(
                 #[must_use]
                 pub const fn checked_add_prod<AFrac: $LeEqU, BFrac: $LeEqU>(
                     self,
-                    a: $Fixed<AFrac>,
-                    b: $Fixed<BFrac>,
-                ) -> Option<$Fixed<Frac>> {
+                    a: $Self<AFrac>,
+                    b: $Self<BFrac>,
+                ) -> Option<$Self<Frac>> {
                     let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         a.to_bits(),
                         b.to_bits(),
@@ -900,8 +910,8 @@ this method saves the correct result without overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let mut acc = Fix::from_num(3);
 let check = acc.checked_mul_acc(Fix::from_num(4), Fix::from_num(0.5));
 assert_eq!(check, Some(()));
@@ -931,8 +941,8 @@ assert_eq!(acc, Fix::MAX / 2);
                 #[must_use = "this `Option` may be a `None` variant indicating overflow, which should be handled"]
                 pub fn checked_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
                     &mut self,
-                    a: $Fixed<AFrac>,
-                    b: $Fixed<BFrac>,
+                    a: $Self<AFrac>,
+                    b: $Self<BFrac>,
                 ) -> Option<()> {
                     match self.checked_add_prod(a, b) {
                         Some(s) => {
@@ -951,8 +961,8 @@ Returns the remainder, or [`None`] if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(3.75).checked_rem_int(2), Some(Fix::from_num(1.75)));
 assert_eq!(Fix::from_num(3.75).checked_rem_int(0), None);
 ",
@@ -965,8 +975,8 @@ assert_eq!(Fix::from_num(3.75).checked_rem_int(0), None);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn checked_rem_int(self, rhs: $Inner) -> Option<$Fixed<Frac>> {
-                    // Overflow converting rhs to $Fixed<Frac> means that either
+                pub const fn checked_rem_int(self, rhs: $Inner) -> Option<$Self<Frac>> {
+                    // Overflow converting rhs to $Self<Frac> means that either
                     //   * |rhs| > |self|, and so remainder is self, or
                     //   * self is signed min with at least one integer bit,
                     //     and the value of rhs is -self, so remainder is 0.
@@ -1013,8 +1023,8 @@ quotient, or [`None`] if the divisor is zero",
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(7.5).checked_div_euclid_int(2), Some(Fix::from_num(3)));
 assert_eq!(Fix::from_num(7.5).checked_div_euclid_int(0), None);
 ",
@@ -1027,7 +1037,7 @@ assert_eq!(Fix::from_num(7.5).checked_div_euclid_int(0), None);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn checked_div_euclid_int(self, rhs: $Inner) -> Option<$Fixed<Frac>> {
+                pub const fn checked_div_euclid_int(self, rhs: $Inner) -> Option<$Self<Frac>> {
                     let q = match self.checked_div_int(rhs) {
                         Some(s) => s.round_to_zero(),
                         None => return None,
@@ -1061,8 +1071,8 @@ Returns the remainder, or [`None`] if the divisor is zero",
 # Examples
 
 ```rust
-use fixed::{types::extra::U", $s_nbits_m4, ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U", $s_nbits_m4, ">;
+use fixed::{types::extra::U", $nm4, ", ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U", $nm4, ">;
 assert_eq!(Fix::from_num(7.5).checked_rem_euclid_int(2), Some(Fix::from_num(1.5)));
 assert_eq!(Fix::from_num(7.5).checked_rem_euclid_int(0), None);
 ",
@@ -1077,7 +1087,7 @@ assert_eq!(Fix::from_num(-7.5).checked_rem_euclid_int(20), None);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn checked_rem_euclid_int(self, rhs: $Inner) -> Option<$Fixed<Frac>> {
+                pub const fn checked_rem_euclid_int(self, rhs: $Inner) -> Option<$Self<Frac>> {
                     if_signed! {
                         $Signedness;
                         let Some(rem) = self.checked_rem_int(rhs) else {
@@ -1133,8 +1143,8 @@ performed if `self` is not in the range 0&nbsp;≤&nbsp;<i>x</i>&nbsp;≤&nbsp;1
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(0.5).checked_lerp(Fix::ZERO, Fix::MAX), Some(Fix::MAX / 2));
 assert_eq!(Fix::from_num(1.5).checked_lerp(Fix::ZERO, Fix::MAX), None);
 ```
@@ -1143,11 +1153,11 @@ assert_eq!(Fix::from_num(1.5).checked_lerp(Fix::ZERO, Fix::MAX), None);
                 #[must_use]
                 pub const fn checked_lerp<RangeFrac>(
                     self,
-                    start: $Fixed<RangeFrac>,
-                    end: $Fixed<RangeFrac>,
-                ) -> Option<$Fixed<RangeFrac>> {
+                    start: $Self<RangeFrac>,
+                    end: $Self<RangeFrac>,
+                ) -> Option<$Self<RangeFrac>> {
                     match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), Frac::U32) {
-                        (bits, false) => Some($Fixed::from_bits(bits)),
+                        (bits, false) => Some($Self::from_bits(bits)),
                         (_, true) => None,
                     }
                 }
@@ -1169,16 +1179,16 @@ Overflow can only occur
 
 ```rust
 use fixed::{
-    types::extra::{U4, U", $s_nbits_m1, ", U", $s_nbits, "},
-    ", $s_fixed, ",
+    types::extra::{U4, U", $nm1, ", U", $n, "},
+    ", stringify!($Self), ",
 };
-type Fix = ", $s_fixed, "<U4>;
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(5).saturating_signum(), 1);
 assert_eq!(Fix::ZERO.saturating_signum(), 0);
 assert_eq!(Fix::from_num(-5).saturating_signum(), -1);
 
-type OneIntBit = ", $s_fixed, "<U", $s_nbits_m1, ">;
-type ZeroIntBits = ", $s_fixed, "<U", $s_nbits, ">;
+type OneIntBit = ", stringify!($Self), "<U", $nm1, ">;
+type ZeroIntBits = ", stringify!($Self), "<U", $n, ">;
 assert_eq!(OneIntBit::from_num(0.5).saturating_signum(), OneIntBit::MAX);
 assert_eq!(ZeroIntBits::from_num(0.25).saturating_signum(), ZeroIntBits::MAX);
 assert_eq!(ZeroIntBits::from_num(-0.5).saturating_signum(), ZeroIntBits::MIN);
@@ -1186,14 +1196,14 @@ assert_eq!(ZeroIntBits::from_num(-0.5).saturating_signum(), ZeroIntBits::MIN);
 ";
                     #[inline]
                     #[must_use]
-                    pub const fn saturating_signum(self) -> $Fixed<Frac> {
+                    pub const fn saturating_signum(self) -> $Self<Frac> {
                         match self.overflowing_signum() {
                             (ans, false) => ans,
                             (_, true) => {
                                 if self.is_negative() {
-                                    $Fixed::MIN
+                                    $Self::MIN
                                 } else {
-                                    $Fixed::MAX
+                                    $Self::MAX
                                 }
                             }
                         }
@@ -1207,15 +1217,15 @@ assert_eq!(ZeroIntBits::from_num(-0.5).saturating_signum(), ZeroIntBits::MIN);
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(3).saturating_mul(Fix::from_num(2)), Fix::from_num(6));
 assert_eq!(Fix::MAX.saturating_mul(Fix::from_num(2)), Fix::MAX);
 ```
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn saturating_mul(self, rhs: $Fixed<Frac>) -> $Fixed<Frac> {
+                pub const fn saturating_mul(self, rhs: $Self<Frac>) -> $Self<Frac> {
                     match arith::$Inner::overflowing_mul(self.to_bits(), rhs.to_bits(), Frac::U32) {
                         (ans, false) => Self::from_bits(ans),
                         (_, true) => {
@@ -1243,8 +1253,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let one_half = Fix::ONE / 2;
 assert_eq!(Fix::ONE.saturating_div(Fix::from_num(2)), one_half);
 assert_eq!(Fix::MAX.saturating_div(one_half), Fix::MAX);
@@ -1253,7 +1263,7 @@ assert_eq!(Fix::MAX.saturating_div(one_half), Fix::MAX);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn saturating_div(self, rhs: $Fixed<Frac>) -> $Fixed<Frac> {
+                pub const fn saturating_div(self, rhs: $Self<Frac>) -> $Self<Frac> {
                     match arith::$Inner::overflowing_div(self.to_bits(), rhs.to_bits(), Frac::U32) {
                         (ans, false) => Self::from_bits(ans),
                         (_, true) => {
@@ -1282,9 +1292,9 @@ Panics if the fixed-point number is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U", $s_nbits_m1, ", ", $s_fixed, "};
+use fixed::{types::extra::U", $nm1, ", ", stringify!($Self), "};
 // only one integer bit
-type Fix = ", $s_fixed, "<U", $s_nbits_m1, ">;
+type Fix = ", stringify!($Self), "<U", $nm1, ">;
 assert_eq!(Fix::from_num(0.25).saturating_recip(), Fix::MAX);
 ",
                 if_signed_else_empty_str! {
@@ -1297,7 +1307,7 @@ assert_eq!(Fix::from_num(0.25).saturating_recip(), Fix::MAX);
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn saturating_recip(self) -> $Fixed<Frac> {
+                pub const fn saturating_recip(self) -> $Self<Frac> {
                     match self.overflowing_recip() {
                         (ans, false) => ans,
                         (_, true) => {
@@ -1326,8 +1336,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(7.5).saturating_div_euclid(Fix::from_num(2)), Fix::from_num(3));
 assert_eq!(Fix::MAX.saturating_div_euclid(Fix::from_num(0.25)), Fix::MAX);
 ",
@@ -1342,7 +1352,7 @@ assert_eq!(Fix::MIN.saturating_div_euclid(Fix::from_num(0.25)), Fix::MIN);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn saturating_div_euclid(self, rhs: $Fixed<Frac>) -> $Fixed<Frac> {
+                pub const fn saturating_div_euclid(self, rhs: $Self<Frac>) -> $Self<Frac> {
                     match self.overflowing_div_euclid(rhs) {
                         (val, false) => val,
                         (_, true) => {
@@ -1380,8 +1390,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(7.5).saturating_div_euclid_int(2), Fix::from_num(3));
 ",
                 if_signed_else_empty_str! {
@@ -1395,11 +1405,11 @@ assert_eq!(Fix::MIN.saturating_div_euclid_int(-1), Fix::MAX);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn saturating_div_euclid_int(self, rhs: $Inner) -> $Fixed<Frac> {
+                pub const fn saturating_div_euclid_int(self, rhs: $Inner) -> $Self<Frac> {
                     // dividing by integer can never result in something < MIN
                     match self.overflowing_div_euclid_int(rhs) {
                         (val, false) => val,
-                        (_, true) => $Fixed::MAX,
+                        (_, true) => $Self::MAX,
                     }
                 }
             }
@@ -1423,8 +1433,8 @@ overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(
     Fix::from_num(3).saturating_add_prod(Fix::from_num(4), Fix::from_num(0.5)),
     5
@@ -1446,9 +1456,9 @@ assert_eq!(
                 #[must_use]
                 pub const fn saturating_add_prod<AFrac: $LeEqU, BFrac: $LeEqU>(
                     self,
-                    a: $Fixed<AFrac>,
-                    b: $Fixed<BFrac>,
-                ) -> $Fixed<Frac> {
+                    a: $Self<AFrac>,
+                    b: $Self<BFrac>,
+                ) -> $Self<Frac> {
                     let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         a.to_bits(),
                         b.to_bits(),
@@ -1490,8 +1500,8 @@ this method saves the correct result without overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let mut acc = Fix::from_num(3);
 acc.saturating_mul_acc(Fix::from_num(4), Fix::from_num(0.5));
 assert_eq!(acc, 5);
@@ -1514,8 +1524,8 @@ assert_eq!(acc, Fix::MAX / 2);
                 #[inline]
                 pub fn saturating_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
                     &mut self,
-                    a: $Fixed<AFrac>,
-                    b: $Fixed<BFrac>,
+                    a: $Self<AFrac>,
+                    b: $Self<BFrac>,
                 ) {
                     *self = self.saturating_add_prod(a, b);
                 }
@@ -1539,8 +1549,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U", $s_nbits_m4, ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U", $s_nbits_m4, ">;
+use fixed::{types::extra::U", $nm4, ", ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U", $nm4, ">;
 assert_eq!(Fix::from_num(7.5).saturating_rem_euclid_int(2), Fix::from_num(1.5));
 ",
                 if_signed_else_empty_str! {
@@ -1555,10 +1565,10 @@ assert_eq!(Fix::from_num(-7.5).saturating_rem_euclid_int(20), Fix::MAX);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn saturating_rem_euclid_int(self, rhs: $Inner) -> $Fixed<Frac> {
+                pub const fn saturating_rem_euclid_int(self, rhs: $Inner) -> $Self<Frac> {
                     match self.overflowing_rem_euclid_int(rhs) {
                         (val, false) => val,
-                        (_, true) => $Fixed::MAX,
+                        (_, true) => $Self::MAX,
                     }
                 }
             }
@@ -1576,8 +1586,8 @@ performed if `self` is not in the range 0&nbsp;≤&nbsp;<i>x</i>&nbsp;≤&nbsp;1
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(0.5).saturating_lerp(Fix::ZERO, Fix::MAX), Fix::MAX / 2);
 assert_eq!(Fix::from_num(1.5).saturating_lerp(Fix::ZERO, Fix::MAX), Fix::MAX);
 ",
@@ -1595,22 +1605,22 @@ assert_eq!(Fix::from_num(3.0).saturating_lerp(Fix::MAX, Fix::ZERO), Fix::MIN);
                 #[must_use]
                 pub const fn saturating_lerp<RangeFrac>(
                     self,
-                    start: $Fixed<RangeFrac>,
-                    end: $Fixed<RangeFrac>,
-                ) -> $Fixed<RangeFrac> {
+                    start: $Self<RangeFrac>,
+                    end: $Self<RangeFrac>,
+                ) -> $Self<RangeFrac> {
                     match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), Frac::U32) {
-                        (bits, false) => $Fixed::from_bits(bits),
+                        (bits, false) => $Self::from_bits(bits),
                         (_, true) => if_signed_unsigned!(
                             $Signedness,
                             if self.is_negative() == (end.to_bits() < start.to_bits()) {
-                                $Fixed::MAX
+                                $Self::MAX
                             } else {
-                                $Fixed::MIN
+                                $Self::MIN
                             },
                             if end.to_bits() < start.to_bits() {
-                                $Fixed::MIN
+                                $Self::MIN
                             } else {
-                                $Fixed::MAX
+                                $Self::MAX
                             },
                         ),
                     }
@@ -1633,16 +1643,16 @@ Overflow can only occur
 
 ```rust
 use fixed::{
-    types::extra::{U4, U", $s_nbits_m1, ", U", $s_nbits, "},
-    ", $s_fixed, ",
+    types::extra::{U4, U", $nm1, ", U", $n, "},
+    ", stringify!($Self), ",
 };
-type Fix = ", $s_fixed, "<U4>;
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(5).wrapping_signum(), 1);
 assert_eq!(Fix::ZERO.wrapping_signum(), 0);
 assert_eq!(Fix::from_num(-5).wrapping_signum(), -1);
 
-type OneIntBit = ", $s_fixed, "<U", $s_nbits_m1, ">;
-type ZeroIntBits = ", $s_fixed, "<U", $s_nbits, ">;
+type OneIntBit = ", stringify!($Self), "<U", $nm1, ">;
+type ZeroIntBits = ", stringify!($Self), "<U", $n, ">;
 assert_eq!(OneIntBit::from_num(0.5).wrapping_signum(), -1);
 assert_eq!(ZeroIntBits::from_num(0.25).wrapping_signum(), 0);
 assert_eq!(ZeroIntBits::from_num(-0.5).wrapping_signum(), 0);
@@ -1650,7 +1660,7 @@ assert_eq!(ZeroIntBits::from_num(-0.5).wrapping_signum(), 0);
 ";
                     #[inline]
                     #[must_use]
-                    pub const fn wrapping_signum(self) -> $Fixed<Frac> {
+                    pub const fn wrapping_signum(self) -> $Self<Frac> {
                         self.overflowing_signum().0
                     }
                 }
@@ -1662,8 +1672,8 @@ assert_eq!(ZeroIntBits::from_num(-0.5).wrapping_signum(), 0);
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(3).wrapping_mul(Fix::from_num(2)), Fix::from_num(6));
 let wrapped = Fix::from_bits(!0 << 2);
 assert_eq!(Fix::MAX.wrapping_mul(Fix::from_num(4)), wrapped);
@@ -1671,7 +1681,7 @@ assert_eq!(Fix::MAX.wrapping_mul(Fix::from_num(4)), wrapped);
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn wrapping_mul(self, rhs: $Fixed<Frac>) -> $Fixed<Frac> {
+                pub const fn wrapping_mul(self, rhs: $Self<Frac>) -> $Self<Frac> {
                     let (ans, _) =
                         arith::$Inner::overflowing_mul(self.to_bits(), rhs.to_bits(), Frac::U32);
                     Self::from_bits(ans)
@@ -1688,8 +1698,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let one_point_5 = Fix::from_bits(0b11 << (4 - 1));
 assert_eq!(Fix::from_num(3).wrapping_div(Fix::from_num(2)), one_point_5);
 let quarter = Fix::ONE / 4;
@@ -1700,7 +1710,7 @@ assert_eq!(Fix::MAX.wrapping_div(quarter), wrapped);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn wrapping_div(self, rhs: $Fixed<Frac>) -> $Fixed<Frac> {
+                pub const fn wrapping_div(self, rhs: $Self<Frac>) -> $Self<Frac> {
                     let (ans, _) =
                         arith::$Inner::overflowing_div(self.to_bits(), rhs.to_bits(), Frac::U32);
                     Self::from_bits(ans)
@@ -1718,16 +1728,16 @@ Panics if the fixed-point number is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U", $s_nbits_m1, ", ", $s_fixed, "};
+use fixed::{types::extra::U", $nm1, ", ", stringify!($Self), "};
 // only one integer bit
-type Fix = ", $s_fixed, "<U", $s_nbits_m1, ">;
+type Fix = ", stringify!($Self), "<U", $nm1, ">;
 assert_eq!(Fix::from_num(0.25).wrapping_recip(), Fix::ZERO);
 ```
 ";
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn wrapping_recip(self) -> $Fixed<Frac> {
+                pub const fn wrapping_recip(self) -> $Self<Frac> {
                     let (ans, _) = self.overflowing_recip();
                     ans
                 }
@@ -1743,8 +1753,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(7.5).wrapping_div_euclid(Fix::from_num(2)), Fix::from_num(3));
 let wrapped = Fix::MAX.wrapping_mul_int(4).round_to_zero();
 assert_eq!(Fix::MAX.wrapping_div_euclid(Fix::from_num(0.25)), wrapped);
@@ -1753,7 +1763,7 @@ assert_eq!(Fix::MAX.wrapping_div_euclid(Fix::from_num(0.25)), wrapped);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn wrapping_div_euclid(self, rhs: $Fixed<Frac>) -> $Fixed<Frac> {
+                pub const fn wrapping_div_euclid(self, rhs: $Self<Frac>) -> $Self<Frac> {
                     self.overflowing_div_euclid(rhs).0
                 }
             }
@@ -1778,8 +1788,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(7.5).wrapping_div_euclid_int(2), Fix::from_num(3));
 ",
                 if_signed_else_empty_str! {
@@ -1794,7 +1804,7 @@ assert_eq!(Fix::MIN.wrapping_div_euclid_int(-1), wrapped);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn wrapping_div_euclid_int(self, rhs: $Inner) -> $Fixed<Frac> {
+                pub const fn wrapping_div_euclid_int(self, rhs: $Inner) -> $Self<Frac> {
                     self.overflowing_div_euclid_int(rhs).0
                 }
             }
@@ -1808,8 +1818,8 @@ different number of fractional bits.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(
     Fix::from_num(3).wrapping_add_prod(Fix::from_num(4), Fix::from_num(0.5)),
     5
@@ -1824,9 +1834,9 @@ assert_eq!(
                 #[must_use]
                 pub const fn wrapping_add_prod<AFrac: $LeEqU, BFrac: $LeEqU>(
                     self,
-                    a: $Fixed<AFrac>,
-                    b: $Fixed<BFrac>,
-                ) -> $Fixed<Frac> {
+                    a: $Self<AFrac>,
+                    b: $Self<BFrac>,
+                ) -> $Self<Frac> {
                     let (ans, _) = arith::$Inner::overflowing_mul_add(
                         a.to_bits(),
                         b.to_bits(),
@@ -1847,8 +1857,8 @@ The `a` and `b` parameters can have a fixed-point type like
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let mut acc = Fix::from_num(3);
 acc.wrapping_mul_acc(Fix::from_num(4), Fix::from_num(0.5));
 assert_eq!(acc, 5);
@@ -1861,8 +1871,8 @@ assert_eq!(acc, Fix::MAX.wrapping_mul_int(4));
                 #[inline]
                 pub fn wrapping_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
                     &mut self,
-                    a: $Fixed<AFrac>,
-                    b: $Fixed<BFrac>,
+                    a: $Self<AFrac>,
+                    b: $Self<BFrac>,
                 ) {
                     *self = self.wrapping_add_prod(a, b);
                 }
@@ -1889,8 +1899,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U", $s_nbits_m4, ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U", $s_nbits_m4, ">;
+use fixed::{types::extra::U", $nm4, ", ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U", $nm4, ">;
 assert_eq!(Fix::from_num(7.5).wrapping_rem_euclid_int(2), Fix::from_num(1.5));
 ",
                 if_signed_else_empty_str! {
@@ -1905,7 +1915,7 @@ assert_eq!(Fix::from_num(-7.5).wrapping_rem_euclid_int(20), Fix::from_num(-3.5))
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn wrapping_rem_euclid_int(self, rhs: $Inner) -> $Fixed<Frac> {
+                pub const fn wrapping_rem_euclid_int(self, rhs: $Inner) -> $Self<Frac> {
                     self.overflowing_rem_euclid_int(rhs).0
                 }
             }
@@ -1923,8 +1933,8 @@ performed if `self` is not in the range 0&nbsp;≤&nbsp;<i>x</i>&nbsp;≤&nbsp;1
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(0.5).wrapping_lerp(Fix::ZERO, Fix::MAX), Fix::MAX / 2);
 assert_eq!(
     Fix::from_num(1.5).wrapping_lerp(Fix::ZERO, Fix::MAX),
@@ -1936,12 +1946,12 @@ assert_eq!(
                 #[must_use]
                 pub const fn wrapping_lerp<RangeFrac>(
                     self,
-                    start: $Fixed<RangeFrac>,
-                    end: $Fixed<RangeFrac>,
-                ) -> $Fixed<RangeFrac> {
+                    start: $Self<RangeFrac>,
+                    end: $Self<RangeFrac>,
+                ) -> $Self<RangeFrac> {
                     let (bits, _) =
                         lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), Frac::U32);
-                    $Fixed::from_bits(bits)
+                    $Self::from_bits(bits)
                 }
             }
 
@@ -1964,8 +1974,8 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(5).unwrapped_signum(), 1);
 assert_eq!(Fix::ZERO.unwrapped_signum(), 0);
 assert_eq!(Fix::from_num(-5).unwrapped_signum(), -1);
@@ -1974,15 +1984,15 @@ assert_eq!(Fix::from_num(-5).unwrapped_signum(), -1);
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U", $s_nbits_m1, ", ", $s_fixed, "};
-type OneIntBit = ", $s_fixed, "<U", $s_nbits_m1, ">;
+use fixed::{types::extra::U", $nm1, ", ", stringify!($Self), "};
+type OneIntBit = ", stringify!($Self), "<U", $nm1, ">;
 let _overflow = OneIntBit::from_num(0.5).unwrapped_signum();
 ```
 ";
                     #[inline]
                     #[track_caller]
                     #[must_use]
-                    pub const fn unwrapped_signum(self) -> $Fixed<Frac> {
+                    pub const fn unwrapped_signum(self) -> $Self<Frac> {
                         let (ans, overflow) = self.overflowing_signum();
                         assert!(!overflow, "overflow");
                         ans
@@ -2000,23 +2010,23 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(3).unwrapped_mul(Fix::from_num(2)), Fix::from_num(6));
 ```
 
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let _overflow = Fix::MAX.unwrapped_mul(Fix::from_num(4));
 ```
 ";
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn unwrapped_mul(self, rhs: $Fixed<Frac>) -> $Fixed<Frac> {
+                pub const fn unwrapped_mul(self, rhs: $Self<Frac>) -> $Self<Frac> {
                     match self.checked_mul(rhs) {
                         Some(s) => s,
                         None => panic!("overflow"),
@@ -2034,8 +2044,8 @@ Panics if the divisor is zero or if the division results in overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let one_point_5 = Fix::from_bits(0b11 << (4 - 1));
 assert_eq!(Fix::from_num(3).unwrapped_div(Fix::from_num(2)), one_point_5);
 ```
@@ -2043,8 +2053,8 @@ assert_eq!(Fix::from_num(3).unwrapped_div(Fix::from_num(2)), one_point_5);
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let quarter = Fix::ONE / 4;
 let _overflow = Fix::MAX.unwrapped_div(quarter);
 ```
@@ -2052,7 +2062,7 @@ let _overflow = Fix::MAX.unwrapped_div(quarter);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn unwrapped_div(self, rhs: $Fixed<Frac>) -> $Fixed<Frac> {
+                pub const fn unwrapped_div(self, rhs: $Self<Frac>) -> $Self<Frac> {
                     match self.overflowing_div(rhs) {
                         (_, true) => panic!("overflow"),
                         (ans, false) => ans,
@@ -2071,15 +2081,15 @@ Panics if the fixed-point number is zero or on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(0.25).unwrapped_recip(), Fix::from_num(4));
 ```
 ";
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn unwrapped_recip(self) -> $Fixed<Frac> {
+                pub const fn unwrapped_recip(self) -> $Self<Frac> {
                     match self.overflowing_recip() {
                         (_, true) => panic!("overflow"),
                         (ans, false) => ans,
@@ -2097,23 +2107,23 @@ Panics if the divisor is zero or if the division results in overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(7.5).unwrapped_div_euclid(Fix::from_num(2)), Fix::from_num(3));
 ```
 
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let _overflow = Fix::MAX.unwrapped_div_euclid(Fix::from_num(0.25));
 ```
 ";
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn unwrapped_div_euclid(self, rhs: $Fixed<Frac>) -> $Fixed<Frac> {
+                pub const fn unwrapped_div_euclid(self, rhs: $Self<Frac>) -> $Self<Frac> {
                     match self.overflowing_div_euclid(rhs) {
                         (_, true) => panic!("overflow"),
                         (ans, false) => ans,
@@ -2144,8 +2154,8 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(
     Fix::from_num(3).unwrapped_add_prod(Fix::from_num(4), Fix::from_num(0.5)),
     5
@@ -2165,8 +2175,8 @@ assert_eq!(
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let _overflow = Fix::DELTA.unwrapped_add_prod(Fix::MAX, Fix::ONE);
 ```
 ";
@@ -2175,9 +2185,9 @@ let _overflow = Fix::DELTA.unwrapped_add_prod(Fix::MAX, Fix::ONE);
                 #[track_caller]
                 pub const fn unwrapped_add_prod<AFrac: $LeEqU, BFrac: $LeEqU>(
                     self,
-                    a: $Fixed<AFrac>,
-                    b: $Fixed<BFrac>,
-                ) -> $Fixed<Frac> {
+                    a: $Self<AFrac>,
+                    b: $Self<BFrac>,
+                ) -> $Self<Frac> {
                     let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         a.to_bits(),
                         b.to_bits(),
@@ -2212,8 +2222,8 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let mut acc = Fix::from_num(3);
 acc.unwrapped_mul_acc(Fix::from_num(4), Fix::from_num(0.5));
 assert_eq!(acc, 5);
@@ -2232,8 +2242,8 @@ assert_eq!(acc, Fix::MAX / 2);
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let mut acc = Fix::DELTA;
 acc.unwrapped_mul_acc(Fix::MAX, Fix::ONE);
 ```
@@ -2242,8 +2252,8 @@ acc.unwrapped_mul_acc(Fix::MAX, Fix::ONE);
                 #[track_caller]
                 pub fn unwrapped_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
                     &mut self,
-                    a: $Fixed<AFrac>,
-                    b: $Fixed<BFrac>,
+                    a: $Self<AFrac>,
+                    b: $Self<BFrac>,
                 ) {
                     *self = self.unwrapped_add_prod(a, b);
                 }
@@ -2260,23 +2270,23 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(3.75).unwrapped_rem_int(2), Fix::from_num(1.75));
 ```
 
 The following panics because the divisor is zero.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let _divisor_is_zero = Fix::from_num(3.75).unwrapped_rem_int(0);
 ```
 ";
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn unwrapped_rem_int(self, rhs: $Inner) -> $Fixed<Frac> {
+                pub const fn unwrapped_rem_int(self, rhs: $Inner) -> $Self<Frac> {
                     match self.checked_rem_int(rhs) {
                         Some(ans) => ans,
                         None => panic!("division by zero"),
@@ -2309,8 +2319,8 @@ Panics if the divisor is zero",
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(7.5).unwrapped_div_euclid_int(2), Fix::from_num(3));
 ",
                 if_signed_else_empty_str! {
@@ -2321,8 +2331,8 @@ assert_eq!(Fix::from_num(7.5).unwrapped_div_euclid_int(2), Fix::from_num(3));
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let _overflow = Fix::MIN.unwrapped_div_euclid_int(-1);
 ",
                 },
@@ -2331,7 +2341,7 @@ let _overflow = Fix::MIN.unwrapped_div_euclid_int(-1);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn unwrapped_div_euclid_int(self, rhs: $Inner) -> $Fixed<Frac> {
+                pub const fn unwrapped_div_euclid_int(self, rhs: $Inner) -> $Self<Frac> {
                     match self.overflowing_div_euclid_int(rhs) {
                         (_, true) => panic!("overflow"),
                         (ans, false) => ans,
@@ -2365,8 +2375,8 @@ Panics if the divisor is zero",
 # Examples
 
 ```rust
-use fixed::{types::extra::U", $s_nbits_m4, ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U", $s_nbits_m4, ">;
+use fixed::{types::extra::U", $nm4, ", ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U", $nm4, ">;
 assert_eq!(Fix::from_num(7.5).unwrapped_rem_euclid_int(2), Fix::from_num(1.5));
 ",
                 if_signed_else_empty_str! {
@@ -2377,8 +2387,8 @@ assert_eq!(Fix::from_num(7.5).unwrapped_rem_euclid_int(2), Fix::from_num(1.5));
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U", $s_nbits_m4, ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U", $s_nbits_m4, ">;
+use fixed::{types::extra::U", $nm4, ", ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U", $nm4, ">;
 // -8 ≤ Fix < 8, so the answer 12.5 overflows
 let _overflow = Fix::from_num(-7.5).unwrapped_rem_euclid_int(20);
 ",
@@ -2388,7 +2398,7 @@ let _overflow = Fix::from_num(-7.5).unwrapped_rem_euclid_int(20);
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn unwrapped_rem_euclid_int(self, rhs: $Inner) -> $Fixed<Frac> {
+                pub const fn unwrapped_rem_euclid_int(self, rhs: $Inner) -> $Self<Frac> {
                     match self.overflowing_rem_euclid_int(rhs) {
                         (_, true) => panic!("overflow"),
                         (ans, false) => ans,
@@ -2413,16 +2423,16 @@ Panics if the result overflows.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(0.5).unwrapped_lerp(Fix::ZERO, Fix::MAX), Fix::MAX / 2);
 ```
 
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let _overflow = Fix::from_num(1.5).unwrapped_lerp(Fix::ZERO, Fix::MAX);
 ```
 ";
@@ -2431,11 +2441,11 @@ let _overflow = Fix::from_num(1.5).unwrapped_lerp(Fix::ZERO, Fix::MAX);
                 #[must_use]
                 pub const fn unwrapped_lerp<RangeFrac>(
                     self,
-                    start: $Fixed<RangeFrac>,
-                    end: $Fixed<RangeFrac>,
-                ) -> $Fixed<RangeFrac> {
+                    start: $Self<RangeFrac>,
+                    end: $Self<RangeFrac>,
+                ) -> $Self<RangeFrac> {
                     match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), Frac::U32) {
-                        (bits, false) => $Fixed::from_bits(bits),
+                        (bits, false) => $Self::from_bits(bits),
                         (_, true) => panic!("overflow"),
                     }
                 }
@@ -2459,16 +2469,16 @@ Overflow can only occur
 
 ```rust
 use fixed::{
-    types::extra::{U4, U", $s_nbits_m1, ", U", $s_nbits, "},
-    ", $s_fixed, ",
+    types::extra::{U4, U", $nm1, ", U", $n, "},
+    ", stringify!($Self), ",
 };
-type Fix = ", $s_fixed, "<U4>;
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(5).overflowing_signum(), (Fix::ONE, false));
 assert_eq!(Fix::ZERO.overflowing_signum(), (Fix::ZERO, false));
 assert_eq!(Fix::from_num(-5).overflowing_signum(), (Fix::NEG_ONE, false));
 
-type OneIntBit = ", $s_fixed, "<U", $s_nbits_m1, ">;
-type ZeroIntBits = ", $s_fixed, "<U", $s_nbits, ">;
+type OneIntBit = ", stringify!($Self), "<U", $nm1, ">;
+type ZeroIntBits = ", stringify!($Self), "<U", $n, ">;
 assert_eq!(OneIntBit::from_num(0.5).overflowing_signum(), (OneIntBit::NEG_ONE, true));
 assert_eq!(ZeroIntBits::from_num(0.25).overflowing_signum(), (ZeroIntBits::ZERO, true));
 assert_eq!(ZeroIntBits::from_num(-0.5).overflowing_signum(), (ZeroIntBits::ZERO, true));
@@ -2476,15 +2486,15 @@ assert_eq!(ZeroIntBits::from_num(-0.5).overflowing_signum(), (ZeroIntBits::ZERO,
 ";
                     #[inline]
                     #[must_use]
-                    pub const fn overflowing_signum(self) -> ($Fixed<Frac>, bool) {
+                    pub const fn overflowing_signum(self) -> ($Self<Frac>, bool) {
                         if self.to_bits() == 0 {
-                            ($Fixed::ZERO, false)
+                            ($Self::ZERO, false)
                         } else if Frac::U32 == $Inner::BITS {
-                            ($Fixed::ZERO, true)
+                            ($Self::ZERO, true)
                         } else if self.to_bits() < 0 {
-                            ($Fixed::from_bits(-1 << Frac::U32), false)
+                            ($Self::from_bits(-1 << Frac::U32), false)
                         } else {
-                            ($Fixed::from_bits(1 << Frac::U32), Frac::U32 == $Inner::BITS - 1)
+                            ($Self::from_bits(1 << Frac::U32), Frac::U32 == $Inner::BITS - 1)
                         }
                     }
                 }
@@ -2499,8 +2509,8 @@ overflow has occurred. On overflow, the wrapped value is returned.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(3).overflowing_mul(Fix::from_num(2)), (Fix::from_num(6), false));
 let wrapped = Fix::from_bits(!0 << 2);
 assert_eq!(Fix::MAX.overflowing_mul(Fix::from_num(4)), (wrapped, true));
@@ -2508,7 +2518,7 @@ assert_eq!(Fix::MAX.overflowing_mul(Fix::from_num(4)), (wrapped, true));
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn overflowing_mul(self, rhs: $Fixed<Frac>) -> ($Fixed<Frac>, bool) {
+                pub const fn overflowing_mul(self, rhs: $Self<Frac>) -> ($Self<Frac>, bool) {
                     let (ans, overflow) =
                         arith::$Inner::overflowing_mul(self.to_bits(), rhs.to_bits(), Frac::U32);
                     (Self::from_bits(ans), overflow)
@@ -2528,8 +2538,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let one_point_5 = Fix::from_bits(0b11 << (4 - 1));
 assert_eq!(Fix::from_num(3).overflowing_div(Fix::from_num(2)), (one_point_5, false));
 let quarter = Fix::ONE / 4;
@@ -2540,7 +2550,7 @@ assert_eq!(Fix::MAX.overflowing_div(quarter), (wrapped, true));
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn overflowing_div(self, rhs: $Fixed<Frac>) -> ($Fixed<Frac>, bool) {
+                pub const fn overflowing_div(self, rhs: $Self<Frac>) -> ($Self<Frac>, bool) {
                     let (ans, overflow) =
                         arith::$Inner::overflowing_div(self.to_bits(), rhs.to_bits(), Frac::U32);
                     (Self::from_bits(ans), overflow)
@@ -2561,12 +2571,12 @@ Panics if the fixed-point number is zero.
 
 ```rust
 use fixed::{
-    types::extra::{U4, U", $s_nbits_m1, "},
-    ", $s_fixed, ",
+    types::extra::{U4, U", $nm1, "},
+    ", stringify!($Self), ",
 };
-type Fix = ", $s_fixed, "<U4>;
+type Fix = ", stringify!($Self), "<U4>;
 // only one integer bit
-type Small = ", $s_fixed, "<U", $s_nbits_m1, ">;
+type Small = ", stringify!($Self), "<U", $nm1, ">;
 assert_eq!(Fix::from_num(0.25).overflowing_recip(), (Fix::from_num(4), false));
 assert_eq!(Small::from_num(0.25).overflowing_recip(), (Small::ZERO, true));
 ```
@@ -2574,16 +2584,16 @@ assert_eq!(Small::from_num(0.25).overflowing_recip(), (Small::ZERO, true));
                 #[inline]
                 #[track_caller]
                 #[must_use]
-                pub const fn overflowing_recip(self) -> ($Fixed<Frac>, bool) {
+                pub const fn overflowing_recip(self) -> ($Self<Frac>, bool) {
                     if let Some(one) = Self::TRY_ONE {
                         return one.overflowing_div(self);
                     }
                     if_signed! {
                         $Signedness;
                         let (neg, abs) = int_helper::$Inner::neg_abs(self.to_bits());
-                        let uns_abs = $UFixed::<Frac>::from_bits(abs);
+                        let uns_abs = $USelf::<Frac>::from_bits(abs);
                         let (uns_wrapped, overflow1) = uns_abs.overflowing_recip();
-                        let wrapped = $Fixed::<Frac>::from_bits(uns_wrapped.to_bits() as $Inner);
+                        let wrapped = $Self::<Frac>::from_bits(uns_wrapped.to_bits() as $Inner);
                         let overflow2 = wrapped.is_negative();
                         if wrapped.to_bits() == $Inner::MIN && neg {
                             return (wrapped, overflow1);
@@ -2620,8 +2630,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let check = Fix::from_num(3);
 assert_eq!(Fix::from_num(7.5).overflowing_div_euclid(Fix::from_num(2)), (check, false));
 let wrapped = Fix::MAX.wrapping_mul_int(4).round_to_zero();
@@ -2633,8 +2643,8 @@ assert_eq!(Fix::MAX.overflowing_div_euclid(Fix::from_num(0.25)), (wrapped, true)
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub const fn overflowing_div_euclid(
                     self,
-                    rhs: $Fixed<Frac>,
-                ) -> ($Fixed<Frac>, bool) {
+                    rhs: $Self<Frac>,
+                ) -> ($Self<Frac>, bool) {
                     let (mut q, overflow) = self.overflowing_div(rhs);
                     q = q.round_to_zero();
                     if_signed! {
@@ -2675,8 +2685,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(7.5).overflowing_div_euclid_int(2), (Fix::from_num(3), false));
 ",
                 if_signed_else_empty_str! {
@@ -2691,7 +2701,7 @@ assert_eq!(Fix::MIN.overflowing_div_euclid_int(-1), (wrapped, true));
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn overflowing_div_euclid_int(self, rhs: $Inner) -> ($Fixed<Frac>, bool) {
+                pub const fn overflowing_div_euclid_int(self, rhs: $Inner) -> ($Self<Frac>, bool) {
                     let (mut q, overflow) = self.overflowing_div_int(rhs);
                     q = q.round_to_zero();
                     if_signed! {
@@ -2734,8 +2744,8 @@ overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(
     Fix::from_num(3).overflowing_add_prod(Fix::from_num(4), Fix::from_num(0.5)),
     (Fix::from_num(5), false)
@@ -2760,9 +2770,9 @@ assert_eq!(
                 #[must_use]
                 pub const fn overflowing_add_prod<AFrac: $LeEqU, BFrac: $LeEqU>(
                     self,
-                    a: $Fixed<AFrac>,
-                    b: $Fixed<BFrac>,
-                ) -> ($Fixed<Frac>, bool) {
+                    a: $Self<AFrac>,
+                    b: $Self<BFrac>,
+                ) -> ($Self<Frac>, bool) {
                     let (ans, overflow) = arith::$Inner::overflowing_mul_add(
                         a.to_bits(),
                         b.to_bits(),
@@ -2792,8 +2802,8 @@ this method saves the correct result without overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let mut acc = Fix::from_num(3);
 assert!(!acc.overflowing_mul_acc(Fix::from_num(4), Fix::from_num(0.5)));
 assert_eq!(acc, 5);
@@ -2817,8 +2827,8 @@ assert_eq!(acc, Fix::MAX / 2);
                 #[must_use = "this returns whether overflow occurs; use `wrapping_mul_acc` if the flag is not needed"]
                 pub fn overflowing_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
                     &mut self,
-                    a: $Fixed<AFrac>,
-                    b: $Fixed<BFrac>,
+                    a: $Self<AFrac>,
+                    b: $Self<BFrac>,
                 ) -> bool {
                     let (ans, overflow) = self.overflowing_add_prod(a, b);
                     *self = ans;
@@ -2848,8 +2858,8 @@ Panics if the divisor is zero.
 # Examples
 
 ```rust
-use fixed::{types::extra::U", $s_nbits_m4, ", ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U", $s_nbits_m4, ">;
+use fixed::{types::extra::U", $nm4, ", ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U", $nm4, ">;
 assert_eq!(Fix::from_num(7.5).overflowing_rem_euclid_int(2), (Fix::from_num(1.5), false));
 ",
                 if_signed_else_empty_str! {
@@ -2864,7 +2874,7 @@ assert_eq!(Fix::from_num(-7.5).overflowing_rem_euclid_int(20), (Fix::from_num(-3
                 #[inline]
                 #[track_caller]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn overflowing_rem_euclid_int(self, rhs: $Inner) -> ($Fixed<Frac>, bool) {
+                pub const fn overflowing_rem_euclid_int(self, rhs: $Inner) -> ($Self<Frac>, bool) {
                     if_signed! {
                         $Signedness;
                         let rem = self.unwrapped_rem_int(rhs);
@@ -2920,8 +2930,8 @@ performed if `self` is not in the range 0&nbsp;≤&nbsp;<i>x</i>&nbsp;≤&nbsp;1
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(
     Fix::from_num(0.5).overflowing_lerp(Fix::ZERO, Fix::MAX),
     (Fix::MAX / 2, false)
@@ -2936,11 +2946,11 @@ assert_eq!(
                 #[must_use]
                 pub const fn overflowing_lerp<RangeFrac>(
                     self,
-                    start: $Fixed<RangeFrac>,
-                    end: $Fixed<RangeFrac>,
-                ) -> ($Fixed<RangeFrac>, bool) {
+                    start: $Self<RangeFrac>,
+                    end: $Self<RangeFrac>,
+                ) -> ($Self<RangeFrac>, bool) {
                     match lerp::$Inner(self.to_bits(), start.to_bits(), end.to_bits(), Frac::U32) {
-                        (bits, overflow) => ($Fixed::from_bits(bits), overflow),
+                        (bits, overflow) => ($Self::from_bits(bits), overflow),
                     }
                 }
             }

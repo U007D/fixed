@@ -14,7 +14,11 @@
 // <https://opensource.org/licenses/MIT>.
 
 macro_rules! fixed_round {
-    ($Fixed:ident[$s_fixed:expr]($s_nbits:expr), $Signedness:tt) => {
+    (
+        Self = $Self:ident,
+        Signedness = $Signedness:ident,
+        n = $n:literal,
+    ) => {
         comment! {
             "Returns the integer part.
 
@@ -25,7 +29,7 @@ macro_rules! fixed_round {
                     "Note that since the numbers are stored in two’s
 complement, negative numbers with non-zero fractional parts will be
 rounded towards &minus;∞, except in the case where there are no integer
-bits, that is `", $s_fixed, "<U", $s_nbits, ">`, where the return value is always zero.",
+bits, that is `", stringify!($Self), "<U", $n, ">`, where the return value is always zero.",
                 ),
                 "Note that for unsigned numbers, this is equivalent to [`floor`].",
             ),
@@ -34,8 +38,8 @@ bits, that is `", $s_fixed, "<U", $s_nbits, ">`, where the return value is alway
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 // 0010.0000
 let two = Fix::from_num(2);
 // 0010.0100
@@ -60,7 +64,7 @@ assert_eq!((-two_and_quarter).int(), -three);
             };
             #[inline]
             #[must_use]
-            pub const fn int(self) -> $Fixed<Frac> {
+            pub const fn int(self) -> $Self<Frac> {
                 Self::from_bits(self.to_bits() & Self::INT_MASK)
             }
         }
@@ -74,7 +78,7 @@ assert_eq!((-two_and_quarter).int(), -three);
                 "Note that since the numbers are stored in two’s
 complement, the returned fraction will be non-negative for negative
 numbers, except in the case where there are no integer bits, that is
-`", $s_fixed, "<U", $s_nbits, ">` where the return value is always equal to
+`", stringify!($Self), "<U", $n, ">` where the return value is always equal to
 `self`.
 
 ",
@@ -82,8 +86,8 @@ numbers, except in the case where there are no integer bits, that is
             "# Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 // 0000.0100
 let quarter = Fix::ONE / 4;
 // 0010.0100
@@ -102,7 +106,7 @@ assert_eq!((-two_and_quarter).frac(), three_quarters);
 ";
             #[inline]
             #[must_use]
-            pub const fn frac(self) -> $Fixed<Frac> {
+            pub const fn frac(self) -> $Self<Frac> {
                 Self::from_bits(self.to_bits() & Self::FRAC_MASK)
             }
         }
@@ -125,8 +129,8 @@ round towards &minus;∞ unlike this method which rounds towards zero.",
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.1).round_to_zero(), Fix::from_num(2));
 assert_eq!(Fix::from_num(2.9).round_to_zero(), Fix::from_num(2));
 ",
@@ -146,7 +150,7 @@ assert_eq!(Fix::from_num(-2.9).round_to_zero(), Fix::from_num(-2));
             };
             #[inline]
             #[must_use]
-            pub const fn round_to_zero(self) -> $Fixed<Frac> {
+            pub const fn round_to_zero(self) -> $Self<Frac> {
                 if_signed! {
                     $Signedness;
                     if self.is_negative() && self.frac().to_bits() != 0 {
@@ -176,8 +180,8 @@ it panics; if wrapping is required use [`wrapping_ceil`] instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).ceil(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -192,7 +196,7 @@ assert_eq!(Fix::from_num(2.5).ceil(), Fix::from_num(3));
             #[inline]
             #[track_caller]
             #[must_use]
-            pub const fn ceil(self) -> $Fixed<Frac> {
+            pub const fn ceil(self) -> $Self<Frac> {
                 let (ceil, overflow) = self.overflowing_ceil();
                 debug_assert!(!overflow, "overflow");
                 let _ = overflow;
@@ -220,8 +224,8 @@ Overflow can only occur when there are zero integer bits.
             "# Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).floor(), Fix::from_num(2));
 ",
             if_signed_else_empty_str! {
@@ -236,7 +240,7 @@ assert_eq!(Fix::from_num(2.5).floor(), Fix::from_num(2));
             #[inline]
             #[track_caller]
             #[must_use]
-            pub const fn floor(self) -> $Fixed<Frac> {
+            pub const fn floor(self) -> $Self<Frac> {
                 let (floor, overflow) = self.overflowing_floor();
                 debug_assert!(!overflow, "overflow");
                 let _ = overflow;
@@ -258,8 +262,8 @@ it panics; if wrapping is required use [`wrapping_round`] instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).round(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -274,7 +278,7 @@ assert_eq!(Fix::from_num(2.5).round(), Fix::from_num(3));
             #[inline]
             #[track_caller]
             #[must_use]
-            pub const fn round(self) -> $Fixed<Frac> {
+            pub const fn round(self) -> $Self<Frac> {
                 let (round, overflow) = self.overflowing_round();
                 debug_assert!(!overflow, "overflow");
                 let _ = overflow;
@@ -296,8 +300,8 @@ instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).round_ties_to_even(), Fix::from_num(2));
 assert_eq!(Fix::from_num(3.5).round_ties_to_even(), Fix::from_num(4));
 ```
@@ -307,7 +311,7 @@ assert_eq!(Fix::from_num(3.5).round_ties_to_even(), Fix::from_num(4));
             #[inline]
             #[track_caller]
             #[must_use]
-            pub const fn round_ties_to_even(self) -> $Fixed<Frac> {
+            pub const fn round_ties_to_even(self) -> $Self<Frac> {
                 let (round, overflow) = self.overflowing_round_ties_to_even();
                 debug_assert!(!overflow, "overflow");
                 let _ = overflow;
@@ -322,8 +326,8 @@ returning [`None`] on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).checked_ceil(), Some(Fix::from_num(3)));
 ",
             if_signed_else_empty_str! {
@@ -336,7 +340,7 @@ assert_eq!(Fix::from_num(2.5).checked_ceil(), Some(Fix::from_num(3)));
 ";
             #[inline]
             #[must_use]
-            pub const fn checked_ceil(self) -> Option<$Fixed<Frac>> {
+            pub const fn checked_ceil(self) -> Option<$Self<Frac>> {
                 let (ceil, overflow) = self.overflowing_ceil();
                 if overflow { None } else { Some(ceil) }
             }
@@ -361,20 +365,20 @@ use fixed::{",
                 $Signedness,
                 concat!(
                     "
-    types::extra::{U4, U", $s_nbits, "},
-    ", $s_fixed, ",
+    types::extra::{U4, U", $n, "},
+    ", stringify!($Self), ",
 ",
                 ),
-                concat!("types::extra::U4, ", $s_fixed),
+                concat!("types::extra::U4, ", stringify!($Self)),
             ),
             "};
-type Fix = ", $s_fixed, "<U4>;
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).checked_floor(), Some(Fix::from_num(2)));
 ",
             if_signed_else_empty_str! {
                 $Signedness;
                 "assert_eq!(Fix::from_num(-2.5).checked_floor(), Some(Fix::from_num(-3)));
-type AllFrac = ", $s_fixed, "<U", $s_nbits, ">;
+type AllFrac = ", stringify!($Self), "<U", $n, ">;
 assert!(AllFrac::MIN.checked_floor().is_none());
 ",
             },
@@ -382,7 +386,7 @@ assert!(AllFrac::MIN.checked_floor().is_none());
 ";
             #[inline]
             #[must_use]
-            pub const fn checked_floor(self) -> Option<$Fixed<Frac>> {
+            pub const fn checked_floor(self) -> Option<$Self<Frac>> {
                 let (floor, overflow) = self.overflowing_floor();
                 if overflow { None } else { Some(floor) }
             }
@@ -395,8 +399,8 @@ rounded away from zero, returning [`None`] on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).checked_round(), Some(Fix::from_num(3)));
 ",
             if_signed_else_empty_str! {
@@ -409,7 +413,7 @@ assert_eq!(Fix::from_num(2.5).checked_round(), Some(Fix::from_num(3)));
 ";
             #[inline]
             #[must_use]
-            pub const fn checked_round(self) -> Option<$Fixed<Frac>> {
+            pub const fn checked_round(self) -> Option<$Self<Frac>> {
                 let (round, overflow) = self.overflowing_round();
                 if overflow { None } else { Some(round) }
             }
@@ -422,8 +426,8 @@ rounded to even, returning [`None`] on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).checked_round_ties_to_even(), Some(Fix::from_num(2)));
 assert_eq!(Fix::from_num(3.5).checked_round_ties_to_even(), Some(Fix::from_num(4)));
 assert!(Fix::MAX.checked_round_ties_to_even().is_none());
@@ -431,7 +435,7 @@ assert!(Fix::MAX.checked_round_ties_to_even().is_none());
 ";
             #[inline]
             #[must_use]
-            pub const fn checked_round_ties_to_even(self) -> Option<$Fixed<Frac>> {
+            pub const fn checked_round_ties_to_even(self) -> Option<$Self<Frac>> {
                 let (round, overflow) = self.overflowing_round_ties_to_even();
                 if overflow { None } else { Some(round) }
             }
@@ -444,8 +448,8 @@ saturating on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).saturating_ceil(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -458,7 +462,7 @@ assert_eq!(Fix::from_num(2.5).saturating_ceil(), Fix::from_num(3));
 ";
             #[inline]
             #[must_use]
-            pub const fn saturating_ceil(self) -> $Fixed<Frac> {
+            pub const fn saturating_ceil(self) -> $Self<Frac> {
                 let (ceil, overflow) = self.overflowing_ceil();
                 if overflow { Self::MAX } else { ceil }
             }
@@ -483,20 +487,20 @@ use fixed::{",
                 $Signedness,
                 concat!(
                     "
-    types::extra::{U4, U", $s_nbits, "},
-    ", $s_fixed, ",
+    types::extra::{U4, U", $n, "},
+    ", stringify!($Self), ",
 ",
                 ),
-                concat!("types::extra::U4, ", $s_fixed),
+                concat!("types::extra::U4, ", stringify!($Self)),
             ),
             "};
-type Fix = ", $s_fixed, "<U4>;
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).saturating_floor(), Fix::from_num(2));
 ",
             if_signed_else_empty_str! {
                 $Signedness;
                 "assert_eq!(Fix::from_num(-2.5).saturating_floor(), Fix::from_num(-3));
-type AllFrac = ", $s_fixed, "<U", $s_nbits, ">;
+type AllFrac = ", stringify!($Self), "<U", $n, ">;
 assert_eq!(AllFrac::MIN.saturating_floor(), AllFrac::MIN);
 ",
             },
@@ -504,7 +508,7 @@ assert_eq!(AllFrac::MIN.saturating_floor(), AllFrac::MIN);
 ";
             #[inline]
             #[must_use]
-            pub const fn saturating_floor(self) -> $Fixed<Frac> {
+            pub const fn saturating_floor(self) -> $Self<Frac> {
                 let (floor, overflow) = self.overflowing_floor();
                 if overflow { Self::MIN } else { floor }
             }
@@ -517,8 +521,8 @@ ties rounded away from zero, and saturating on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).saturating_round(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -531,11 +535,11 @@ assert_eq!(Fix::from_num(2.5).saturating_round(), Fix::from_num(3));
 ";
             #[inline]
             #[must_use]
-            pub const fn saturating_round(self) -> $Fixed<Frac> {
+            pub const fn saturating_round(self) -> $Self<Frac> {
                 let saturated = if self.to_bits() > 0 {
-                    $Fixed::MAX
+                    $Self::MAX
                 } else {
-                    $Fixed::MIN
+                    $Self::MIN
                 };
                 let (round, overflow) = self.overflowing_round();
                 if overflow { saturated } else { round }
@@ -549,8 +553,8 @@ ties rounded to even, and saturating on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).saturating_round_ties_to_even(), Fix::from_num(2));
 assert_eq!(Fix::from_num(3.5).saturating_round_ties_to_even(), Fix::from_num(4));
 assert_eq!(Fix::MAX.saturating_round_ties_to_even(), Fix::MAX);
@@ -558,11 +562,11 @@ assert_eq!(Fix::MAX.saturating_round_ties_to_even(), Fix::MAX);
 ";
             #[inline]
             #[must_use]
-            pub const fn saturating_round_ties_to_even(self) -> $Fixed<Frac> {
+            pub const fn saturating_round_ties_to_even(self) -> $Self<Frac> {
                 let saturated = if self.to_bits() > 0 {
-                    $Fixed::MAX
+                    $Self::MAX
                 } else {
-                    $Fixed::MIN
+                    $Self::MIN
                 };
                 let (round, overflow) = self.overflowing_round_ties_to_even();
                 if overflow { saturated } else { round }
@@ -576,8 +580,8 @@ wrapping on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).wrapping_ceil(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -590,7 +594,7 @@ assert_eq!(Fix::from_num(2.5).wrapping_ceil(), Fix::from_num(3));
 ";
             #[inline]
             #[must_use]
-            pub const fn wrapping_ceil(self) -> $Fixed<Frac> {
+            pub const fn wrapping_ceil(self) -> $Self<Frac> {
                 self.overflowing_ceil().0
             }
         }
@@ -614,20 +618,20 @@ use fixed::{",
                 $Signedness,
                 concat!(
                     "
-    types::extra::{U4, U", $s_nbits, "},
-    ", $s_fixed, ",
+    types::extra::{U4, U", $n, "},
+    ", stringify!($Self), ",
 ",
                 ),
-                concat!("types::extra::U4, ", $s_fixed),
+                concat!("types::extra::U4, ", stringify!($Self)),
             ),
             "};
-type Fix = ", $s_fixed, "<U4>;
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).wrapping_floor(), Fix::from_num(2));
 ",
             if_signed_else_empty_str! {
                 $Signedness;
                 "assert_eq!(Fix::from_num(-2.5).wrapping_floor(), Fix::from_num(-3));
-type AllFrac = ", $s_fixed, "<U", $s_nbits, ">;
+type AllFrac = ", stringify!($Self), "<U", $n, ">;
 assert_eq!(AllFrac::MIN.wrapping_floor(), AllFrac::ZERO);
 ",
             },
@@ -635,7 +639,7 @@ assert_eq!(AllFrac::MIN.wrapping_floor(), AllFrac::ZERO);
 ";
             #[inline]
             #[must_use]
-            pub const fn wrapping_floor(self) -> $Fixed<Frac> {
+            pub const fn wrapping_floor(self) -> $Self<Frac> {
                 self.overflowing_floor().0
             }
         }
@@ -647,8 +651,8 @@ nearest, with ties rounded away from zero, and wrapping on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).wrapping_round(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -661,7 +665,7 @@ assert_eq!(Fix::from_num(2.5).wrapping_round(), Fix::from_num(3));
 ";
             #[inline]
             #[must_use]
-            pub const fn wrapping_round(self) -> $Fixed<Frac> {
+            pub const fn wrapping_round(self) -> $Self<Frac> {
                 self.overflowing_round().0
             }
         }
@@ -673,8 +677,8 @@ nearest, with ties rounded to even, and wrapping on overflow.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).wrapping_round_ties_to_even(), Fix::from_num(2));
 assert_eq!(Fix::from_num(3.5).wrapping_round_ties_to_even(), Fix::from_num(4));
 assert_eq!(Fix::MAX.wrapping_round_ties_to_even(), Fix::MIN);
@@ -682,7 +686,7 @@ assert_eq!(Fix::MAX.wrapping_round_ties_to_even(), Fix::MIN);
 ";
             #[inline]
             #[must_use]
-            pub const fn wrapping_round_ties_to_even(self) -> $Fixed<Frac> {
+            pub const fn wrapping_round_ties_to_even(self) -> $Self<Frac> {
                 self.overflowing_round_ties_to_even().0
             }
         }
@@ -698,8 +702,8 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).unwrapped_ceil(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -712,15 +716,15 @@ assert_eq!(Fix::from_num(2.5).unwrapped_ceil(), Fix::from_num(3));
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let _overflow = Fix::MAX.unwrapped_ceil();
 ```
 ";
             #[inline]
             #[track_caller]
             #[must_use]
-            pub const fn unwrapped_ceil(self) -> $Fixed<Frac> {
+            pub const fn unwrapped_ceil(self) -> $Self<Frac> {
                 match self.checked_ceil() {
                     Some(s) => s,
                     None => panic!("overflow"),
@@ -746,8 +750,8 @@ Panics if the result does not fit.",
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).unwrapped_floor(), Fix::from_num(2));
 ",
             if_signed_else_empty_str! {
@@ -758,8 +762,8 @@ assert_eq!(Fix::from_num(2.5).unwrapped_floor(), Fix::from_num(2));
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U", $s_nbits, ", ", $s_fixed, "};
-type AllFrac = ", $s_fixed, "<U", $s_nbits, ">;
+use fixed::{types::extra::U", $n, ", ", stringify!($Self), "};
+type AllFrac = ", stringify!($Self), "<U", $n, ">;
 let _overflow = AllFrac::MIN.unwrapped_floor();
 ",
             },
@@ -768,7 +772,7 @@ let _overflow = AllFrac::MIN.unwrapped_floor();
             #[inline]
             #[track_caller]
             #[must_use]
-            pub const fn unwrapped_floor(self) -> $Fixed<Frac> {
+            pub const fn unwrapped_floor(self) -> $Self<Frac> {
                 match self.checked_floor() {
                     Some(s) => s,
                     None => panic!("overflow"),
@@ -787,8 +791,8 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).unwrapped_round(), Fix::from_num(3));
 ",
             if_signed_else_empty_str! {
@@ -801,15 +805,15 @@ assert_eq!(Fix::from_num(2.5).unwrapped_round(), Fix::from_num(3));
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let _overflow = Fix::MAX.unwrapped_round();
 ```
 ";
             #[inline]
             #[track_caller]
             #[must_use]
-            pub const fn unwrapped_round(self) -> $Fixed<Frac> {
+            pub const fn unwrapped_round(self) -> $Self<Frac> {
                 match self.checked_round() {
                     Some(s) => s,
                     None => panic!("overflow"),
@@ -828,8 +832,8 @@ Panics if the result does not fit.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).unwrapped_round_ties_to_even(), Fix::from_num(2));
 assert_eq!(Fix::from_num(3.5).unwrapped_round_ties_to_even(), Fix::from_num(4));
 ```
@@ -837,15 +841,15 @@ assert_eq!(Fix::from_num(3.5).unwrapped_round_ties_to_even(), Fix::from_num(4));
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 let _overflow = Fix::MAX.unwrapped_round_ties_to_even();
 ```
 ";
             #[inline]
             #[track_caller]
             #[must_use]
-            pub const fn unwrapped_round_ties_to_even(self) -> $Fixed<Frac> {
+            pub const fn unwrapped_round_ties_to_even(self) -> $Self<Frac> {
                 match self.checked_round_ties_to_even() {
                     Some(s) => s,
                     None => panic!("overflow"),
@@ -863,8 +867,8 @@ returned.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).overflowing_ceil(), (Fix::from_num(3), false));
 ",
             if_signed_else_empty_str! {
@@ -877,7 +881,7 @@ assert_eq!(Fix::from_num(2.5).overflowing_ceil(), (Fix::from_num(3), false));
 ";
             #[inline]
             #[must_use]
-            pub const fn overflowing_ceil(self) -> ($Fixed<Frac>, bool) {
+            pub const fn overflowing_ceil(self) -> ($Self<Frac>, bool) {
                 let int = self.int();
                 if self.frac().to_bits() == 0 {
                     return (int, false);
@@ -919,20 +923,20 @@ use fixed::{",
                 $Signedness,
                 concat!(
                     "
-    types::extra::{U4, U", $s_nbits, "},
-    ", $s_fixed, ",
+    types::extra::{U4, U", $n, "},
+    ", stringify!($Self), ",
 ",
                 ),
-                concat!("types::extra::U4, ", $s_fixed),
+                concat!("types::extra::U4, ", stringify!($Self)),
             ),
             "};
-type Fix = ", $s_fixed, "<U4>;
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).overflowing_floor(), (Fix::from_num(2), false));
 ",
             if_signed_else_empty_str! {
                 $Signedness;
                 "assert_eq!(Fix::from_num(-2.5).overflowing_floor(), (Fix::from_num(-3), false));
-type AllFrac = ", $s_fixed, "<U", $s_nbits, ">;
+type AllFrac = ", stringify!($Self), "<U", $n, ">;
 assert_eq!(AllFrac::MIN.overflowing_floor(), (AllFrac::ZERO, true));
 ",
             },
@@ -940,7 +944,7 @@ assert_eq!(AllFrac::MIN.overflowing_floor(), (AllFrac::ZERO, true));
 ";
             #[inline]
             #[must_use]
-            pub const fn overflowing_floor(self) -> ($Fixed<Frac>, bool) {
+            pub const fn overflowing_floor(self) -> ($Self<Frac>, bool) {
                 let int = self.int();
                 if_signed! {
                     $Signedness;
@@ -963,8 +967,8 @@ returned.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).overflowing_round(), (Fix::from_num(3), false));
 ",
             if_signed_else_empty_str! {
@@ -977,7 +981,7 @@ assert_eq!(Fix::from_num(2.5).overflowing_round(), (Fix::from_num(3), false));
 ";
             #[inline]
             #[must_use]
-            pub const fn overflowing_round(self) -> ($Fixed<Frac>, bool) {
+            pub const fn overflowing_round(self) -> ($Self<Frac>, bool) {
                 let int = self.int();
                 if (self.to_bits() & Self::FRAC_MSB) == 0 {
                     return (int, false);
@@ -1025,8 +1029,8 @@ returned.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", $s_fixed, "};
-type Fix = ", $s_fixed, "<U4>;
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
 assert_eq!(Fix::from_num(2.5).overflowing_round_ties_to_even(), (Fix::from_num(2), false));
 assert_eq!(Fix::from_num(3.5).overflowing_round_ties_to_even(), (Fix::from_num(4), false));
 assert_eq!(Fix::MAX.overflowing_round_ties_to_even(), (Fix::MIN, true));
@@ -1034,7 +1038,7 @@ assert_eq!(Fix::MAX.overflowing_round_ties_to_even(), (Fix::MIN, true));
 ";
             #[inline]
             #[must_use]
-            pub const fn overflowing_round_ties_to_even(self) -> ($Fixed<Frac>, bool) {
+            pub const fn overflowing_round_ties_to_even(self) -> ($Self<Frac>, bool) {
                 let int = self.int();
                 if (self.to_bits() & Self::FRAC_MSB) == 0 {
                     return (int, false);

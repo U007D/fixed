@@ -486,77 +486,58 @@ mod macros_const;
 
 macro_rules! fixed {
     (
-        $description:expr,
-        $Fixed:ident(
-            $Inner:ident, $LeEqU:tt, $UNbits:ident, $UNbits_m1:ident, $s_nbits:expr,
-            $s_nbits_p1:expr, $s_nbits_m1:expr, $s_nbits_m2:expr, $s_nbits_m3:expr, $s_nbits_m4:expr
-        ),
-        $nbytes:expr, $bytes_val:expr, $rev_bytes_val:expr, $be_bytes:expr, $le_bytes:expr,
-        $IFixed:ident, $UFixed:ident,
-        $IInner:ident, $UInner:ident, $NonZeroUInner:ident, $Signedness:tt,
-        $LeEqU_C0:tt, $LeEqU_C1:tt, $LeEqU_C2:tt, $LeEqU_C3:tt,
-        $HasDouble:tt, $s_nbits_2:expr,
-        $Double:ident, $DoubleInner:ty, $IDouble:ident, $IDoubleInner:ty
-    ) => {
-        fixed! {
-            $description,
-            $Fixed[stringify!($Fixed)](
-                $Inner[stringify!($Inner)], $LeEqU, $UNbits, $UNbits_m1, $s_nbits,
-                $s_nbits_p1, $s_nbits_m1, $s_nbits_m2, $s_nbits_m3, $s_nbits_m4
-            ),
-            $nbytes, $bytes_val, $rev_bytes_val, $be_bytes, $le_bytes,
-            $IFixed[stringify!($IFixed)], $UFixed[stringify!($UFixed)],
-            $IInner, $UInner, $NonZeroUInner, $Signedness,
-            $LeEqU_C0, $LeEqU_C1, $LeEqU_C2, $LeEqU_C3,
-            $HasDouble, $s_nbits_2,
-            $Double[stringify!($Double)], $DoubleInner, $IDouble, $IDoubleInner
-        }
-    };
-    (
-        $description:expr,
-        $Fixed:ident[$s_fixed:expr](
-            $Inner:ident[$s_inner:expr], $LeEqU:tt, $UNbits:ident, $UNbits_m1:ident, $s_nbits:expr,
-            $s_nbits_p1:expr, $s_nbits_m1:expr, $s_nbits_m2:expr, $s_nbits_m3:expr, $s_nbits_m4:expr
-        ),
-        $nbytes:expr, $bytes_val:expr, $rev_bytes_val:expr, $be_bytes:expr, $le_bytes:expr,
-        $IFixed:ident[$s_ifixed:expr], $UFixed:ident[$s_ufixed:expr],
-        $IInner:ident, $UInner:ident, $NonZeroUInner:ident, $Signedness:tt,
-        $LeEqU_C0:tt, $LeEqU_C1:tt, $LeEqU_C2:tt, $LeEqU_C3:tt,
-        $HasDouble:tt, $s_nbits_2:expr,
-        $Double:ident[$s_double:expr], $DoubleInner:ty, $IDouble:ident, $IDoubleInner:ty
+        description = $description:literal,
+        {Self, Inner} = {$Self:ident, $Inner:ident},
+        Signedness = $Signedness:ident,
+        LeEqU = $LeEqU:ident,
+        {Unm1, Un} = {$Unm1:ident, $Un:ident},
+        [nm4 ..= np1]
+            = [$nm4:literal, $nm3:literal, $nm2:literal, $nm1:literal, $n:literal, $np1:literal],
+        {ISelf, IInner} = {$ISelf:ident, $IInner:ident},
+        {USelf, UInner} = {$USelf:ident, $UInner:ident},
+        NonZeroUInner = $NonZeroUInner:ident,
+        [LeEqUC0 ..= LeEqUC3] = [$LeEqUC0:ident, $LeEqUC1:ident, $LeEqUC2:ident, $LeEqUC3:ident],
+        nbytes = $nbytes:literal,
+        {bytes_val, rev_bytes_val} = {$bytes_val:literal, $rev_bytes_val:literal $(,)?},
+        {be_bytes, le_bytes} = {$be_bytes:literal, $le_bytes:literal $(,)?},
+        $(
+            n2 = $n2:literal,
+            {Double, DoubleInner} = {$Double:ident, $DoubleInner:ident},
+            {IDouble, IDoubleInner} = {$IDouble:ident, $IDoubleInner:ident},
+        )?
     ) => {
         comment! {
             $description, "-bit ",
             if_signed_unsigned!($Signedness, "signed", "unsigned"),
             " number with `Frac` fractional bits.
 
-The number has ", $s_nbits, " bits, of which <i>f</i>&nbsp;=&nbsp;`Frac` are
-fractional bits and ", $s_nbits, "&nbsp;&minus;&nbsp;<i>f</i> are integer bits.
+The number has ", $n, " bits, of which <i>f</i>&nbsp;=&nbsp;`Frac` are
+fractional bits and ", $n, "&nbsp;&minus;&nbsp;<i>f</i> are integer bits.
 The value <i>x</i> can lie in the range ",
             if_signed_unsigned!(
                 $Signedness,
-                concat!("&minus;2<sup>", $s_nbits_m1, "</sup>/2<sup><i>f</i></sup>"),
+                concat!("&minus;2<sup>", $nm1, "</sup>/2<sup><i>f</i></sup>"),
                 "0",
             ),
             "&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;2<sup>",
-            if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
+            if_signed_unsigned!($Signedness, $nm1, $n),
             "</sup>/2<sup><i>f</i></sup>. The difference between successive
 numbers is constant throughout the range: <i>Δ</i>&nbsp;=&nbsp;1/2<sup><i>f</i></sup>.
 
-For <code>", $s_fixed, "\\<[U0]></code>, <i>f</i>&nbsp;=&nbsp;0 and
+For <code>", stringify!($Self), "\\<[U0]></code>, <i>f</i>&nbsp;=&nbsp;0 and
 <i>Δ</i>&nbsp;=&nbsp;1, and the fixed-point number behaves like ",
             if_signed_unsigned!($Signedness, "an", "a"),
-            " [`", $s_inner, "`] with the value lying in the range ",
+            " [`", stringify!($Inner), "`] with the value lying in the range ",
             if_signed_unsigned!(
                 $Signedness,
-                concat!("&minus;2<sup>", $s_nbits_m1, "</sup>"),
+                concat!("&minus;2<sup>", $nm1, "</sup>"),
                 "0",
             ),
             "&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;2<sup>",
-            if_signed_unsigned!($Signedness, $s_nbits_m1, $s_nbits),
-            "</sup>. For <code>", $s_fixed, "\\<[U", $s_nbits, "]></code>,
-<i>f</i>&nbsp;=&nbsp;", $s_nbits, " and
-<i>Δ</i>&nbsp;=&nbsp;1/2<sup>", $s_nbits, "</sup>, and the value lies in the
+            if_signed_unsigned!($Signedness, $nm1, $n),
+            "</sup>. For <code>", stringify!($Self), "\\<[U", $n, "]></code>,
+<i>f</i>&nbsp;=&nbsp;", $n, " and
+<i>Δ</i>&nbsp;=&nbsp;1/2<sup>", $n, "</sup>, and the value lies in the
 range ",
             if_signed_unsigned!(
                 $Signedness,
@@ -570,56 +551,57 @@ to have a major version 2 where `Frac` is replaced by `FRAC` of type [`i32`]
 when the Rust compiler’s [`generic_const_exprs` feature] is ready and stabilized.
 An [alpha version] is already available.
 
-`", $s_fixed, "<Frac>` has the same size, alignment and ABI as [`", $s_inner, "`];
-it is `#[repr(transparent)]` with [`", $s_inner, "`] as the only non-zero-sized field.
+`", stringify!($Self), "<Frac>` has the same size, alignment and ABI as
+[`", stringify!($Inner), "`]; it is `#[repr(transparent)]` with
+[`", stringify!($Inner), "`] as the only non-zero-sized field.
 
 # Examples
 
 ```rust
-use fixed::{types::extra::U3, ", $s_fixed, "};
-let eleven = ", $s_fixed, "::<U3>::from_num(11);
-assert_eq!(eleven, ", $s_fixed, "::<U3>::from_bits(11 << 3));
+use fixed::{types::extra::U3, ", stringify!($Self), "};
+let eleven = ", stringify!($Self), "::<U3>::from_num(11);
+assert_eq!(eleven, ", stringify!($Self), "::<U3>::from_bits(11 << 3));
 assert_eq!(eleven, 11);
 assert_eq!(eleven.to_string(), \"11\");
 let two_point_75 = eleven / 4;
-assert_eq!(two_point_75, ", $s_fixed, "::<U3>::from_bits(11 << 1));
+assert_eq!(two_point_75, ", stringify!($Self), "::<U3>::from_bits(11 << 1));
 assert_eq!(two_point_75, 2.75);
 assert_eq!(two_point_75.to_string(), \"2.8\");
 ```
 
 [*typenum* crate]: https://crates.io/crates/typenum
-[U", $s_nbits, "]: crate::types::extra::U", $s_nbits, "
+[U", $n, "]: crate::types::extra::U", $n, "
 [U0]: crate::types::extra::U0
 [`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
 [alpha version]: https://docs.rs/fixed/2.0.0-alpha/fixed/
 ";
             #[repr(transparent)]
-            pub struct $Fixed<Frac> {
+            pub struct $Self<Frac> {
                 pub(crate) bits: $Inner,
                 phantom: PhantomData<Frac>,
             }
         }
 
-        impl<Frac> Clone for $Fixed<Frac> {
+        impl<Frac> Clone for $Self<Frac> {
             #[inline]
-            fn clone(&self) -> $Fixed<Frac> {
+            fn clone(&self) -> $Self<Frac> {
                 *self
             }
         }
 
-        impl<Frac> Copy for $Fixed<Frac> {}
+        impl<Frac> Copy for $Self<Frac> {}
 
-        impl<Frac> Default for $Fixed<Frac> {
+        impl<Frac> Default for $Self<Frac> {
             #[inline]
             fn default() -> Self {
-                $Fixed {
+                $Self {
                     bits: Default::default(),
                     phantom: PhantomData,
                 }
             }
         }
 
-        impl<Frac> Hash for $Fixed<Frac> {
+        impl<Frac> Hash for $Self<Frac> {
             #[inline]
             fn hash<H: Hasher>(&self, state: &mut H) {
                 self.bits.hash(state);
@@ -628,122 +610,236 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
 
         // inherent methods that do not require Frac bounds, some of which can thus be const
         fixed_no_frac! {
-            $Fixed[$s_fixed](
-                $Inner[$s_inner], $LeEqU, $UNbits, $UNbits_m1,
-                $s_nbits, $s_nbits_p1, $s_nbits_m1, $s_nbits_m2, $s_nbits_m3
-            ),
-            $nbytes, $bytes_val, $rev_bytes_val, $be_bytes, $le_bytes,
-            $IFixed[$s_ifixed], $UFixed[$s_ufixed],
-            $IInner, $UInner, $Signedness,
-            $HasDouble, $s_nbits_2,
-            $Double[$s_double], $DoubleInner, $IDouble, $IDoubleInner
+            {Self, Inner} = {$Self, $Inner},
+            Signedness = $Signedness,
+            LeEqU = $LeEqU,
+            {Unm1, Un} = {$Unm1, $Un},
+            [nm3 ..= np1] = [$nm3, $nm2, $nm1, $n, $np1],
+            {ISelf, IInner} = {$ISelf, $IInner},
+            {USelf, UInner} = {$USelf, $UInner},
+            nbytes = $nbytes,
+            {bytes_val, rev_bytes_val} = {$bytes_val, $rev_bytes_val},
+            {be_bytes, le_bytes} = {$be_bytes, $le_bytes},
+            $(
+                n2 = $n2,
+                {Double, DoubleInner} = {$Double, $DoubleInner},
+                {IDouble, IDoubleInner} = {$IDouble, $IDoubleInner},
+            )?
         }
         // inherent methods that require Frac bounds, and cannot be const
         fixed_frac! {
-            $Fixed[$s_fixed]($Inner[$s_inner], $LeEqU, $s_nbits, $s_nbits_m1, $s_nbits_m4),
-            $UFixed, $UInner, $NonZeroUInner, $Signedness
+            {Self, Inner} = {$Self, $Inner},
+            Signedness = $Signedness,
+            LeEqU = $LeEqU,
+            {nm4, nm1, n} = {$nm4, $nm1, $n},
+            {USelf, UInner} = {$USelf, $UInner},
+            NonZeroUInner = $NonZeroUInner,
         }
         fixed_const! {
-            $Fixed[$s_fixed]($LeEqU, $s_nbits, $s_nbits_m1, $s_nbits_m2, $s_nbits_m3, $s_nbits_m4),
-            $LeEqU_C0, $LeEqU_C1, $LeEqU_C2, $LeEqU_C3,
-            $Signedness
+            Self = $Self,
+            Signedness = $Signedness,
+            LeEqU = $LeEqU,
+            [nm4 ..= n] = [$nm4, $nm3, $nm2, $nm1, $n],
+            [LeEqUC0 ..= LeEqUC3] = [$LeEqUC0, $LeEqUC1, $LeEqUC2, $LeEqUC3],
         }
     };
 }
 
 fixed! {
-    "An eight",
-    FixedU8(u8, LeEqU8, U8, U7, "8", "9", "7", "6", "5", "4"),
-    1, "0x12", "0x12", "[0x12]", "[0x12]",
-    FixedI8, FixedU8, i8, u8, NonZeroU8, Unsigned,
-    U8, U7, U6, U5,
-    True, "16", FixedU16, u16, FixedI16, i16
+    description = "An eight",
+    {Self, Inner} = {FixedU8, u8},
+    Signedness = Unsigned,
+    LeEqU = LeEqU8,
+    {Unm1, Un} = {U7, U8},
+    [nm4 ..= np1] = [4, 5, 6, 7, 8, 9],
+    {ISelf, IInner} = {FixedI8, i8},
+    {USelf, UInner} = {FixedU8, u8},
+    NonZeroUInner = NonZeroU8,
+    [LeEqUC0 ..= LeEqUC3] = [U8, U7, U6, U5],
+    nbytes = 1,
+    {bytes_val, rev_bytes_val} = {"0x12", "0x12"},
+    {be_bytes, le_bytes} = {"[0x12]", "[0x12]"},
+    n2 = 16,
+    {Double, DoubleInner} = {FixedU16, u16},
+    {IDouble, IDoubleInner} = {FixedI16, i16},
 }
 fixed! {
-    "A 16",
-    FixedU16(u16, LeEqU16, U16, U15, "16", "17", "15", "14", "13", "12"),
-    2, "0x1234", "0x3412", "[0x12, 0x34]", "[0x34, 0x12]",
-    FixedI16, FixedU16, i16, u16, NonZeroU16, Unsigned,
-    U16, U15, U14, U13,
-    True, "32", FixedU32, u32, FixedI32, i32
+    description = "A 16",
+    {Self, Inner} = {FixedU16, u16},
+    Signedness = Unsigned,
+    LeEqU = LeEqU16,
+    {Unm1, Un} = {U15, U16},
+    [nm4 ..= np1] = [12, 13, 14, 15, 16, 17],
+    {ISelf, IInner} = {FixedI16, i16},
+    {USelf, UInner} = {FixedU16, u16},
+    NonZeroUInner = NonZeroU16,
+    [LeEqUC0 ..= LeEqUC3] = [U16, U15, U14, U13],
+    nbytes = 2,
+    {bytes_val, rev_bytes_val} = {"0x1234", "0x3412"},
+    {be_bytes, le_bytes} = {"[0x12, 0x34]", "[0x34, 0x12]"},
+    n2 = 32,
+    {Double, DoubleInner} = {FixedU32, u32},
+    {IDouble, IDoubleInner} = {FixedI32, i32},
 }
 fixed! {
-    "A 32",
-    FixedU32(u32, LeEqU32, U32, U31, "32", "33", "31", "30", "29", "28"),
-    4, "0x1234_5678", "0x7856_3412", "[0x12, 0x34, 0x56, 0x78]", "[0x78, 0x56, 0x34, 0x12]",
-    FixedI32, FixedU32, i32, u32, NonZeroU32, Unsigned,
-    U32, U31, U30, U29,
-    True, "64", FixedU64, u64, FixedI64, i64
+    description = "A 32",
+    {Self, Inner} = {FixedU32, u32},
+    Signedness = Unsigned,
+    LeEqU = LeEqU32,
+    {Unm1, Un} = {U31, U32},
+    [nm4 ..= np1] = [28, 29, 30, 31, 32, 33],
+    {ISelf, IInner} = {FixedI32, i32},
+    {USelf, UInner} = {FixedU32, u32},
+    NonZeroUInner = NonZeroU32,
+    [LeEqUC0 ..= LeEqUC3] = [U32, U31, U30, U29],
+    nbytes = 4,
+    {bytes_val, rev_bytes_val} = {"0x1234_5678", "0x7856_3412"},
+    {be_bytes, le_bytes} = {"[0x12, 0x34, 0x56, 0x78]", "[0x78, 0x56, 0x34, 0x12]"},
+    n2 = 64,
+    {Double, DoubleInner} = {FixedU64, u64},
+    {IDouble, IDoubleInner} = {FixedI64, i64},
 }
 fixed! {
-    "A 64",
-    FixedU64(u64, LeEqU64, U64, U63, "64", "65", "63", "62", "61", "60"),
-    8, "0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412",
-    "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0x0F]",
-    "[0x0F, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
-    FixedI64, FixedU64, i64, u64, NonZeroU64, Unsigned,
-    U64, U63, U62, U61,
-    True, "128", FixedU128, u128, FixedI128, i128
+    description = "A 64",
+    {Self, Inner} = {FixedU64, u64},
+    Signedness = Unsigned,
+    LeEqU = LeEqU64,
+    {Unm1, Un} = {U63, U64},
+    [nm4 ..= np1] = [60, 61, 62, 63, 64, 65],
+    {ISelf, IInner} = {FixedI64, i64},
+    {USelf, UInner} = {FixedU64, u64},
+    NonZeroUInner = NonZeroU64,
+    [LeEqUC0 ..= LeEqUC3] = [U64, U63, U62, U61],
+    nbytes = 8,
+    {bytes_val, rev_bytes_val} = {"0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412"},
+    {be_bytes, le_bytes} = {
+        "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0x0F]",
+        "[0x0F, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
+    },
+    n2 = 128,
+    {Double, DoubleInner} = {FixedU128, u128},
+    {IDouble, IDoubleInner} = {FixedI128, i128},
 }
 fixed! {
-    "A 128",
-    FixedU128(u128, LeEqU128, U128, U127, "128", "129", "127", "126", "125", "124"),
-    16, "0x1234_5678_9ABC_DEF0_0102_0304_0506_0708",
-    "0x0807_0605_0403_0201_F0DE_BC9A_7856_3412",
-    "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, \
-     0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]",
-    "[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, \
-     0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
-    FixedI128, FixedU128, i128, u128, NonZeroU128, Unsigned,
-    U128, U127, U126, U125,
-    False, "128", FixedU128, u128, FixedI128, i128
+    description = "A 128",
+    {Self, Inner} = {FixedU128, u128},
+    Signedness = Unsigned,
+    LeEqU = LeEqU128,
+    {Unm1, Un} = {U127, U128},
+    [nm4 ..= np1] = [124, 125, 126, 127, 128, 129],
+    {ISelf, IInner} = {FixedI128, i128},
+    {USelf, UInner} = {FixedU128, u128},
+    NonZeroUInner = NonZeroU128,
+    [LeEqUC0 ..= LeEqUC3] = [U128, U127, U126, U125],
+    nbytes = 16,
+    {bytes_val, rev_bytes_val} = {
+        "0x1234_5678_9ABC_DEF0_0102_0304_0506_0708",
+        "0x0807_0605_0403_0201_F0DE_BC9A_7856_3412",
+    },
+    {be_bytes, le_bytes} = {
+        "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, \
+         0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]",
+        "[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, \
+         0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
+    },
 }
 fixed! {
-    "An eight",
-    FixedI8(i8, LeEqU8, U8, U7, "8", "9", "7", "6", "5", "4"),
-    1, "0x12", "0x12", "[0x12]", "[0x12]",
-    FixedI8, FixedU8, i8, u8, NonZeroU8, Signed,
-    U7, U6, U5, U4,
-    True, "16", FixedI16, i16, FixedI16, i16
+    description = "An eight",
+    {Self, Inner} = {FixedI8, i8},
+    Signedness = Signed,
+    LeEqU = LeEqU8,
+    {Unm1, Un} = {U7, U8},
+    [nm4 ..= np1] = [4, 5, 6, 7, 8, 9],
+    {ISelf, IInner} = {FixedI8, i8},
+    {USelf, UInner} = {FixedU8, u8},
+    NonZeroUInner = NonZeroU8,
+    [LeEqUC0 ..= LeEqUC3] = [U7, U6, U5, U4],
+    nbytes = 1,
+    {bytes_val, rev_bytes_val} = {"0x12", "0x12"},
+    {be_bytes, le_bytes} = {"[0x12]", "[0x12]"},
+    n2 = 16,
+    {Double, DoubleInner} = {FixedI16, i16},
+    {IDouble, IDoubleInner} = {FixedI16, i16},
 }
 fixed! {
-    "A 16",
-    FixedI16(i16, LeEqU16, U16, U15, "16", "17", "15", "14", "13", "12"),
-    2, "0x1234", "0x3412", "[0x12, 0x34]", "[0x34, 0x12]",
-    FixedI16, FixedU16, i16, u16, NonZeroU16, Signed,
-    U15, U14, U13, U12,
-    True, "32", FixedI32, i32, FixedI32, i32
+    description = "A 16",
+    {Self, Inner} = {FixedI16, i16},
+    Signedness = Signed,
+    LeEqU = LeEqU16,
+    {Unm1, Un} = {U15, U16},
+    [nm4 ..= np1] = [12, 13, 14, 15, 16, 17],
+    {ISelf, IInner} = {FixedI16, i16},
+    {USelf, UInner} = {FixedU16, u16},
+    NonZeroUInner = NonZeroU16,
+    [LeEqUC0 ..= LeEqUC3] = [U15, U14, U13, U12],
+    nbytes = 2,
+    {bytes_val, rev_bytes_val} = {"0x1234", "0x3412"},
+    {be_bytes, le_bytes} = {"[0x12, 0x34]", "[0x34, 0x12]"},
+    n2 = 32,
+    {Double, DoubleInner} = {FixedI32, i32},
+    {IDouble, IDoubleInner} = {FixedI32, i32},
 }
 fixed! {
-    "A 32",
-    FixedI32(i32, LeEqU32, U32, U31, "32", "33", "31", "30", "29", "28"),
-    4, "0x1234_5678", "0x7856_3412", "[0x12, 0x34, 0x56, 0x78]", "[0x78, 0x56, 0x34, 0x12]",
-    FixedI32, FixedU32, i32, u32, NonZeroU32, Signed,
-    U31, U30, U29, U28,
-    True, "64", FixedI64, i64, FixedI64, i64
+    description = "A 32",
+    {Self, Inner} = {FixedI32, i32},
+    Signedness = Signed,
+    LeEqU = LeEqU32,
+    {Unm1, Un} = {U31, U32},
+    [nm4 ..= np1] = [28, 29, 30, 31, 32, 33],
+    {ISelf, IInner} = {FixedI32, i32},
+    {USelf, UInner} = {FixedU32, u32},
+    NonZeroUInner = NonZeroU32,
+    [LeEqUC0 ..= LeEqUC3] = [U31, U30, U29, U28],
+    nbytes = 4,
+    {bytes_val, rev_bytes_val} = {"0x1234_5678", "0x7856_3412"},
+    {be_bytes, le_bytes} = {"[0x12, 0x34, 0x56, 0x78]", "[0x78, 0x56, 0x34, 0x12]"},
+    n2 = 64,
+    {Double, DoubleInner} = {FixedI64, i64},
+    {IDouble, IDoubleInner} = {FixedI64, i64},
 }
 fixed! {
-    "A 64",
-    FixedI64(i64, LeEqU64, U64, U63, "64", "65", "63", "62", "61", "60"),
-    8, "0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412",
-    "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0x0F]",
-    "[0x0F, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
-    FixedI64, FixedU64, i64, u64, NonZeroU64, Signed,
-    U63, U62, U61, U60,
-    True, "128", FixedI128, i128, FixedI128, i128
+    description = "A 64",
+    {Self, Inner} = {FixedI64, i64},
+    Signedness = Signed,
+    LeEqU = LeEqU64,
+    {Unm1, Un} = {U63, U64},
+    [nm4 ..= np1] = [60, 61, 62, 63, 64, 65],
+    {ISelf, IInner} = {FixedI64, i64},
+    {USelf, UInner} = {FixedU64, u64},
+    NonZeroUInner = NonZeroU64,
+    [LeEqUC0 ..= LeEqUC3] = [U63, U62, U61, U60],
+    nbytes = 8,
+    {bytes_val, rev_bytes_val} = {"0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412"},
+    {be_bytes, le_bytes} = {
+        "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0x0F]",
+        "[0x0F, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
+    },
+    n2 = 128,
+    {Double, DoubleInner} = {FixedI128, i128},
+    {IDouble, IDoubleInner} = {FixedI128, i128},
 }
 fixed! {
-    "A 128",
-    FixedI128(i128, LeEqU128, U128, U127, "128", "129", "127", "126", "125", "124"),
-    16, "0x1234_5678_9ABC_DEF0_0102_0304_0506_0708",
-    "0x0807_0605_0403_0201_F0DE_BC9A_7856_3412",
-    "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, \
-     0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]",
-    "[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, \
-     0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
-    FixedI128, FixedU128, i128, u128, NonZeroU128, Signed,
-    U127, U126, U125, U124,
-    False, "128", FixedI128, i128, FixedI128, i128
+    description = "A 128",
+    {Self, Inner} = {FixedI128, i128},
+    Signedness = Signed,
+    LeEqU = LeEqU128,
+    {Unm1, Un} = {U127, U128},
+    [nm4 ..= np1] = [124, 125, 126, 127, 128, 129],
+    {ISelf, IInner} = {FixedI128, i128},
+    {USelf, UInner} = {FixedU128, u128},
+    NonZeroUInner = NonZeroU128,
+    [LeEqUC0 ..= LeEqUC3] = [U127, U126, U125, U124],
+    nbytes = 16,
+    {bytes_val, rev_bytes_val} = {
+        "0x1234_5678_9ABC_DEF0_0102_0304_0506_0708",
+        "0x0807_0605_0403_0201_F0DE_BC9A_7856_3412",
+    },
+    {be_bytes, le_bytes} = {
+        "[0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, \
+         0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]",
+        "[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, \
+         0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]",
+    },
 }
 
 /// The bit representation of a *binary128* floating-point number (`f128`).

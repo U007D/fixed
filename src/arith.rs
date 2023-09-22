@@ -222,7 +222,7 @@ macro_rules! shift_all {
 macro_rules! fixed_arith {
     (
         $Fixed:ident($Inner:ident, $LeEqU:ident, $bits_count:expr, $NonZeroInner:ident),
-        $Signedness:tt
+        $Signedness:ident
     ) => {
         if_signed! {
             $Signedness;
@@ -590,7 +590,7 @@ fixed_arith! { FixedI64(i64, LeEqU64, 64, NonZeroI64), Signed }
 fixed_arith! { FixedI128(i128, LeEqU128, 128, NonZeroI128), Signed }
 
 macro_rules! mul_div_widen {
-    ($Single:ident, $Double:ty, $Signedness:tt, $Unsigned:ty) => {
+    ($Single:ident, $Double:ty, $Signedness:ident, $Unsigned:ty) => {
         pub mod $Single {
             // 0 <= frac_nbits <= NBITS
             #[inline]
