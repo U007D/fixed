@@ -180,6 +180,16 @@ The conversions supported cover the following cases.
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.12/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.12/fixed/struct.Wrapping.html
 
+### Version 1.25.0 news (unreleased)
+
+  * The [experimental][feat-exp-1-25] `borsh` feature was promoted to an
+    [optional feature][feat-1-25], and the optional [*borsh* crate] dependency
+    was updated to [version 1.0][borsh-1-0].
+
+[borsh-1-0]: https://docs.rs/borsh/~1.0/borsh/index.html
+[feat-1-25]: https://docs.rs/fixed/~1.24/fixed/index.html#optional-features
+[feat-exp-1-25]: https://docs.rs/fixed/~1.24/fixed/index.html#experimental-optional-features
+
 ### Version 1.24.0 news (2023-09-19)
 
   * The crate now requires rustc version 1.71.0 or later.
@@ -301,12 +311,14 @@ The *fixed* crate has these optional feature:
  1. `arbitrary`, disabled by default. This provides the generation of arbitrary
     fixed-point numbers from raw, unstructured data. This feature requires the
     [*arbitrary* crate].
- 2. `serde`, disabled by default. This provides serialization support for the
+ 2. `borsh`, disabled by default. This implements serialization and
+    deserialization using the [*borsh* crate].
+ 3. `serde`, disabled by default. This provides serialization support for the
     fixed-point types. This feature requires the [*serde* crate].
- 3. `std`, disabled by default. This is for features that are not possible under
+ 4. `std`, disabled by default. This is for features that are not possible under
     `no_std`: currently the implementation of the [`Error`] trait for
     [`ParseFixedError`].
- 4. `serde-str`, disabled by default. Fixed-point numbers are serialized as
+ 5. `serde-str`, disabled by default. Fixed-point numbers are serialized as
     strings showing the value when using human-readable formats. This feature
     requires the `serde` and the `std` optional features. With this feature,
     serialization is only supported for fixed-point numbers where the number of
@@ -329,10 +341,7 @@ are removed. The removal of experimental features would however require a minor
 version bump. Similarly, on a minor version bump, optional dependencies can be
 updated to an incompatible newer version.
 
- 1. `borsh`, disabled by default. This implements serialization and
-    deserialization using the [*borsh* crate]. (The plan is to promote this to
-    an optional feature once the [*borsh* crate] reaches version 1.0.0.)
- 2. `num-traits`, disabled by default. This implements some traits from the
+ 1. `num-traits`, disabled by default. This implements some traits from the
     [*num-traits* crate]. (The plan is to promote this to an optional feature
     once the [*num-traits* crate] reaches version 1.0.0.)
 

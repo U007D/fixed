@@ -81,6 +81,16 @@ as-is, without any warranty. -->
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.12/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.12/fixed/struct.Wrapping.html
 
+# Version 1.25.0 (unreleased)
+
+  * The [experimental][feat-exp-1-25] `borsh` feature was promoted to an
+    [optional feature][feat-1-25], and the optional [*borsh* crate] dependency
+    was updated to [version 1.0][borsh-1-0].
+
+[borsh-1-0]: https://docs.rs/borsh/~1.0/borsh/index.html
+[feat-1-25]: https://docs.rs/fixed/~1.24/fixed/index.html#optional-features
+[feat-exp-1-25]: https://docs.rs/fixed/~1.24/fixed/index.html#experimental-optional-features
+
 # Version 1.24.0 (2023-09-19)
 
   * The crate now requires rustc version 1.71.0 or later.
