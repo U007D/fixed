@@ -72,6 +72,8 @@ to initialize a constant.
 For example, here `lit` would be evaluated at compile time:
 
 ```rust
+# #![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
 # use fixed::{types::extra::U4, FixedU32};
 # type Fix = FixedU32<U4>;
 const ONE_AND_HALF: Fix = Fix::lit("1.5");
@@ -81,6 +83,8 @@ const ONE_AND_HALF: Fix = Fix::lit("1.5");
 However, here `lit` would be evaluated at run time:
 
 ```rust
+# #![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
 # use fixed::{types::extra::U4, FixedU32};
 # type Fix = FixedU32<U4>;
 let one_and_half = Fix::lit("1.5");
