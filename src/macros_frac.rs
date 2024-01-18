@@ -60,6 +60,42 @@ separator “`p`” or “`P`”. The parsed value is scaled by 2 to the power o
 exponent. For example, for hexadecimal “`P8`” means ×2⁸, and is equivalent to
 “`@2`” which means ×16².
 
+# Constants
+
+The `lit` method is useful to write constant fixed-point literals, and can be
+evaluated in constant context.
+
+**Warning:** Normal calls to the `lit` method are *not* evaluated at compile
+time. To ensure that the call is evaluated at compile time, `lit` must be used
+to initialize a constant.
+
+For example, here `lit` would be evaluated at compile time:
+
+```rust
+# use fixed::{types::extra::U4, FixedU32};
+# type Fix = FixedU32<U4>;
+const ONE_AND_HALF: Fix = Fix::lit("1.5");
+# assert_eq!(ONE_AND_HALF, 1.5);
+```
+
+However, here `lit` would be evaluated at run time:
+
+```rust
+# use fixed::{types::extra::U4, FixedU32};
+# type Fix = FixedU32<U4>;
+let one_and_half = Fix::lit("1.5");
+# assert_eq!(one_and_half, 1.5);
+```
+
+With the [unstable `inline_const`
+feature](https://github.com/rust-lang/rust/issues/76001), here `lit` would be
+evaluated at compile time:
+
+```rust,ignore
+#![feature(inline_const)]
+let one_and_half = const { Fix::lit("1.5") };
+```
+
 # Panics
 
 Panics if the number is not valid or overflows.
