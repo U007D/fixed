@@ -25,10 +25,10 @@ std = []
 
 # optional features through optional dependencies:
 # arbitrary
+# borsh
 # serde
 
 # experimental optional features through optional dependencies:
-# borsh
 # num-traits
 
 # deprecated
@@ -57,7 +57,7 @@ default-features = false
 optional = true
 
 [dependencies.borsh]
-version = "0.10.0"
+version = "1"
 default-features = false
 optional = true
 

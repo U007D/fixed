@@ -17,7 +17,7 @@ use crate::{
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
 };
-use borsh::maybestd::io::{Read, Result, Write};
+use borsh::io::{Read, Result, Write};
 use borsh::{BorshDeserialize, BorshSerialize};
 
 macro_rules! borsh_fixed {
