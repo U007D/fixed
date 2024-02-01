@@ -8,53 +8,37 @@
 [package]
 name = "fixed"
 version = "2.0.0-alpha.12"
-description = "Fixed-point numbers"
-documentation = "https://docs.rs/fixed"
-repository = "https://gitlab.com/tspiteri/fixed"
-readme = "README.md"
-keywords = ["dsp", "embedded", "fixed", "math", "numerics"]
 categories = ["algorithms", "embedded", "mathematics", "no-std"]
-license = "MIT/Apache-2.0"
+description = "Fixed-point numbers."
+documentation = "https://docs.rs/fixed"
 edition = "2021"
+keywords = ["dsp", "embedded", "fixed", "math", "numerics"]
+license = "MIT/Apache-2.0"
+readme = "README.md"
+repository = "https://gitlab.com/tspiteri/fixed"
 rust-version = "1.71"
 
+[dependencies]
+arbitrary = { optional = true, version = "1" }
+az = "1.2"
+borsh = { default-features = false, optional = true, version = "1" }
+bytemuck = "1.2"
+half = { default_features = false, version = ">= 1.8, < 3" }
+num-traits = { default-features = false, features = ["i128"], optional = true, version = "0.2.15" }
+serde = { default-features = false, optional = true, version = "1.0.60" }
+
 [features]
-fail-on-warnings = []
-serde-str = ["serde", "std", "serde/std"]
+arbitrary = ["dep:arbitrary"]
+borsh = ["dep:borsh"]
+serde = ["dep:serde"]
+serde-str = ["serde", "serde/std", "std"]
 std = []
 
-# optional features through optional dependencies:
-# arbitrary
-# borsh
-# serde
+# experimental features
+num-traits = ["dep:num-traits"]
 
-# experimental optional features through optional dependencies:
-# num-traits
-
-[dependencies]
-az = "1.2"
-bytemuck = "1.2"
-half = { version = ">= 1.8, < 3", default_features = false }
-
-[dependencies.arbitrary]
-version = "1"
-optional = true
-
-[dependencies.num-traits]
-version = "0.2.15"
-default-features = false
-features = ["i128"]
-optional = true
-
-[dependencies.serde]
-version = "1.0.60"
-default-features = false
-optional = true
-
-[dependencies.borsh]
-version = "1"
-default-features = false
-optional = true
+# undocumented features
+fail-on-warnings = []
 
 [package.metadata.docs.rs]
 features = ["arbitrary", "borsh", "num-traits", "serde", "std"]
