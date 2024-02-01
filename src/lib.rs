@@ -318,7 +318,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [`U20F12`]: types::U20F12
 [`UpperExp`]: core::fmt::UpperExp
 [`UpperHex`]: core::fmt::UpperHex
-[`az`]: az_crate
 [`bf16`]: half::bf16
 [`checked_from_num`]: FixedI32::checked_from_num
 [`f16`]: half::f16

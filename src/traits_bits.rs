@@ -16,7 +16,7 @@
 use crate::traits::FixedEquiv;
 #[cfg(feature = "arbitrary")]
 use arbitrary::Arbitrary;
-use az_crate::{
+use az::{
     Cast, CastFrom, CheckedCast, CheckedCastFrom, OverflowingCast, OverflowingCastFrom,
     SaturatingCast, SaturatingCastFrom, UnwrappedCast, UnwrappedCastFrom, WrappingCast,
     WrappingCastFrom,
@@ -93,8 +93,6 @@ macro_rules! impl_bits {
 /// # Examples
 ///
 /// ```rust
-/// # use az_crate::OverflowingAs;
-/// # #[cfg(skip_this)]
 /// use az::OverflowingAs;
 /// use fixed::{traits::Fixed, types::*};
 /// fn limited_positive_bits<F: Fixed>(fixed: F) -> Option<u32> {

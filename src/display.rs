@@ -20,7 +20,7 @@ use crate::{
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
 };
-use az_crate::{WrappingAs, WrappingCast};
+use az::{WrappingAs, WrappingCast};
 use core::{
     cmp::{self, Ordering},
     fmt::{
