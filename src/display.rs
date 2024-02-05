@@ -48,8 +48,9 @@ struct Buffer {
     int_digits: usize,
     frac_digits: usize,
     digits: [u8; 129],
+    exp: i32,
     exp_len: usize,
-    exp: [u8; 4],
+    exp_bytes: [u8; 4],
 }
 
 impl Buffer {
@@ -59,8 +60,9 @@ impl Buffer {
             int_digits: int_digits as usize,
             frac_digits: frac_digits as usize,
             digits: [0; 129],
+            exp: 0,
             exp_len: 0,
-            exp: [0; 4],
+            exp_bytes: [0; 4],
         }
     }
 
@@ -83,33 +85,24 @@ impl Buffer {
         &self.digits[begin..end]
     }
 
-    fn format_exp_dec(
-        &mut self,
-        exp_is_upper: bool,
-        max_frac_digits: Option<usize>,
-        truncation: &mut Truncation,
-    ) {
-        self.exp_len = 1;
-        self.exp[0] = if exp_is_upper { b'E' } else { b'e' };
+    fn find_exp_dec(&mut self, max_frac_digits: Option<usize>, truncation: &mut Truncation) {
         match self.int_and_frac().iter().position(|&x| x > 0) {
             None => {
                 self.int_digits = 0;
                 self.frac_digits = 0;
-                self.exp_len = 2;
-                self.exp[1] = b'0';
             }
             Some(first) => {
                 // exponent is 0 when first non-zero is at position int_digits - 1
-                let neg_exp = self.int_digits <= first;
-                let abs_exp = self.int_digits.abs_diff(first + 1);
-                if neg_exp {
-                    self.int_digits += abs_exp;
-                    self.frac_digits -= abs_exp;
-                    self.exp_len = 2;
-                    self.exp[1] = b'-';
+                if self.int_digits > first {
+                    let exp = self.int_digits - 1 - first;
+                    self.int_digits -= exp;
+                    self.frac_digits += exp;
+                    self.exp = exp.wrapping_as::<i32>();
                 } else {
-                    self.int_digits -= abs_exp;
-                    self.frac_digits += abs_exp;
+                    let neg_exp = first - self.int_digits + 1;
+                    self.int_digits += neg_exp;
+                    self.frac_digits -= neg_exp;
+                    self.exp = -neg_exp.wrapping_as::<i32>();
                 }
 
                 // At this point, buf.frac_nbits can be greater than fmt.precision().
@@ -119,18 +112,6 @@ impl Buffer {
                         update_truncation(truncation, &frac[max..]);
                         self.frac_digits = max;
                     }
-                }
-
-                // exp should be between -38 and 39 inclusive
-                debug_assert!(abs_exp <= 39);
-                if abs_exp > 9 {
-                    self.exp_len += 2;
-                    let (e0, e1) = (abs_exp as u8 % 10, abs_exp as u8 / 10);
-                    self.exp[self.exp_len - 2] = b'0' + e1;
-                    self.exp[self.exp_len - 1] = b'0' + e0;
-                } else {
-                    self.exp_len += 1;
-                    self.exp[self.exp_len - 1] = b'0' + abs_exp as u8;
                 }
             }
         }
@@ -143,9 +124,14 @@ impl Buffer {
         truncation: Truncation,
         fmt: &mut Formatter,
     ) -> FmtResult {
+        let has_exp = matches!(format, Format::UpExp | Format::LowExp);
+
         self.round_and_trim(format.max_digit(), truncation);
 
         self.encode_digits(format == Format::UpHex);
+        if has_exp {
+            self.encode_exp(format == Format::UpExp);
+        }
         self.pad_and_print(is_neg, format.prefix(), fmt)
     }
 
@@ -189,6 +175,28 @@ impl Buffer {
         }
     }
 
+    fn encode_exp(&mut self, upper: bool) {
+        debug_assert!(-39 <= self.exp && self.exp <= 38);
+
+        self.exp_len = 1;
+        self.exp_bytes[0] = if upper { b'E' } else { b'e' };
+        if self.exp < 0 {
+            self.exp_len = 2;
+            self.exp_bytes[1] = b'-';
+        }
+        let abs_exp = self.exp.abs().wrapping_as::<u8>();
+
+        if abs_exp > 9 {
+            self.exp_len += 2;
+            let (e0, e1) = (abs_exp as u8 % 10, abs_exp as u8 / 10);
+            self.exp_bytes[self.exp_len - 2] = b'0' + e1;
+            self.exp_bytes[self.exp_len - 1] = b'0' + e0;
+        } else {
+            self.exp_len += 1;
+            self.exp_bytes[self.exp_len - 1] = b'0' + abs_exp as u8;
+        }
+    }
+
     fn pad_and_print(&self, is_neg: bool, maybe_prefix: &str, fmt: &mut Formatter) -> FmtResult {
         use core::fmt::Write;
 
@@ -217,7 +225,7 @@ impl Buffer {
         // between 8 and 15, so two decimal digits are allocated apart
         // from the initial padding zero. This means that for 8, data
         // would begin as "008.", and begin = 2.
-        let abs_begin = if self.exp[1] == b'-' {
+        let abs_begin = if self.exp_bytes[1] == b'-' {
             self.int_digits
         } else if self.int_digits == 0 || self.digits[0] != b'0' {
             0
@@ -270,7 +278,7 @@ impl Buffer {
                 fmt.write_char('0')?;
             }
         }
-        fmt.write_str(str::from_utf8(&self.exp[..self.exp_len]).unwrap())?;
+        fmt.write_str(str::from_utf8(&self.exp_bytes[..self.exp_len]).unwrap())?;
         for _ in 0..pad_right {
             fmt.write_char(fill)?;
         }
@@ -624,7 +632,6 @@ fn fmt_dec<U: FmtHelper>(
 
     let int_sig_digits = FmtHelper::write_int_dec(int, int_used_nbits, &mut buf);
     let has_exp = matches!(format, Format::UpExp | Format::LowExp);
-    let exp_is_upper = matches!(format, Format::UpExp);
     let frac_format = DecFracFormat {
         int_sig_digits,
         has_exp,
@@ -632,7 +639,7 @@ fn fmt_dec<U: FmtHelper>(
     };
     let mut truncation = FmtHelper::write_frac_dec(frac, frac_nbits, frac_format, &mut buf);
     if has_exp {
-        buf.format_exp_dec(exp_is_upper, fmt.precision(), &mut truncation);
+        buf.find_exp_dec(fmt.precision(), &mut truncation);
     }
     buf.finish(format, neg, truncation, fmt)
 }
