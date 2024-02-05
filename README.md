@@ -105,6 +105,15 @@ The conversions supported cover the following cases.
 
 ### Version 1.25.0 news (unreleased)
 
+  * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
+    incorrect output for very small numbers, for example
+    `format!("{:e}", I16F16::DELTA)`.
+  * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was panicking
+    for some cases of positive exponents and small precision, for example
+    `format!("{:.1e}", I16F16::from_num(1001))`.
+  * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
+    incorrect output when rounding adds a more significant digit, for example
+    `format!("{:.1e}", I16F16::lit("0.999"))`.
   * The [experimental][feat-exp-1-25] `borsh` feature was promoted to an
     [optional feature][feat-1-25], and the optional [*borsh* crate] dependency
     was updated to [version 1.0][borsh-1-0].
