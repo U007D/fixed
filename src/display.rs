@@ -77,11 +77,16 @@ impl Buffer {
         &mut self.digits[begin..end]
     }
 
+    fn int_and_frac(&self) -> &[u8] {
+        let begin = 1;
+        let end = 1 + self.int_digits + self.frac_digits;
+        &self.digits[begin..end]
+    }
+
     fn format_exp_dec(&mut self, exp_is_upper: bool) {
         self.exp_len = 1;
         self.exp[0] = if exp_is_upper { b'E' } else { b'e' };
-        let digits_end = self.int_digits + self.frac_digits;
-        match self.digits[..digits_end].iter().position(|&x| x > 0) {
+        match self.int_and_frac().iter().position(|&x| x > 0) {
             None => {
                 self.int_digits = 0;
                 self.frac_digits = 0;
@@ -89,10 +94,9 @@ impl Buffer {
                 self.exp[1] = b'0';
             }
             Some(first) => {
-                // point should be between digits[int_digits] and digits[1 + int_digits],
-                // so digits[int_digits] should be digits[first]
-                let neg_exp = self.int_digits < first;
-                let abs_exp = self.int_digits.abs_diff(first);
+                // exponent is 0 when first non-zero is at position int_digits - 1
+                let neg_exp = self.int_digits <= first;
+                let abs_exp = self.int_digits.abs_diff(first + 1);
                 if neg_exp {
                     self.int_digits += abs_exp;
                     self.frac_digits -= abs_exp;
