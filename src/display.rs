@@ -755,6 +755,10 @@ mod tests {
         assert_eq!(format!("{pos:.16}"), "0.0001373291015625");
         assert_eq!(format!("{pos:e}"), "1.4e-4");
         assert_eq!(format!("{pos:.16e}"), "1.3732910156250000e-4");
+
+        assert_eq!(format!("{:.1e}", I16F16::from_num(999)), "1.0e3");
+        assert_eq!(format!("{:.1e}", I16F16::from_num(1000)), "1.0e3");
+        assert_eq!(format!("{:.1e}", I16F16::from_num(1001)), "1.0e3");
     }
 
     fn trim_frac_zeros(mut x: &str) -> &str {
