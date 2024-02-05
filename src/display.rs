@@ -1039,4 +1039,12 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn exp_small_numbers() {
+        assert_eq!(format!("{:e}", I0F64::DELTA), "5e-20");
+        assert_eq!(format!("{:e}", I0F64::DELTA * 2), "1e-19");
+        assert_eq!(format!("{:e}", I0F64::DELTA * 3), "1.6e-19");
+        assert_eq!(format!("{:e}", I0F64::DELTA * 4), "2e-19");
+    }
 }
