@@ -213,12 +213,12 @@ impl Buffer {
 
         if abs_exp > 9 {
             self.exp_len += 2;
-            let (e0, e1) = (abs_exp as u8 % 10, abs_exp as u8 / 10);
+            let (e0, e1) = (abs_exp % 10, abs_exp / 10);
             self.exp_bytes[self.exp_len - 2] = b'0' + e1;
             self.exp_bytes[self.exp_len - 1] = b'0' + e0;
         } else {
             self.exp_len += 1;
-            self.exp_bytes[self.exp_len - 1] = b'0' + abs_exp as u8;
+            self.exp_bytes[self.exp_len - 1] = b'0' + abs_exp;
         }
     }
 
