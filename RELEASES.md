@@ -81,7 +81,7 @@ as-is, without any warranty. -->
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.12/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.12/fixed/struct.Wrapping.html
 
-# Version 1.25.0 (unreleased)
+# Version 1.25.0 (2024-02-05)
 
   * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
     incorrect output for very small numbers, for example
@@ -97,8 +97,8 @@ as-is, without any warranty. -->
     was updated to [version 1.0][borsh-1-0].
 
 [borsh-1-0]: https://docs.rs/borsh/~1.0/borsh/index.html
-[feat-1-25]: https://docs.rs/fixed/~1.24/fixed/index.html#optional-features
-[feat-exp-1-25]: https://docs.rs/fixed/~1.24/fixed/index.html#experimental-optional-features
+[feat-1-25]: https://docs.rs/fixed/~1.25/fixed/index.html#optional-features
+[feat-exp-1-25]: https://docs.rs/fixed/~1.25/fixed/index.html#experimental-optional-features
 
 # Version 1.24.0 (2023-09-19)
 

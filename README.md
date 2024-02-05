@@ -180,7 +180,7 @@ The conversions supported cover the following cases.
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.12/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.12/fixed/struct.Wrapping.html
 
-### Version 1.25.0 news (unreleased)
+### Version 1.25.0 news (2024-02-05)
 
   * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
     incorrect output for very small numbers, for example
@@ -196,19 +196,8 @@ The conversions supported cover the following cases.
     was updated to [version 1.0][borsh-1-0].
 
 [borsh-1-0]: https://docs.rs/borsh/~1.0/borsh/index.html
-[feat-1-25]: https://docs.rs/fixed/~1.24/fixed/index.html#optional-features
-[feat-exp-1-25]: https://docs.rs/fixed/~1.24/fixed/index.html#experimental-optional-features
-
-### Version 1.24.0 news (2023-09-19)
-
-  * The crate now requires rustc version 1.71.0 or later.
-  * The [`saturating_div_int`][f-sdi-1-24] method was added to all fixed-point
-    numbers and to the [`Fixed`][tf-1-24] trait.
-  * The [`Saturating`][s-1-24] wrapper was added.
-
-[f-sdi-1-24]: https://docs.rs/fixed/~1.24/fixed/struct.FixedI32.html#method.saturating_div_int
-[s-1-24]: https://docs.rs/fixed/~1.24/fixed/struct.Saturating.html
-[tf-1-24]: https://docs.rs/fixed/~1.24/fixed/traits/trait.Fixed.html
+[feat-1-25]: https://docs.rs/fixed/~1.25/fixed/index.html#optional-features
+[feat-exp-1-25]: https://docs.rs/fixed/~1.25/fixed/index.html#experimental-optional-features
 
 ### Other releases
 
@@ -339,8 +328,8 @@ To enable features, you can add the dependency like this to [*Cargo.toml*]:
 
 ```toml
 [dependencies.fixed]
-version = "2.0.0-alpha.12"
 features = ["serde"]
+version = "2.0.0-alpha.12"
 ```
 
 ## Experimental optional features
