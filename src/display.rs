@@ -83,7 +83,12 @@ impl Buffer {
         &self.digits[begin..end]
     }
 
-    fn format_exp_dec(&mut self, exp_is_upper: bool) {
+    fn format_exp_dec(
+        &mut self,
+        exp_is_upper: bool,
+        max_frac_digits: Option<usize>,
+        truncation: &mut Truncation,
+    ) {
         self.exp_len = 1;
         self.exp[0] = if exp_is_upper { b'E' } else { b'e' };
         match self.int_and_frac().iter().position(|&x| x > 0) {
@@ -106,6 +111,16 @@ impl Buffer {
                     self.int_digits -= abs_exp;
                     self.frac_digits += abs_exp;
                 }
+
+                // At this point, buf.frac_nbits can be greater than fmt.precision().
+                if let Some(max) = max_frac_digits {
+                    if self.frac_digits > max {
+                        let frac = self.frac();
+                        update_truncation(truncation, &frac[max..]);
+                        self.frac_digits = max;
+                    }
+                }
+
                 // exp should be between -38 and 39 inclusive
                 debug_assert!(abs_exp <= 39);
                 if abs_exp > 9 {
@@ -125,22 +140,23 @@ impl Buffer {
         &mut self,
         format: Format,
         is_neg: bool,
-        frac_rem_cmp_tie: Ordering,
+        truncation: Truncation,
         fmt: &mut Formatter,
     ) -> FmtResult {
-        self.round_and_trim(format.max_digit(), frac_rem_cmp_tie);
+        self.round_and_trim(format.max_digit(), truncation);
+
         self.encode_digits(format == Format::UpHex);
         self.pad_and_print(is_neg, format.prefix(), fmt)
     }
 
     // rounds, and then trims trailing zeros from frac
-    fn round_and_trim(&mut self, max: u8, frac_rem_cmp_tie: Ordering) {
+    fn round_and_trim(&mut self, max: u8, truncation: Truncation) {
         let len = 1 + self.int_digits + self.frac_digits;
 
         // round up if cropped is greater than tie, or if it is tie and current is odd
         let is_odd = self.digits[len - 1] & 1 != 0;
         let round_up =
-            frac_rem_cmp_tie == Ordering::Greater || frac_rem_cmp_tie == Ordering::Equal && is_odd;
+            truncation == Truncation::GreaterTie || truncation == Truncation::Tie && is_odd;
         if round_up {
             for b in self.digits[0..len].iter_mut().rev() {
                 if *b < max {
@@ -262,6 +278,54 @@ impl Buffer {
     }
 }
 
+fn update_truncation(truncation: &mut Truncation, mut truncated_frac: &[u8]) {
+    if truncated_frac.is_empty() {
+        return;
+    }
+
+    let mut leading_zeros = false;
+    while let [0, tail @ ..] = truncated_frac {
+        leading_zeros = true;
+        truncated_frac = tail;
+    }
+
+    if truncated_frac.is_empty() {
+        // truncation contained at least one zero, and no non-zeros
+        if *truncation != Truncation::Zero {
+            *truncation = Truncation::LessTie
+        }
+        return;
+    }
+
+    if leading_zeros {
+        // removed zeros, but there are still non-zero digits
+        *truncation = Truncation::LessTie;
+        return;
+    }
+
+    // did not remove any zeros, and we have at least one digit to remove
+    let first = truncated_frac[0];
+    truncated_frac = &truncated_frac[1..];
+
+    if first < 5 {
+        *truncation = Truncation::LessTie;
+        return;
+    }
+    if first > 5 || *truncation != Truncation::Zero {
+        *truncation = Truncation::GreaterTie;
+        return;
+    }
+    // if we only have zeros next, we have a tie
+    while let [0, tail @ ..] = truncated_frac {
+        truncated_frac = tail;
+    }
+    *truncation = if truncated_frac.is_empty() {
+        Truncation::Tie
+    } else {
+        Truncation::GreaterTie
+    }
+}
+
 #[derive(Clone, Copy, Eq, PartialEq)]
 enum Format {
     Bin,
@@ -271,6 +335,14 @@ enum Format {
     Dec,
     LowExp,
     UpExp,
+}
+
+#[derive(Clone, Copy, Eq, PartialEq)]
+enum Truncation {
+    Zero,
+    LessTie,
+    Tie,
+    GreaterTie,
 }
 
 impl Format {
@@ -332,7 +404,12 @@ where
         debug_assert!(int == Self::ZERO);
     }
 
-    fn write_frac_radix2(mut frac: Self, format: Format, nbits: u32, buf: &mut Buffer) -> Ordering {
+    fn write_frac_radix2(
+        mut frac: Self,
+        format: Format,
+        nbits: u32,
+        buf: &mut Buffer,
+    ) -> Truncation {
         if Self::Half::BITS == Self::BITS / 2 && nbits <= Self::Half::BITS {
             return FmtHelper::write_frac_radix2(
                 Self::as_half(frac >> Self::Half::BITS),
@@ -348,7 +425,15 @@ where
             *b = (frac >> compl_digit_bits).wrapping_as::<u8>();
             frac = frac << digit_bits;
         }
-        frac.cmp(&Self::MSB)
+        if frac == Self::ZERO {
+            Truncation::Zero
+        } else {
+            match frac.cmp(&Self::MSB) {
+                Ordering::Less => Truncation::LessTie,
+                Ordering::Equal => Truncation::Tie,
+                Ordering::Greater => Truncation::GreaterTie,
+            }
+        }
     }
 
     // returns the number of significant digits
@@ -369,12 +454,14 @@ where
         sig
     }
 
+    // The truncated bits are compared to the half-way tie, and the comparison
+    // result is returned.
     fn write_frac_dec(
         mut frac: Self,
         nbits: u32,
         frac_format: DecFracFormat,
         buf: &mut Buffer,
-    ) -> Ordering {
+    ) -> Truncation {
         if Self::Half::BITS == Self::BITS / 2 && nbits <= Self::Half::BITS {
             return FmtHelper::write_frac_dec(
                 Self::as_half(frac >> Self::Half::BITS),
@@ -437,7 +524,15 @@ where
                 }
             }
         }
-        frac.cmp(&Self::MSB)
+        if frac == Self::ZERO {
+            Truncation::Zero
+        } else {
+            match frac.cmp(&Self::MSB) {
+                Ordering::Less => Truncation::LessTie,
+                Ordering::Equal => Truncation::Tie,
+                Ordering::Greater => Truncation::GreaterTie,
+            }
+        }
     }
 }
 
@@ -535,11 +630,11 @@ fn fmt_dec<U: FmtHelper>(
         has_exp,
         precision: fmt.precision(),
     };
-    let frac_rem_cmp_tie = FmtHelper::write_frac_dec(frac, frac_nbits, frac_format, &mut buf);
+    let mut truncation = FmtHelper::write_frac_dec(frac, frac_nbits, frac_format, &mut buf);
     if has_exp {
-        buf.format_exp_dec(exp_is_upper);
+        buf.format_exp_dec(exp_is_upper, fmt.precision(), &mut truncation);
     }
-    buf.finish(format, neg, frac_rem_cmp_tie, fmt)
+    buf.finish(format, neg, truncation, fmt)
 }
 
 fn fmt_radix2<U: FmtHelper>(
