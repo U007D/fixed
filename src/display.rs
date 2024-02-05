@@ -117,6 +117,18 @@ impl Buffer {
         }
     }
 
+    fn inc_exp_after_rounding_up(&mut self, fixed_prec: bool) {
+        self.exp += 1;
+        // since this is with exponent, there is at least one integer digit
+        self.int_digits = self
+            .int_digits
+            .checked_sub(1)
+            .expect("expected at least one int digit for LowerExp/UpperExp");
+        if !fixed_prec {
+            self.frac_digits += 1;
+        }
+    }
+
     fn finish(
         &mut self,
         format: Format,
@@ -126,7 +138,12 @@ impl Buffer {
     ) -> FmtResult {
         let has_exp = matches!(format, Format::UpExp | Format::LowExp);
 
-        self.round_and_trim(format.max_digit(), truncation);
+        let added_ms_digit = self.round_and_trim(format.max_digit(), truncation);
+
+        // check to see if rounding increased a digit and we are printing with exponent
+        if added_ms_digit == RoundingAddedMSDigit::Yes && has_exp {
+            self.inc_exp_after_rounding_up(fmt.precision().is_some());
+        }
 
         self.encode_digits(format == Format::UpHex);
         if has_exp {
@@ -135,8 +152,8 @@ impl Buffer {
         self.pad_and_print(is_neg, format.prefix(), fmt)
     }
 
-    // rounds, and then trims trailing zeros from frac
-    fn round_and_trim(&mut self, max: u8, truncation: Truncation) {
+    // rounds, and then trims trailing zeros from frac.
+    fn round_and_trim(&mut self, max: u8, truncation: Truncation) -> RoundingAddedMSDigit {
         let len = 1 + self.int_digits + self.frac_digits;
 
         // round up if cropped is greater than tie, or if it is tie and current is odd
@@ -144,8 +161,14 @@ impl Buffer {
         let round_up =
             truncation == Truncation::GreaterTie || truncation == Truncation::Tie && is_odd;
         if round_up {
+            let mut added_digit = RoundingAddedMSDigit::No;
             for b in self.digits[0..len].iter_mut().rev() {
                 if *b < max {
+                    added_digit = if *b == 0 {
+                        RoundingAddedMSDigit::Yes
+                    } else {
+                        RoundingAddedMSDigit::No
+                    };
                     *b += 1;
                     break;
                 }
@@ -155,6 +178,7 @@ impl Buffer {
                     self.frac_digits -= 1;
                 }
             }
+            added_digit
         } else {
             for b in self.digits[len - self.frac_digits..len].iter_mut().rev() {
                 if *b != 0 {
@@ -162,6 +186,7 @@ impl Buffer {
                 }
                 self.frac_digits -= 1;
             }
+            RoundingAddedMSDigit::No
         }
     }
 
@@ -351,6 +376,12 @@ enum Truncation {
     LessTie,
     Tie,
     GreaterTie,
+}
+
+#[derive(Clone, Copy, Eq, PartialEq)]
+enum RoundingAddedMSDigit {
+    Yes,
+    No,
 }
 
 impl Format {
@@ -861,6 +892,8 @@ mod tests {
         assert_eq!(format!("{:.1e}", I16F16::from_num(999)), "1.0e3");
         assert_eq!(format!("{:.1e}", I16F16::from_num(1000)), "1.0e3");
         assert_eq!(format!("{:.1e}", I16F16::from_num(1001)), "1.0e3");
+        assert_eq!(format!("{:.1e}", U0F32::lit("0.999")), "1.0e0");
+        assert_eq!(format!("{:.1e}", I16F16::lit("0.999")), "1.0e0");
     }
 
     fn trim_frac_zeros(mut x: &str) -> &str {
