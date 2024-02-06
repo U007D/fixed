@@ -889,6 +889,7 @@ mod tests {
         assert_eq!(format!("{:.1e}", I16F16::from_num(1001)), "1.0e3");
         assert_eq!(format!("{:.1e}", U0F32::lit("0.999")), "1.0e0");
         assert_eq!(format!("{:.1e}", I16F16::lit("0.999")), "1.0e0");
+        assert_eq!(format!("{:.2e}", I16F16::lit("9.099")), "9.10e0");
     }
 
     fn trim_frac_zeros(mut x: &str) -> &str {
