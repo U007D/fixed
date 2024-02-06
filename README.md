@@ -103,7 +103,7 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
-### Version 1.25.1 news (unreleased)
+### Version 1.25.1 news (2024-02-06)
 
   * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
     incorrect output when rounding incremented a zero in the middle of a string,

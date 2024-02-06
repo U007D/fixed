@@ -5,7 +5,7 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-# Version 1.25.1 (unreleased)
+# Version 1.25.1 (2024-02-06)
 
   * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
     incorrect output when rounding incremented a zero in the middle of a string,
