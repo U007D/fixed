@@ -91,6 +91,20 @@ let one_and_half = Fix::lit("1.5");
 # assert_eq!(one_and_half, 1.5);
 ```
 
+To evaluate at compile time without introducing a constant into the scope:
+
+```rust
+# #![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+# use fixed::FixedU32;
+# type Fix = FixedU32<4>;
+let one_and_half = {
+    const C: Fix = Fix::lit("1.5");
+    C
+};
+# assert_eq!(one_and_half, 1.5);
+```
+
 With the [unstable `inline_const`
 feature](https://github.com/rust-lang/rust/issues/76001), here `lit` would be
 evaluated at compile time:
@@ -124,11 +138,18 @@ assert_eq!(Fix::lit("0_.017_5_e+0_2"), 1.75);
 "#,
                 },
                 r#"
-assert_eq!(Fix::lit("0b_1.1_1"), 1.75);
+assert_eq!(Fix::lit("0b1.11"), 1.75);
 assert_eq!(Fix::lit("0b_111e-2"), 1.75);
-
-assert_eq!(Fix::lit("0o_1.6"), 1.75);
-assert_eq!(Fix::lit("0o_.16E1"), 1.75);
+"#,
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    r#"assert_eq!(Fix::lit("-0b1.11"), -1.75);
+"#,
+                },
+                r#"
+assert_eq!(Fix::lit("0o1.6"), 1.75);
+assert_eq!(Fix::lit("0o.16E1"), 1.75);
+assert_eq!(Fix::lit("0o7p-2"), 1.75);
 
 assert_eq!(Fix::lit("0x1.C"), 1.75);
 assert_eq!(Fix::lit("0x0.1C@1"), 1.75);
