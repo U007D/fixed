@@ -7,7 +7,7 @@
 
 [package]
 name = "fixed"
-version = "2.0.0-alpha.13"
+version = "2.0.0-alpha.25.1"
 categories = ["algorithms", "embedded", "mathematics", "no-std"]
 description = "Fixed-point numbers."
 documentation = "https://docs.rs/fixed"
