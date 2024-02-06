@@ -141,7 +141,7 @@ impl Buffer {
         let added_ms_digit = self.round_and_trim(format.max_digit(), truncation);
 
         // check to see if rounding increased a digit and we are printing with exponent
-        if added_ms_digit == RoundingAddedMSDigit::Yes && has_exp {
+        if added_ms_digit.0 && has_exp {
             self.inc_exp_after_rounding_up(fmt.precision().is_some());
         }
 
@@ -161,14 +161,12 @@ impl Buffer {
         let round_up =
             truncation == Truncation::GreaterTie || truncation == Truncation::Tie && is_odd;
         if round_up {
-            let mut added_digit = RoundingAddedMSDigit::No;
+            let mut added_digit = RoundingAddedMSDigit(false);
             for b in self.digits[0..len].iter_mut().rev() {
                 if *b < max {
-                    added_digit = if *b == 0 {
-                        RoundingAddedMSDigit::Yes
-                    } else {
-                        RoundingAddedMSDigit::No
-                    };
+                    if *b == 0 {
+                        added_digit = RoundingAddedMSDigit(true);
+                    }
                     *b += 1;
                     break;
                 }
@@ -186,7 +184,7 @@ impl Buffer {
                 }
                 self.frac_digits -= 1;
             }
-            RoundingAddedMSDigit::No
+            RoundingAddedMSDigit(false)
         }
     }
 
@@ -379,10 +377,7 @@ enum Truncation {
 }
 
 #[derive(Clone, Copy, Eq, PartialEq)]
-enum RoundingAddedMSDigit {
-    Yes,
-    No,
-}
+struct RoundingAddedMSDigit(bool);
 
 impl Format {
     fn digit_bits(self) -> u32 {
