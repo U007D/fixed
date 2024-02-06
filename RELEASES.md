@@ -81,7 +81,7 @@ as-is, without any warranty. -->
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.13/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.13/fixed/struct.Wrapping.html
 
-# Version 1.25.1 (unreleased)
+# Version 1.25.1 (2024-02-06)
 
   * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
     incorrect output when rounding incremented a zero in the middle of a string,
