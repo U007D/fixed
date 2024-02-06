@@ -881,18 +881,10 @@ impl F128Bits {
 
 /// Defines constant fixed-point numbers from integer expressions.
 ///
-/// This macro is useful because [`from_num`] cannot be used in constant
-/// expressions.
-///
-/// # Alternative
-///
-/// The [*fixed-macro* crate] provides a convenient macro to write down
-/// fixed-point constants literally in code which has two advantages over this
-/// macro:
-///
-///  1. It can handle fixed-point numbers with fractions, not just integers.
-///  2. It can be used anywhere an expression or constant expression can be
-///     used, not just to define a constant.
+/// This macro was useful because [`from_num`][FixedI32::from_num] cannot be
+/// used in constant expressions. Now constant fixed-point numbers can be
+/// created using the [`const_from_int`][FixedI32::const_from_int] method or the
+/// [`lit`][FixedI32::lit] method, so this macro is deprecated.
 ///
 /// # Examples
 ///
@@ -909,34 +901,15 @@ impl F128Bits {
 /// assert_eq!(SUM, 5);
 /// ```
 ///
-/// The following would fail to compile because
-/// <code>[i32]::[MAX][i32::MAX]</code> is not representable by [`I16F16`].
+/// This can now be rewritten as
 ///
-/// ```rust,compile_fail
-/// # #![allow(deprecated)]
-/// use fixed::{const_fixed_from_int, types::I16F16};
-/// const_fixed_from_int! {
-///     // fails because i32::MAX > I16F16::MAX
-///     const _OVERFLOW: I16F16 = i32::MAX;
-/// }
+/// ```rust
+/// use fixed::types::I16F16;
+/// const FIVE: I16F16 = I16F16::const_from_int(5);
+/// const SUM: I16F16 = I16F16::const_from_int(3 + 2);
+/// assert_eq!(FIVE, 5);
+/// assert_eq!(SUM, 5);
 /// ```
-///
-/// The following would fail to compile because [`I16F16`] is an alias for
-/// <code>[FixedI32]\<[U32]></code>, and this macro can define [`FixedI32`]
-/// constants using [`i32`] expressions, not [`i16`] expressions.
-///
-/// ```rust,compile_fail
-/// # #![allow(deprecated)]
-/// use fixed::{const_fixed_from_int, types::I16F16};
-/// const_fixed_from_int! {
-///     // fails because 0i16 is not of type i32
-///     const _MISMATCH: I16F16 = 0i16;
-/// }
-/// ```
-///
-/// [*fixed-macro* crate]: https://crates.io/crates/fixed-macro
-/// [`I16F16`]: crate::types::I16F16
-/// [`from_num`]: FixedI32::from_num
 #[macro_export]
 #[deprecated(since = "1.20.0", note = "use the `const_from_int` method instead")]
 macro_rules! const_fixed_from_int {
