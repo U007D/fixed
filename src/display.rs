@@ -159,7 +159,7 @@ impl Buffer {
         // round up if cropped is greater than tie, or if it is tie and current is odd
         let is_odd = self.digits[len - 1] & 1 != 0;
         let round_up =
-            truncation == Truncation::GreaterTie || truncation == Truncation::Tie && is_odd;
+            truncation == Truncation::GreaterTie || (truncation == Truncation::Tie && is_odd);
         if round_up {
             let mut incremented_zero_at = None;
             for (index, b) in self.digits[0..len].iter_mut().enumerate().rev() {
@@ -362,7 +362,7 @@ fn update_truncation(truncation: &mut Truncation, mut truncated_frac: &[u8]) {
     }
 }
 
-#[derive(Clone, Copy, Eq, PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 enum Format {
     Bin,
     Oct,
@@ -373,7 +373,7 @@ enum Format {
     UpExp,
 }
 
-#[derive(Clone, Copy, Eq, PartialEq)]
+#[derive(PartialEq)]
 enum Truncation {
     Zero,
     LessTie,
@@ -381,7 +381,6 @@ enum Truncation {
     GreaterTie,
 }
 
-#[derive(Clone, Copy, Eq, PartialEq)]
 struct RoundingAddedMSDigit(bool);
 
 impl Format {
