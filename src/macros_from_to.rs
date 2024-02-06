@@ -1232,7 +1232,7 @@ by 16 to the power of the exponent.
 
 Base-2 exponents are supported too, using the separator “`p`” or “`P`”. The
 parsed value is scaled by 2 to the power of the exponent. For example, for
-hexadecimal “`P8`” means ×2⁸, and is equivalent to “`E2`” which means ×16².
+hexadecimal “`P8`” means ×2⁸, and is equivalent to “`@2`” which means ×16².
 
 # Examples
 
