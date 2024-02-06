@@ -15,7 +15,7 @@
 
 use crate::{
     from_str::ParseFixedError,
-    traits::{Fixed, FixedBits, FixedSigned, FixedStrict, FixedUnsigned, FromFixed, ToFixed},
+    traits::{Fixed, FixedBits, FixedBoundFrac, FixedSigned, FixedUnsigned, FromFixed, ToFixed},
     types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
@@ -1355,7 +1355,7 @@ impl<F: Fixed> Unwrapped<F> {
     }
 }
 
-impl<F: FixedStrict> Unwrapped<F> {
+impl<F: FixedBoundFrac> Unwrapped<F> {
     /// Parses a string slice containing decimal digits to return a fixed-point number.
     ///
     /// Rounding is to the nearest, with ties rounded to even.
@@ -2236,7 +2236,7 @@ impl<F: FixedUnsigned> Unwrapped<F> {
     }
 }
 
-impl<F: FixedStrict> Display for Unwrapped<F> {
+impl<F: FixedBoundFrac> Display for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Display::fmt(&self.0, f)
@@ -2250,49 +2250,49 @@ impl<F: Fixed> Debug for Unwrapped<F> {
     }
 }
 
-impl<F: FixedStrict> Binary for Unwrapped<F> {
+impl<F: FixedBoundFrac> Binary for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Binary::fmt(&self.0, f)
     }
 }
 
-impl<F: FixedStrict> Octal for Unwrapped<F> {
+impl<F: FixedBoundFrac> Octal for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Octal::fmt(&self.0, f)
     }
 }
 
-impl<F: FixedStrict> LowerHex for Unwrapped<F> {
+impl<F: FixedBoundFrac> LowerHex for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         LowerHex::fmt(&self.0, f)
     }
 }
 
-impl<F: FixedStrict> UpperHex for Unwrapped<F> {
+impl<F: FixedBoundFrac> UpperHex for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         UpperHex::fmt(&self.0, f)
     }
 }
 
-impl<F: FixedStrict> LowerExp for Unwrapped<F> {
+impl<F: FixedBoundFrac> LowerExp for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         LowerExp::fmt(&self.0, f)
     }
 }
 
-impl<F: FixedStrict> UpperExp for Unwrapped<F> {
+impl<F: FixedBoundFrac> UpperExp for Unwrapped<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         UpperExp::fmt(&self.0, f)
     }
 }
 
-impl<F: FixedStrict> From<F> for Unwrapped<F> {
+impl<F: FixedBoundFrac> From<F> for Unwrapped<F> {
     /// Wraps a fixed-point number.
     #[inline]
     fn from(src: F) -> Unwrapped<F> {
@@ -2300,7 +2300,7 @@ impl<F: FixedStrict> From<F> for Unwrapped<F> {
     }
 }
 
-impl<F: FixedStrict> FromStr for Unwrapped<F> {
+impl<F: FixedBoundFrac> FromStr for Unwrapped<F> {
     type Err = ParseFixedError;
     /// Parses a string slice containing decimal digits to return a fixed-point number.
     ///
@@ -2577,7 +2577,7 @@ impl<F: Fixed> Neg for &Unwrapped<F> {
 op! { Fixed, unwrapped_add, Add add, AddAssign add_assign }
 op! { Fixed, unwrapped_sub, Sub sub, SubAssign sub_assign }
 op! { Fixed, unwrapped_mul, Mul mul, MulAssign mul_assign }
-op! { FixedStrict, unwrapped_div, Div div, DivAssign div_assign }
+op! { FixedBoundFrac, unwrapped_div, Div div, DivAssign div_assign }
 op! { Fixed, unwrapped_rem, Rem rem, RemAssign rem_assign }
 
 impl<F> Not for Unwrapped<F>

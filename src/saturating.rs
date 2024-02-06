@@ -15,7 +15,7 @@
 
 use crate::{
     from_str::ParseFixedError,
-    traits::{Fixed, FixedBits, FixedSigned, FixedStrict, FixedUnsigned, FromFixed, ToFixed},
+    traits::{Fixed, FixedBits, FixedBoundFrac, FixedSigned, FixedUnsigned, FromFixed, ToFixed},
     types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
@@ -1209,7 +1209,7 @@ impl<F: Fixed> Saturating<F> {
     }
 }
 
-impl<F: FixedStrict> Saturating<F> {
+impl<F: FixedBoundFrac> Saturating<F> {
     /// Parses a string slice containing binary digits to return a fixed-point number.
     ///
     /// Rounding is to the nearest, with ties rounded to even.
@@ -1819,7 +1819,7 @@ impl<F: FixedUnsigned> Saturating<F> {
     }
 }
 
-impl<F: FixedStrict> Display for Saturating<F> {
+impl<F: FixedBoundFrac> Display for Saturating<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Display::fmt(&self.0, f)
@@ -1833,42 +1833,42 @@ impl<F: Fixed> Debug for Saturating<F> {
     }
 }
 
-impl<F: FixedStrict> Binary for Saturating<F> {
+impl<F: FixedBoundFrac> Binary for Saturating<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Binary::fmt(&self.0, f)
     }
 }
 
-impl<F: FixedStrict> Octal for Saturating<F> {
+impl<F: FixedBoundFrac> Octal for Saturating<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         Octal::fmt(&self.0, f)
     }
 }
 
-impl<F: FixedStrict> LowerHex for Saturating<F> {
+impl<F: FixedBoundFrac> LowerHex for Saturating<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         LowerHex::fmt(&self.0, f)
     }
 }
 
-impl<F: FixedStrict> UpperHex for Saturating<F> {
+impl<F: FixedBoundFrac> UpperHex for Saturating<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         UpperHex::fmt(&self.0, f)
     }
 }
 
-impl<F: FixedStrict> LowerExp for Saturating<F> {
+impl<F: FixedBoundFrac> LowerExp for Saturating<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         LowerExp::fmt(&self.0, f)
     }
 }
 
-impl<F: FixedStrict> UpperExp for Saturating<F> {
+impl<F: FixedBoundFrac> UpperExp for Saturating<F> {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         UpperExp::fmt(&self.0, f)
@@ -1883,7 +1883,7 @@ impl<F: Fixed> From<F> for Saturating<F> {
     }
 }
 
-impl<F: FixedStrict> FromStr for Saturating<F> {
+impl<F: FixedBoundFrac> FromStr for Saturating<F> {
     type Err = ParseFixedError;
     /// Parses a string slice containing decimal digits to return a fixed-point number.
     ///
@@ -2050,7 +2050,7 @@ impl<F: Fixed> Neg for &Saturating<F> {
 op! { Fixed, saturating_add, Add add, AddAssign add_assign }
 op! { Fixed, saturating_sub, Sub sub, SubAssign sub_assign }
 op! { Fixed, saturating_mul, Mul mul, MulAssign mul_assign }
-op! { FixedStrict, saturating_div, Div div, DivAssign div_assign }
+op! { FixedBoundFrac, saturating_div, Div div, DivAssign div_assign }
 op! { Fixed, rem, Rem rem, RemAssign rem_assign }
 
 impl<F> Not for Saturating<F>

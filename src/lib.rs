@@ -271,13 +271,13 @@ To port from version 1 to version 2, the following is required:
 
     [U8]: https://docs.rs/fixed/1/fixed/types/extra/type.U8.html
 
-  * The [`Fixed`] trait constraints have been relaxed, and the methods which
-    needed the strict constraints have been moved to the subtrait
-    [`FixedStrict`]. For code that uses these trait methods, [`Fixed`] should be
-    replaced by [`FixedStrict`].
+  * The [`Fixed`] trait constraints have been relaxed. Methods that required the
+    number of fractional bits to be bounded have been moved to the new subtrait
+    [`FixedBoundFrac`]. For code that uses these trait methods, [`Fixed`] should
+    be replaced by [`FixedBoundFrac`].
 
     [`Fixed`]: traits::Fixed
-    [`FixedStrict`]: traits::FixedStrict
+    [`FixedBoundFrac`]: traits::FixedBoundFrac
 
   * The [`FRAC_NBITS`] and [`INT_NBITS`] associated constants of type [`u32`]
     were replaced by [`FRAC_BITS`] and [`INT_BITS`] of type [`i32`].

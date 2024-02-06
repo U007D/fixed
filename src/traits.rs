@@ -136,13 +136,13 @@ where
 ///   * [`ToPrimitive`], [`FromPrimitive`]
 ///   * [`FloatConst`]
 ///
-/// The following are supertraits of [`FixedStrict`] as they have extra
+/// The following are supertraits of [`FixedBoundFrac`] as they have extra
 /// constraints:
 ///
 ///   * [`Inv`]
 ///   * [`CheckedDiv`]
 ///
-/// The following are *not* supertraits of [`Fixed`] or [`FixedStrict`], even
+/// The following are *not* supertraits of [`Fixed`] or [`FixedBoundFrac`], even
 /// though they are implemented for fixed-point numbers where applicable:
 ///
 ///   * [`One`] because not all fixed-point numbers can represent the value 1
@@ -183,13 +183,13 @@ pub trait FixedOptionalNum: Sealed {}
 ///   * [`ToPrimitive`], [`FromPrimitive`]
 ///   * [`FloatConst`]
 ///
-/// The following are supertraits of [`FixedStrict`] as they have extra
+/// The following are supertraits of [`FixedBoundFrac`] as they have extra
 /// constraints:
 ///
 ///   * [`Inv`]
 ///   * [`CheckedDiv`]
 ///
-/// The following are *not* supertraits of [`Fixed`] or [`FixedStrict`], even
+/// The following are *not* supertraits of [`Fixed`] or [`FixedBoundFrac`], even
 /// though they are implemented for fixed-point numbers where applicable:
 ///
 ///   * [`One`] because not all fixed-point numbers can represent the value 1
@@ -248,52 +248,52 @@ where
 }
 
 #[cfg(not(feature = "num-traits"))]
-/// This trait is used to provide supertraits to the [`FixedStrict`] trait
+/// This trait is used to provide supertraits to the [`FixedBoundFrac`] trait
 /// depending on the crate’s [optional features], and should not be used
 /// directly.
 ///
 /// If the `num-traits` experimental feature is enabled, [`Inv`] and
-/// [`CheckedDiv`] are supertraits of [`FixedStrict`].
+/// [`CheckedDiv`] are supertraits of [`FixedBoundFrac`].
 ///
 /// [optional features]: crate#optional-features
-pub trait FixedStrictOptionalNum: Sealed {}
+pub trait FixedBoundFracOptionalNum: Sealed {}
 
 #[cfg(feature = "num-traits")]
-/// This trait is used to provide supertraits to the [`FixedStrict`] trait
+/// This trait is used to provide supertraits to the [`FixedBoundFrac`] trait
 /// depending on the crate’s [optional features], and should not be used
 /// directly.
 ///
 /// If the `num-traits` experimental feature is enabled, [`Inv`] and
-/// [`CheckedDiv`] are supertraits of [`FixedStrict`].
+/// [`CheckedDiv`] are supertraits of [`FixedBoundFrac`].
 ///
 /// [optional features]: crate#optional-features
-pub trait FixedStrictOptionalNum: Sealed
+pub trait FixedBoundFracOptionalNum: Sealed
 where
     Self: Inv + CheckedDiv,
 {
 }
 
 #[cfg(not(feature = "serde-str"))]
-/// This trait is used to provide supertraits to the [`FixedStrict`] trait
+/// This trait is used to provide supertraits to the [`FixedBoundFrac`] trait
 /// depending on the crate’s [optional features], and should not be used
 /// directly.
 ///
 /// If both the `serde` feature and the `serde-str` feature are enabled,
-/// [`Serialize`] and [`Deserialize`] are supertraits of [`FixedStrict`].
+/// [`Serialize`] and [`Deserialize`] are supertraits of [`FixedBoundFrac`].
 ///
 /// [optional features]: crate#optional-features
-pub trait FixedStrictOptionalSerdeStr: Sealed {}
+pub trait FixedBoundFracOptionalSerdeStr: Sealed {}
 
 #[cfg(feature = "serde-str")]
-/// This trait is used to provide supertraits to the [`FixedStrict`] trait
+/// This trait is used to provide supertraits to the [`FixedBoundFrac`] trait
 /// depending on the crate’s [optional features], and should not be used
 /// directly.
 ///
 /// If both the `serde` feature and the `serde-str` feature are enabled,
-/// [`Serialize`] and [`Deserialize`] are supertraits of [`FixedStrict`].
+/// [`Serialize`] and [`Deserialize`] are supertraits of [`FixedBoundFrac`].
 ///
 /// [optional features]: crate#optional-features
-pub trait FixedStrictOptionalSerdeStr: Sealed
+pub trait FixedBoundFracOptionalSerdeStr: Sealed
 where
     Self: Serialize + for<'de> Deserialize<'de>,
 {
@@ -2174,7 +2174,7 @@ where
 /// is implemented for [`FixedI8`], [`FixedI16`], [`FixedI32`],
 /// [`FixedI64`], [`FixedI128`], [`FixedU8`], [`FixedU16`],
 /// [`FixedU32`], [`FixedU64`], and [`FixedU128`].
-pub trait FixedStrict: Fixed
+pub trait FixedBoundFrac: Fixed
 where
     Self: Display + LowerExp + UpperExp,
     Self: Binary + Octal + LowerHex + UpperHex,
@@ -2183,8 +2183,8 @@ where
     Self: Rem<<Self as Fixed>::Bits, Output = Self> + RemAssign<<Self as Fixed>::Bits>,
     Self: Rem<<Self as Fixed>::NonZeroBits, Output = Self>,
     Self: RemAssign<<Self as Fixed>::NonZeroBits>,
-    Self: FixedStrictOptionalNum,
-    Self: FixedStrictOptionalSerdeStr,
+    Self: FixedBoundFracOptionalNum,
+    Self: FixedBoundFracOptionalSerdeStr,
 {
     /// Parses a string slice containing binary digits to return a fixed-point number.
     ///
@@ -3957,11 +3957,11 @@ macro_rules! impl_fixed {
         impl<const FRAC: i32> FixedOptionalBorsh for $Fixed<FRAC> {}
         impl<const FRAC: i32> FixedOptionalNum for $Fixed<FRAC> {}
         impl<const FRAC: i32> FixedOptionalSerde for $Fixed<FRAC> {}
-        impl<const FRAC: i32> FixedStrictOptionalNum for $Fixed<FRAC> where
+        impl<const FRAC: i32> FixedBoundFracOptionalNum for $Fixed<FRAC> where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True
         {
         }
-        impl<const FRAC: i32> FixedStrictOptionalSerdeStr for $Fixed<FRAC> where
+        impl<const FRAC: i32> FixedBoundFracOptionalSerdeStr for $Fixed<FRAC> where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True
         {
         }
@@ -4192,7 +4192,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn overflowing_dist(self, other: Self) -> (Self, bool) }
         }
 
-        impl<const FRAC: i32> FixedStrict for $Fixed<FRAC>
+        impl<const FRAC: i32> FixedBoundFrac for $Fixed<FRAC>
         where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {

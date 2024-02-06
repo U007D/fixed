@@ -110,9 +110,9 @@ The conversions supported cover the following cases.
     feature] enabled.
   * The crate now uses generic constant expressions to specify the number of
     fractional bits.
-  * The [`Fixed`][tf-2-0a] trait constraints have been relaxed, and the methods
-    which needed the strict constraints have been moved to the subtrait
-    [`FixedStrict`][tfs-2-0a].
+  * The [`Fixed`][tf-2-0a] trait constraints have been relaxed. Methods that
+    required the number of fractional bits to be bounded have been moved to the
+    new subtrait [`FixedBoundFrac`][tfbf-2-0a].
   * The `INT_NBITS` and `FRAC_NBITS` associated constants were replaced with
     [`INT_BITS`][f-ib-2-0a] and [`FRAC_BITS`][f-fb-2-0a] which can be negative.
   * The [`Unwrapped`][u-2-0a] methods [`from_str_binary`][u-fsb-2-0a],
@@ -173,7 +173,7 @@ The conversions supported cover the following cases.
 [tf-wap-2-0a]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/traits/trait.Fixed.html#tymethod.wrapping_add_prod
 [tf-wmac-2-0a]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/traits/trait.Fixed.html#tymethod.wrapping_mul_acc
 [tf-wmad-2-0a]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/traits/trait.Fixed.html#tymethod.wrapping_mul_add
-[tfs-2-0a]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/traits/trait.FixedStrict.html
+[tfbf-2-0a]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/traits/trait.FixedBoundFrac.html
 [u-2-0a]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/struct.Unwrapped.html
 [u-fsb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/struct.Unwrapped.html#method.from_str_binary
 [u-fsh-2-0a]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/struct.Unwrapped.html#method.from_str_hex
@@ -367,13 +367,13 @@ To port from version 1 to version 2, the following is required:
 
     [U8]: https://docs.rs/fixed/1/fixed/types/extra/type.U8.html
 
-  * The [`Fixed`] trait constraints have been relaxed, and the methods which
-    needed the strict constraints have been moved to the subtrait
-    [`FixedStrict`]. For code that uses these trait methods, [`Fixed`] should be
-    replaced by [`FixedStrict`].
+  * The [`Fixed`] trait constraints have been relaxed. Methods that required the
+    number of fractional bits to be bounded have been moved to the new subtrait
+    [`FixedBoundFrac`]. For code that uses these trait methods, [`Fixed`] should
+    be replaced by [`FixedBoundFrac`].
 
     [`Fixed`]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/traits/trait.Fixed.html
-    [`FixedStrict`]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/traits/trait.FixedStrict.html
+    [`FixedBoundFrac`]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/traits/trait.FixedBoundFrac.html
 
   * The [`FRAC_NBITS`] and [`INT_NBITS`] associated constants of type [`u32`]
     were replaced by [`FRAC_BITS`] and [`INT_BITS`] of type [`i32`].
