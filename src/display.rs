@@ -161,11 +161,11 @@ impl Buffer {
         let round_up =
             truncation == Truncation::GreaterTie || truncation == Truncation::Tie && is_odd;
         if round_up {
-            let mut added_digit = RoundingAddedMSDigit(false);
-            for b in self.digits[0..len].iter_mut().rev() {
+            let mut incremented_zero_at = None;
+            for (index, b) in self.digits[0..len].iter_mut().enumerate().rev() {
                 if *b < max {
                     if *b == 0 {
-                        added_digit = RoundingAddedMSDigit(true);
+                        incremented_zero_at = Some(index)
                     }
                     *b += 1;
                     break;
@@ -176,7 +176,12 @@ impl Buffer {
                     self.frac_digits -= 1;
                 }
             }
-            added_digit
+            match incremented_zero_at {
+                Some(index) if self.digits[0..index].iter().all(|&x| x == 0) => {
+                    RoundingAddedMSDigit(true)
+                }
+                _ => RoundingAddedMSDigit(false),
+            }
         } else {
             for b in self.digits[len - self.frac_digits..len].iter_mut().rev() {
                 if *b != 0 {
