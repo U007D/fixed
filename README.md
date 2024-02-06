@@ -180,6 +180,12 @@ The conversions supported cover the following cases.
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.13/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.13/fixed/struct.Wrapping.html
 
+### Version 1.25.1 news (unreleased)
+
+  * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
+    incorrect output when rounding incremented a zero in the middle of a string,
+    for example `format!("{:.2e}", I16F16::lit("9.099"))`.
+
 ### Version 1.25.0 news (2024-02-05)
 
   * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
