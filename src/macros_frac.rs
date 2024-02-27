@@ -102,7 +102,7 @@ for an input value ≥&nbsp;0.25.
 ```rust
 use fixed::{types::extra::U4, ", stringify!($Self), "};
 type Fix = ", stringify!($Self), "<U4>;
-assert_eq!(Fix::from_num(1).sqrt(), Fix::ONE);
+assert_eq!(Fix::from_num(2).sqrt(), Fix::SQRT_2);
 ```
 ";
                 #[inline]
