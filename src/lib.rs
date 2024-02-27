@@ -409,6 +409,7 @@ mod prim_traits;
 mod saturating;
 #[cfg(feature = "serde")]
 mod serdeize;
+mod sqrt;
 pub mod traits;
 mod traits_bits;
 pub mod types;

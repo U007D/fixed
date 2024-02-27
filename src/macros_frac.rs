@@ -79,6 +79,63 @@ assert_eq!(Fix::FRAC_NBITS, 6);
             }
 
             comment! {
+                "Finds the square root.
+
+This method uses an iterative method, with up to ", $n, " iterations for [`",
+                stringify!($Self), "`].
+
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "# Panics
+
+Panics if the number is negative.
+
+When there are no integer bits the representable range is
+&minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;&lt;&nbsp;0.5. In this case, the method panics
+for an input value ≥&nbsp;0.25.
+
+"
+                },
+                "# Examples
+
+```rust
+use fixed::{types::extra::U4, ", stringify!($Self), "};
+type Fix = ", stringify!($Self), "<U4>;
+assert_eq!(Fix::from_num(1).sqrt(), Fix::ONE);
+```
+";
+                #[inline]
+                #[must_use]
+                pub const fn sqrt(self) -> Self {
+                    let bits = if_signed_unsigned!(
+                        $Signedness,
+                        {
+                            if self.is_negative() {
+                                panic!("square root of negative number");
+                            }
+                            if Self::INT_NBITS == 0
+                                && self.to_bits() >= (1 << (Self::FRAC_NBITS - 2))
+                            {
+                                panic!("overflow");
+                            }
+                            self.to_bits() as $UInner
+                        },
+                        self.to_bits()
+                    );
+                    let Some(nz) = $NonZeroUInner::new(bits) else {
+                        return Self::ZERO;
+                    };
+                    let ret = sqrt::$UInner(nz, Self::FRAC_NBITS);
+                    if_signed! {
+                        $Signedness;
+                        let ret = ret as $Inner;
+                    }
+                    Self::from_bits(ret)
+                }
+            }
+
+            comment! {
                 "Integer base-2 logarithm, rounded down.
 
 # Panics
@@ -174,6 +231,83 @@ assert_eq!(Fix::from_num(0.1875).int_log(5), -2);
                             }
                         }
                     }
+                }
+            }
+
+            comment! {
+                "Checked square root. ",
+                if_signed_unsigned!(
+                    $Signedness,
+                    "Returns [`None`] for negative numbers and on overflow.",
+                    "Always returns the square root for unsigned numbers."
+                ),
+                "
+
+This method uses an iterative method, with up to ", $n, " iterations for [`",
+                stringify!($Self), "`].
+
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "Overflow can only occur when there are no integer bits. The
+representable range is &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;&lt;&nbsp;0.5. In
+this case, the method returns [`None`] for an input value ≥&nbsp;0.25.
+
+"
+                },
+                "# Examples
+
+```rust
+",
+                if_signed_unsigned! {
+                    $Signedness,
+                    concat!(
+                        "use fixed::types::extra::{U4, U", $n, "};
+use fixed::", stringify!($Self), ";",
+                    ),
+                    concat!("use fixed::{types::extra::U4, ", stringify!($Self), "};"),
+                },
+                "
+type Fix = ", stringify!($Self), "<U4>;
+assert_eq!(Fix::from_num(1).checked_sqrt(), Some(Fix::ONE));
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "assert_eq!(Fix::from_num(-1).checked_sqrt(), None);
+
+type AllFrac = ", stringify!($Self), "<U", $n, ">;
+assert_eq!(AllFrac::from_num(0.25).checked_sqrt(), None);
+",
+                },
+                "```
+";
+                #[inline]
+                #[must_use]
+                pub const fn checked_sqrt(self) -> Option<Self> {
+                    let bits = if_signed_unsigned!(
+                        $Signedness,
+                        {
+                            if self.is_negative() {
+                                return None;
+                            }
+                            if Self::INT_NBITS == 0
+                                && self.to_bits() >= (1 << (Self::FRAC_NBITS - 2))
+                            {
+                                return None;
+                            }
+                            self.to_bits() as $UInner
+                        },
+                        self.to_bits()
+                    );
+                    let Some(nz) = $NonZeroUInner::new(bits) else {
+                        return Some(Self::ZERO);
+                    };
+                    let ret = sqrt::$UInner(nz, Self::FRAC_NBITS);
+                    if_signed! {
+                        $Signedness;
+                        let ret = ret as $Inner;
+                    }
+                    Some(Self::from_bits(ret))
                 }
             }
 
