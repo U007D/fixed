@@ -19,7 +19,6 @@ use crate::{
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8, F128,
 };
-use core::convert::TryFrom;
 use half::{bf16, f16};
 
 macro_rules! i_f_equivalent {

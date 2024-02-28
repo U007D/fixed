@@ -855,10 +855,9 @@ impl Mul10 for u128 {
 #[cfg(test)]
 mod tests {
     use crate::{display, types::*};
-    use std::{
-        format,
-        string::{String, ToString},
-    };
+    use std::format;
+    #[cfg(not(feature = "std"))]
+    use std::string::{String, ToString};
 
     #[test]
     fn format() {

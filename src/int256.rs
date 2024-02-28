@@ -349,7 +349,6 @@ pub const fn overflowing_shl_u256_into_u128(a: U256, sh: u32) -> (u128, bool) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::num::{NonZeroI128, NonZeroU128};
 
     fn check_udiv_rem(num: U256, den: u128) {
         let (quot, rem) = div_rem_u256_u128(num, NonZeroU128::new(den).unwrap());

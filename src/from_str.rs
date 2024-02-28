@@ -1320,10 +1320,9 @@ mod tests {
         from_str::{self, parse_bounds, Parse, ParseErrorKind, ParseFixedError, Round, Sep},
         types::*,
     };
-    use std::{
-        format,
-        string::{String, ToString},
-    };
+    use std::format;
+    #[cfg(not(feature = "std"))]
+    use std::string::{String, ToString};
 
     #[test]
     fn overflowing() {

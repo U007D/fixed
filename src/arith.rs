@@ -1021,7 +1021,7 @@ pub const fn saturating_add_sub_i32(a: i32, b: i32, c: i32) -> i32 {
 
 #[cfg(test)]
 mod tests {
-    use crate::{arith, *};
+    use crate::*;
 
     #[test]
     fn fixed_u16() {
