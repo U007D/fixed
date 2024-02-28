@@ -869,6 +869,36 @@ impl<F: Fixed> Wrapping<F> {
         self.0.trailing_zeros()
     }
 
+    /// Returns the square root.
+    ///
+    /// See also <code>FixedI32::[sqrt][FixedI32::sqrt]</code> and
+    /// <code>FixedU32::[sqrt][FixedU32::sqrt]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the number is negative.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::{types::I0F32, Wrapping};
+    /// assert_eq!(Wrapping(I0F32::lit("0b0.0001")).sqrt().0, I0F32::lit("0b0.01"));
+    ///
+    /// // This method handles the overflow corner case.
+    /// let w = Wrapping(I0F32::from_num(0.25));
+    /// assert_eq!(w.sqrt().0, -0.5);
+    /// ```
+    #[inline]
+    #[track_caller]
+    pub fn sqrt(self) -> Self {
+        // Handle the overflow corner case.
+        if Self::IS_SIGNED && Self::INT_NBITS == 0 && self > Self::ZERO {
+            Self::from_num(F::Unsigned::from_fixed(self.0).sqrt())
+        } else {
+            Wrapping(self.0.sqrt())
+        }
+    }
+
     /// Integer base-2 logarithm, rounded down.
     ///
     /// See also <code>FixedI32::[int\_log2][FixedI32::int_log2]</code> and

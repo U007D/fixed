@@ -1015,6 +1015,36 @@ impl<F: Fixed> Unwrapped<F> {
         self.0.trailing_zeros()
     }
 
+    /// Returns the square root.
+    ///
+    /// See also <code>FixedI32::[sqrt][FixedI32::sqrt]</code> and
+    /// <code>FixedU32::[sqrt][FixedU32::sqrt]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the number is negative, or in the rare corner case where the
+    /// answer does not fit.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::{types::I0F32, Unwrapped};
+    /// assert_eq!(Unwrapped(I0F32::lit("0b0.0001")).sqrt().0, I0F32::lit("0b0.01"));
+    /// ```
+    ///
+    /// The following panics because of overflow.
+    ///
+    /// ```should_panic
+    /// use fixed::{types::I0F32, Unwrapped};
+    /// let u = Unwrapped(I0F32::from_num(0.25));
+    /// let _overflow = u.sqrt();
+    /// ```
+    #[inline]
+    #[track_caller]
+    pub fn sqrt(self) -> Self {
+        Unwrapped(self.0.sqrt())
+    }
+    
     /// Integer base-2 logarithm, rounded down.
     ///
     /// See also <code>FixedI32::[int\_log2][FixedI32::int_log2]</code> and
