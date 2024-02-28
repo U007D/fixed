@@ -1641,6 +1641,17 @@ where
     /// <code>FixedU32::[trailing\_zeros][FixedU32::trailing_zeros]</code>.
     fn trailing_zeros(self) -> u32;
 
+    /// Returns the square root.
+    ///
+    /// See also <code>FixedI32::[sqrt][FixedI32::sqrt]</code> and
+    /// <code>FixedU32::[sqrt][FixedU32::sqrt]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the number is negative, or in the rare corner case where the
+    /// answer does not fit.
+    fn sqrt(self) -> Self;
+
     /// Integer base-2 logarithm, rounded down.
     ///
     /// See also <code>FixedI32::[int\_log2][FixedI32::int_log2]</code> and
@@ -1673,6 +1684,18 @@ where
     /// Panics if the fixed-point number is ≤&nbsp;0 or if the base is <&nbsp;2.
     #[doc(alias("ilog"))]
     fn int_log(self, base: u32) -> i32;
+
+    /// Checked square root. Returns [`None`] for negative numbers or in the
+    /// rare corner case where the answer does not fit
+    ///
+    /// See also <code>FixedI32::[checked\_sqrt][FixedI32::checked_sqrt]</code>
+    /// and <code>FixedU32::[checked\_sqrt][FixedU32::checked_sqrt]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the number is negative, or in the rare corner case where the
+    /// answer does not fit.
+    fn checked_sqrt(self) -> Option<Self>;
 
     /// Checked integer base-2 logarithm, rounded down. Returns the
     /// logarithm or [`None`] if the fixed-point number is ≤&nbsp;0.
@@ -4070,9 +4093,11 @@ macro_rules! impl_fixed {
             trait_delegate! { fn leading_zeros(self) -> u32 }
             trait_delegate! { fn trailing_ones(self) -> u32 }
             trait_delegate! { fn trailing_zeros(self) -> u32 }
+            trait_delegate! { fn sqrt(self) -> Self }
             trait_delegate! { fn int_log2(self) -> i32 }
             trait_delegate! { fn int_log10(self) -> i32 }
             trait_delegate! { fn int_log(self, base: u32) -> i32 }
+            trait_delegate! { fn checked_sqrt(self) -> Option<Self> }
             trait_delegate! { fn checked_int_log2(self) -> Option<i32> }
             trait_delegate! { fn checked_int_log10(self) -> Option<i32> }
             trait_delegate! { fn checked_int_log(self, base: u32) -> Option<i32> }

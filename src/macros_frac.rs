@@ -79,7 +79,7 @@ assert_eq!(Fix::FRAC_NBITS, 6);
             }
 
             comment! {
-                "Finds the square root.
+                "Returns the square root.
 
 This method uses an iterative method, with up to ", $n, " iterations for [`",
                 stringify!($Self), "`].
