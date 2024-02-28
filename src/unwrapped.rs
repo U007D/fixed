@@ -985,7 +985,7 @@ impl<F: Fixed> Unwrapped<F> {
     pub fn trailing_zeros(self) -> u32 {
         self.0.trailing_zeros()
     }
-    
+
     /// Integer base-2 logarithm, rounded down.
     ///
     /// See also <code>FixedI32::[int\_log2][FixedI32::int_log2]</code> and
