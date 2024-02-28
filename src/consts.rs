@@ -281,7 +281,7 @@ mod tests {
         consts::*,
         traits::{Fixed, FromFixed},
     };
-    use core::{convert::TryFrom, f32, f64};
+    use core::{f32, f64};
 
     #[test]
     fn cmp_f16() {

@@ -851,7 +851,7 @@ pub mod i128 {
 
 #[cfg(test)]
 mod tests {
-    use crate::{arith, types::extra::Unsigned, *};
+    use crate::*;
 
     #[test]
     fn fixed_u16() {

@@ -33,7 +33,7 @@ use crate::{
 use arbitrary::Arbitrary;
 #[cfg(feature = "borsh")]
 use borsh::{BorshDeserialize, BorshSerialize};
-use bytemuck::{self, Contiguous, Pod, TransparentWrapper};
+use bytemuck::{Contiguous, Pod, TransparentWrapper};
 use core::{
     fmt::{Binary, Debug, Display, LowerExp, LowerHex, Octal, UpperExp, UpperHex},
     hash::Hash,
