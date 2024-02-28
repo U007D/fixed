@@ -68,7 +68,7 @@ are enough fractional bits.
 
 This crate does *not* provide general analytic functions.
 
-  * No algebraic functions are provided, for example no `sqrt` or `pow`.
+  * No algebraic functions are provided, for example no `pow`.
   * No trigonometric functions are provided, for example no `sin` or `cos`.
   * No other transcendental functions are provided, for example no `log` or
     `exp`.
@@ -77,7 +77,6 @@ These functions are not provided because different implementations can have
 different trade-offs, for example trading some correctness for speed.
 Implementations can be provided in other crates.
 
-  * The [*fixed-sqrt* crate] provides the square root operation.
   * The [*cordic* crate] provides various functions implemented using the
     [CORDIC] algorithm.
 

@@ -5,6 +5,20 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
+# Version 1.26.0 (unreleased)
+
+  * The following methods were added to all fixed-point numbers, to the
+    [`Fixed`][tf-1-26] trait, and to the [`Saturating`][s-1-26],
+    [`Wrapping`][w-1-26] and [`Unwrapped`][u-1-26] wrappers:
+      *  [`sqrt`][f-s-1-26], [`checked_sqrt`][f-cs-1-26]
+
+[f-cs-1-26]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI32.html#method.checked_sqrt
+[f-s-1-26]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI32.html#method.sqrt
+[s-1-26]: https://docs.rs/fixed/~1.26/fixed/struct.Saturating.html
+[tf-1-26]: https://docs.rs/fixed/~1.26/fixed/traits/trait.Fixed.html
+[u-1-26]: https://docs.rs/fixed/~1.26/fixed/struct.Unwrapped.html
+[w-1-26]: https://docs.rs/fixed/~1.26/fixed/struct.Wrapping.html
+
 # Version 1.25.1 (2024-02-06)
 
   * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
