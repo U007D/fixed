@@ -985,7 +985,7 @@ impl<F: Fixed> Unwrapped<F> {
     pub fn trailing_zeros(self) -> u32 {
         self.0.trailing_zeros()
     }
-
+    
     /// Integer base-2 logarithm, rounded down.
     ///
     /// See also <code>FixedI32::[int\_log2][FixedI32::int_log2]</code> and
@@ -1515,6 +1515,42 @@ impl<F: FixedBoundFrac> Unwrapped<F> {
     #[must_use]
     pub fn from_str_hex(src: &str) -> Unwrapped<F> {
         Unwrapped(F::unwrapped_from_str_hex(src))
+    }
+
+    /// Returns the square root.
+    ///
+    /// See also <code>FixedI32::[sqrt][FixedI32::sqrt]</code> and
+    /// <code>FixedU32::[sqrt][FixedU32::sqrt]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the number is negative, or in the rare corner case where the
+    /// answer does not fit.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I0F32, Unwrapped};
+    /// assert_eq!(Unwrapped(I0F32::lit("0b0.0001")).sqrt().0, I0F32::lit("0b0.01"));
+    /// ```
+    ///
+    /// The following panics because of overflow.
+    ///
+    /// ```should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I0F32, Unwrapped};
+    /// let u = Unwrapped(I0F32::from_num(0.25));
+    /// let _overflow = u.sqrt();
+    /// ```
+    #[inline]
+    #[track_caller]
+    pub fn sqrt(self) -> Self {
+        Unwrapped(self.0.sqrt())
     }
 
     /// Integer base-10 logarithm, rounded down.

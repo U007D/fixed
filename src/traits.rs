@@ -2186,6 +2186,62 @@ where
     Self: FixedBoundFracOptionalNum,
     Self: FixedBoundFracOptionalSerdeStr,
 {
+    /// An unsigned fixed-point number type with the same number of integer and
+    /// fractional bits as `Self`.
+    ///
+    /// If `Self` is signed, then `Self::SignedBoundFrac` is the same as `Self`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::traits::FixedBoundFrac;
+    /// use fixed::types::{I16F16, U16F16};
+    /// // I16F16::SignedBoundFrac is I16F16
+    /// assert_eq!(<I16F16 as FixedBoundFrac>::SignedBoundFrac::FRAC_BITS, I16F16::FRAC_BITS);
+    /// assert_eq!(<I16F16 as FixedBoundFrac>::SignedBoundFrac::INT_BITS, I16F16::INT_BITS);
+    /// assert_eq!(<I16F16 as FixedBoundFrac>::SignedBoundFrac::IS_SIGNED, I16F16::IS_SIGNED);
+    /// // U16F16::SignedBoundFrac is I16F16
+    /// assert_eq!(<U16F16 as FixedBoundFrac>::SignedBoundFrac::FRAC_BITS, I16F16::FRAC_BITS);
+    /// assert_eq!(<U16F16 as FixedBoundFrac>::SignedBoundFrac::INT_BITS, I16F16::INT_BITS);
+    /// assert_eq!(<U16F16 as FixedBoundFrac>::SignedBoundFrac::IS_SIGNED, I16F16::IS_SIGNED);
+    /// ```
+    ///
+    /// [I16F16]: crate::types::I16F16
+    /// [U16F16]: crate::types::U16F16
+    /// [types]: crate::types
+    type SignedBoundFrac: FixedBoundFrac + FixedSigned;
+
+    /// An unsigned fixed-point number type with the same number of integer and
+    /// fractional bits as `Self`.
+    ///
+    /// If `Self` is unsigned, then `Self::UnsignedBoundFrac` is the same as `Self`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::traits::FixedBoundFrac;
+    /// use fixed::types::{I16F16, U16F16};
+    /// // I16F16::UnsignedBoundFrac is U16F16
+    /// assert_eq!(<I16F16 as FixedBoundFrac>::UnsignedBoundFrac::FRAC_BITS, U16F16::FRAC_BITS);
+    /// assert_eq!(<I16F16 as FixedBoundFrac>::UnsignedBoundFrac::INT_BITS, U16F16::INT_BITS);
+    /// assert_eq!(<I16F16 as FixedBoundFrac>::UnsignedBoundFrac::IS_SIGNED, U16F16::IS_SIGNED);
+    /// // U16F16::UnsignedBoundFrac is U16F16
+    /// assert_eq!(<U16F16 as FixedBoundFrac>::UnsignedBoundFrac::FRAC_BITS, U16F16::FRAC_BITS);
+    /// assert_eq!(<U16F16 as FixedBoundFrac>::UnsignedBoundFrac::INT_BITS, U16F16::INT_BITS);
+    /// assert_eq!(<U16F16 as FixedBoundFrac>::UnsignedBoundFrac::IS_SIGNED, U16F16::IS_SIGNED);
+    /// ```
+    ///
+    /// [I16F16]: crate::types::I16F16
+    /// [U16F16]: crate::types::U16F16
+    /// [types]: crate::types
+    type UnsignedBoundFrac: FixedBoundFrac + FixedUnsigned;
+
     /// Parses a string slice containing binary digits to return a fixed-point number.
     ///
     /// Rounding is to the nearest, with ties rounded to even.
@@ -4219,6 +4275,8 @@ macro_rules! impl_fixed {
         where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
+            type SignedBoundFrac = $IFixed<FRAC>;
+            type UnsignedBoundFrac = $UFixed<FRAC>;
             trait_delegate! { fn from_str_binary(src: &str) -> Result<Self, ParseFixedError> }
             trait_delegate! { fn from_str_octal(src: &str) -> Result<Self, ParseFixedError> }
             trait_delegate! { fn from_str_hex(src: &str) -> Result<Self, ParseFixedError> }

@@ -1290,6 +1290,39 @@ impl<F: FixedBoundFrac> Wrapping<F> {
         F::wrapping_from_str_hex(src).map(Wrapping)
     }
 
+    /// Returns the square root.
+    ///
+    /// See also <code>FixedI32::[sqrt][FixedI32::sqrt]</code> and
+    /// <code>FixedU32::[sqrt][FixedU32::sqrt]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the number is negative.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I0F32, Wrapping};
+    /// assert_eq!(Wrapping(I0F32::lit("0b0.0001")).sqrt().0, I0F32::lit("0b0.01"));
+    ///
+    /// // This method handles the overflow corner case.
+    /// let w = Wrapping(I0F32::from_num(0.25));
+    /// assert_eq!(w.sqrt().0, -0.5);
+    /// ```
+    #[inline]
+    #[track_caller]
+    pub fn sqrt(self) -> Self {
+        // Handle the overflow corner case.
+        if Self::IS_SIGNED && Self::INT_BITS == 0 && self > Self::ZERO {
+            Self::from_num(F::UnsignedBoundFrac::from_fixed(self.0).sqrt())
+        } else {
+            Wrapping(self.0.sqrt())
+        }
+    }
+
     /// Integer base-10 logarithm, rounded down.
     ///
     /// See also <code>FixedI32::[int\_log10][FixedI32::int_log10]</code> and
