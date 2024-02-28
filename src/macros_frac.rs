@@ -1009,8 +1009,10 @@ assert_eq!(U8F8::overflowing_from_str_hex("C0F.FE"), Ok((check, true)));
             comment! {
                 "Returns the square root.
 
-This method uses an iterative method, with up to ", $n, " iterations for [`",
-                stringify!($Self), "`].
+This method uses an iterative method, with up to ", $n, " iterations for
+[`", stringify!($Self), "`]. The result is rounded down, and the error is
+&lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
 
 ",
                 if_signed_else_empty_str! {
@@ -1147,8 +1149,10 @@ assert_eq!(Fix::from_num(0.1875).int_log(5), -2);
                 ),
                 "
 
-This method uses an iterative method, with up to ", $n, " iterations for [`",
-                stringify!($Self), "`].
+This method uses an iterative method, with up to ", $n, " iterations for
+ [`", stringify!($Self), "`]. The result is rounded down, and the error is
+&lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
 
 ",
                 if_signed_else_empty_str! {
