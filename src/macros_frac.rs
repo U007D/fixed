@@ -1007,7 +1007,7 @@ assert_eq!(U8F8::overflowing_from_str_hex("C0F.FE"), Ok((check, true)));
             }
 
             comment! {
-                "Finds the square root.
+                "Returns the square root.
 
 This method uses an iterative method, with up to ", $n, " iterations for [`",
                 stringify!($Self), "`].
