@@ -330,7 +330,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [*borsh* crate]: https://crates.io/crates/borsh
 [*cordic* crate]: https://crates.io/crates/cordic
 [*fixed* crate]: https://crates.io/crates/fixed
-[*fixed-sqrt* crate]: https://crates.io/crates/fixed-sqrt
 [*half* crate]: https://crates.io/crates/half
 [*num-traits* crate]: https://crates.io/crates/num-traits
 [*serde* crate]: https://crates.io/crates/serde

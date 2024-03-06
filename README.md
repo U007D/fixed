@@ -179,7 +179,7 @@ The conversions supported cover the following cases.
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/struct.Wrapping.html
 
-### Version 1.26.0 news (unreleased)
+### Version 1.26.0 news (2024-03-06)
 
   * The [`sqrt`][f-s-1-26] method was added to all fixed-point numbers, to the
     [`Fixed`][tf-1-26] trait, and to the [`Saturating`][s-1-26],
@@ -193,31 +193,6 @@ The conversions supported cover the following cases.
 [tf-1-26]: https://docs.rs/fixed/~1.26/fixed/traits/trait.Fixed.html
 [u-1-26]: https://docs.rs/fixed/~1.26/fixed/struct.Unwrapped.html
 [w-1-26]: https://docs.rs/fixed/~1.26/fixed/struct.Wrapping.html
-
-### Version 1.25.1 news (2024-02-06)
-
-  * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
-    incorrect output when rounding incremented a zero in the middle of a string,
-    for example `format!("{:.2e}", I16F16::lit("9.099"))`.
-
-### Version 1.25.0 news (2024-02-05)
-
-  * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
-    incorrect output for very small numbers, for example
-    `format!("{:e}", I16F16::DELTA)`.
-  * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was panicking
-    for some cases of positive exponents and small precision, for example
-    `format!("{:.1e}", I16F16::from_num(1001))`.
-  * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
-    incorrect output when rounding adds a more significant digit, for example
-    `format!("{:.1e}", I16F16::lit("0.999"))`.
-  * The [experimental][feat-exp-1-25] `borsh` feature was promoted to an
-    [optional feature][feat-1-25], and the optional [*borsh* crate] dependency
-    was updated to [version 1.0][borsh-1-0].
-
-[borsh-1-0]: https://docs.rs/borsh/~1.0/borsh/index.html
-[feat-1-25]: https://docs.rs/fixed/~1.25/fixed/index.html#optional-features
-[feat-exp-1-25]: https://docs.rs/fixed/~1.25/fixed/index.html#experimental-optional-features
 
 ### Other releases
 
@@ -444,7 +419,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [*borsh* crate]: https://crates.io/crates/borsh
 [*cordic* crate]: https://crates.io/crates/cordic
 [*fixed* crate]: https://crates.io/crates/fixed
-[*fixed-sqrt* crate]: https://crates.io/crates/fixed-sqrt
 [*half* crate]: https://crates.io/crates/half
 [*num-traits* crate]: https://crates.io/crates/num-traits
 [*serde* crate]: https://crates.io/crates/serde

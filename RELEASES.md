@@ -81,7 +81,7 @@ as-is, without any warranty. -->
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.25.1/fixed/struct.Wrapping.html
 
-# Version 1.26.0 (unreleased)
+# Version 1.26.0 (2024-03-06)
 
   * The [`sqrt`][f-s-1-26] method was added to all fixed-point numbers, to the
     [`Fixed`][tf-1-26] trait, and to the [`Saturating`][s-1-26],

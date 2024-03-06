@@ -197,7 +197,7 @@ macro_rules! impl_sqrt {
                     // which can be obtained with q_i < y_i
                     if q_i < y_i {
                         // We cannot subtract d == 0.5 from y_i immediately, so
-                        // we subtract 1 from y_i before the multiplcation by 2
+                        // we subtract 1 from y_i before the multiplication by 2
                         // and then add 1 back.
                         y_i -= q_i + 1;
                         y_i *= 2;
