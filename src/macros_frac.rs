@@ -253,9 +253,9 @@ result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
 ",
                 if_signed_else_empty_str! {
                     $Signedness;
-                    "Overflow can only occur when there are no integer bits. The
-representable range is &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;&lt;&nbsp;0.5. In
-this case, the method returns [`None`] for an input value ≥&nbsp;0.25.
+                    "Overflow can only occur when there are no integer bits and
+the representable range is &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;&lt;&nbsp;0.5.
+In this case, the method returns [`None`] for an input value ≥&nbsp;0.25.
 
 "
                 },
