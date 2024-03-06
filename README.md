@@ -181,10 +181,11 @@ The conversions supported cover the following cases.
 
 ### Version 1.26.0 news (unreleased)
 
-  * The following methods were added to all fixed-point numbers, to the
+  * The [`sqrt`][f-s-1-26] method was added to all fixed-point numbers, to the
     [`Fixed`][tf-1-26] trait, and to the [`Saturating`][s-1-26],
-    [`Wrapping`][w-1-26] and [`Unwrapped`][u-1-26] wrappers:
-      *  [`sqrt`][f-s-1-26], [`checked_sqrt`][f-cs-1-26]
+    [`Wrapping`][w-1-26] and [`Unwrapped`][u-1-26] wrappers.
+  * The [`checked_sqrt`][f-cs-1-26] method was added to all fixed-point numbers
+    and to the [`Fixed`][tf-1-26] trait.
 
 [f-cs-1-26]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI32.html#method.checked_sqrt
 [f-s-1-26]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI32.html#method.sqrt
