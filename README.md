@@ -102,7 +102,7 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
-### Version 1.26.0 news (unreleased)
+### Version 1.26.0 news (2024-03-06)
 
   * The [`sqrt`][f-s-1-26] method was added to all fixed-point numbers, to the
     [`Fixed`][tf-1-26] trait, and to the [`Saturating`][s-1-26],
@@ -116,31 +116,6 @@ The conversions supported cover the following cases.
 [tf-1-26]: https://docs.rs/fixed/~1.26/fixed/traits/trait.Fixed.html
 [u-1-26]: https://docs.rs/fixed/~1.26/fixed/struct.Unwrapped.html
 [w-1-26]: https://docs.rs/fixed/~1.26/fixed/struct.Wrapping.html
-
-### Version 1.25.1 news (2024-02-06)
-
-  * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
-    incorrect output when rounding incremented a zero in the middle of a string,
-    for example `format!("{:.2e}", I16F16::lit("9.099"))`.
-
-### Version 1.25.0 news (2024-02-05)
-
-  * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
-    incorrect output for very small numbers, for example
-    `format!("{:e}", I16F16::DELTA)`.
-  * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was panicking
-    for some cases of positive exponents and small precision, for example
-    `format!("{:.1e}", I16F16::from_num(1001))`.
-  * Bug fix: formatting numbers with [`LowerExp`] and [`UpperExp`] was producing
-    incorrect output when rounding adds a more significant digit, for example
-    `format!("{:.1e}", I16F16::lit("0.999"))`.
-  * The [experimental][feat-exp-1-25] `borsh` feature was promoted to an
-    [optional feature][feat-1-25], and the optional [*borsh* crate] dependency
-    was updated to [version 1.0][borsh-1-0].
-
-[borsh-1-0]: https://docs.rs/borsh/~1.0/borsh/index.html
-[feat-1-25]: https://docs.rs/fixed/~1.25/fixed/index.html#optional-features
-[feat-exp-1-25]: https://docs.rs/fixed/~1.25/fixed/index.html#experimental-optional-features
 
 ### Other releases
 
@@ -251,7 +226,7 @@ crate, add it as a dependency inside [*Cargo.toml*]:
 
 ```toml
 [dependencies]
-fixed = "1.25"
+fixed = "1.26"
 ```
 
 The *fixed* crate requires rustc version 1.71.0 or later.
@@ -281,7 +256,7 @@ To enable features, you can add the dependency like this to [*Cargo.toml*]:
 ```toml
 [dependencies.fixed]
 features = ["serde"]
-version = "1.25"
+version = "1.26"
 ```
 
 ## Experimental optional features
@@ -327,62 +302,61 @@ shall be dual licensed as above, without any additional terms or conditions.
 [*cordic* crate]: https://crates.io/crates/cordic
 [*fixed* crate]: https://crates.io/crates/fixed
 [*fixed-macro* crate]: https://crates.io/crates/fixed-macro
-[*fixed-sqrt* crate]: https://crates.io/crates/fixed-sqrt
 [*half* crate]: https://crates.io/crates/half
 [*num-traits* crate]: https://crates.io/crates/num-traits
 [*serde* crate]: https://crates.io/crates/serde
 [*typenum* crate]: https://crates.io/crates/typenum
 [CORDIC]: https://en.wikipedia.org/wiki/CORDIC
-[FixedI32]: https://docs.rs/fixed/~1.25/fixed/struct.FixedI32.html
-[FixedU32]: https://docs.rs/fixed/~1.25/fixed/struct.FixedU32.html
+[FixedI32]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI32.html
+[FixedU32]: https://docs.rs/fixed/~1.26/fixed/struct.FixedU32.html
 [LICENSE-APACHE]: https://www.apache.org/licenses/LICENSE-2.0
 [LICENSE-MIT]: https://opensource.org/licenses/MIT
-[U0]: https://docs.rs/fixed/~1.25/fixed/types/extra/type.U0.html
-[U12]: https://docs.rs/fixed/~1.25/fixed/types/extra/type.U12.html
-[U24]: https://docs.rs/fixed/~1.25/fixed/types/extra/type.U24.html
-[U32]: https://docs.rs/fixed/~1.25/fixed/types/extra/type.U32.html
+[U0]: https://docs.rs/fixed/~1.26/fixed/types/extra/type.U0.html
+[U12]: https://docs.rs/fixed/~1.26/fixed/types/extra/type.U12.html
+[U24]: https://docs.rs/fixed/~1.26/fixed/types/extra/type.U24.html
+[U32]: https://docs.rs/fixed/~1.26/fixed/types/extra/type.U32.html
 [`Binary`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Binary.html
 [`Display`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Display.html
 [`Error`]: https://doc.rust-lang.org/nightly/std/error/trait.Error.html
-[`FixedI128`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedI128.html
-[`FixedI16`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedI16.html
-[`FixedI32`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedI32.html
-[`FixedI64`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedI64.html
-[`FixedI8`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedI8.html
-[`FixedU128`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedU128.html
-[`FixedU16`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedU16.html
-[`FixedU32`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedU32.html
-[`FixedU64`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedU64.html
-[`FixedU8`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedU8.html
-[`FromFixed`]: https://docs.rs/fixed/~1.25/fixed/traits/trait.FromFixed.html
+[`FixedI128`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI128.html
+[`FixedI16`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI16.html
+[`FixedI32`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI32.html
+[`FixedI64`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI64.html
+[`FixedI8`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI8.html
+[`FixedU128`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedU128.html
+[`FixedU16`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedU16.html
+[`FixedU32`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedU32.html
+[`FixedU64`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedU64.html
+[`FixedU8`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedU8.html
+[`FromFixed`]: https://docs.rs/fixed/~1.26/fixed/traits/trait.FromFixed.html
 [`FromStr`]: https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html
 [`From`]: https://doc.rust-lang.org/nightly/core/convert/trait.From.html
-[`I20F12`]: https://docs.rs/fixed/~1.25/fixed/types/type.I20F12.html
-[`I4F12`]: https://docs.rs/fixed/~1.25/fixed/types/type.I4F12.html
-[`I4F4`]: https://docs.rs/fixed/~1.25/fixed/types/type.I4F4.html
+[`I20F12`]: https://docs.rs/fixed/~1.26/fixed/types/type.I20F12.html
+[`I4F12`]: https://docs.rs/fixed/~1.26/fixed/types/type.I4F12.html
+[`I4F4`]: https://docs.rs/fixed/~1.26/fixed/types/type.I4F4.html
 [`Into`]: https://doc.rust-lang.org/nightly/core/convert/trait.Into.html
-[`LosslessTryFrom`]: https://docs.rs/fixed/~1.25/fixed/traits/trait.LosslessTryFrom.html
-[`LosslessTryInto`]: https://docs.rs/fixed/~1.25/fixed/traits/trait.LosslessTryInto.html
-[`LossyFrom`]: https://docs.rs/fixed/~1.25/fixed/traits/trait.LossyFrom.html
-[`LossyInto`]: https://docs.rs/fixed/~1.25/fixed/traits/trait.LossyInto.html
+[`LosslessTryFrom`]: https://docs.rs/fixed/~1.26/fixed/traits/trait.LosslessTryFrom.html
+[`LosslessTryInto`]: https://docs.rs/fixed/~1.26/fixed/traits/trait.LosslessTryInto.html
+[`LossyFrom`]: https://docs.rs/fixed/~1.26/fixed/traits/trait.LossyFrom.html
+[`LossyInto`]: https://docs.rs/fixed/~1.26/fixed/traits/trait.LossyInto.html
 [`LowerExp`]: https://doc.rust-lang.org/nightly/core/fmt/trait.LowerExp.html
 [`LowerHex`]: https://doc.rust-lang.org/nightly/core/fmt/trait.LowerHex.html
 [`Octal`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Octal.html
-[`ParseFixedError`]: https://docs.rs/fixed/~1.25/fixed/struct.ParseFixedError.html
-[`ToFixed`]: https://docs.rs/fixed/~1.25/fixed/traits/trait.ToFixed.html
-[`U20F12`]: https://docs.rs/fixed/~1.25/fixed/types/type.U20F12.html
+[`ParseFixedError`]: https://docs.rs/fixed/~1.26/fixed/struct.ParseFixedError.html
+[`ToFixed`]: https://docs.rs/fixed/~1.26/fixed/traits/trait.ToFixed.html
+[`U20F12`]: https://docs.rs/fixed/~1.26/fixed/types/type.U20F12.html
 [`UpperExp`]: https://doc.rust-lang.org/nightly/core/fmt/trait.UpperExp.html
 [`UpperHex`]: https://doc.rust-lang.org/nightly/core/fmt/trait.UpperHex.html
 [`az`]: https://docs.rs/az/^1/az/index.html
 [`bf16`]: https://docs.rs/half/^2/half/struct.bf16.html
 [`bytemuck`]: https://docs.rs/bytemuck/^1/bytemuck/index.html
-[`checked_from_num`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedI32.html#method.checked_from_num
+[`checked_from_num`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI32.html#method.checked_from_num
 [`f16`]: https://docs.rs/half/^2/half/struct.f16.html
-[`from_num`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedI32.html#method.from_num
-[`from_str_binary`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedI32.html#method.from_str_binary
-[`from_str_hex`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedI32.html#method.from_str_hex
-[`from_str_octal`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedI32.html#method.from_str_octal
+[`from_num`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI32.html#method.from_num
+[`from_str_binary`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI32.html#method.from_str_binary
+[`from_str_hex`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI32.html#method.from_str_hex
+[`from_str_octal`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI32.html#method.from_str_octal
 [`i32`]: https://doc.rust-lang.org/nightly/core/primitive.i32.html
-[`lit`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedI32.html#method.lit
-[`to_num`]: https://docs.rs/fixed/~1.25/fixed/struct.FixedI32.html#method.to_num
+[`lit`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI32.html#method.lit
+[`to_num`]: https://docs.rs/fixed/~1.26/fixed/struct.FixedI32.html#method.to_num
 [`u32`]: https://doc.rust-lang.org/nightly/core/primitive.u32.html

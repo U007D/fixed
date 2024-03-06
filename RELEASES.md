@@ -5,7 +5,7 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-# Version 1.26.0 (unreleased)
+# Version 1.26.0 (2024-03-06)
 
   * The [`sqrt`][f-s-1-26] method was added to all fixed-point numbers, to the
     [`Fixed`][tf-1-26] trait, and to the [`Saturating`][s-1-26],
