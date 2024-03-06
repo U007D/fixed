@@ -197,7 +197,7 @@ macro_rules! impl_sqrt {
                     // which can be obtained with q_i < y_i
                     if q_i < y_i {
                         // We cannot subtract d == 0.5 from y_i immediately, so
-                        // we subtract 1 from y_i before the multiplcation by 2
+                        // we subtract 1 from y_i before the multiplication by 2
                         // and then add 1 back.
                         y_i -= q_i + 1;
                         y_i *= 2;
@@ -373,12 +373,20 @@ mod tests {
         assert_eq!(FixedU8::<U4>::from_num(2).sqrt(), FixedU8::<U4>::SQRT_2);
         assert_eq!(FixedU8::<U5>::from_num(2).sqrt(), FixedU8::<U5>::SQRT_2);
         assert_eq!(FixedU8::<U6>::from_num(2).sqrt(), FixedU8::<U6>::SQRT_2);
+        assert!(
+            FixedU8::<U7>::MAX.sqrt() == FixedU8::<U7>::SQRT_2 - FixedU8::<U7>::DELTA
+                || FixedU8::<U7>::MAX.sqrt() == FixedU8::<U7>::SQRT_2
+        );
 
         assert_eq!(FixedI8::<U0>::from_num(2).sqrt(), FixedI8::<U0>::SQRT_2);
         assert_eq!(FixedI8::<U1>::from_num(2).sqrt(), FixedI8::<U1>::SQRT_2);
         assert_eq!(FixedI8::<U3>::from_num(2).sqrt(), FixedI8::<U3>::SQRT_2);
         assert_eq!(FixedI8::<U4>::from_num(2).sqrt(), FixedI8::<U4>::SQRT_2);
         assert_eq!(FixedI8::<U5>::from_num(2).sqrt(), FixedI8::<U5>::SQRT_2);
+        assert!(
+            FixedI8::<U6>::MAX.sqrt() == FixedI8::<U6>::SQRT_2 - FixedI8::<U6>::DELTA
+                || FixedI8::<U6>::MAX.sqrt() == FixedI8::<U6>::SQRT_2
+        );
     }
 
     #[test]
@@ -390,6 +398,10 @@ mod tests {
         assert_eq!(FixedU16::<U9>::from_num(2).sqrt(), FixedU16::<U9>::SQRT_2);
         assert_eq!(FixedU16::<U13>::from_num(2).sqrt(), FixedU16::<U13>::SQRT_2);
         assert_eq!(FixedU16::<U14>::from_num(2).sqrt(), FixedU16::<U14>::SQRT_2);
+        assert!(
+            FixedU16::<U15>::MAX.sqrt() == FixedU16::<U15>::SQRT_2 - FixedU16::<U15>::DELTA
+                || FixedU16::<U15>::MAX.sqrt() == FixedU16::<U15>::SQRT_2
+        );
 
         assert_eq!(FixedI16::<U0>::from_num(2).sqrt(), FixedI16::<U0>::SQRT_2);
         assert_eq!(FixedI16::<U1>::from_num(2).sqrt(), FixedI16::<U1>::SQRT_2);
@@ -397,6 +409,10 @@ mod tests {
         assert_eq!(FixedI16::<U8>::from_num(2).sqrt(), FixedI16::<U8>::SQRT_2);
         assert_eq!(FixedI16::<U9>::from_num(2).sqrt(), FixedI16::<U9>::SQRT_2);
         assert_eq!(FixedI16::<U13>::from_num(2).sqrt(), FixedI16::<U13>::SQRT_2);
+        assert!(
+            FixedI16::<U14>::MAX.sqrt() == FixedI16::<U14>::SQRT_2 - FixedI16::<U14>::DELTA
+                || FixedI16::<U14>::MAX.sqrt() == FixedI16::<U14>::SQRT_2
+        );
     }
 
     #[test]
@@ -408,6 +424,10 @@ mod tests {
         assert_eq!(FixedU32::<U17>::from_num(2).sqrt(), FixedU32::<U17>::SQRT_2);
         assert_eq!(FixedU32::<U29>::from_num(2).sqrt(), FixedU32::<U29>::SQRT_2);
         assert_eq!(FixedU32::<U30>::from_num(2).sqrt(), FixedU32::<U30>::SQRT_2);
+        assert!(
+            FixedU32::<U31>::MAX.sqrt() == FixedU32::<U31>::SQRT_2 - FixedU32::<U31>::DELTA
+                || FixedU32::<U31>::MAX.sqrt() == FixedU32::<U31>::SQRT_2
+        );
 
         assert_eq!(FixedI32::<U0>::from_num(2).sqrt(), FixedI32::<U0>::SQRT_2);
         assert_eq!(FixedI32::<U1>::from_num(2).sqrt(), FixedI32::<U1>::SQRT_2);
@@ -415,6 +435,10 @@ mod tests {
         assert_eq!(FixedI32::<U16>::from_num(2).sqrt(), FixedI32::<U16>::SQRT_2);
         assert_eq!(FixedI32::<U17>::from_num(2).sqrt(), FixedI32::<U17>::SQRT_2);
         assert_eq!(FixedI32::<U29>::from_num(2).sqrt(), FixedI32::<U29>::SQRT_2);
+        assert!(
+            FixedI32::<U30>::MAX.sqrt() == FixedI32::<U30>::SQRT_2 - FixedI32::<U30>::DELTA
+                || FixedI32::<U30>::MAX.sqrt() == FixedI32::<U30>::SQRT_2
+        );
     }
 
     #[test]
@@ -426,6 +450,10 @@ mod tests {
         assert_eq!(FixedU64::<U33>::from_num(2).sqrt(), FixedU64::<U33>::SQRT_2);
         assert_eq!(FixedU64::<U61>::from_num(2).sqrt(), FixedU64::<U61>::SQRT_2);
         assert_eq!(FixedU64::<U62>::from_num(2).sqrt(), FixedU64::<U62>::SQRT_2);
+        assert!(
+            FixedU64::<U63>::MAX.sqrt() == FixedU64::<U63>::SQRT_2 - FixedU64::<U63>::DELTA
+                || FixedU64::<U63>::MAX.sqrt() == FixedU64::<U63>::SQRT_2
+        );
 
         assert_eq!(FixedI64::<U0>::from_num(2).sqrt(), FixedI64::<U0>::SQRT_2);
         assert_eq!(FixedI64::<U1>::from_num(2).sqrt(), FixedI64::<U1>::SQRT_2);
@@ -433,6 +461,10 @@ mod tests {
         assert_eq!(FixedI64::<U32>::from_num(2).sqrt(), FixedI64::<U32>::SQRT_2);
         assert_eq!(FixedI64::<U33>::from_num(2).sqrt(), FixedI64::<U33>::SQRT_2);
         assert_eq!(FixedI64::<U61>::from_num(2).sqrt(), FixedI64::<U61>::SQRT_2);
+        assert!(
+            FixedI64::<U62>::MAX.sqrt() == FixedI64::<U62>::SQRT_2 - FixedI64::<U62>::DELTA
+                || FixedI64::<U62>::MAX.sqrt() == FixedI64::<U62>::SQRT_2
+        );
     }
 
     #[test]
@@ -459,6 +491,10 @@ mod tests {
             FixedU128::<U126>::from_num(2).sqrt(),
             FixedU128::<U126>::SQRT_2
         );
+        assert!(
+            FixedU128::<U127>::MAX.sqrt() == FixedU128::<U127>::SQRT_2 - FixedU128::<U127>::DELTA
+                || FixedU128::<U127>::MAX.sqrt() == FixedU128::<U127>::SQRT_2
+        );
 
         assert_eq!(FixedI128::<U0>::from_num(2).sqrt(), FixedI128::<U0>::SQRT_2);
         assert_eq!(FixedI128::<U1>::from_num(2).sqrt(), FixedI128::<U1>::SQRT_2);
@@ -477,6 +513,10 @@ mod tests {
         assert_eq!(
             FixedI128::<U125>::from_num(2).sqrt(),
             FixedI128::<U125>::SQRT_2
+        );
+        assert!(
+            FixedI128::<U126>::MAX.sqrt() == FixedI128::<U126>::SQRT_2 - FixedI128::<U126>::DELTA
+                || FixedI128::<U126>::MAX.sqrt() == FixedI128::<U126>::SQRT_2
         );
     }
 }
