@@ -139,44 +139,39 @@ macro_rules! impl_sqrt {
                 (int_nbits / 2) as i32 - (leading / 2) as i32
             };
 
-            let mut i = 0;
+            let mut i = 1;
             let mut q_i = 1 << ($u::BITS - 2);
             let mut next_bit = q_i >> 1;
             let mut y_i = val.get();
-            let shift = int_nbits as i32 - sig_int_pairs * 2;
-            if shift < 0 {
+            let input_shl = int_nbits as i32 - sig_int_pairs * 2;
+            if input_shl < 0 {
                 // This can only happen when we have odd frac_nbits and the most
-                // significant bit is set.
-                debug_assert!(shift == -1);
+                // significant bit is set. We would need to shift right by 1.
+                debug_assert!(input_shl == -1);
 
-                // do one iteration here as it is a special case
-                let bit_shifted_out = y_i & 1;
-                y_i >>= 1;
-                y_i -= q_i;
+                // Do one iteration here as this is a special case.
 
+                // In this special case, y is in the range [1, 2) instead of [1, 4),
+                // and q is in the range [1, √2) instead of [1, 2).
+                // Therefore, q_1 is always 0b1.0, and never 0b1.1.
+                // Since q_0 = q_1 = 1, y_1 = 2 × (y - q_1^2) = 2 × y - 2 × q_i.
+                // Since input_shl is -1, its effect is cancelled out by 2 × y,
+                // and we only need to subtract 2 × q_i from y_i.
+                y_i -= 2 * q_i;
+                next_bit >>= 1;
                 i += 1;
-                let d = next_bit >> 1;
-                if q_i + d <= y_i {
-                    y_i -= q_i + d;
-                    q_i += next_bit;
-                }
-                y_i *= 2;
-                y_i += bit_shifted_out;
-
-                next_bit = d;
             } else {
-                y_i <<= shift;
+                y_i <<= input_shl;
                 y_i -= q_i;
             };
 
             let iters = (frac_nbits as i32 - 1 + sig_int_pairs) as u32;
-            i += 1;
             while i <= iters {
                 let d = next_bit >> 1;
                 if d == 0 {
                     if i == iters {
-                        // here final shift must be 0, otherwise we wouldn't have
-                        // room to potentially insert one extra bit
+                        // Here result_shr must be 0, otherwise we wouldn't have
+                        // room to potentially insert one extra bit.
                         debug_assert!(int_nbits as i32 - 1 - sig_int_pairs == 0);
 
                         // d == 0.5, so we really need q_i + 0.5 <= y_i,
@@ -189,8 +184,8 @@ macro_rules! impl_sqrt {
                     }
 
                     debug_assert!(i == iters - 1);
-                    // here final shift must be -1, otherwise we wouldn't have
-                    // room to potentially insert two extra bits
+                    // Here result_shr must be -1, otherwise we wouldn't have
+                    // room to potentially insert two extra bits.
                     debug_assert!(int_nbits as i32 - 1 - sig_int_pairs == -1);
 
                     // d == 0.5, so we really need q_i + 0.5 <= y_i,
@@ -198,7 +193,8 @@ macro_rules! impl_sqrt {
                     if q_i < y_i {
                         // We cannot subtract d == 0.5 from y_i immediately, so
                         // we subtract 1 from y_i before the multiplication by 2
-                        // and then add 1 back.
+                        // and then add 1 back. (There may be a potential overflow
+                        // if we multiply y_i by 2 and then subtract 1.)
                         y_i -= q_i + 1;
                         y_i *= 2;
                         y_i += 1;
@@ -229,8 +225,8 @@ macro_rules! impl_sqrt {
                 next_bit = d;
                 i += 1;
             }
-            let shift = int_nbits as i32 - 1 - sig_int_pairs;
-            q_i >> shift
+            let result_shr = int_nbits as i32 - 1 - sig_int_pairs;
+            q_i >> result_shr
         }
     };
 }
