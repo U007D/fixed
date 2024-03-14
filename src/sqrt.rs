@@ -15,6 +15,9 @@
 
 use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8};
 
+// The mathematics below is based on the comments from FreeBSD's
+// /usr/src/lib/msun/src/e_sqrt.c.
+
 // q_i = sqrt(y) truncated to i bits after point.
 // q_0 = 1
 // y_i = 2^i (y - q_i^2)
