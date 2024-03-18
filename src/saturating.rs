@@ -781,6 +781,7 @@ impl<F: Fixed> Saturating<F> {
     /// ```
     #[inline]
     #[must_use]
+    #[doc(alias("round_ties_even"))]
     pub fn round_ties_to_even(self) -> Saturating<F> {
         Saturating(self.0.saturating_round_ties_to_even())
     }

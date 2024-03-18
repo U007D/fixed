@@ -789,6 +789,7 @@ impl<F: Fixed> Wrapping<F> {
     /// ```
     #[inline]
     #[must_use]
+    #[doc(alias("round_ties_even"))]
     pub fn round_ties_to_even(self) -> Wrapping<F> {
         Wrapping(self.0.wrapping_round_ties_to_even())
     }

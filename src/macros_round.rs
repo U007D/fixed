@@ -332,6 +332,7 @@ assert_eq!(Fix::from_num(3.5).round_ties_to_even(), Fix::from_num(4));
             #[inline]
             #[track_caller]
             #[must_use]
+            #[doc(alias("round_ties_even"))]
             pub const fn round_ties_to_even(self) -> $Self<FRAC> {
                 let (round, overflow) = self.overflowing_round_ties_to_even();
                 debug_assert!(!overflow, "overflow");
