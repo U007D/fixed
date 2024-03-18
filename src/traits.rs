@@ -1384,6 +1384,7 @@ where
     /// and
     /// <code>FixedU32::[round\_ties\_to\_even][FixedU32::round_ties_to_even]</code>.
     #[must_use]
+    #[doc(alias("round_ties_even"))]
     fn round_ties_to_even(self) -> Self;
 
     /// Checked ceil. Rounds to the next integer towards +∞, returning
