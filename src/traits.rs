@@ -1778,6 +1778,13 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn mean(self, other: Self) -> Self;
 
+    /// Compute the hypotenuse of a right triange.
+    ///
+    /// See also <code>FixedI32::[hypot][FixedI32::hypot]</code> and
+    /// <code>FixedU32::[hypot][FixedU32::hypot]</code>.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn hypot(self, other: Self) -> Self;
+
     /// Returns the reciprocal.
     ///
     /// See also <code>FixedI32::[recip][FixedI32::recip]</code> and
@@ -2089,6 +2096,15 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn checked_dist(self, other: Self) -> Option<Self>;
 
+    /// Compute the hypotenuse of a right triange, returning [`None`] on
+    /// overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[checked\_hypot][FixedI32::checked_hypot]</code> and
+    /// <code>FixedU32::[checked\_hypot][FixedU32::checked_hypot]</code>.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn checked_hypot(self, other: Self) -> Option<Self>;
+
     /// Checked linear interpolation between `start` and `end`. Returns [`None`]
     /// on overflow.
     ///
@@ -2274,6 +2290,15 @@ where
     /// <code>FixedU32::[saturating\_dist][FixedU32::saturating_dist]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn saturating_dist(self, other: Self) -> Self;
+
+    /// Compute the hypotenuse of a right triange, saturating on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_hypot][FixedI32::saturating_hypot]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_hypot][FixedU32::saturating_hypot]</code>.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn saturating_hypot(self, other: Self) -> Self;
 
     /// Linear interpolation between `start` and `end`, saturating on overflow.
     ///
@@ -2473,6 +2498,14 @@ where
     /// <code>FixedU32::[wrapping\_dist][FixedU32::wrapping_dist]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn wrapping_dist(self, other: Self) -> Self;
+
+    /// Compute the hypotenuse of a right triange, wrapping on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_hypot][FixedI32::wrapping_hypot]</code> and
+    /// <code>FixedU32::[wrapping\_hypot][FixedU32::wrapping_hypot]</code>.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn wrapping_hypot(self, other: Self) -> Self;
 
     /// Linear interpolation between `start` and `end`, wrapping on overflow.
     ///
@@ -2785,6 +2818,19 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn unwrapped_dist(self, other: Self) -> Self;
 
+    /// Compute the hypotenuse of a right triange, panicking on overflow.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the result does not fit.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_hypot][FixedI32::unwrapped_hypot]</code> and
+    /// <code>FixedU32::[unwrapped\_hypot][FixedU32::unwrapped_hypot]</code>.
+    #[track_caller]
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn unwrapped_hypot(self, other: Self) -> Self;
+
     /// Linear interpolation between `start` and `end`, panicking on overflow.
     ///
     /// # Panics
@@ -3059,6 +3105,18 @@ where
     /// <code>FixedU32::[overflowing\_dist][FixedU32::overflowing_dist]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn overflowing_dist(self, other: Self) -> (Self, bool);
+
+    /// Compute the hypotenuse of a right triange.
+    ///
+    /// Returns a [tuple] of the hypotenuse and a [`bool`], indicating whether
+    /// an overflow has occurred. On overflow, the wrapped value is returned.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_hypot][FixedI32::overflowing_hypot]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_hypot][FixedU32::overflowing_hypot]</code>.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn overflowing_hypot(self, other: Self) -> (Self, bool);
 
     /// Overflowing linear interpolation between `start` and `end`.
     ///
@@ -4109,6 +4167,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn dist(self, other: Self) -> Self }
             trait_delegate! { fn abs_diff(self, other: Self) -> Self::Unsigned }
             trait_delegate! { fn mean(self, other: Self) -> Self }
+            trait_delegate! { fn hypot(self, other: Self) -> Self }
             trait_delegate! { fn recip(self) -> Self }
             trait_delegate! { fn next_multiple_of(self, other: Self) -> Self }
             trait_delegate! { fn mul_add(self, mul: Self, add: Self) -> Self }
@@ -4141,6 +4200,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn checked_shl(self, rhs: u32) -> Option<Self> }
             trait_delegate! { fn checked_shr(self, rhs: u32) -> Option<Self> }
             trait_delegate! { fn checked_dist(self, other: Self) -> Option<Self> }
+            trait_delegate! { fn checked_hypot(self, other: Self) -> Option<Self> }
             trait_delegate! { fn checked_lerp(self, start: Self, end: Self) -> Option<Self> }
             trait_delegate! { fn checked_inv_lerp(self, start: Self, end: Self) -> Option<Self> }
             trait_delegate! { fn saturating_neg(self) -> Self }
@@ -4159,6 +4219,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn saturating_div_euclid_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn saturating_rem_euclid_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn saturating_dist(self, other: Self) -> Self }
+            trait_delegate! { fn saturating_hypot(self, other: Self) -> Self }
             trait_delegate! { fn saturating_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn saturating_inv_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn wrapping_neg(self) -> Self }
@@ -4179,6 +4240,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn wrapping_shl(self, rhs: u32) -> Self }
             trait_delegate! { fn wrapping_shr(self, rhs: u32) -> Self }
             trait_delegate! { fn wrapping_dist(self, other: Self) -> Self }
+            trait_delegate! { fn wrapping_hypot(self, other: Self) -> Self }
             trait_delegate! { fn wrapping_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn wrapping_inv_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn unwrapped_neg(self) -> Self }
@@ -4202,6 +4264,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn unwrapped_shl(self, rhs: u32) -> Self }
             trait_delegate! { fn unwrapped_shr(self, rhs: u32) -> Self }
             trait_delegate! { fn unwrapped_dist(self, other: Self) -> Self }
+            trait_delegate! { fn unwrapped_hypot(self, other: Self) -> Self }
             trait_delegate! { fn unwrapped_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn unwrapped_inv_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn overflowing_neg(self) -> (Self, bool) }
@@ -4222,6 +4285,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn overflowing_shl(self, rhs: u32) -> (Self, bool) }
             trait_delegate! { fn overflowing_shr(self, rhs: u32) -> (Self, bool) }
             trait_delegate! { fn overflowing_dist(self, other: Self) -> (Self, bool) }
+            trait_delegate! { fn overflowing_hypot(self, other: Self) -> (Self, bool) }
             trait_delegate! { fn overflowing_lerp(self, start: Self, end: Self) -> (Self, bool) }
             trait_delegate! {
                 fn overflowing_inv_lerp(self, start: Self, end: Self) -> (Self, bool)
