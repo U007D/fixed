@@ -334,6 +334,21 @@ pub const fn div_rem_i256_i128_no_overflow(n: I256, d: NonZeroI128) -> (I256, i1
 }
 
 #[inline]
+pub const fn overflowing_add_u256(a: U256, b: U256) -> (U256, bool) {
+    let (lo, carry0) = a.lo.overflowing_add(b.lo);
+    let (hi, carry1_a) = a.hi.overflowing_add(b.hi);
+    let (hi, carry1_b) = hi.overflowing_add(carry0 as u128);
+    (U256 { lo, hi }, carry1_a | carry1_b)
+}
+
+#[inline]
+pub const fn wrapping_sub_u256(a: U256, b: U256) -> U256 {
+    let (lo, borrow) = a.lo.overflowing_sub(b.lo);
+    let hi = a.hi.wrapping_sub(b.hi).wrapping_sub(borrow as u128);
+    U256 { lo, hi }
+}
+
+#[inline]
 pub const fn overflowing_shl_u256_into_u128(a: U256, sh: u32) -> (u128, bool) {
     if sh == 128 {
         (a.hi, false)

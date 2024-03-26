@@ -432,6 +432,7 @@ mod fixed_from_bits;
 mod float_helper;
 mod from_str;
 mod helpers;
+mod hypot;
 #[cfg(feature = "arbitrary")]
 mod impl_arbitrary;
 mod impl_bytemuck;
