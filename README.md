@@ -102,7 +102,7 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
-# Version 1.27.0 news (unreleased)
+### Version 1.27.0 news (unreleased)
 
   * The [`hypot`][f-h-1-27] method was added to all fixed-point numbers, to the
     [`Fixed`][tf-1-27] trait, and to the [`Saturating`][s-1-27],
