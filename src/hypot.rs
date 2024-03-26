@@ -19,7 +19,7 @@ use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64};
 
 macro_rules! impl_hypot {
     ($Single:ident, $Double:ident, $NonZeroDouble:ident $(, $Half:ident)?) => {
-        pub fn $Single(a: $Single, b: $Single) -> ($Single, bool) {
+        pub const fn $Single(a: $Single, b: $Single) -> ($Single, bool) {
             $(
                 if a <= ($Half::MAX as $Single) && b <= ($Half::MAX as $Single) {
                     let val = match $Half(a as $Half, b as $Half) {
@@ -72,7 +72,7 @@ impl_hypot! { u16, u32, NonZeroU32, u8 }
 impl_hypot! { u32, u64, NonZeroU64, u16 }
 impl_hypot! { u64, u128, NonZeroU128, u32 }
 
-pub fn u128(a: u128, b: u128) -> (u128, bool) {
+pub const fn u128(a: u128, b: u128) -> (u128, bool) {
     if a <= (u64::MAX as u128) && b <= (u64::MAX as u128) {
         let val = match u64(a as u64, b as u64) {
             (val, false) => val as u128,
