@@ -1056,6 +1056,28 @@ impl<F: Fixed> Wrapping<F> {
         Wrapping(self.0.mean(other.0))
     }
 
+    /// Compute the hypotenuse of a right triange.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_hypot][FixedI32::wrapping_hypot]</code> and
+    /// <code>FixedU32::[wrapping\_hypot][FixedU32::wrapping_hypot]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::{types::I8F8, Wrapping};
+    /// type Wr = Wrapping<I8F8>;
+    /// // hypot(3, 4) == 5
+    /// assert_eq!(Wr::from_num(3).hypot(Wr::from_num(4)), Wr::from_num(5));
+    /// // hypot(88, 105) == 137, which wraps to -119
+    /// assert_eq!(Wr::from_num(88).hypot(Wr::from_num(105)), Wr::from_num(-119));
+    /// ```
+    #[inline]
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    pub fn hypot(self, other: Wrapping<F>) -> Wrapping<F> {
+        Wrapping(self.0.wrapping_hypot(other.0))
+    }
+
     /// Returns the reciprocal (inverse), 1/`self`.
     ///
     /// See also
