@@ -1054,6 +1054,31 @@ impl<F: Fixed> Saturating<F> {
         Saturating(self.0.mean(other.0))
     }
 
+    /// Compute the hypotenuse of a right triange.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_hypot][FixedI32::saturating_hypot]</code> and
+    /// <code>FixedU32::[saturating\_hypot][FixedU32::saturating_hypot]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F8, Saturating};
+    /// type Sa = Saturating<I8F8>;
+    /// // hypot(3, 4) == 5
+    /// assert_eq!(Sa::from_num(3).hypot(Sa::from_num(4)), Sa::from_num(5));
+    /// // hypot(88, 105) == 137, which saturates
+    /// assert_eq!(Sa::from_num(88).hypot(Sa::from_num(105)), Sa::MAX);
+    /// ```
+    #[inline]
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    pub fn hypot(self, other: Saturating<F>) -> Saturating<F> {
+        Saturating(self.0.saturating_hypot(other.0))
+    }
+
     /// Returns the next multiple of `other`.
     ///
     /// See also

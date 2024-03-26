@@ -1146,6 +1146,41 @@ impl<F: Fixed> Unwrapped<F> {
         Unwrapped(self.0.mean(other.0))
     }
 
+    /// Compute the hypotenuse of a right triange.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_hypot][FixedI32::unwrapped_hypot]</code> and
+    /// <code>FixedU32::[unwrapped\_hypot][FixedU32::unwrapped_hypot]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F8, Unwrapped};
+    /// type Unwr = Unwrapped<I8F8>;
+    /// // hypot(3, 4) == 5
+    /// assert_eq!(Unwr::from_num(3).hypot(Unwr::from_num(4)), Unwr::from_num(5));
+    /// ```
+    ///
+    /// The following panics because of overflow.
+    ///
+    /// ```should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I8F8, Unwrapped};
+    /// type Unwr = Unwrapped<I8F8>;
+    /// // hypot(88, 105) == 137, which does not fit
+    /// let _overflow = Unwr::from_num(88).hypot(Unwr::from_num(105));
+    /// ```
+    #[inline]
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    pub fn hypot(self, other: Unwrapped<F>) -> Unwrapped<F> {
+        Unwrapped(self.0.unwrapped_hypot(other.0))
+    }
+
     /// Returns the next multiple of `other`.
     ///
     /// See also
