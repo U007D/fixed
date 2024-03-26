@@ -1219,6 +1219,8 @@ const fn parse_bounds(bytes: &[u8], radix: u32, sep: Sep) -> Result<Parse<'_>, P
     if exp_sep.is_some() && !has_exp_digit {
         return Err(ParseErrorKind::ExpNoDigits);
     }
+    // workaround for https://github.com/rust-lang/rust-clippy/issues/12568
+    #[allow(clippy::manual_unwrap_or_default)]
     let neg = match sign {
         Some(s) => s,
         None => false,
