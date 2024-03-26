@@ -1840,6 +1840,14 @@ assert_eq!(Fix::from_num(3).mean(Fix::from_num(4)), Fix::from_num(3.5));
             comment! {
                 "Compute the hypotenuse of a right triange.
 
+The hypotenuse is equal to the square root of the sum of the squares of the
+operands.
+
+This method uses an iterative method for its square root, with up to ", $n, "
+iterations for [`", stringify!($Self), "`]. The result is rounded down, and the
+error is &lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+
 # Panics
 
 When debug assertions are enabled, this method panics if the result overflows.
@@ -2928,6 +2936,14 @@ assert_eq!(ZeroIntBits::from_num(-0.5).checked_signum(), None);
             comment! {
                 "Compute the hypotenuse of a right triange, returning [`None`] on overflow.
 
+The hypotenuse is equal to the square root of the sum of the squares of the
+operands.
+
+This method uses an iterative method for its square root, with up to ", $n, "
+iterations for [`", stringify!($Self), "`]. The result is rounded down, and the
+error is &lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+
 # Examples
 
 ```rust
@@ -3716,6 +3732,14 @@ assert_eq!(ZeroIntBits::from_num(-0.5).saturating_signum(), ZeroIntBits::MIN);
             comment! {
                 "Compute the hypotenuse of a right triange, saturating on overflow.
 
+The hypotenuse is equal to the square root of the sum of the squares of the
+operands.
+
+This method uses an iterative method for its square root, with up to ", $n, "
+iterations for [`", stringify!($Self), "`]. The result is rounded down, and the
+error is &lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+
 # Examples
 
 ```rust
@@ -4442,6 +4466,14 @@ assert_eq!(ZeroIntBits::from_num(-0.5).wrapping_signum(), 0);
 
             comment! {
                 "Compute the hypotenuse of a right triange, wrapping on overflow.
+
+The hypotenuse is equal to the square root of the sum of the squares of the
+operands.
+
+This method uses an iterative method for its square root, with up to ", $n, "
+iterations for [`", stringify!($Self), "`]. The result is rounded down, and the
+error is &lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
 
 # Examples
 
@@ -5515,6 +5547,14 @@ let _overflow = OneIntBit::from_num(0.5).unwrapped_signum();
             comment! {
                 "Compute the hypotenuse of a right triange, panicking on overflow.
 
+The hypotenuse is equal to the square root of the sum of the squares of the
+operands.
+
+This method uses an iterative method for its square root, with up to ", $n, "
+iterations for [`", stringify!($Self), "`]. The result is rounded down, and the
+error is &lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+
 # Panics
 
 Panics if the result does not fit.
@@ -6490,6 +6530,14 @@ assert_eq!(ZeroIntBits::from_num(-0.5).overflowing_signum(), (ZeroIntBits::ZERO,
 
 Returns a [tuple] of the hypotenuse and a [`bool`], indicating whether an
 overflow has occurred. On overflow, the wrapped value is returned.
+
+The hypotenuse is equal to the square root of the sum of the squares of the
+operands.
+
+This method uses an iterative method for its square root, with up to ", $n, "
+iterations for [`", stringify!($Self), "`]. The result is rounded down, and the
+error is &lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
 
 # Examples
 
