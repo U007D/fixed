@@ -392,6 +392,7 @@ pub mod f128;
 mod float_helper;
 mod from_str;
 mod helpers;
+mod hypot;
 #[cfg(feature = "arbitrary")]
 mod impl_arbitrary;
 mod impl_bytemuck;
