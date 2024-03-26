@@ -1444,7 +1444,7 @@ operands.
 This method uses an iterative method for its square root, with up to ", $n, "
 iterations for [`", stringify!($Self), "`]. The result is rounded down, and the
 error is &lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
-result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+result&nbsp;≤&nbsp;√(`self`²&nbsp;+&nbsp;`other`²)&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
 
 # Panics
 
@@ -2302,7 +2302,7 @@ operands.
 This method uses an iterative method for its square root, with up to ", $n, "
 iterations for [`", stringify!($Self), "`]. The result is rounded down, and the
 error is &lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
-result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+result&nbsp;≤&nbsp;√(`self`²&nbsp;+&nbsp;`other`²)&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
 
 # Examples
 
@@ -2891,7 +2891,7 @@ operands.
 This method uses an iterative method for its square root, with up to ", $n, "
 iterations for [`", stringify!($Self), "`]. The result is rounded down, and the
 error is &lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
-result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+result&nbsp;≤&nbsp;√(`self`²&nbsp;+&nbsp;`other`²)&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
 
 # Examples
 
@@ -3456,7 +3456,7 @@ operands.
 This method uses an iterative method for its square root, with up to ", $n, "
 iterations for [`", stringify!($Self), "`]. The result is rounded down, and the
 error is &lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
-result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+result&nbsp;≤&nbsp;√(`self`²&nbsp;+&nbsp;`other`²)&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
 
 # Examples
 
@@ -4243,7 +4243,7 @@ operands.
 This method uses an iterative method for its square root, with up to ", $n, "
 iterations for [`", stringify!($Self), "`]. The result is rounded down, and the
 error is &lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
-result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+result&nbsp;≤&nbsp;√(`self`²&nbsp;+&nbsp;`other`²)&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
 
 # Panics
 
@@ -4986,7 +4986,7 @@ operands.
 This method uses an iterative method for its square root, with up to ", $n, "
 iterations for [`", stringify!($Self), "`]. The result is rounded down, and the
 error is &lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
-result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+result&nbsp;≤&nbsp;√(`self`²&nbsp;+&nbsp;`other`²)&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
 
 # Examples
 
