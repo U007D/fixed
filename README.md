@@ -179,6 +179,28 @@ The conversions supported cover the following cases.
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.26.0/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.26.0/fixed/struct.Wrapping.html
 
+### Version 1.27.0 news (unreleased)
+
+  * The [`hypot`][f-h-1-27] method was added to all fixed-point numbers, to the
+    [`Fixed`][tf-1-27] trait, and to the [`Saturating`][s-1-27],
+    [`Wrapping`][w-1-27] and [`Unwrapped`][u-1-27] wrappers.
+  * The following methods were added to all fixed-point numbers and to the
+    [`Fixed`][tf-1-26] trait:
+      * [`checked_hypot`][f-ch-1-27], [`saturating_hypot`][f-sh-1-27],
+        [`wrapping_hypot`][f-wh-1-27], [`unwrapped_hypot`][f-uh-1-27],
+        [`overflowing_hypot`][f-oh-1-27]
+
+[f-ch-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.checked_hypot
+[f-h-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.hypot
+[f-oh-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.overflowing_hypot
+[f-sh-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.saturating_hypot
+[f-uh-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.unwrapped_hypot
+[f-wh-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.wrapping_hypot
+[s-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.Saturating.html
+[tf-1-27]: https://docs.rs/fixed/~1.27/fixed/traits/trait.Fixed.html
+[u-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.Unwrapped.html
+[w-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.Wrapping.html
+
 ### Version 1.26.0 news (2024-03-06)
 
   * The [`sqrt`][f-s-1-26] method was added to all fixed-point numbers, to the
