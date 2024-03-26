@@ -144,3 +144,90 @@ pub fn u128(a: u128, b: u128) -> (u128, bool) {
     }
     (y.lo, overflow)
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::hypot;
+    use crate::types::{U1F127, U1F15, U1F31, U1F63, U1F7};
+
+    #[test]
+    fn check_max() {
+        assert_eq!(hypot::u8(u8::MAX, u8::MAX), (104, true));
+        assert_eq!(hypot::u16(u16::MAX, u16::MAX), (27_144, true));
+        assert_eq!(hypot::u32(u32::MAX, u32::MAX), (1_779_033_702, true));
+        assert_eq!(
+            hypot::u64(u64::MAX, u64::MAX),
+            (7_640_891_576_956_012_807, true)
+        );
+        assert_eq!(
+            hypot::u128(u128::MAX, u128::MAX),
+            (140_949_571_415_070_559_626_692_937_523_481_902_396, true)
+        );
+    }
+
+    #[test]
+    fn check_zero() {
+        assert_eq!(hypot::u8(0, 0), (0, false));
+        assert_eq!(hypot::u16(0, 0), (0, false));
+        assert_eq!(hypot::u32(0, 0), (0, false));
+        assert_eq!(hypot::u64(0, 0), (0, false));
+        assert_eq!(hypot::u128(0, 0), (0, false));
+    }
+
+    #[test]
+    fn check_zero_max() {
+        assert_eq!(hypot::u8(u8::MAX, 0), (u8::MAX, false));
+        assert_eq!(hypot::u8(0, u8::MAX), (u8::MAX, false));
+        assert_eq!(hypot::u16(u16::MAX, 0), (u16::MAX, false));
+        assert_eq!(hypot::u16(0, u16::MAX), (u16::MAX, false));
+        assert_eq!(hypot::u32(u32::MAX, 0), (u32::MAX, false));
+        assert_eq!(hypot::u32(0, u32::MAX), (u32::MAX, false));
+        assert_eq!(hypot::u64(u64::MAX, 0), (u64::MAX, false));
+        assert_eq!(hypot::u64(0, u64::MAX), (u64::MAX, false));
+        assert_eq!(hypot::u128(u128::MAX, 0), (u128::MAX, false));
+        assert_eq!(hypot::u128(0, u128::MAX), (u128::MAX, false));
+    }
+
+    #[test]
+    fn check_max_plus() {
+        // hypot(2^n - 1, x) = 2^n; x = sqrt(2^(n+1) - 1)
+        // e.g. for u32, sqrt(2^33 - 1) = 92681.9
+        assert_eq!(hypot::u8(u8::MAX, 22), (u8::MAX, false));
+        assert_eq!(hypot::u8(u8::MAX, 23), (0, true));
+        assert_eq!(hypot::u16(u16::MAX, 362), (u16::MAX, false));
+        assert_eq!(hypot::u16(u16::MAX, 363), (0, true));
+        assert_eq!(hypot::u32(u32::MAX, 92_681), (u32::MAX, false));
+        assert_eq!(hypot::u32(u32::MAX, 92_682), (0, true));
+        assert_eq!(hypot::u64(u64::MAX, 6_074_000_999), (u64::MAX, false));
+        assert_eq!(hypot::u64(u64::MAX, 6_074_001_000), (0, true));
+        assert_eq!(
+            hypot::u128(u128::MAX, 26_087_635_650_665_564_424),
+            (u128::MAX, false)
+        );
+        assert_eq!(
+            hypot::u128(u128::MAX, 26_087_635_650_665_564_425),
+            (0, true)
+        );
+    }
+
+    #[test]
+    fn check_sqrt_2() {
+        assert_eq!(hypot::u8(1 << 7, 1 << 7), (U1F7::SQRT_2.to_bits(), false));
+        assert_eq!(
+            hypot::u16(1 << 15, 1 << 15),
+            (U1F15::SQRT_2.to_bits(), false)
+        );
+        assert_eq!(
+            hypot::u32(1 << 31, 1 << 31),
+            (U1F31::SQRT_2.to_bits(), false)
+        );
+        assert_eq!(
+            hypot::u64(1 << 63, 1 << 63),
+            (U1F63::SQRT_2.to_bits(), false)
+        );
+        assert_eq!(
+            hypot::u128(1 << 127, 1 << 127),
+            (U1F127::SQRT_2.to_bits(), false)
+        );
+    }
+}
