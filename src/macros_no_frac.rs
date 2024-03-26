@@ -19,7 +19,8 @@ macro_rules! fixed_no_frac {
         Signedness = $Signedness:ident,
         LeEqU = $LeEqU:ident,
         {Unm1, Un} = {$Unm1:ident, $Un:ident},
-        [nm3 ..= np1] = [$nm3:literal, $nm2:literal, $nm1:literal, $n:literal, $np1:literal],
+        [nm4 ..= np1]
+            = [$nm4:literal, $nm3:literal, $nm2:literal, $nm1:literal, $n:literal, $np1:literal],
         {ISelf, IInner} = {$ISelf:ident, $IInner:ident},
         {USelf, UInner} = {$USelf:ident, $UInner:ident},
         nbytes = $nbytes:literal,
@@ -1435,6 +1436,42 @@ assert_eq!(Fix::from_num(3).mean(Fix::from_num(4)), Fix::from_num(3.5));
             }
 
             comment! {
+                "Compute the hypotenuse of a right triange.
+
+# Panics
+
+When debug assertions are enabled, this method panics if the result overflows.
+When debug assertions are not enabled, the wrapped value can be returned, but it
+is not considered a breaking change if in the future it panics; if wrapping is
+required use [`wrapping_hypot`] instead.
+
+# Examples
+
+```rust
+use fixed::types::extra::U", stringify!($nm4), ";
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<U", stringify!($nm4), ">;
+
+// hypot(3, 4) == 5
+assert_eq!(
+    Fix::from_num(3).overflowing_hypot(Fix::from_num(4)),
+    (Fix::from_num(5), false)
+);
+```
+
+[`wrapping_hypot`]: Self::wrapping_hypot
+";
+                #[inline]
+                #[track_caller]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn hypot(self, other: $Self<Frac>) -> $Self<Frac> {
+                    let (val, overflow) = self.overflowing_hypot(other);
+                    debug_assert!(!overflow, "overflow");
+                    val
+                }
+            }
+
+            comment! {
                 "Returns the smallest multiple of `other` that is ≥&nbsp;`self`",
                 if_signed_else_empty_str! {
                     $Signedness;
@@ -2249,6 +2286,54 @@ assert_eq!(Fix::ONE.checked_dist(Fix::from_num(5)), Some(Fix::from_num(4)));
             }
 
             comment! {
+                "Compute the hypotenuse of a right triange, returning [`None`] on overflow.
+
+# Examples
+
+```rust
+use fixed::types::extra::U", stringify!($nm4), ";
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<U", stringify!($nm4), ">;
+
+// hypot(3, 4) == 5
+assert_eq!(
+    Fix::from_num(3).checked_hypot(Fix::from_num(4)),
+    Some(Fix::from_num(5))
+);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "
+// hypot(2, 7.875) == 8.125, which does not fit
+assert_eq!(
+    Fix::from_num(2).checked_hypot(Fix::from_num(7.875)),
+    None
+);
+",
+                },
+                if_unsigned_else_empty_str! {
+                    $Signedness;
+                    "
+// hypot(8, 15) == 17, which does not fit
+assert_eq!(
+    Fix::from_num(8).checked_hypot(Fix::from_num(15)),
+    None
+);
+",
+                },
+                "```
+";
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn checked_hypot(self, other: $Self<Frac>) -> Option<$Self<Frac>> {
+                    match self.overflowing_hypot(other) {
+                        (val, false) => Some(val),
+                        (_, true) => None,
+                    }
+                }
+            }
+
+            comment! {
                 "Checked next multiple of `other`. Returns the next multiple, or
 [`None`] if `other` is zero or on overflow.
 
@@ -2782,6 +2867,54 @@ assert_eq!(Fix::ONE.saturating_dist(Fix::from_num(5)), Fix::from_num(4));
             }
 
             comment! {
+                "Compute the hypotenuse of a right triange, saturating on overflow.
+
+# Examples
+
+```rust
+use fixed::types::extra::U", stringify!($nm4), ";
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<U", stringify!($nm4), ">;
+
+// hypot(3, 4) == 5
+assert_eq!(
+    Fix::from_num(3).saturating_hypot(Fix::from_num(4)),
+    Fix::from_num(5)
+);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "
+// hypot(2, 7.875) == 8.125, which does not fit
+assert_eq!(
+    Fix::from_num(2).saturating_hypot(Fix::from_num(7.875)),
+    Fix::MAX
+);
+",
+                },
+                if_unsigned_else_empty_str! {
+                    $Signedness;
+                    "
+// hypot(8, 15) == 17, which does not fit
+assert_eq!(
+    Fix::from_num(8).saturating_hypot(Fix::from_num(15)),
+    Fix::MAX
+);
+",
+                },
+                "```
+";
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn saturating_hypot(self, other: $Self<Frac>) -> $Self<Frac> {
+                    match self.overflowing_hypot(other) {
+                        (val, false) => val,
+                        (_, true) => $Self::MAX,
+                    }
+                }
+            }
+
+            comment! {
                 "Saturating next multiple of `other`.
 
 The next multiple is the smallest multiple of `other` that is ≥&nbsp;`self`",
@@ -3287,6 +3420,51 @@ assert_eq!(Fix::ONE.wrapping_dist(Fix::from_num(5)), Fix::from_num(4));
                         self.overflowing_dist(other).0,
                         self.dist(other),
                     )
+                }
+            }
+
+            comment! {
+                "Compute the hypotenuse of a right triange, wrapping on overflow.
+
+# Examples
+
+```rust
+use fixed::types::extra::U", stringify!($nm4), ";
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<U", stringify!($nm4), ">;
+
+// hypot(3, 4) == 5
+assert_eq!(
+    Fix::from_num(3).wrapping_hypot(Fix::from_num(4)),
+    Fix::from_num(5)
+);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "
+// hypot(2, 7.875) == 8.125, which wraps to -7.875
+assert_eq!(
+    Fix::from_num(2).wrapping_hypot(Fix::from_num(7.875)),
+    Fix::from_num(-7.875)
+);
+",
+                },
+                if_unsigned_else_empty_str! {
+                    $Signedness;
+                    "
+// hypot(8, 15) == 17, which wraps to 1
+assert_eq!(
+    Fix::from_num(8).wrapping_hypot(Fix::from_num(15)),
+    Fix::from_num(1)
+);
+",
+                },
+                "```
+";
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn wrapping_hypot(self, other: $Self<Frac>) -> $Self<Frac> {
+                    self.overflowing_hypot(other).0
                 }
             }
 
@@ -4025,6 +4203,61 @@ let _overflow = Fix::MIN.unwrapped_dist(Fix::ZERO);
             }
 
             comment! {
+                "Compute the hypotenuse of a right triange, panicking on overflow.
+
+# Panics
+
+Panics if the result does not fit.
+
+# Examples
+
+```rust
+use fixed::types::extra::U", stringify!($nm4), ";
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<U", stringify!($nm4), ">;
+
+// hypot(3, 4) == 5
+assert_eq!(
+    Fix::from_num(3).overflowing_hypot(Fix::from_num(4)),
+    (Fix::from_num(5), false)
+);
+```
+
+The following panics because of overflow.
+
+```should_panic
+use fixed::types::extra::U", stringify!($nm4), ";
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<U", stringify!($nm4), ">;
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "
+// hypot(2, 7.875) == 8.125, which does not fit
+let _overflow = Fix::from_num(2).unwrapped_hypot(Fix::from_num(7.875));
+",
+                },
+                if_unsigned_else_empty_str! {
+                    $Signedness;
+                    "
+// hypot(8, 15) == 17, which does not fit
+let _overflow = Fix::from_num(8).unwrapped_hypot(Fix::from_num(15));
+",
+                },
+                "```
+";
+                #[inline]
+                #[track_caller]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn unwrapped_hypot(self, other: $Self<Frac>) -> $Self<Frac> {
+                    match self.overflowing_hypot(other) {
+                        (val, false) => val,
+                        (_, true) => panic!("overflow"),
+                    }
+                }
+            }
+
+            comment! {
                 "Returns the next multiple of `other`, panicking on overflow.
 
 The next multiple is the smallest multiple of `other` that is ≥&nbsp;`self`",
@@ -4685,7 +4918,7 @@ assert_eq!(
 ";
                 #[inline]
                 #[must_use = "this returns the result of the operation, without modifying the original"]
-                pub const fn overflowing_dist(self, other: $Self<Frac>,) -> ($Self<Frac>, bool) {
+                pub const fn overflowing_dist(self, other: $Self<Frac>) -> ($Self<Frac>, bool) {
                     if_signed! {
                         $Signedness;
                         if self.to_bits() < other.to_bits() {
@@ -4697,6 +4930,66 @@ assert_eq!(
                     if_unsigned! {
                         $Signedness;
                         (self.dist(other), false)
+                    }
+                }
+            }
+
+            comment! {
+                "Compute the hypotenuse of a right triange.
+
+Returns a [tuple] of the hypotenuse and a [`bool`], indicating whether an
+overflow has occurred. On overflow, the wrapped value is returned.
+
+# Examples
+
+```rust
+use fixed::types::extra::U", stringify!($nm4), ";
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<U", stringify!($nm4), ">;
+
+// hypot(3, 4) == 5
+assert_eq!(
+    Fix::from_num(3).overflowing_hypot(Fix::from_num(4)),
+    (Fix::from_num(5), false)
+);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "
+// hypot(2, 7.875) == 8.125, which wraps to -7.875
+assert_eq!(
+    Fix::from_num(2).overflowing_hypot(Fix::from_num(7.875)),
+    (Fix::from_num(-7.875), true)
+);
+",
+                },
+                if_unsigned_else_empty_str! {
+                    $Signedness;
+                    "
+// hypot(8, 15) == 17, which wraps to 1
+assert_eq!(
+    Fix::from_num(8).overflowing_hypot(Fix::from_num(15)),
+    (Fix::from_num(1), true)
+);
+",
+                },
+                "```
+";
+                #[inline]
+                #[must_use = "this returns the result of the operation, without modifying the original"]
+                pub const fn overflowing_hypot(self, other: $Self<Frac>) -> ($Self<Frac>, bool) {
+                    if_signed! {
+                        $Signedness;
+                        let (uns, overflow) =
+                            self.unsigned_abs().overflowing_hypot(other.unsigned_abs());
+                        let bits = uns.to_bits() as $Inner;
+                        let val = $Self::from_bits(bits);
+                        (val, overflow || val.is_negative())
+                    }
+                    if_unsigned! {
+                        $Signedness;
+                        let (hypot_bits, overflow) = hypot::$Inner(self.to_bits(), other.to_bits());
+                        ($Self::from_bits(hypot_bits), overflow)
                     }
                 }
             }

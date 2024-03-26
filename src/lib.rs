@@ -612,7 +612,7 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
             Signedness = $Signedness,
             LeEqU = $LeEqU,
             {Unm1, Un} = {$Unm1, $Un},
-            [nm3 ..= np1] = [$nm3, $nm2, $nm1, $n, $np1],
+            [nm4 ..= np1] = [$nm4, $nm3, $nm2, $nm1, $n, $np1],
             {ISelf, IInner} = {$ISelf, $IInner},
             {USelf, UInner} = {$USelf, $UInner},
             nbytes = $nbytes,
