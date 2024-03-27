@@ -1007,68 +1007,6 @@ assert_eq!(U8F8::overflowing_from_str_hex("C0F.FE"), Ok((check, true)));
             }
 
             comment! {
-                "Returns the square root.
-
-This method uses an iterative method, with up to ", $n, " iterations for
-[`", stringify!($Self), "`]. The result is rounded down, and the error is
-&lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
-result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
-
-",
-                if_signed_else_empty_str! {
-                    $Signedness;
-                    "# Panics
-
-Panics if the number is negative.
-
-When there are no integer bits the representable range is
-&minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;&lt;&nbsp;0.5. In this case, the method panics
-for an input value ≥&nbsp;0.25.
-
-"
-                },
-                "# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", stringify!($Self), ";
-type Fix = ", stringify!($Self), "<4>;
-assert_eq!(Fix::from_num(2).sqrt(), Fix::SQRT_2);
-```
-";
-                #[inline]
-                #[must_use]
-                pub const fn sqrt(self) -> Self {
-                    let bits = if_signed_unsigned!(
-                        $Signedness,
-                        {
-                            if self.is_negative() {
-                                panic!("square root of negative number");
-                            }
-                            if Self::INT_BITS == 0
-                                && self.to_bits() >= (1 << (Self::FRAC_BITS - 2))
-                            {
-                                panic!("overflow");
-                            }
-                            self.to_bits() as $UInner
-                        },
-                        self.to_bits()
-                    );
-                    let Some(nz) = $NonZeroUInner::new(bits) else {
-                        return Self::ZERO;
-                    };
-                    let ret = sqrt::$UInner(nz, Self::FRAC_BITS as u32);
-                    if_signed! {
-                        $Signedness;
-                        let ret = ret as $Inner;
-                    }
-                    Self::from_bits(ret)
-                }
-            }
-
-            comment! {
                 "Integer base-10 logarithm, rounded down.
 
 # Panics
@@ -1137,79 +1075,6 @@ assert_eq!(Fix::from_num(0.1875).int_log(5), -2);
                             }
                         }
                     }
-                }
-            }
-
-            comment! {
-                "Checked square root. ",
-                if_signed_unsigned!(
-                    $Signedness,
-                    "Returns [`None`] for negative numbers and on overflow.",
-                    "Always returns the square root for unsigned numbers."
-                ),
-                "
-
-This method uses an iterative method, with up to ", $n, " iterations for
- [`", stringify!($Self), "`]. The result is rounded down, and the error is
-&lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
-result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
-
-",
-                if_signed_else_empty_str! {
-                    $Signedness;
-                    "Overflow can only occur when there are no integer bits and
-the representable range is &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;&lt;&nbsp;0.5.
-In this case, the method returns [`None`] for an input value ≥&nbsp;0.25.
-
-"
-                },
-                "# Examples
-
-```rust
-#![feature(generic_const_exprs)]
-# #![allow(incomplete_features)]
-
-use fixed::", stringify!($Self), ";
-type Fix = ", stringify!($Self), "<4>;
-assert_eq!(Fix::from_num(1).checked_sqrt(), Some(Fix::ONE));
-",
-                if_signed_else_empty_str! {
-                    $Signedness;
-                    "assert_eq!(Fix::from_num(-1).checked_sqrt(), None);
-
-type AllFrac = ", stringify!($Self), "<", $n, ">;
-assert_eq!(AllFrac::from_num(0.25).checked_sqrt(), None);
-",
-                },
-                "```
-";
-                #[inline]
-                #[must_use]
-                pub const fn checked_sqrt(self) -> Option<Self> {
-                    let bits = if_signed_unsigned!(
-                        $Signedness,
-                        {
-                            if self.is_negative() {
-                                return None;
-                            }
-                            if Self::INT_BITS == 0
-                                && self.to_bits() >= (1 << (Self::FRAC_BITS - 2))
-                            {
-                                return None;
-                            }
-                            self.to_bits() as $UInner
-                        },
-                        self.to_bits()
-                    );
-                    let Some(nz) = $NonZeroUInner::new(bits) else {
-                        return Some(Self::ZERO);
-                    };
-                    let ret = sqrt::$UInner(nz, Self::FRAC_BITS as u32);
-                    if_signed! {
-                        $Signedness;
-                        let ret = ret as $Inner;
-                    }
-                    Some(Self::from_bits(ret))
                 }
             }
 
@@ -1462,6 +1327,58 @@ assert_eq!(Fix::from_num(7.5).rem_euclid_int(2), Fix::from_num(1.5));
                     let (ans, overflow) = self.overflowing_rem_euclid_int(rhs);
                     debug_assert!(!overflow, "overflow");
                     ans
+                }
+            }
+
+            comment! {
+                "Returns the square root.
+
+This method uses an iterative method, with up to ", $n, " iterations for
+[`", stringify!($Self), "`]. The result is rounded down, and the error is
+&lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "Overflow can only occur when there are no integer bits and
+the representable range is &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;&lt;&nbsp;0.5.
+In this case, overflow occurs for an input value ≥&nbsp;0.25.
+
+"
+                },
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "# Panics
+
+Panics if the number is negative.
+
+When debug assertions are enabled, this method also panics if the square root
+overflows. When debug assertions are not enabled, the wrapped value can be
+returned, but it is not considered a breaking change if in the future it panics;
+if wrapping is required use [`wrapping_sqrt`] instead.
+
+"
+                },
+                "# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
+assert_eq!(Fix::from_num(2).sqrt(), Fix::SQRT_2);
+```
+
+[`wrapping_sqrt`]: Self::wrapping_sqrt
+";
+                #[inline]
+                #[must_use]
+                pub const fn sqrt(self) -> Self {
+                    let (val, overflow) = self.overflowing_sqrt();
+                    debug_assert!(!overflow, "overflow");
+                    val
                 }
             }
 
@@ -1817,6 +1734,65 @@ assert_eq!(Fix::from_num(-7.5).checked_rem_euclid_int(20), None);
             }
 
             comment! {
+                "Checked square root. ",
+                if_signed_unsigned!(
+                    $Signedness,
+                    "Returns [`None`] for negative numbers and on overflow.",
+                    "Always returns the square root for unsigned numbers."
+                ),
+                "
+
+This method uses an iterative method, with up to ", $n, " iterations for
+ [`", stringify!($Self), "`]. The result is rounded down, and the error is
+&lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "Overflow can only occur when there are no integer bits and
+the representable range is &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;&lt;&nbsp;0.5.
+In this case, the method returns [`None`] for an input value ≥&nbsp;0.25.
+
+"
+                },
+                "# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
+assert_eq!(Fix::from_num(2).checked_sqrt(), Some(Fix::SQRT_2));
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "assert_eq!(Fix::from_num(-1).checked_sqrt(), None);
+
+type AllFrac = ", stringify!($Self), "<", $n, ">;
+assert_eq!(AllFrac::from_num(0.25).checked_sqrt(), None);
+",
+                },
+                "```
+";
+                #[inline]
+                #[must_use]
+                pub const fn checked_sqrt(self) -> Option<Self> {
+                    if_signed! {
+                        $Signedness;
+                        if self.is_negative() {
+                            return None;
+                        }
+                    }
+                    match self.overflowing_sqrt() {
+                        (val, false) => Some(val),
+                        (_, true) => None,
+                    }
+                }
+            }
+
+            comment! {
                 "Checked linear interpolation between `start` and `end`. Returns
 [`None`] on overflow.
 
@@ -2082,6 +2058,65 @@ assert_eq!(Fix::from_num(-7.5).saturating_rem_euclid_int(20), Fix::MAX);
             }
 
             comment! {
+                "Returns the square root, saturating on overflow.",
+                if_unsigned_else_empty_str! {
+                    $Signedness;
+                    " Can never overflow for unsigned numbers."
+                },
+                "
+
+This method uses an iterative method, with up to ", $n, " iterations for
+ [`", stringify!($Self), "`]. The result is rounded down, and the error is
+&lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "Overflow can only occur when there are no integer bits and
+the representable range is &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;&lt;&nbsp;0.5.
+In this case, the method returns [`MAX`][Self::MAX] for an input value ≥&nbsp;0.25.
+
+"
+                },
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "# Panics
+
+Panics if the number is negative.
+
+"
+                },
+                "# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
+assert_eq!(Fix::from_num(2).saturating_sqrt(), Fix::SQRT_2);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "
+type AllFrac = ", stringify!($Self), "<", $n, ">;
+assert_eq!(AllFrac::from_num(0.25).saturating_sqrt(), AllFrac::MAX);
+",
+                },
+                "```
+";
+                #[inline]
+                #[must_use]
+                pub const fn saturating_sqrt(self) -> Self {
+                    match self.overflowing_sqrt() {
+                        (val, false) => val,
+                        (_, true) => Self::MAX,
+                    }
+                }
+            }
+
+            comment! {
                 "Linear interpolation between `start` and `end`, saturating on
 overflow.
 
@@ -2313,6 +2348,62 @@ assert_eq!(Fix::from_num(-7.5).wrapping_rem_euclid_int(20), Fix::from_num(-3.5))
                 #[must_use = "this returns the result of the operation, without modifying the original"]
                 pub const fn wrapping_rem_euclid_int(self, rhs: $Inner) -> $Self<FRAC> {
                     self.overflowing_rem_euclid_int(rhs).0
+                }
+            }
+
+            comment! {
+                "Returns the square root, wrapping on overflow.",
+                if_unsigned_else_empty_str! {
+                    $Signedness;
+                    " Can never overflow for unsigned numbers."
+                },
+                "
+
+This method uses an iterative method, with up to ", $n, " iterations for
+ [`", stringify!($Self), "`]. The result is rounded down, and the error is
+&lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "Overflow can only occur when there are no integer bits and
+the representable range is &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;&lt;&nbsp;0.5.
+In this case, the method returns the wrapped answer for an input value ≥&nbsp;0.25.
+
+"
+                },
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "# Panics
+
+Panics if the number is negative.
+
+"
+                },
+                "# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
+assert_eq!(Fix::from_num(2).wrapping_sqrt(), Fix::SQRT_2);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "
+type AllFrac = ", stringify!($Self), "<", $n, ">;
+assert_eq!(AllFrac::from_num(0.25).wrapping_sqrt(), AllFrac::from_num(-0.5));
+",
+                },
+                "```
+";
+                #[inline]
+                #[must_use]
+                pub const fn wrapping_sqrt(self) -> Self {
+                    self.overflowing_sqrt().0
                 }
             }
 
@@ -2627,6 +2718,85 @@ let _overflow = Fix::from_num(-7.5).unwrapped_rem_euclid_int(20);
                     match self.overflowing_rem_euclid_int(rhs) {
                         (_, true) => panic!("overflow"),
                         (ans, false) => ans,
+                    }
+                }
+            }
+
+            comment! {
+                "Returns the square root",
+                if_signed_unsigned!(
+                    $Signedness,
+                    ", panicking for negative numbers and on overflow.",
+                    ". Can never overflow for unsigned numbers.",
+                ),
+                "
+
+This method uses an iterative method, with up to ", $n, " iterations for
+[`", stringify!($Self), "`]. The result is rounded down, and the error is
+&lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "Overflow can only occur when there are no integer bits and
+the representable range is &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;&lt;&nbsp;0.5.
+In this case, the method panics for an input value ≥&nbsp;0.25.
+
+"
+                },
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "# Panics
+
+Panics if the number is negative and on overflow.
+
+"
+                },
+                "# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
+assert_eq!(Fix::from_num(2).unwrapped_sqrt(), Fix::SQRT_2);
+```
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "
+The following panics because the input value is negative.
+
+```should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
+let _sqrt_neg = Fix::from_num(-1).unwrapped_sqrt();
+```
+
+The following panics because of overflow.
+
+```should_panic
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", stringify!($Self), ";
+type AllFrac = ", stringify!($Self), "<", $n, ">;
+let _overflow = AllFrac::from_num(0.25).unwrapped_sqrt();
+```
+",
+                };
+                #[inline]
+                #[track_caller]
+                #[must_use]
+                pub const fn unwrapped_sqrt(self) -> Self {
+                    match self.overflowing_sqrt() {
+                        (val, false) => val,
+                        (_, true) => panic!("overflow"),
                     }
                 }
             }
@@ -2967,6 +3137,89 @@ assert_eq!(Fix::from_num(-7.5).overflowing_rem_euclid_int(20), (Fix::from_num(-3
                         $Signedness;
                         (self.unwrapped_rem_int(rhs), false)
                     }
+                }
+            }
+
+            comment! {
+                "Returns the square root.
+
+Returns a [tuple] of the result and ",
+                if_signed_unsigned!(
+                    $Signedness,
+                    "a [`bool`] indicationg whether an overflow has occurred. On
+overflow, the wrapped value is returned.",
+                    "[`false`], since this can never overflow for unsigned numbers.",
+                ),
+                "
+
+This method uses an iterative method, with up to ", $n, " iterations for
+ [`", stringify!($Self), "`]. The result is rounded down, and the error is
+&lt;&nbsp;[`DELTA`][Self::DELTA]. That is,
+result&nbsp;≤&nbsp;√`self`&nbsp;&lt;&nbsp;result&nbsp;+&nbsp;`DELTA`.
+
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "Overflow can only occur when there are no integer bits and
+the representable range is &minus;0.5&nbsp;≤&nbsp;<i>x</i>&nbsp;&lt;&nbsp;0.5.
+In this case, overflow occurs for an input value ≥&nbsp;0.25.
+
+"
+                },
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "# Panics
+
+Panics if the number is negative.
+
+"
+                },
+                "# Examples
+
+```rust
+#![feature(generic_const_exprs)]
+# #![allow(incomplete_features)]
+
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), "<4>;
+assert_eq!(
+    Fix::from_num(2).overflowing_sqrt(),
+    (Fix::SQRT_2, false)
+);
+",
+                if_signed_else_empty_str! {
+                    $Signedness;
+                    "
+type AllFrac = ", stringify!($Self), "<", $n, ">;
+assert_eq!(
+    AllFrac::from_num(0.25).overflowing_sqrt(),
+    (AllFrac::from_num(-0.5), true)
+);
+",
+                },
+                "```
+";
+                #[inline]
+                #[must_use]
+                pub const fn overflowing_sqrt(self) -> (Self, bool) {
+                    if_signed_unsigned!(
+                        $Signedness,
+                        {
+                            if self.is_negative() {
+                                panic!("square root of negative number");
+                            }
+                            let u = $USelf::<FRAC>::from_bits(self.to_bits() as $UInner);
+                            let s = $Self::from_bits(u.sqrt().to_bits() as $Inner);
+                            (s, s.is_negative())
+                        },
+                        {
+                            let Some(nz) = $NonZeroUInner::new(self.to_bits()) else {
+                                return (Self::ZERO, false);
+                            };
+                            let ret = sqrt::$UInner(nz, Self::FRAC_BITS as u32);
+                            (Self::from_bits(ret), false)
+                        }
+                    )
                 }
             }
 
