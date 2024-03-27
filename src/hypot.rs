@@ -17,6 +17,11 @@ use crate::int256;
 use crate::int256::U256;
 use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64};
 
+// The square root method used is based on code by Martin Guy @UKC, June 1985.
+// His method of square root by abacus method is from a book on programming
+// abaci by Mr C. Woo.
+// http://medialab.freaknet.org/martin/src/sqrt/
+
 macro_rules! impl_hypot {
     ($Single:ident, $Double:ident, $NonZeroDouble:ident $(, $Half:ident)?) => {
         pub const fn $Single(a: $Single, b: $Single) -> ($Single, bool) {
@@ -38,6 +43,20 @@ macro_rules! impl_hypot {
             let mut y;
             let mut bit;
             if overflow {
+                // Perform initialization and two iterations assuming word wider than n bits.
+                // Initialization:
+                //     Set y = 0
+                //     Set bit = 1 << n
+                // First iteration:
+                //     Since x >= y + bit (because the overflow is equivalent to 1 << n on x):
+                //         x -= y + bit (removing the effect of the overflow on x)
+                //         y = (y >> 1) + bit (y becomes 1 << n)
+                //     bit >>= 2 (bit becomes 1 << (n - 2))
+                // Second iteration:
+                //     Now x < y (because y is 1 << n):
+                //         y >>= 1 (y becomes 1 << (n - 1))
+                //     bit >>= 2 (bit becomes 1 << (n - 4))
+                // In effect, we can set y = 1 << (n - 1), and bit = 1 << (n - 4)
                 y = 1 << ($Double::BITS - 1);
                 bit = 1 << ($Double::BITS - 4);
             } else {
@@ -49,19 +68,15 @@ macro_rules! impl_hypot {
                 bit = 1 << ($Double::BITS - 2 - sum_lz / 2 * 2);
             }
             while bit != 0 {
-                if x >= y + bit {
-                    x -= y + bit;
-                    y = (y >> 1) + bit;
-                } else {
-                    y >>= 1;
+                let y_plus_bit = y + bit;
+                y >>= 1;
+                if x >= y_plus_bit {
+                    x -= y_plus_bit;
+                    y += bit;
                 }
                 bit >>= 2;
             }
-            if overflow {
-                debug_assert!(y >= 1 << $Single::BITS && y < 2 << $Single::BITS);
-            } else {
-                debug_assert!(y < 1 << $Single::BITS);
-            }
+            debug_assert!((y >> $Single::BITS) as $Single == overflow as $Single);
             (y as $Single, overflow)
         }
     };
@@ -89,6 +104,20 @@ pub const fn u128(a: u128, b: u128) -> (u128, bool) {
     let mut y;
     let mut bit;
     if overflow {
+        // Perform initialization and two iterations assuming word wider than n bits.
+        // Initialization:
+        //     Set y = 0
+        //     Set bit = 1 << n
+        // First iteration:
+        //     Since x >= y + bit (because the overflow is equivalent to 1 << n on x):
+        //         x -= y + bit (removing the effect of the overflow on x)
+        //         y = (y >> 1) + bit (y becomes 1 << n)
+        //     bit >>= 2 (bit becomes 1 << (n - 2))
+        // Second iteration:
+        //     Now x < y (because y is 1 << n):
+        //         y >>= 1 (y becomes 1 << (n - 1))
+        //     bit >>= 2 (bit becomes 1 << (n - 4))
+        // In effect, we can set y = 1 << (n - 1), and bit = 1 << (n - 4)
         y = U256 {
             lo: 0,
             hi: 1 << 127,
@@ -97,51 +126,35 @@ pub const fn u128(a: u128, b: u128) -> (u128, bool) {
     } else {
         y = U256 { lo: 0, hi: 0 };
         bit = match NonZeroU128::new(sum.hi) {
-            None => 0,
+            None => panic!("small operands; should have used crate::hypot::u64"),
             Some(s) => 1 << (126 - s.leading_zeros() / 2 * 2),
         };
     }
     while bit != 0 {
-        if x.hi >= y.hi + bit {
-            x.hi -= y.hi + bit;
-            y.hi = (y.hi >> 1) + bit;
-        } else {
-            y.hi >>= 1;
+        let y_hi_plus_bit = y.hi + bit;
+        y.hi >>= 1;
+        if x.hi >= y_hi_plus_bit {
+            x.hi -= y_hi_plus_bit;
+            y.hi += bit;
         }
         bit >>= 2;
     }
-
-    bit = if y.hi == 0 {
-        debug_assert!(sum.hi == 0);
-        let sum_lz = match NonZeroU128::new(sum.lo) {
-            None => return (0, false),
-            Some(s) => s.leading_zeros(),
-        };
-        1 << (126 - sum_lz / 2 * 2)
-    } else {
-        1 << 126
-    };
+    bit = 1 << 126;
     while bit != 0 {
-        if (x.hi > y.hi) || (x.hi == y.hi && x.lo >= y.lo + bit) {
-            let y_plus_bit = U256 {
-                lo: y.lo + bit,
-                hi: y.hi,
-            };
+        let y_plus_bit = U256 {
+            lo: y.lo + bit,
+            hi: y.hi,
+        };
+        y.lo = (y.lo >> 1) + ((y.hi & 1) << 127);
+        y.hi >>= 1;
+        if (x.hi > y_plus_bit.hi) || (x.hi == y_plus_bit.hi && x.lo >= y_plus_bit.lo) {
             x = int256::wrapping_sub_u256(x, y_plus_bit);
-            y.lo = (y.lo >> 1) + bit + ((y.hi & 1) << 127);
-            y.hi >>= 1;
-        } else {
-            y.lo = (y.lo >> 1) + ((y.hi & 1) << 127);
-            y.hi >>= 1;
+            y.lo += bit;
         }
         bit >>= 2
     }
 
-    if overflow {
-        debug_assert!(y.hi >= 1 && y.hi < 2);
-    } else {
-        debug_assert!(y.hi == 0);
-    }
+    debug_assert!(y.hi == overflow as u128);
     (y.lo, overflow)
 }
 
