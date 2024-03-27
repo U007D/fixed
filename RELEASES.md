@@ -81,7 +81,7 @@ as-is, without any warranty. -->
 [u-fso-2-0a]: https://docs.rs/fixed/2.0.0-alpha.26.0/fixed/struct.Unwrapped.html#method.from_str_octal
 [w-2-0a]: https://docs.rs/fixed/2.0.0-alpha.26.0/fixed/struct.Wrapping.html
 
-# Version 1.27.0 (unreleased)
+# Version 1.27.0 (2024-03-27)
 
   * The [`hypot`][f-h-1-27] method was added to all fixed-point numbers, to the
     [`Fixed`][tf-1-27] trait, and to the [`Saturating`][s-1-27],
