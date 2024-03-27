@@ -11,7 +11,7 @@ as-is, without any warranty. -->
     [`Fixed`][tf-1-27] trait, and to the [`Saturating`][s-1-27],
     [`Wrapping`][w-1-27] and [`Unwrapped`][u-1-27] wrappers.
   * The following methods were added to all fixed-point numbers and to the
-    [`Fixed`][tf-1-26] trait:
+    [`Fixed`][tf-1-27] trait:
       * [`checked_hypot`][f-ch-1-27], [`saturating_hypot`][f-sh-1-27],
         [`wrapping_hypot`][f-wh-1-27], [`unwrapped_hypot`][f-uh-1-27],
         [`overflowing_hypot`][f-oh-1-27]
