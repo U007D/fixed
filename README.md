@@ -112,13 +112,19 @@ The conversions supported cover the following cases.
       * [`checked_hypot`][f-ch-1-27], [`saturating_hypot`][f-sh-1-27],
         [`wrapping_hypot`][f-wh-1-27], [`unwrapped_hypot`][f-uh-1-27],
         [`overflowing_hypot`][f-oh-1-27]
+      * [`saturating_sqrt`][f-ss-1-27], [`wrapping_sqrt`][f-ws-1-27],
+        [`unwrapped_sqrt`][f-us-1-27], [`overflowing_sqrt`][f-os-1-27]
 
 [f-ch-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.checked_hypot
 [f-h-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.hypot
 [f-oh-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.overflowing_hypot
+[f-os-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.overflowing_sqrt
 [f-sh-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.saturating_hypot
+[f-ss-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.saturating_sqrt
 [f-uh-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.unwrapped_hypot
+[f-us-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.unwrapped_sqrt
 [f-wh-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.wrapping_hypot
+[f-ws-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.wrapping_sqrt
 [s-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.Saturating.html
 [tf-1-27]: https://docs.rs/fixed/~1.27/fixed/traits/trait.Fixed.html
 [u-1-27]: https://docs.rs/fixed/~1.27/fixed/struct.Unwrapped.html
