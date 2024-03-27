@@ -5,7 +5,7 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-# Version 1.27.0 (unreleased)
+# Version 1.27.0 (2024-03-27)
 
   * The [`hypot`][f-h-1-27] method was added to all fixed-point numbers, to the
     [`Fixed`][tf-1-27] trait, and to the [`Saturating`][s-1-27],
