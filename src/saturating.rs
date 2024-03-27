@@ -866,8 +866,9 @@ impl<F: Fixed> Saturating<F> {
 
     /// Returns the square root.
     ///
-    /// See also <code>FixedI32::[sqrt][FixedI32::sqrt]</code> and
-    /// <code>FixedU32::[sqrt][FixedU32::sqrt]</code>.
+    /// See also
+    /// <code>FixedI32::[saturating\_sqrt][FixedI32::saturating_sqrt]</code> and
+    /// <code>FixedU32::[saturating\_sqrt][FixedU32::saturating_sqrt]</code>.
     ///
     /// # Panics
     ///
@@ -886,14 +887,7 @@ impl<F: Fixed> Saturating<F> {
     #[inline]
     #[track_caller]
     pub fn sqrt(self) -> Self {
-        // Handle the overflow corner case.
-        if Self::IS_SIGNED && Self::INT_NBITS == 0 {
-            let inp_overflow = Self::from_bits(Self::DELTA.to_bits() << (Self::FRAC_NBITS - 2));
-            if self >= inp_overflow {
-                return Self::MAX;
-            }
-        }
-        Saturating(self.0.sqrt())
+        Saturating(self.0.saturating_sqrt())
     }
 
     /// Integer base-2 logarithm, rounded down.

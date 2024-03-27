@@ -872,8 +872,9 @@ impl<F: Fixed> Wrapping<F> {
 
     /// Returns the square root.
     ///
-    /// See also <code>FixedI32::[sqrt][FixedI32::sqrt]</code> and
-    /// <code>FixedU32::[sqrt][FixedU32::sqrt]</code>.
+    /// See also
+    /// <code>FixedI32::[wrapping\_sqrt][FixedI32::wrapping_sqrt]</code> and
+    /// <code>FixedU32::[wrapping\_sqrt][FixedU32::wrapping_sqrt]</code>.
     ///
     /// # Panics
     ///
@@ -892,12 +893,7 @@ impl<F: Fixed> Wrapping<F> {
     #[inline]
     #[track_caller]
     pub fn sqrt(self) -> Self {
-        // Handle the overflow corner case.
-        if Self::IS_SIGNED && Self::INT_NBITS == 0 && self > Self::ZERO {
-            Self::from_num(F::Unsigned::from_fixed(self.0).sqrt())
-        } else {
-            Wrapping(self.0.sqrt())
-        }
+        Wrapping(self.0.wrapping_sqrt())
     }
 
     /// Integer base-2 logarithm, rounded down.
