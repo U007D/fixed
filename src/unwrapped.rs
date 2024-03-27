@@ -1555,13 +1555,13 @@ impl<F: FixedBoundFrac> Unwrapped<F> {
 
     /// Returns the square root.
     ///
-    /// See also <code>FixedI32::[sqrt][FixedI32::sqrt]</code> and
-    /// <code>FixedU32::[sqrt][FixedU32::sqrt]</code>.
+    /// See also
+    /// <code>FixedI32::[unwrapped\_sqrt][FixedI32::unwrapped_sqrt]</code> and
+    /// <code>FixedU32::[unwrapped\_sqrt][FixedU32::unwrapped_sqrt]</code>.
     ///
     /// # Panics
     ///
-    /// Panics if the number is negative, or in the rare corner case where the
-    /// answer does not fit.
+    /// Panics if the number is negative, or on overflow.
     ///
     /// # Examples
     ///
@@ -1571,6 +1571,17 @@ impl<F: FixedBoundFrac> Unwrapped<F> {
     ///
     /// use fixed::{types::I0F32, Unwrapped};
     /// assert_eq!(Unwrapped(I0F32::lit("0b0.0001")).sqrt().0, I0F32::lit("0b0.01"));
+    /// ```
+    ///
+    /// The following panics because the input value is negative.
+    ///
+    /// ```should_panic
+    /// #![feature(generic_const_exprs)]
+    /// # #![allow(incomplete_features)]
+    ///
+    /// use fixed::{types::I16F16, Unwrapped};
+    /// let neg = Unwrapped(I16F16::from_num(-1));
+    /// let _sqrt_neg = neg.sqrt();
     /// ```
     ///
     /// The following panics because of overflow.
@@ -1586,7 +1597,7 @@ impl<F: FixedBoundFrac> Unwrapped<F> {
     #[inline]
     #[track_caller]
     pub fn sqrt(self) -> Self {
-        Unwrapped(self.0.sqrt())
+        Unwrapped(self.0.unwrapped_sqrt())
     }
 
     /// Integer base-10 logarithm, rounded down.
