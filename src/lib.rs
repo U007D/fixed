@@ -914,15 +914,7 @@ impl F128Bits {
 #[deprecated(since = "1.20.0", note = "use the `const_from_int` method instead")]
 macro_rules! const_fixed_from_int {
     ($($vis:vis const $NAME:ident: $Fixed:ty = $int:expr;)*) => { $(
-        $vis const $NAME: $Fixed = <$Fixed>::from_bits({
-            // Coerce type.
-            let int = <$Fixed>::from_bits($int).to_bits();
-            // Divide shift into two parts for cases where $Fixed cannot represent 1.
-            let frac_nbits = <$Fixed>::FRAC_NBITS;
-            let one_a = <$Fixed>::DELTA.to_bits() << (frac_nbits / 2);
-            let one_b = <$Fixed>::DELTA.to_bits() << (frac_nbits - frac_nbits / 2);
-            int * one_a * one_b
-        });
+        $vis const $NAME: $Fixed = <$Fixed>::const_from_int($int);
     )* };
 }
 
