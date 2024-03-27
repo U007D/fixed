@@ -1642,17 +1642,6 @@ where
     /// <code>FixedU32::[trailing\_zeros][FixedU32::trailing_zeros]</code>.
     fn trailing_zeros(self) -> u32;
 
-    /// Returns the square root.
-    ///
-    /// See also <code>FixedI32::[sqrt][FixedI32::sqrt]</code> and
-    /// <code>FixedU32::[sqrt][FixedU32::sqrt]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the number is negative, or in the rare corner case where the
-    /// answer does not fit.
-    fn sqrt(self) -> Self;
-
     /// Integer base-2 logarithm, rounded down.
     ///
     /// See also <code>FixedI32::[int\_log2][FixedI32::int_log2]</code> and
@@ -1685,18 +1674,6 @@ where
     /// Panics if the fixed-point number is ≤&nbsp;0 or if the base is <&nbsp;2.
     #[doc(alias("ilog"))]
     fn int_log(self, base: u32) -> i32;
-
-    /// Checked square root. Returns [`None`] for negative numbers or in the
-    /// rare corner case where the answer does not fit
-    ///
-    /// See also <code>FixedI32::[checked\_sqrt][FixedI32::checked_sqrt]</code>
-    /// and <code>FixedU32::[checked\_sqrt][FixedU32::checked_sqrt]</code>.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the number is negative, or in the rare corner case where the
-    /// answer does not fit.
-    fn checked_sqrt(self) -> Option<Self>;
 
     /// Checked integer base-2 logarithm, rounded down. Returns the
     /// logarithm or [`None`] if the fixed-point number is ≤&nbsp;0.
@@ -1893,6 +1870,16 @@ where
     /// Panics if the divisor is zero or if the division results in overflow.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn rem_euclid_int(self, rhs: Self::Bits) -> Self;
+
+    /// Returns the square root.
+    ///
+    /// See also <code>FixedI32::[sqrt][FixedI32::sqrt]</code> and
+    /// <code>FixedU32::[sqrt][FixedU32::sqrt]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the number is negative.
+    fn sqrt(self) -> Self;
 
     /// Linear interpolation between `start` and `end`.
     ///
@@ -2105,6 +2092,12 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn checked_hypot(self, other: Self) -> Option<Self>;
 
+    /// Checked square root. Returns [`None`] for negative numbers or on overflow.
+    ///
+    /// See also <code>FixedI32::[checked\_sqrt][FixedI32::checked_sqrt]</code>
+    /// and <code>FixedU32::[checked\_sqrt][FixedU32::checked_sqrt]</code>.
+    fn checked_sqrt(self) -> Option<Self>;
+
     /// Checked linear interpolation between `start` and `end`. Returns [`None`]
     /// on overflow.
     ///
@@ -2299,6 +2292,17 @@ where
     /// <code>FixedU32::[saturating\_hypot][FixedU32::saturating_hypot]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn saturating_hypot(self, other: Self) -> Self;
+
+    /// Returns the square root, saturating on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_sqrt][FixedI32::saturating_sqrt]</code> and
+    /// <code>FixedU32::[saturating\_sqrt][FixedU32::saturating_sqrt]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the number is negative.
+    fn saturating_sqrt(self) -> Self;
 
     /// Linear interpolation between `start` and `end`, saturating on overflow.
     ///
@@ -2506,6 +2510,17 @@ where
     /// <code>FixedU32::[wrapping\_hypot][FixedU32::wrapping_hypot]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn wrapping_hypot(self, other: Self) -> Self;
+
+    /// Returns the square root, wrapping on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_sqrt][FixedI32::wrapping_sqrt]</code> and
+    /// <code>FixedU32::[wrapping\_sqrt][FixedU32::wrapping_sqrt]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the number is negative.
+    fn wrapping_sqrt(self) -> Self;
 
     /// Linear interpolation between `start` and `end`, wrapping on overflow.
     ///
@@ -2831,6 +2846,17 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn unwrapped_hypot(self, other: Self) -> Self;
 
+    /// Returns the square root, panicking if the number is negative or on overflow.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_sqrt][FixedI32::unwrapped_sqrt]</code> and
+    /// <code>FixedU32::[unwrapped\_sqrt][FixedU32::unwrapped_sqrt]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the number is negative or on overflow.
+    fn unwrapped_sqrt(self) -> Self;
+
     /// Linear interpolation between `start` and `end`, panicking on overflow.
     ///
     /// # Panics
@@ -3117,6 +3143,21 @@ where
     /// <code>FixedU32::[overflowing\_hypot][FixedU32::overflowing_hypot]</code>.
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn overflowing_hypot(self, other: Self) -> (Self, bool);
+
+    /// Compute the square root.
+    ///
+    /// Returns a [tuple] of the square root and a [`bool`], indicating whether
+    /// an overflow has occurred. On overflow, the wrapped value is returned.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_sqrt][FixedI32::overflowing_sqrt]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_sqrt][FixedU32::overflowing_sqrt]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the number is negative.
+    fn overflowing_sqrt(self) -> (Self, bool);
 
     /// Overflowing linear interpolation between `start` and `end`.
     ///
@@ -4152,11 +4193,9 @@ macro_rules! impl_fixed {
             trait_delegate! { fn leading_zeros(self) -> u32 }
             trait_delegate! { fn trailing_ones(self) -> u32 }
             trait_delegate! { fn trailing_zeros(self) -> u32 }
-            trait_delegate! { fn sqrt(self) -> Self }
             trait_delegate! { fn int_log2(self) -> i32 }
             trait_delegate! { fn int_log10(self) -> i32 }
             trait_delegate! { fn int_log(self, base: u32) -> i32 }
-            trait_delegate! { fn checked_sqrt(self) -> Option<Self> }
             trait_delegate! { fn checked_int_log2(self) -> Option<i32> }
             trait_delegate! { fn checked_int_log10(self) -> Option<i32> }
             trait_delegate! { fn checked_int_log(self, base: u32) -> Option<i32> }
@@ -4177,6 +4216,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn rem_euclid(self, rhs: Self) -> Self }
             trait_delegate! { fn div_euclid_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn rem_euclid_int(self, rhs: Self::Bits) -> Self }
+            trait_delegate! { fn sqrt(self) -> Self }
             trait_delegate! { fn lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn inv_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn checked_neg(self) -> Option<Self> }
@@ -4201,6 +4241,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn checked_shr(self, rhs: u32) -> Option<Self> }
             trait_delegate! { fn checked_dist(self, other: Self) -> Option<Self> }
             trait_delegate! { fn checked_hypot(self, other: Self) -> Option<Self> }
+            trait_delegate! { fn checked_sqrt(self) -> Option<Self> }
             trait_delegate! { fn checked_lerp(self, start: Self, end: Self) -> Option<Self> }
             trait_delegate! { fn checked_inv_lerp(self, start: Self, end: Self) -> Option<Self> }
             trait_delegate! { fn saturating_neg(self) -> Self }
@@ -4220,6 +4261,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn saturating_rem_euclid_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn saturating_dist(self, other: Self) -> Self }
             trait_delegate! { fn saturating_hypot(self, other: Self) -> Self }
+            trait_delegate! { fn saturating_sqrt(self) -> Self }
             trait_delegate! { fn saturating_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn saturating_inv_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn wrapping_neg(self) -> Self }
@@ -4241,6 +4283,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn wrapping_shr(self, rhs: u32) -> Self }
             trait_delegate! { fn wrapping_dist(self, other: Self) -> Self }
             trait_delegate! { fn wrapping_hypot(self, other: Self) -> Self }
+            trait_delegate! { fn wrapping_sqrt(self) -> Self }
             trait_delegate! { fn wrapping_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn wrapping_inv_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn unwrapped_neg(self) -> Self }
@@ -4265,6 +4308,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn unwrapped_shr(self, rhs: u32) -> Self }
             trait_delegate! { fn unwrapped_dist(self, other: Self) -> Self }
             trait_delegate! { fn unwrapped_hypot(self, other: Self) -> Self }
+            trait_delegate! { fn unwrapped_sqrt(self) -> Self }
             trait_delegate! { fn unwrapped_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn unwrapped_inv_lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn overflowing_neg(self) -> (Self, bool) }
@@ -4286,6 +4330,7 @@ macro_rules! impl_fixed {
             trait_delegate! { fn overflowing_shr(self, rhs: u32) -> (Self, bool) }
             trait_delegate! { fn overflowing_dist(self, other: Self) -> (Self, bool) }
             trait_delegate! { fn overflowing_hypot(self, other: Self) -> (Self, bool) }
+            trait_delegate! { fn overflowing_sqrt(self) -> (Self, bool) }
             trait_delegate! { fn overflowing_lerp(self, start: Self, end: Self) -> (Self, bool) }
             trait_delegate! {
                 fn overflowing_inv_lerp(self, start: Self, end: Self) -> (Self, bool)
