@@ -41,22 +41,30 @@ use crate::{
 
 /*
 ```rust
-use core::{cmp::Ord, convert::TryFrom};
-use rug::{
-    float::{Constant, Round},
-    Assign, Float, Integer,
-};
+use core::cmp::Ord;
+use rug::float::{Constant, Round};
+use rug::{Assign, Float};
 
-fn decimal_string(val: &Float, prec: i32) -> String {
-    let log10 = val.clone().log10();
-    let floor_log10 = log10.to_i32_saturating_round(Round::Down).unwrap();
-    let shift = u32::try_from(prec - 1 - floor_log10).unwrap();
-    let val = val.clone() * Integer::from(Integer::u_pow_u(10, shift));
-    let int = val.to_integer_round(Round::Down).unwrap().0;
-    let padding = "0".repeat(usize::try_from(-floor_log10.min(0)).unwrap());
-    let mut s = format!("{padding}{int}");
-    s.insert(1, '.');
-    s
+fn decimal_string(val: &Float, num_digits: usize) -> String {
+    let (sign, mut digits, exp) = val.to_sign_string_exp(10, Some(num_digits));
+    if let Some(exp) = exp {
+        if exp <= 0 {
+            let one_minus_exp = usize::try_from(1 - exp).unwrap();
+            digits.insert_str(0, &"0".repeat(one_minus_exp));
+            digits.insert(1, '.');
+        } else {
+            let exp = usize::try_from(exp).unwrap();
+            if exp >= num_digits {
+                digits.push_str(&"0".repeat(exp - num_digits));
+            } else {
+                digits.insert(exp, '.');
+            }
+        }
+    }
+    if sign {
+        digits.insert(0, '-');
+    }
+    digits
 }
 
 fn hex_bits(val: &Float, frac_bits: i32) -> String {
