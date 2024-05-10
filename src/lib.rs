@@ -185,28 +185,6 @@ let sum = TWELVE_POINT_75 + ONE_POINT_5;
 assert_eq!(sum, 14.25);
 ```
 
-The [*fixed-macro* crate] is an alternative which provides a convenient macro to
-write down fixed-point constants literally in the code. It supports underscores
-as separators, binary/octal/hexadecimal integers, and an optional exponent for
-decimal numbers, but it does not support fractions or exponents for
-binary/octal/hexadecimal as they cannot be parsed by the Rust compiler.
-
-```rust
-# #[cfg(feature = "skip-this-test")] {
-use fixed::types::I16F16;
-use fixed_macro::fixed;
-use fixed_macro::types::I16F16;
-
-// 0.1275e2 is 12.75
-const TWELVE_POINT_75: I16F16 = fixed!(0.127_5e2: I16F16);
-// 11 binary is 3 decimal
-const THREE: I16F16 = I16F16!(0b_11);
-// 12.75 + 3 = 15.75
-let sum = TWELVE_POINT_75 + THREE;
-assert_eq!(sum, 15.75);
-# }
-```
-
 ## Using the *fixed* crate
 
 The *fixed* crate is available on [crates.io][*fixed* crate]. To use it in your
@@ -289,7 +267,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [*borsh* crate]: https://crates.io/crates/borsh
 [*cordic* crate]: https://crates.io/crates/cordic
 [*fixed* crate]: https://crates.io/crates/fixed
-[*fixed-macro* crate]: https://crates.io/crates/fixed-macro
 [*half* crate]: https://crates.io/crates/half
 [*num-traits* crate]: https://crates.io/crates/num-traits
 [*serde* crate]: https://crates.io/crates/serde
