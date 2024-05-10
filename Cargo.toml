@@ -23,7 +23,7 @@ arbitrary = { optional = true, version = "1" }
 az = "1.2"
 borsh = { default-features = false, optional = true, version = "1" }
 bytemuck = "1.2"
-half = { default_features = false, version = ">= 1.8, < 3" }
+half = { default-features = false, version = ">= 1.8, < 3" }
 num-traits = { default-features = false, features = ["i128"], optional = true, version = "0.2.15" }
 serde = { default-features = false, optional = true, version = "1.0.60" }
 
