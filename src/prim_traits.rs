@@ -332,7 +332,7 @@ fn leading_zeros<Bits: FixedBits>(bits: Bits) -> u32 {
 }
 
 macro_rules! impl_float {
-    ($Float:ident, $FloatI:ident, $FloatU:ident) => {
+    ($Float:ident, $FloatI:ident, $FloatU:ident $(, $link_prefix:expr)?) => {
         impl FromFixed for $Float {
             /// Converts a fixed-point number to a floating-point number.
             ///
@@ -487,7 +487,7 @@ returned, but it is not considered a breaking change if in the future
 it panics; if wrapping is required use [`wrapping_to_fixed`] instead.
 
 [`wrapping_to_fixed`]: ToFixed::wrapping_to_fixed
-[finite]: ", stringify!($Float), "::is_finite
+[finite]: ", $($link_prefix, )? stringify!($Float), "::is_finite
 ";
                 #[inline]
                 #[track_caller]
@@ -556,7 +556,7 @@ Rounding is to the nearest, with ties rounded to even.
 
 Panics if `self` is not [finite].
 
-[finite]: ", stringify!($Float), "::is_finite
+[finite]: ", $($link_prefix, )? stringify!($Float), "::is_finite
 ";
                 #[inline]
                 #[track_caller]
@@ -579,7 +579,7 @@ Rounding is to the nearest, with ties rounded to even.
 
 Panics if `self` is not [finite].
 
-[finite]: ", stringify!($Float), "::is_finite
+[finite]: ", $($link_prefix, )? stringify!($Float), "::is_finite
 ";
                 #[inline]
                 #[track_caller]
@@ -599,7 +599,7 @@ Rounding is to the nearest, with ties rounded to even.
 Panics if `self` is not [finite] or if the value does not fit, even
 when debug assertions are not enabled.
 
-[finite]: ", stringify!($Float), "::is_finite
+[finite]: ", $($link_prefix, )? stringify!($Float), "::is_finite
 ";
                 #[inline]
                 #[track_caller]
@@ -614,7 +614,7 @@ when debug assertions are not enabled.
     };
 }
 
-impl_float! { f16, i16, u16 }
+impl_float! { f16, i16, u16, "half::" }
 impl_float! { bf16, i16, u16 }
 impl_float! { f32, i32, u32 }
 impl_float! { f64, i64, u64 }
