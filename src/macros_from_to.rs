@@ -995,7 +995,7 @@ evaluated in constant context.
 
 **Warning:** Normal calls to the `lit` method are *not* evaluated at compile
 time. To ensure that the call is evaluated at compile time, `lit` must be used
-to initialize a constant.
+in an inline constant expression, or used to initialize a constant.
 
 For example, here `lit` would be evaluated at compile time:
 
@@ -1011,11 +1011,22 @@ However, here `lit` would be evaluated at run time:
 ```rust
 # use fixed::{types::extra::U4, FixedU32};
 # type Fix = FixedU32<U4>;
+// Evaluated at run time.
 let one_and_half = Fix::lit("1.5");
 # assert_eq!(one_and_half, 1.5);
 ```
 
 To evaluate at compile time without introducing a constant into the scope:
+
+```rust
+# #[cfg(skip_this)] {
+// Evaluated at compile time.
+let one_and_half = const { Fix::lit("1.5") };
+# }
+```
+
+Inline const expressions were stabilized for rustc version 1.79.0 or later; when
+using an earliner version, this can be written as:
 
 ```rust
 # use fixed::{types::extra::U4, FixedU32};
@@ -1025,15 +1036,6 @@ let one_and_half = {
     C
 };
 # assert_eq!(one_and_half, 1.5);
-```
-
-With the [unstable `inline_const`
-feature](https://github.com/rust-lang/rust/issues/76001), here `lit` would be
-evaluated at compile time:
-
-```rust,ignore
-#![feature(inline_const)]
-let one_and_half = const { Fix::lit("1.5") };
 ```
 
 # Panics
