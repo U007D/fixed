@@ -492,7 +492,7 @@ when debug assertions are not enabled.
     };
 }
 
-impl_float! { f16, "f16", "{} overflows", |x| x }
+impl_float! { f16, "half::f16", "{} overflows", |x| x }
 impl_float! { bf16, "bf16", "{} overflows", |x| x }
 impl_float! { f32, "f32", "{} overflows", |x| x }
 impl_float! { f64, "f64", "{} overflows", |x| x }
