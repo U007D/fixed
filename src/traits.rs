@@ -475,7 +475,7 @@ where
     /// [`Bits`]: Fixed::Bits
     type NonZeroBits: TryFrom<Self::Bits, Error = TryFromIntError>;
 
-    /// An unsigned fixed-point number type with the same number of integer and
+    /// A signed fixed-point number type with the same number of integer and
     /// fractional bits as `Self`.
     ///
     /// If `Self` is signed, then `Self::Signed` is the same as `Self`.
