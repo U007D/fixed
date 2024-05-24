@@ -732,30 +732,29 @@ impl<F: Fixed> Saturating<F> {
         Saturating(self.0.saturating_round())
     }
 
-    /// Saturating round. Rounds to the next integer to the nearest,
-    /// with ties rounded to even, and saturating on overflow.
+    /// Saturating round. Rounds to the next integer to the nearest, with ties
+    /// rounded to even, and saturating on overflow.
     ///
     /// See also
-    /// <code>FixedI32::[saturating\_round\_ties\_to\_even][FixedI32::saturating_round_ties_to_even]</code>
+    /// <code>FixedI32::[saturating\_round\_ties\_even][FixedI32::saturating_round_ties_even]</code>
     /// and
-    /// <code>FixedU32::[saturating\_round\_ties\_to\_even][FixedU32::saturating_round_ties_to_even]</code>.
+    /// <code>FixedU32::[saturating\_round\_ties\_even][FixedU32::saturating_round_ties_even]</code>.
     ///
     /// # Examples
     ///
     /// ```rust
     /// use fixed::{types::I16F16, Saturating};
     /// let two_half = Saturating(I16F16::from_num(2.5));
-    /// assert_eq!(two_half.round_ties_to_even(), Saturating(I16F16::from_num(2)));
+    /// assert_eq!(two_half.round_ties_even(), Saturating(I16F16::from_num(2)));
     /// let three_half = Saturating(I16F16::from_num(3.5));
-    /// assert_eq!(three_half.round_ties_to_even(), Saturating(I16F16::from_num(4)));
+    /// assert_eq!(three_half.round_ties_even(), Saturating(I16F16::from_num(4)));
     /// let max = Saturating(I16F16::MAX);
-    /// assert_eq!(max.round_ties_to_even(), max);
+    /// assert_eq!(max.round_ties_even(), max);
     /// ```
     #[inline]
     #[must_use]
-    #[doc(alias("round_ties_even"))]
-    pub fn round_ties_to_even(self) -> Saturating<F> {
-        Saturating(self.0.saturating_round_ties_to_even())
+    pub fn round_ties_even(self) -> Saturating<F> {
+        Saturating(self.0.saturating_round_ties_even())
     }
 
     /// Returns the number of ones in the binary representation.
@@ -1345,6 +1344,15 @@ impl<F: Fixed> Saturating<F> {
     #[must_use]
     pub fn inv_lerp(self, start: Saturating<F>, end: Saturating<F>) -> Saturating<F> {
         Saturating(self.0.saturating_inv_lerp(start.0, end.0))
+    }
+
+    /// Saturating round. Rounds to the next integer to the nearest, with ties
+    /// rounded to even, and saturating on overflow.
+    #[inline]
+    #[must_use]
+    #[deprecated(since = "1.28.0", note = "renamed to `round_ties_even`")]
+    pub fn round_ties_to_even(self) -> Saturating<F> {
+        self.round_ties_even()
     }
 }
 

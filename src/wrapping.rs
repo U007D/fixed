@@ -738,30 +738,29 @@ impl<F: Fixed> Wrapping<F> {
         Wrapping(self.0.wrapping_round())
     }
 
-    /// Wrapping round. Rounds to the next integer to the nearest,
-    /// with ties rounded to even, and wrapping on overflow.
+    /// Wrapping round. Rounds to the next integer to the nearest, with ties
+    /// rounded to even, and wrapping on overflow.
     ///
     /// See also
-    /// <code>FixedI32::[wrapping\_round\_ties\_to\_even][FixedI32::wrapping_round_ties_to_even]</code>
+    /// <code>FixedI32::[wrapping\_round\_ties\_even][FixedI32::wrapping_round_ties_even]</code>
     /// and
-    /// <code>FixedU32::[wrapping\_round\_ties\_to\_even][FixedU32::wrapping_round_ties_to_even]</code>.
+    /// <code>FixedU32::[wrapping\_round\_ties\_even][FixedU32::wrapping_round_ties_even]</code>.
     ///
     /// # Examples
     ///
     /// ```rust
     /// use fixed::{types::I16F16, Wrapping};
     /// let two_half = Wrapping(I16F16::from_num(2.5));
-    /// assert_eq!(two_half.round_ties_to_even(), Wrapping(I16F16::from_num(2)));
+    /// assert_eq!(two_half.round_ties_even(), Wrapping(I16F16::from_num(2)));
     /// let three_half = Wrapping(I16F16::from_num(3.5));
-    /// assert_eq!(three_half.round_ties_to_even(), Wrapping(I16F16::from_num(4)));
+    /// assert_eq!(three_half.round_ties_even(), Wrapping(I16F16::from_num(4)));
     /// let max = Wrapping(I16F16::MAX);
-    /// assert_eq!(max.round_ties_to_even(), Wrapping(I16F16::MIN));
+    /// assert_eq!(max.round_ties_even(), Wrapping(I16F16::MIN));
     /// ```
     #[inline]
     #[must_use]
-    #[doc(alias("round_ties_even"))]
-    pub fn round_ties_to_even(self) -> Wrapping<F> {
-        Wrapping(self.0.wrapping_round_ties_to_even())
+    pub fn round_ties_even(self) -> Wrapping<F> {
+        Wrapping(self.0.wrapping_round_ties_even())
     }
 
     /// Returns the number of ones in the binary representation.
@@ -1350,6 +1349,15 @@ impl<F: Fixed> Wrapping<F> {
     #[must_use]
     pub fn inv_lerp(self, start: Wrapping<F>, end: Wrapping<F>) -> Wrapping<F> {
         Wrapping(self.0.wrapping_inv_lerp(start.0, end.0))
+    }
+
+    /// Wrapping round. Rounds to the next integer to the nearest, with ties
+    /// rounded to even, and wrapping on overflow.
+    #[inline]
+    #[must_use]
+    #[deprecated(since = "1.28.0", note = "renamed to `round_ties_even`")]
+    pub fn round_ties_to_even(self) -> Wrapping<F> {
+        self.round_ties_even()
     }
 }
 

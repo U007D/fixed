@@ -12,10 +12,36 @@ as-is, without any warranty. -->
     [`Fixed`][tf-1-28] trait:
       * [`unchecked_add`][f-ua-1-28], [`unchecked_sub`][f-us-1-28],
         [`unchecked_mul_int`][f-umi-1-28]
+  * For all fixed-point numbers and the [`Fixed`][tf-1-28] trait, the following
+    methods were renamed. The old method names are deprecated.
+      * [`round_ties_to_even`][f-rtte-1-28] renamed to
+        [`round_ties_even`][f-rte-1-28]
+      * [`checked_round_ties_to_even`][f-crtte-1-28] renamed to
+        [`checked_round_ties_even`][f-crte-1-28]
+      * [`saturating_round_ties_to_even`][f-srtte-1-28] renamed to
+        [`saturating_round_ties_even`][f-srte-1-28]
+      * [`wrapping_round_ties_to_even`][f-wrtte-1-28] renamed to
+        [`wrapping_round_ties_even`][f-wrte-1-28]
+      * [`unwrapped_round_ties_to_even`][f-urtte-1-28] renamed to
+        [`unwrapped_round_ties_even`][f-urte-1-28]
+      * [`overflowing_round_ties_to_even`][f-ortte-1-28] renamed to
+        [`overflowing_round_ties_even`][f-orte-1-28]
 
+[f-crte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.checked_round_ties_even
+[f-crtte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.checked_round_ties_to_even
+[f-orte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.overflowing_round_ties_even
+[f-ortte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.overflowing_round_ties_to_even
+[f-rte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.round_ties_even
+[f-rtte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.round_ties_to_even
+[f-srte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.saturating_round_ties_even
+[f-srtte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.saturating_round_ties_to_even
 [f-ua-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.unchecked_add
 [f-umi-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.unchecked_mul_int
+[f-urte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.unwrapped_round_ties_even
+[f-urtte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.unwrapped_round_ties_to_even
 [f-us-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.unchecked_sub
+[f-wrte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.wrapping_round_ties_even
+[f-wrtte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.wrapping_round_ties_to_even
 [tf-1-28]: https://docs.rs/fixed/~1.28/fixed/traits/trait.Fixed.html
 
 # Version 1.27.0 (2024-03-27)

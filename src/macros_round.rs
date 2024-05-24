@@ -294,7 +294,7 @@ assert_eq!(Fix::from_num(2.5).round(), Fix::from_num(3));
 When debug assertions are enabled, panics if the result does not fit.
 When debug assertions are not enabled, the wrapped result can be
 returned, but it is not considered a breaking change if in the future
-it panics; if wrapping is required use [`wrapping_round_ties_to_even`]
+it panics; if wrapping is required use [`wrapping_round_ties_even`]
 instead.
 
 # Examples
@@ -302,18 +302,17 @@ instead.
 ```rust
 use fixed::{types::extra::U4, ", stringify!($Self), "};
 type Fix = ", stringify!($Self), "<U4>;
-assert_eq!(Fix::from_num(2.5).round_ties_to_even(), Fix::from_num(2));
-assert_eq!(Fix::from_num(3.5).round_ties_to_even(), Fix::from_num(4));
+assert_eq!(Fix::from_num(2.5).round_ties_even(), Fix::from_num(2));
+assert_eq!(Fix::from_num(3.5).round_ties_even(), Fix::from_num(4));
 ```
 
-[`wrapping_round_ties_to_even`]: Self::wrapping_round_ties_to_even
+[`wrapping_round_ties_even`]: Self::wrapping_round_ties_even
 ";
             #[inline]
             #[track_caller]
             #[must_use]
-            #[doc(alias("round_ties_even"))]
-            pub const fn round_ties_to_even(self) -> $Self<Frac> {
-                let (round, overflow) = self.overflowing_round_ties_to_even();
+            pub const fn round_ties_even(self) -> $Self<Frac> {
+                let (round, overflow) = self.overflowing_round_ties_even();
                 debug_assert!(!overflow, "overflow");
                 let _ = overflow;
                 round
@@ -421,23 +420,23 @@ assert_eq!(Fix::from_num(2.5).checked_round(), Some(Fix::from_num(3)));
         }
 
         comment! {
-            "Checked round. Rounds to the nearest integer, with ties
-rounded to even, returning [`None`] on overflow.
+            "Checked round. Rounds to the nearest integer, with ties rounded to
+even, returning [`None`] on overflow.
 
 # Examples
 
 ```rust
 use fixed::{types::extra::U4, ", stringify!($Self), "};
 type Fix = ", stringify!($Self), "<U4>;
-assert_eq!(Fix::from_num(2.5).checked_round_ties_to_even(), Some(Fix::from_num(2)));
-assert_eq!(Fix::from_num(3.5).checked_round_ties_to_even(), Some(Fix::from_num(4)));
-assert!(Fix::MAX.checked_round_ties_to_even().is_none());
+assert_eq!(Fix::from_num(2.5).checked_round_ties_even(), Some(Fix::from_num(2)));
+assert_eq!(Fix::from_num(3.5).checked_round_ties_even(), Some(Fix::from_num(4)));
+assert!(Fix::MAX.checked_round_ties_even().is_none());
 ```
 ";
             #[inline]
             #[must_use]
-            pub const fn checked_round_ties_to_even(self) -> Option<$Self<Frac>> {
-                let (round, overflow) = self.overflowing_round_ties_to_even();
+            pub const fn checked_round_ties_even(self) -> Option<$Self<Frac>> {
+                let (round, overflow) = self.overflowing_round_ties_even();
                 if overflow { None } else { Some(round) }
             }
         }
@@ -548,28 +547,28 @@ assert_eq!(Fix::from_num(2.5).saturating_round(), Fix::from_num(3));
         }
 
         comment! {
-            "Saturating round. Rounds to the nearest integer, with
-ties rounded to even, and saturating on overflow.
+            "Saturating round. Rounds to the nearest integer, with ties rounded
+to even, and saturating on overflow.
 
 # Examples
 
 ```rust
 use fixed::{types::extra::U4, ", stringify!($Self), "};
 type Fix = ", stringify!($Self), "<U4>;
-assert_eq!(Fix::from_num(2.5).saturating_round_ties_to_even(), Fix::from_num(2));
-assert_eq!(Fix::from_num(3.5).saturating_round_ties_to_even(), Fix::from_num(4));
-assert_eq!(Fix::MAX.saturating_round_ties_to_even(), Fix::MAX);
+assert_eq!(Fix::from_num(2.5).saturating_round_ties_even(), Fix::from_num(2));
+assert_eq!(Fix::from_num(3.5).saturating_round_ties_even(), Fix::from_num(4));
+assert_eq!(Fix::MAX.saturating_round_ties_even(), Fix::MAX);
 ```
 ";
             #[inline]
             #[must_use]
-            pub const fn saturating_round_ties_to_even(self) -> $Self<Frac> {
+            pub const fn saturating_round_ties_even(self) -> $Self<Frac> {
                 let saturated = if self.to_bits() > 0 {
                     $Self::MAX
                 } else {
                     $Self::MIN
                 };
-                let (round, overflow) = self.overflowing_round_ties_to_even();
+                let (round, overflow) = self.overflowing_round_ties_even();
                 if overflow { saturated } else { round }
             }
         }
@@ -672,23 +671,23 @@ assert_eq!(Fix::from_num(2.5).wrapping_round(), Fix::from_num(3));
         }
 
         comment! {
-            "Wrapping round. Rounds to the next integer to the
-nearest, with ties rounded to even, and wrapping on overflow.
+            "Wrapping round. Rounds to the next integer to the nearest, with
+ties rounded to even, and wrapping on overflow.
 
 # Examples
 
 ```rust
 use fixed::{types::extra::U4, ", stringify!($Self), "};
 type Fix = ", stringify!($Self), "<U4>;
-assert_eq!(Fix::from_num(2.5).wrapping_round_ties_to_even(), Fix::from_num(2));
-assert_eq!(Fix::from_num(3.5).wrapping_round_ties_to_even(), Fix::from_num(4));
-assert_eq!(Fix::MAX.wrapping_round_ties_to_even(), Fix::MIN);
+assert_eq!(Fix::from_num(2.5).wrapping_round_ties_even(), Fix::from_num(2));
+assert_eq!(Fix::from_num(3.5).wrapping_round_ties_even(), Fix::from_num(4));
+assert_eq!(Fix::MAX.wrapping_round_ties_even(), Fix::MIN);
 ```
 ";
             #[inline]
             #[must_use]
-            pub const fn wrapping_round_ties_to_even(self) -> $Self<Frac> {
-                self.overflowing_round_ties_to_even().0
+            pub const fn wrapping_round_ties_even(self) -> $Self<Frac> {
+                self.overflowing_round_ties_even().0
             }
         }
 
@@ -823,8 +822,8 @@ let _overflow = Fix::MAX.unwrapped_round();
         }
 
         comment! {
-            "Unwrapped round. Rounds to the next integer to the
-nearest, with ties rounded to even, and panicking on overflow.
+            "Unwrapped round. Rounds to the next integer to the nearest, with
+ties rounded to even, and panicking on overflow.
 
 # Panics
 
@@ -835,8 +834,8 @@ Panics if the result does not fit.
 ```rust
 use fixed::{types::extra::U4, ", stringify!($Self), "};
 type Fix = ", stringify!($Self), "<U4>;
-assert_eq!(Fix::from_num(2.5).unwrapped_round_ties_to_even(), Fix::from_num(2));
-assert_eq!(Fix::from_num(3.5).unwrapped_round_ties_to_even(), Fix::from_num(4));
+assert_eq!(Fix::from_num(2.5).unwrapped_round_ties_even(), Fix::from_num(2));
+assert_eq!(Fix::from_num(3.5).unwrapped_round_ties_even(), Fix::from_num(4));
 ```
 
 The following panics because of overflow.
@@ -844,14 +843,14 @@ The following panics because of overflow.
 ```should_panic
 use fixed::{types::extra::U4, ", stringify!($Self), "};
 type Fix = ", stringify!($Self), "<U4>;
-let _overflow = Fix::MAX.unwrapped_round_ties_to_even();
+let _overflow = Fix::MAX.unwrapped_round_ties_even();
 ```
 ";
             #[inline]
             #[track_caller]
             #[must_use]
-            pub const fn unwrapped_round_ties_to_even(self) -> $Self<Frac> {
-                match self.checked_round_ties_to_even() {
+            pub const fn unwrapped_round_ties_even(self) -> $Self<Frac> {
+                match self.checked_round_ties_even() {
                     Some(s) => s,
                     None => panic!("overflow"),
                 }
@@ -1020,8 +1019,8 @@ assert_eq!(Fix::from_num(2.5).overflowing_round(), (Fix::from_num(3), false));
         }
 
         comment! {
-            "Overflowing round. Rounds to the next integer to the
-nearest, with ties rounded to even.
+            "Overflowing round. Rounds to the next integer to the nearest, with
+ties rounded to even.
 
 Returns a [tuple] of the fixed-point number and a [`bool`] indicating
 whether an overflow has occurred. On overflow, the wrapped value is
@@ -1032,14 +1031,14 @@ returned.
 ```rust
 use fixed::{types::extra::U4, ", stringify!($Self), "};
 type Fix = ", stringify!($Self), "<U4>;
-assert_eq!(Fix::from_num(2.5).overflowing_round_ties_to_even(), (Fix::from_num(2), false));
-assert_eq!(Fix::from_num(3.5).overflowing_round_ties_to_even(), (Fix::from_num(4), false));
-assert_eq!(Fix::MAX.overflowing_round_ties_to_even(), (Fix::MIN, true));
+assert_eq!(Fix::from_num(2.5).overflowing_round_ties_even(), (Fix::from_num(2), false));
+assert_eq!(Fix::from_num(3.5).overflowing_round_ties_even(), (Fix::from_num(4), false));
+assert_eq!(Fix::MAX.overflowing_round_ties_even(), (Fix::MIN, true));
 ```
 ";
             #[inline]
             #[must_use]
-            pub const fn overflowing_round_ties_to_even(self) -> ($Self<Frac>, bool) {
+            pub const fn overflowing_round_ties_even(self) -> ($Self<Frac>, bool) {
                 let int = self.int();
                 if (self.to_bits() & Self::FRAC_MSB) == 0 {
                     return (int, false);
@@ -1067,6 +1066,61 @@ assert_eq!(Fix::MAX.overflowing_round_ties_to_even(), (Fix::MIN, true));
                     int.overflowing_add(increment)
                 }
             }
+        }
+
+        /// Rounds to the nearest integer, with ties rounded to even.
+        #[inline]
+        #[track_caller]
+        #[must_use]
+        #[deprecated(since = "1.28.0", note = "renamed to `round_ties_even`")]
+        pub const fn round_ties_to_even(self) -> $Self<Frac> {
+            self.round_ties_even()
+        }
+
+        /// Checked round. Rounds to the nearest integer, with ties rounded to
+        /// even, returning [`None`] on overflow.
+        #[inline]
+        #[must_use]
+        #[deprecated(since = "1.28.0", note = "renamed to `checked_round_ties_even`")]
+        pub const fn checked_round_ties_to_even(self) -> Option<$Self<Frac>> {
+            self.checked_round_ties_even()
+        }
+
+        /// Saturating round. Rounds to the nearest integer, with ties rounded
+        /// to even, and saturating on overflow.
+        #[inline]
+        #[must_use]
+        #[deprecated(since = "1.28.0", note = "renamed to `saturating_round_ties_even`")]
+        pub const fn saturating_round_ties_to_even(self) -> $Self<Frac> {
+            self.saturating_round_ties_even()
+        }
+
+        /// Wrapping round. Rounds to the next integer to the nearest, with ties
+        /// rounded to even, and wrapping on overflow.
+        #[inline]
+        #[must_use]
+        #[deprecated(since = "1.28.0", note = "renamed to `wrapping_round_ties_even`")]
+        pub const fn wrapping_round_ties_to_even(self) -> $Self<Frac> {
+            self.wrapping_round_ties_even()
+        }
+
+        /// Unwrapped round. Rounds to the next integer to the nearest, with
+        /// ties rounded to even, and panicking on overflow.
+        #[inline]
+        #[track_caller]
+        #[must_use]
+        #[deprecated(since = "1.28.0", note = "renamed to `unwrapped_round_ties_even`")]
+        pub const fn unwrapped_round_ties_to_even(self) -> $Self<Frac> {
+            self.unwrapped_round_ties_even()
+        }
+
+        /// Overflowing round. Rounds to the next integer to the nearest, with
+        /// ties rounded to even.
+        #[inline]
+        #[must_use]
+        #[deprecated(since = "1.28.0", note = "renamed to `overflowing_round_ties_even`")]
+        pub const fn overflowing_round_ties_to_even(self) -> ($Self<Frac>, bool) {
+            self.overflowing_round_ties_even()
         }
     };
 }
