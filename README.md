@@ -105,13 +105,15 @@ The conversions supported cover the following cases.
 ### Version 1.28.0 news (unreleased, not before 2024-07-25)
 
   * The crate now requires rustc version 1.79.0 or later.
-  * The following methods were added to all fixed-point numbers:
+  * The following methods were added to all fixed-point numbers and to the
+    [`Fixed`][tf-1-28] trait:
       * [`unchecked_add`][f-ua-1-28], [`unchecked_sub`][f-us-1-28],
         [`unchecked_mul_int`][f-umi-1-28]
 
 [f-ua-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.unchecked_add
 [f-umi-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.unchecked_mul_int
 [f-us-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.unchecked_sub
+[tf-1-28]: https://docs.rs/fixed/~1.28/fixed/traits/trait.Fixed.html
 
 ### Version 1.27.0 news (2024-03-27)
 

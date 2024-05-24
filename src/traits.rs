@@ -3182,6 +3182,49 @@ where
     /// and
     /// <code>FixedU32::[overflowing\_inv\_lerp][FixedU32::overflowing_inv_lerp]</code>.
     fn overflowing_inv_lerp(self, start: Self, end: Self) -> (Self, bool);
+
+    /// Unchecked addition. Computes `self`&nbsp;+&nbsp;`rhs`, assuming
+    /// overflow cannot occur.
+    ///
+    /// See also
+    /// <code>FixedI32::[unchecked\_add][FixedI32::unchecked_add]</code> and
+    /// <code>FixedU32::[unchecked\_add][FixedU32::unchecked_add]</code>.
+    ///
+    /// # Safety
+    ///
+    /// This results in undefined behavior when
+    /// `self`&nbsp;+&nbsp;`rhs`&nbsp;\>&nbsp;[`MAX`][Self::MAX] or
+    /// `self`&nbsp;+&nbsp;`rhs`&nbsp;\<&nbsp;[`MIN`][Self::MIN].
+    unsafe fn unchecked_add(self, rhs: Self) -> Self;
+
+    /// Unchecked subtraction. Computes `self`&nbsp;&minus;&nbsp;`rhs`, assuming
+    /// overflow cannot occur.
+    ///
+    /// See also
+    /// <code>FixedI32::[unchecked\_sub][FixedI32::unchecked_sub]</code> and
+    /// <code>FixedU32::[unchecked\_sub][FixedU32::unchecked_sub]</code>.
+    ///
+    /// # Safety
+    ///
+    /// This results in undefined behavior when
+    /// `self`&nbsp;&minus;&nbsp;`rhs`&nbsp;\>&nbsp;[`MAX`][Self::MAX] or
+    /// `self`&nbsp;&minus;&nbsp;`rhs`&nbsp;\<&nbsp;[`MIN`][Self::MIN].
+    unsafe fn unchecked_sub(self, rhs: Self) -> Self;
+
+    /// Unchecked multiplication by an integer. Computes
+    /// `self`&nbsp;×&nbsp;`rhs`, assuming overflow cannot occur.
+    ///
+    /// See also
+    /// <code>FixedI32::[unchecked\_mul\_int][FixedI32::unchecked_mul_int]</code>
+    /// and
+    /// <code>FixedU32::[unchecked\_mul\_int][FixedU32::unchecked_mul_int]</code>.
+    ///
+    /// # Safety
+    ///
+    /// This results in undefined behavior when
+    /// `self`&nbsp;×&nbsp;`rhs`&nbsp;\>&nbsp;[`MAX`][Self::MAX] or
+    /// `self`&nbsp;×&nbsp;`rhs`&nbsp;\<&nbsp;[`MIN`][Self::MIN].
+    unsafe fn unchecked_mul_int(self, rhs: Self::Bits) -> Self;
 }
 
 /// This trait provides methods common to all signed fixed-point numbers.
@@ -4050,6 +4093,12 @@ macro_rules! trait_delegate {
             self.$method($($param),*)
         }
     };
+    (unsafe fn $method:ident(self $(, $param:ident: $Param:ty)*) -> $Ret:ty) => {
+        #[inline]
+        unsafe fn $method(self $(, $param: $Param)*) -> $Ret {
+            unsafe { self.$method($($param),*) }
+        }
+    };
     (fn $method:ident(&mut self $(, $param:ident: $Param:ty)*) $(-> $Ret:ty)*) => {
         #[inline]
         fn $method(&mut self $(, $param: $Param)*) $(-> $Ret)* {
@@ -4335,6 +4384,9 @@ macro_rules! impl_fixed {
             trait_delegate! {
                 fn overflowing_inv_lerp(self, start: Self, end: Self) -> (Self, bool)
             }
+            trait_delegate! { unsafe fn unchecked_add(self, rhs: Self) -> Self }
+            trait_delegate! { unsafe fn unchecked_sub(self, rhs: Self) -> Self }
+            trait_delegate! { unsafe fn unchecked_mul_int(self, rhs: Self::Bits) -> Self }
         }
 
         impl<Frac: $LeEqU> FromFixed for $Fixed<Frac> {
