@@ -1019,22 +1019,9 @@ let one_and_half = Fix::lit("1.5");
 To evaluate at compile time without introducing a constant into the scope:
 
 ```rust
-# #[cfg(skip_this)] {
-// Evaluated at compile time.
-let one_and_half = const { Fix::lit("1.5") };
-# }
-```
-
-Inline const expressions were stabilized for rustc version 1.79.0 or later; when
-using an earliner version, this can be written as:
-
-```rust
 # use fixed::{types::extra::U4, FixedU32};
 # type Fix = FixedU32<U4>;
-let one_and_half = {
-    const C: Fix = Fix::lit("1.5");
-    C
-};
+let one_and_half = const { Fix::lit("1.5") };
 # assert_eq!(one_and_half, 1.5);
 ```
 
