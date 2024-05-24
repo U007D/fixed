@@ -991,12 +991,11 @@ where
     /// Rounds to the nearest integer, with ties rounded to even.
     ///
     /// See also
-    /// <code>FixedI32::[round\_ties\_to\_even][FixedI32::round_ties_to_even]</code>
+    /// <code>FixedI32::[round\_ties\_even][FixedI32::round_ties_even]</code>
     /// and
-    /// <code>FixedU32::[round\_ties\_to\_even][FixedU32::round_ties_to_even]</code>.
+    /// <code>FixedU32::[round\_ties\_even][FixedU32::round_ties_even]</code>.
     #[must_use]
-    #[doc(alias("round_ties_even"))]
-    fn round_ties_to_even(self) -> Self;
+    fn round_ties_even(self) -> Self;
 
     /// Checked ceil. Rounds to the next integer towards +∞, returning
     /// [`None`] on overflow.
@@ -1021,14 +1020,14 @@ where
     /// <code>FixedU32::[checked\_round][FixedU32::checked_round]</code>.
     fn checked_round(self) -> Option<Self>;
 
-    /// Checked round. Rounds to the nearest integer, with ties
-    /// rounded to even, returning [`None`] on overflow.
+    /// Checked round. Rounds to the nearest integer, with ties rounded to even,
+    /// returning [`None`] on overflow.
     ///
     /// See also
-    /// <code>FixedI32::[checked\_round\_ties\_to\_even][FixedI32::checked_round_ties_to_even]</code>
+    /// <code>FixedI32::[checked\_round\_ties\_even][FixedI32::checked_round_ties_even]</code>
     /// and
-    /// <code>FixedU32::[checked\_round\_ties\_to\_even][FixedU32::checked_round_ties_to_even]</code>.
-    fn checked_round_ties_to_even(self) -> Option<Self>;
+    /// <code>FixedU32::[checked\_round\_ties\_even][FixedU32::checked_round_ties_even]</code>.
+    fn checked_round_ties_even(self) -> Option<Self>;
 
     /// Saturating ceil. Rounds to the next integer towards +∞,
     /// saturating on overflow.
@@ -1059,15 +1058,15 @@ where
     #[must_use]
     fn saturating_round(self) -> Self;
 
-    /// Saturating round. Rounds to the nearest integer, with ties
-    /// rounded to_even, and saturating on overflow.
+    /// Saturating round. Rounds to the nearest integer, with ties rounded
+    /// to_even, and saturating on overflow.
     ///
     /// See also
-    /// <code>FixedI32::[saturating\_round\_ties\_to\_even][FixedI32::saturating_round_ties_to_even]</code>
+    /// <code>FixedI32::[saturating\_round\_ties\_even][FixedI32::saturating_round_ties_even]</code>
     /// and
-    /// <code>FixedU32::[saturating\_round\_ties\_to\_even][FixedU32::saturating_round_ties_to_even]</code>.
+    /// <code>FixedU32::[saturating\_round\_ties\_even][FixedU32::saturating_round_ties_even]</code>.
     #[must_use]
-    fn saturating_round_ties_to_even(self) -> Self;
+    fn saturating_round_ties_even(self) -> Self;
 
     /// Wrapping ceil. Rounds to the next integer towards +∞, wrapping
     /// on overflow.
@@ -1096,15 +1095,15 @@ where
     #[must_use]
     fn wrapping_round(self) -> Self;
 
-    /// Wrapping round. Rounds to the next integer to the nearest,
-    /// with ties rounded to even, and wrapping on overflow.
+    /// Wrapping round. Rounds to the next integer to the nearest, with ties
+    /// rounded to even, and wrapping on overflow.
     ///
     /// See also
-    /// <code>FixedI32::[wrapping\_round\_ties\_to\_even][FixedI32::wrapping_round_ties_to_even]</code>
+    /// <code>FixedI32::[wrapping\_round\_ties\_even][FixedI32::wrapping_round_ties_even]</code>
     /// and
-    /// <code>FixedU32::[wrapping\_round\_ties\_to\_even][FixedU32::wrapping_round_ties_to_even]</code>.
+    /// <code>FixedU32::[wrapping\_round\_ties\_even][FixedU32::wrapping_round_ties_even]</code>.
     #[must_use]
-    fn wrapping_round_ties_to_even(self) -> Self;
+    fn wrapping_round_ties_even(self) -> Self;
 
     /// Unwrapped ceil. Rounds to the next integer towards +∞,
     /// panicking on overflow.
@@ -1148,20 +1147,20 @@ where
     #[must_use]
     fn unwrapped_round(self) -> Self;
 
-    /// Unwrapped round. Rounds to the next integer to the nearest,
-    /// with ties rounded to even, and panicking on overflow.
+    /// Unwrapped round. Rounds to the next integer to the nearest, with ties
+    /// rounded to even, and panicking on overflow.
     ///
     /// See also
-    /// <code>FixedI32::[unwrapped\_round\_ties\_to\_even][FixedI32::unwrapped_round_ties_to_even]</code>
+    /// <code>FixedI32::[unwrapped\_round\_ties\_even][FixedI32::unwrapped_round_ties_even]</code>
     /// and
-    /// <code>FixedU32::[unwrapped\_round\_ties\_to\_even][FixedU32::unwrapped_round_ties_to_even]</code>.
+    /// <code>FixedU32::[unwrapped\_round\_ties\_even][FixedU32::unwrapped_round_ties_even]</code>.
     ///
     /// # Panics
     ///
     /// Panics if the result does not fit.
     #[track_caller]
     #[must_use]
-    fn unwrapped_round_ties_to_even(self) -> Self;
+    fn unwrapped_round_ties_even(self) -> Self;
 
     /// Overflowing ceil. Rounds to the next integer towards +∞.
     ///
@@ -1200,18 +1199,18 @@ where
     /// <code>FixedU32::[overflowing\_round][FixedU32::overflowing_round]</code>.
     fn overflowing_round(self) -> (Self, bool);
 
-    /// Overflowing round. Rounds to the next integer to the nearest,
-    /// with ties rounded to even.
+    /// Overflowing round. Rounds to the next integer to the nearest, with ties
+    /// rounded to even.
     ///
     /// Returns a [tuple] of the fixed-point number and a [`bool`],
     /// indicating whether an overflow has occurred. On overflow, the
     /// wrapped value is returned.
     ///
     /// See also
-    /// <code>FixedI32::[overflowing\_round\_ties\_to\_even][FixedI32::overflowing_round_ties_to_even]</code>
+    /// <code>FixedI32::[overflowing\_round\_ties\_even][FixedI32::overflowing_round_ties_even]</code>
     /// and
-    /// <code>FixedU32::[overflowing\_round\_ties\_to\_even][FixedU32::overflowing_round_ties_to_even]</code>.
-    fn overflowing_round_ties_to_even(self) -> (Self, bool);
+    /// <code>FixedU32::[overflowing\_round\_ties\_even][FixedU32::overflowing_round_ties_even]</code>.
+    fn overflowing_round_ties_even(self) -> (Self, bool);
 
     /// Returns the number of ones in the binary representation.
     ///
@@ -4238,27 +4237,27 @@ macro_rules! impl_fixed {
             trait_delegate! { fn floor(self) -> Self }
             trait_delegate! { fn round_to_zero(self) -> Self }
             trait_delegate! { fn round(self) -> Self }
-            trait_delegate! { fn round_ties_to_even(self) -> Self }
+            trait_delegate! { fn round_ties_even(self) -> Self }
             trait_delegate! { fn checked_ceil(self) -> Option<Self> }
             trait_delegate! { fn checked_floor(self) -> Option<Self> }
             trait_delegate! { fn checked_round(self) -> Option<Self> }
-            trait_delegate! { fn checked_round_ties_to_even(self) -> Option<Self> }
+            trait_delegate! { fn checked_round_ties_even(self) -> Option<Self> }
             trait_delegate! { fn saturating_ceil(self) -> Self }
             trait_delegate! { fn saturating_floor(self) -> Self }
             trait_delegate! { fn saturating_round(self) -> Self }
-            trait_delegate! { fn saturating_round_ties_to_even(self) -> Self }
+            trait_delegate! { fn saturating_round_ties_even(self) -> Self }
             trait_delegate! { fn wrapping_ceil(self) -> Self }
             trait_delegate! { fn wrapping_floor(self) -> Self }
             trait_delegate! { fn wrapping_round(self) -> Self }
-            trait_delegate! { fn wrapping_round_ties_to_even(self) -> Self }
+            trait_delegate! { fn wrapping_round_ties_even(self) -> Self }
             trait_delegate! { fn unwrapped_ceil(self) -> Self }
             trait_delegate! { fn unwrapped_floor(self) -> Self }
             trait_delegate! { fn unwrapped_round(self) -> Self }
-            trait_delegate! { fn unwrapped_round_ties_to_even(self) -> Self }
+            trait_delegate! { fn unwrapped_round_ties_even(self) -> Self }
             trait_delegate! { fn overflowing_ceil(self) -> (Self, bool) }
             trait_delegate! { fn overflowing_floor(self) -> (Self, bool) }
             trait_delegate! { fn overflowing_round(self) -> (Self, bool) }
-            trait_delegate! { fn overflowing_round_ties_to_even(self) -> (Self, bool) }
+            trait_delegate! { fn overflowing_round_ties_even(self) -> (Self, bool) }
             trait_delegate! { fn count_ones(self) -> u32 }
             trait_delegate! { fn count_zeros(self) -> u32 }
             trait_delegate! { fn leading_ones(self) -> u32 }

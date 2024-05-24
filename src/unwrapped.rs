@@ -820,13 +820,13 @@ impl<F: Fixed> Unwrapped<F> {
         Unwrapped(self.0.unwrapped_round())
     }
 
-    /// Unwrapped round. Rounds to the next integer to the nearest,
-    /// with ties rounded to even, and panics on overflow.
+    /// Unwrapped round. Rounds to the next integer to the nearest, with ties
+    /// rounded to even, and panics on overflow.
     ///
     /// See also
-    /// <code>FixedI32::[unwrapped\_round\_ties\_to\_even][FixedI32::unwrapped_round_ties_to_even]</code>
+    /// <code>FixedI32::[unwrapped\_round\_ties\_even][FixedI32::unwrapped_round_ties_even]</code>
     /// and
-    /// <code>FixedU32::[unwrapped\_round\_ties\_to\_even][FixedU32::unwrapped_round_ties_to_even]</code>.
+    /// <code>FixedU32::[unwrapped\_round\_ties\_even][FixedU32::unwrapped_round_ties_even]</code>.
     ///
     /// # Panics
     ///
@@ -840,9 +840,9 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let two_half = Unwrapped(I16F16::from_num(2.5));
-    /// assert_eq!(two_half.round_ties_to_even(), Unwrapped(I16F16::from_num(2)));
+    /// assert_eq!(two_half.round_ties_even(), Unwrapped(I16F16::from_num(2)));
     /// let three_half = Unwrapped(I16F16::from_num(3.5));
-    /// assert_eq!(three_half.round_ties_to_even(), Unwrapped(I16F16::from_num(4)));
+    /// assert_eq!(three_half.round_ties_even(), Unwrapped(I16F16::from_num(4)));
     /// ```
     ///
     /// The following panics because of overflow.
@@ -853,14 +853,13 @@ impl<F: Fixed> Unwrapped<F> {
     ///
     /// use fixed::{types::I16F16, Unwrapped};
     /// let max = Unwrapped(I16F16::MAX);
-    /// let _overflow = max.round_ties_to_even();
+    /// let _overflow = max.round_ties_even();
     /// ```
     #[inline]
     #[track_caller]
     #[must_use]
-    #[doc(alias("round_ties_even"))]
-    pub fn round_ties_to_even(self) -> Unwrapped<F> {
-        Unwrapped(self.0.unwrapped_round_ties_to_even())
+    pub fn round_ties_even(self) -> Unwrapped<F> {
+        Unwrapped(self.0.unwrapped_round_ties_even())
     }
 
     /// Returns the number of ones in the binary representation.
@@ -1877,6 +1876,20 @@ impl<F: FixedBoundFrac> Unwrapped<F> {
     #[must_use]
     pub fn inv_lerp(self, start: Unwrapped<F>, end: Unwrapped<F>) -> Unwrapped<F> {
         Unwrapped(self.0.unwrapped_inv_lerp(start.0, end.0))
+    }
+
+    /// Unwrapped round. Rounds to the next integer to the nearest, with ties
+    /// rounded to even, and panics on overflow.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the result does not fit.
+    #[inline]
+    #[track_caller]
+    #[must_use]
+    #[deprecated(since = "1.28.0", note = "renamed to `round_ties_even`")]
+    pub fn round_ties_to_even(self) -> Unwrapped<F> {
+        self.round_ties_even()
     }
 }
 
