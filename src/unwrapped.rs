@@ -1877,20 +1877,6 @@ impl<F: FixedBoundFrac> Unwrapped<F> {
     pub fn inv_lerp(self, start: Unwrapped<F>, end: Unwrapped<F>) -> Unwrapped<F> {
         Unwrapped(self.0.unwrapped_inv_lerp(start.0, end.0))
     }
-
-    /// Unwrapped round. Rounds to the next integer to the nearest, with ties
-    /// rounded to even, and panics on overflow.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the result does not fit.
-    #[inline]
-    #[track_caller]
-    #[must_use]
-    #[deprecated(since = "1.28.0", note = "renamed to `round_ties_even`")]
-    pub fn round_ties_to_even(self) -> Unwrapped<F> {
-        self.round_ties_even()
-    }
 }
 
 impl<F: FixedSigned> Unwrapped<F> {

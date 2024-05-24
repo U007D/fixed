@@ -309,6 +309,8 @@ To port from version 1 to version 2, the following is required:
     had no effect, as their functionality has been unconditionally enabled since
     version 1.7.0.
 
+  * All deprecated methods have been removed.
+
 ## License
 
 This crate is free software: you can redistribute it and/or modify it under the

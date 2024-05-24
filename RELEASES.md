@@ -25,6 +25,7 @@ as-is, without any warranty. -->
     replaced by the [`const_from_int`][f-cfi-2-0a] method in version 1.20.0.
   * The deprecated optional features `az` and `f16` were removed. These features
     had no effect, as the functionality they enabled is now always enabled.
+  * All deprecated methods have been removed.
   * The new generic associated type [`Fixed`][fb-f-2-0a] was added to the
     [`FixedBits`][fb-2-0a] trait.
   * The following methods of the [`Fixed`][tf-2-0a] trait and of the

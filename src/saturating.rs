@@ -1534,15 +1534,6 @@ impl<F: FixedBoundFrac> Saturating<F> {
     pub fn inv_lerp(self, start: Saturating<F>, end: Saturating<F>) -> Saturating<F> {
         Saturating(self.0.saturating_inv_lerp(start.0, end.0))
     }
-
-    /// Saturating round. Rounds to the next integer to the nearest, with ties
-    /// rounded to even, and saturating on overflow.
-    #[inline]
-    #[must_use]
-    #[deprecated(since = "1.28.0", note = "renamed to `round_ties_even`")]
-    pub fn round_ties_to_even(self) -> Saturating<F> {
-        self.round_ties_even()
-    }
 }
 
 impl<F: FixedSigned> Saturating<F> {

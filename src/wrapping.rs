@@ -1541,15 +1541,6 @@ impl<F: FixedBoundFrac> Wrapping<F> {
     pub fn inv_lerp(self, start: Wrapping<F>, end: Wrapping<F>) -> Wrapping<F> {
         Wrapping(self.0.wrapping_inv_lerp(start.0, end.0))
     }
-
-    /// Wrapping round. Rounds to the next integer to the nearest, with ties
-    /// rounded to even, and wrapping on overflow.
-    #[inline]
-    #[must_use]
-    #[deprecated(since = "1.28.0", note = "renamed to `round_ties_even`")]
-    pub fn round_ties_to_even(self) -> Wrapping<F> {
-        self.round_ties_even()
-    }
 }
 
 impl<F: FixedSigned> Wrapping<F> {
