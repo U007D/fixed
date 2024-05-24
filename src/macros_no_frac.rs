@@ -5369,7 +5369,7 @@ assert_eq!(
                 "`self`&nbsp;&minus;&nbsp;`rhs`&nbsp;\\>&nbsp;[`MAX`][Self::MAX]."
             }]
             pub const unsafe fn unchecked_sub(self, rhs: $Self<Frac>) -> $Self<Frac> {
-                Self::from_bits(unsafe { self.to_bits().unchecked_add(rhs.to_bits()) })
+                Self::from_bits(unsafe { self.to_bits().unchecked_sub(rhs.to_bits()) })
             }
 
             /// Unchecked multiplication by an integer. Computes
