@@ -6891,6 +6891,78 @@ assert_eq!(
                 }
             }
 
+            /// Unchecked addition. Computes `self`&nbsp;+&nbsp;`rhs`, assuming
+            /// overflow cannot occur.
+            ///
+            /// Calling `x.unchecked_add(y)` is semantically equivalent to
+            /// calling
+            /// <code>x.[checked\_add][Self::checked_add](y).[unwrap\_unchecked][Option::unwrap_unchecked]()</code>.
+            ///
+            /// If you’re just trying to avoid the panic in debug mode, then
+            /// **do not** use this. Instead, you’re looking for
+            /// [`wrapping_add`][Self::wrapping_add].
+            ///
+            /// # Safety
+            ///
+            /// This results in undefined behavior when
+            #[doc = if_signed_unsigned! {
+                $Signedness,
+                "`self`&nbsp;+&nbsp;`rhs`&nbsp;\\>&nbsp;[`MAX`][Self::MAX] or \
+`self`&nbsp;+&nbsp;`rhs`&nbsp;\\<&nbsp;[`MIN`][Self::MIN].",
+                "`self`&nbsp;+&nbsp;`rhs`&nbsp;\\>&nbsp;[`MAX`][Self::MAX]."
+            }]
+            pub const unsafe fn unchecked_add(self, rhs: $Self<FRAC>) -> $Self<FRAC> {
+                Self::from_bits(unsafe { self.to_bits().unchecked_add(rhs.to_bits()) })
+            }
+
+            /// Unchecked subtraction. Computes `self`&nbsp;&minus;&nbsp;`rhs`,
+            /// assuming overflow cannot occur.
+            ///
+            /// Calling `x.unchecked_sub(y)` is semantically equivalent to
+            /// calling
+            /// <code>x.[checked\_sub][Self::checked_sub](y).[unwrap\_unchecked][Option::unwrap_unchecked]()</code>.
+            ///
+            /// If you’re just trying to avoid the panic in debug mode, then
+            /// **do not** use this. Instead, you’re looking for
+            /// [`wrapping_sub`][Self::wrapping_sub].
+            ///
+            /// # Safety
+            ///
+            /// This results in undefined behavior when
+            #[doc = if_signed_unsigned! {
+                $Signedness,
+                "`self`&nbsp;&minus;&nbsp;`rhs`&nbsp;\\>&nbsp;[`MAX`][Self::MAX] or \
+`self`&nbsp;&minus;&nbsp;`rhs`&nbsp;\\<&nbsp;[`MIN`][Self::MIN].",
+                "`self`&nbsp;&minus;&nbsp;`rhs`&nbsp;\\>&nbsp;[`MAX`][Self::MAX]."
+            }]
+            pub const unsafe fn unchecked_sub(self, rhs: $Self<FRAC>) -> $Self<FRAC> {
+                Self::from_bits(unsafe { self.to_bits().unchecked_add(rhs.to_bits()) })
+            }
+
+            /// Unchecked multiplication by an integer. Computes
+            /// `self`&nbsp;×&nbsp;`rhs`, assuming overflow cannot occur.
+            ///
+            /// Calling `x.unchecked_mul_int(y)` is semantically equivalent to
+            /// calling
+            /// <code>x.[checked\_mul\_int][Self::checked_mul_int](y).[unwrap\_unchecked][Option::unwrap_unchecked]()</code>.
+            ///
+            /// If you’re just trying to avoid the panic in debug mode, then
+            /// **do not** use this. Instead, you’re looking for
+            /// [`wrapping_mul_int`][Self::wrapping_mul_int].
+            ///
+            /// # Safety
+            ///
+            /// This results in undefined behavior when
+            #[doc = if_signed_unsigned! {
+                $Signedness,
+                "`self`&nbsp;×&nbsp;`rhs`&nbsp;\\>&nbsp;[`MAX`][Self::MAX] or \
+`self`&nbsp;×&nbsp;`rhs`&nbsp;\\<&nbsp;[`MIN`][Self::MIN].",
+                "`self`&nbsp;×&nbsp;`rhs`&nbsp;\\>&nbsp;[`MAX`][Self::MAX]."
+            }]
+            pub const unsafe fn unchecked_mul_int(self, rhs: $Inner) -> $Self<FRAC> {
+                Self::from_bits(unsafe { self.to_bits().unchecked_mul(rhs) })
+            }
+
             if_signed! {
                 $Signedness;
 
