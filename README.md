@@ -102,6 +102,10 @@ The conversions supported cover the following cases.
 
 ## What’s new
 
+### Version 1.28.0 news (unreleased, not before 2024-07-25)
+
+  * The crate now requires rustc version 1.79.0 or later.
+
 ### Version 1.27.0 news (2024-03-27)
 
   * The [`hypot`][f-h-1-27] method was added to all fixed-point numbers, to the
@@ -237,7 +241,7 @@ crate, add it as a dependency inside [*Cargo.toml*]:
 fixed = "1.27"
 ```
 
-The *fixed* crate requires rustc version 1.71.0 or later.
+The *fixed* crate requires rustc version 1.79.0 or later.
 
 ## Optional features
 

@@ -5,6 +5,10 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
+# Version 1.28.0 news (unreleased, not before 2024-07-25)
+
+  * The crate now requires rustc version 1.79.0 or later.
+
 # Version 1.27.0 (2024-03-27)
 
   * The [`hypot`][f-h-1-27] method was added to all fixed-point numbers, to the
