@@ -211,7 +211,6 @@ assert_eq!(Fix::from_num(2.5).ceil(), Fix::from_num(3));
             pub const fn ceil(self) -> $Self<FRAC> {
                 let (ceil, overflow) = self.overflowing_ceil();
                 debug_assert!(!overflow, "overflow");
-                let _ = overflow;
                 ceil
             }
         }
@@ -258,7 +257,6 @@ assert_eq!(Fix::from_num(2.5).floor(), Fix::from_num(2));
             pub const fn floor(self) -> $Self<FRAC> {
                 let (floor, overflow) = self.overflowing_floor();
                 debug_assert!(!overflow, "overflow");
-                let _ = overflow;
                 floor
             }
         }
@@ -299,7 +297,6 @@ assert_eq!(Fix::from_num(2.5).round(), Fix::from_num(3));
             pub const fn round(self) -> $Self<FRAC> {
                 let (round, overflow) = self.overflowing_round();
                 debug_assert!(!overflow, "overflow");
-                let _ = overflow;
                 round
             }
         }
@@ -335,7 +332,6 @@ assert_eq!(Fix::from_num(3.5).round_ties_even(), Fix::from_num(4));
             pub const fn round_ties_even(self) -> $Self<FRAC> {
                 let (round, overflow) = self.overflowing_round_ties_even();
                 debug_assert!(!overflow, "overflow");
-                let _ = overflow;
                 round
             }
         }

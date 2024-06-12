@@ -4627,7 +4627,6 @@ macro_rules! impl_fixed {
             fn from_fixed<F: Fixed>(src: F) -> Self {
                 let (wrapped, overflow) = $Fixed::fixed_from_bits(src.to_bits(), F::FRAC_BITS);
                 debug_assert!(!overflow, "overflow");
-                let _ = overflow;
                 wrapped
             }
 
