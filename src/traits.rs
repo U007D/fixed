@@ -4461,7 +4461,6 @@ macro_rules! impl_fixed {
             fn from_fixed<F: Fixed>(src: F) -> Self {
                 let (wrapped, overflow) = FromFixed::overflowing_from_fixed(src);
                 debug_assert!(!overflow, "{} overflows", src);
-                let _ = overflow;
                 wrapped
             }
 
