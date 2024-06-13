@@ -35,9 +35,9 @@ struct Optional(bool);
 
 impl Environment {
     //  1. If optional feature is availble (both with and without flag), output:
-    //         cargo:rustc-cfg=<name>
+    //         cargo::rustc-cfg=<name>
     //  2. If feature is available with flag (both optional and not), output:
-    //         cargo:rustc-cfg=nightly_<name>
+    //         cargo::rustc-cfg=nightly_<name>
     //  3. If non-optional feature is not available, panic.
     fn check_feature(
         &self,
@@ -77,12 +77,14 @@ impl Environment {
             let status = cmd
                 .status()
                 .unwrap_or_else(|_| panic!("Unable to execute: {cmd:?}"));
+            println!("cargo::rustc-cfg=cfg({name})");
+            println!("cargo::rustc-cfg=cfg(nightly_{name})");
             if status.success() {
                 if optional.0 {
-                    println!("cargo:rustc-cfg={name}");
+                    println!("cargo::rustc-cfg={name}");
                 }
                 if *i == Iteration::Unstable {
-                    println!("cargo:rustc-cfg=nightly_{name}");
+                    println!("cargo::rustc-cfg=nightly_{name}");
                 }
                 found = true;
                 break;
