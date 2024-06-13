@@ -57,6 +57,9 @@ assert_eq!(Fix::LOG10_2, Fix::from_num(consts::LOG10_2));
                 /// 1/π = 0.318309…
                 pub const FRAC_1_PI: $Self<Frac> = Self::from_const(consts::FRAC_1_PI);
 
+                /// 1/√2π = 0.398942…
+                pub const FRAC_1_SQRT_2PI: $Self<Frac> = Self::from_const(consts::FRAC_1_SQRT_2PI);
+
                 /// log<sub>10</sub> 2 = 0.301029…
                 pub const LOG10_2: $Self<Frac> = Self::from_const(consts::LOG10_2);
 
@@ -323,6 +326,9 @@ let _ = Fix::E;
 
                 /// Archimedes’ constant, π = 3.14159…
                 pub const PI: $Self<Frac> = Self::from_const(consts::PI);
+
+                /// √2π = 2.50662…
+                pub const SQRT_2PI: $Self<Frac> = Self::from_const(consts::SQRT_2PI);
 
                 /// Euler’s number, e = 2.71828…
                 pub const E: $Self<Frac> = Self::from_const(consts::E);

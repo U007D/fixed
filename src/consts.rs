@@ -40,7 +40,7 @@ use rug::float::{Constant, Round};
 use rug::{Assign, Float};
 
 fn decimal_string(val: &Float, num_digits: usize) -> String {
-    let (sign, mut digits, exp) = val.to_sign_string_exp(10, Some(num_digits));
+    let (sign, mut digits, exp) = val.to_sign_string_exp_round(10, Some(num_digits), Round::Down);
     if let Some(exp) = exp {
         if exp <= 0 {
             let one_minus_exp = usize::try_from(1 - exp).unwrap();
@@ -108,7 +108,9 @@ fn main() {
     print("1/π", "FRAC_1_PI", 1 / float(Constant::Pi));
     print("2/π", "FRAC_2_PI", 2 / float(Constant::Pi));
     print("√π", "SQRT_PI", float(Constant::Pi).sqrt());
+    print("√2π", "SQRT_2PI", (float(Constant::Pi) * 2u32).sqrt());
     print("1/√π", "FRAC_1_SQRT_PI", 1 / float(Constant::Pi).sqrt());
+    print("1/√2π", "FRAC_1_SQRT_2PI", 1 / (float(Constant::Pi) * 2u32).sqrt());
     print("2/√π", "FRAC_2_SQRT_PI", 2 / float(Constant::Pi).sqrt());
     print("√2", "SQRT_2", float(2).sqrt());
     print("1/√2", "FRAC_1_SQRT_2", float(0.5).sqrt());
@@ -207,9 +209,17 @@ pub const FRAC_2_PI: U0F128 = U0F128::from_bits(0xA2F9_836E_4E44_1529_FC27_57D1_
 // SQRT_PI = 1.772453850905516027298167483341145182797...
 pub const SQRT_PI: U1F127 = U1F127::from_bits(0xE2DF_C48D_A77B_553C_E1D8_2906_AEDC_9C1F);
 
+/// √2π = 2.50662…
+// SQRT_2PI = 2.506628274631000502415765284811045253006...
+pub const SQRT_2PI: U2F126 = U2F126::from_bits(0xA06C_98FF_B138_2CB2_BE52_0FD7_3916_7717);
+
 /// 1/√π = 0.564189…
 // FRAC_1_SQRT_PI = 0.5641895835477562869480794515607725858440...
 pub const FRAC_1_SQRT_PI: U0F128 = U0F128::from_bits(0x906E_BA82_14DB_688D_71D4_8A7F_6BFE_C344);
+
+/// 1/√2π = 0.398942…
+// FRAC_1_SQRT_2PI = 0.3989422804014326779399460599343818684758...
+pub const FRAC_1_SQRT_2PI: U0F128 = U0F128::from_bits(0x6621_14CF_50D9_4234_3F2C_F140_2EAE_38BF);
 
 /// 2/√π = 1.12837…
 // FRAC_2_SQRT_PI = 1.128379167095512573896158903121545171688...
