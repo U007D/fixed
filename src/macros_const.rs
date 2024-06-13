@@ -175,6 +175,10 @@ let _ = Fix::LOG10_2;
                 /// 1/π = 0.318309…
                 pub const FRAC_1_PI: $Self<FRAC> = Self::from_const(consts::PREC_FRAC_1_PI);
 
+                /// 1/√2π = 0.398942…
+                pub const FRAC_1_SQRT_2PI: $Self<FRAC> =
+                    Self::from_const(consts::PREC_FRAC_1_SQRT_2PI);
+
                 /// log<sub>10</sub> 2 = 0.301029…
                 pub const LOG10_2: $Self<FRAC> = Self::from_const(consts::PREC_LOG10_2);
 
@@ -513,6 +517,9 @@ let _ = Fix::E;
 
                 /// Archimedes’ constant, π = 3.14159…
                 pub const PI: $Self<FRAC> = Self::from_const(consts::PI);
+
+                /// √2π = 2.50662…
+                pub const SQRT_2PI: $Self<FRAC> = Self::from_const(consts::SQRT_2PI);
 
                 /// Euler’s number, e = 2.71828…
                 pub const E: $Self<FRAC> = Self::from_const(consts::E);

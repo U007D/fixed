@@ -103,7 +103,13 @@ as-is, without any warranty. -->
         [`unwrapped_round_ties_even`][f-urte-1-28]
       * [`overflowing_round_ties_to_even`][f-ortte-1-28] renamed to
         [`overflowing_round_ties_even`][f-orte-1-28]
+  * The following constants were added to the [`consts`][c-1-28] module and as
+    associated constants to fixed-point types:
+      * [`SQRT_2PI`][c-r2p-1-28], [`FRAC_1_SQRT_2PI`][c-1r2p-1-28]
 
+[c-1-28]: https://docs.rs/fixed/~1.28/fixed/consts/index.html
+[c-1r2p-1-28]: https://docs.rs/fixed/~1.28/fixed/consts/constant.FRAC_1_SQRT_2PI.html
+[c-r2p-1-28]: https://docs.rs/fixed/~1.28/fixed/consts/constant.SQRT_2PI.html
 [f-crte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.checked_round_ties_even
 [f-crtte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.checked_round_ties_to_even
 [f-orte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.overflowing_round_ties_even
