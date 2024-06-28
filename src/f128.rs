@@ -19,6 +19,13 @@
 //!
 //! For constants related to the floating-point representation itself, see the
 //! associated constants defined directly on the [`F128`] type.
+//!
+//! # Planned deprecation
+//!
+//! This module will be deprecated when the [`f128` feature] is ready and
+//! stabilized.
+//!
+//! [`f128` feature]: https://github.com/rust-lang/rust/issues/116909
 
 use crate::F128;
 use core::{
@@ -53,6 +60,11 @@ pub(crate) mod private {
     ///
     /// *See also the <code>[fixed]::[f128]::[consts]</code> module.*
     ///
+    /// # Planned deprecation
+    ///
+    /// This struct will be deprecated when the [`f128` feature] is ready and
+    /// stabilized.
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -65,6 +77,7 @@ pub(crate) mod private {
     /// assert!(I16F16::from_num(0.5) < F128::ONE);
     /// ```
     ///
+    /// [`f128` feature]: https://github.com/rust-lang/rust/issues/116909
     /// [consts]: crate::f128::consts
     /// [f128]: crate::f128
     /// [fixed]: crate
