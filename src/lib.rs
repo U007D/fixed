@@ -243,8 +243,10 @@ major version of the crate.
 
  1. `az`, has no effect. Previously required for the [`az`] cast traits. Now
     these cast traits are always provided.
- 2. `f16`, has no effect. Previously required for conversion to/from [`f16`] and
-    [`bf16`]. Now these conversions are always provided.
+ 2. `f16`, has no effect. Previously required for conversion to/from
+    <code>[half]::[f16][half::f16]</code> and
+    <code>[half]::[bf16][half::bf16]</code>. Now these conversions are always
+    provided.
 
 ## License
 
@@ -293,9 +295,7 @@ shall be dual licensed as above, without any additional terms or conditions.
 [`U20F12`]: types::U20F12
 [`UpperExp`]: core::fmt::UpperExp
 [`UpperHex`]: core::fmt::UpperHex
-[`bf16`]: half::bf16
 [`checked_from_num`]: FixedI32::checked_from_num
-[`f16`]: half::f16
 [`from_num`]: FixedI32::from_num
 [`from_str_binary`]: FixedI32::from_str_binary
 [`from_str_hex`]: FixedI32::from_str_hex

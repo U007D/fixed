@@ -30,9 +30,10 @@ The other number can be:
   * An integer of type [`i8`], [`i16`], [`i32`], [`i64`], [`i128`],
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`].
-  * A floating-point number of type [`f16`], [`bf16`], [`f32`],
-    [`f64`] or [`F128`]. For this conversion, the method rounds
-    to the nearest, with ties rounding to even.
+  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
+    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`F128`]. For
+    this conversion, the method rounds to the nearest, with ties rounding to
+    even.
   * Any other number `src` for which [`ToFixed`] is implemented, in
     which case this method returns
     <code>src.[to\_fixed][ToFixed::to_fixed]\()</code>.
@@ -75,8 +76,6 @@ assert_eq!(Fix::from_num(",
             "0b111 << (4-2)));
 ```
 
-[`bf16`]: half::bf16
-[`f16`]: half::f16
 [`wrapping_from_num`]: Self::wrapping_from_num
 [finite]: f64::is_finite
 ";
@@ -98,9 +97,10 @@ The other number can be:
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`]. Any fractional bits are discarded, which rounds towards
     &minus;∞.
-  * A floating-point number of type [`f16`], [`bf16`], [`f32`],
-    [`f64`] or [`F128`]. For this conversion, the method rounds to
-    the nearest, with ties rounding to even.
+  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
+    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`F128`]. For
+    this conversion, the method rounds to the nearest, with ties rounding to
+    even.
   * Any other type `Dst` for which [`FromFixed`] is implemented, in
     which case this method returns
     <code>Dst::[from\_fixed][FromFixed::from_fixed]\(self)</code>.
@@ -147,8 +147,6 @@ assert_eq!(",
             "1.625f64);
 ```
 
-[`bf16`]: half::bf16
-[`f16`]: half::f16
 [`wrapping_to_num`]: Self::wrapping_to_num
 ";
             #[inline]
@@ -170,9 +168,10 @@ The other number can be:
   * An integer of type [`i8`], [`i16`], [`i32`], [`i64`], [`i128`],
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`].
-  * A floating-point number of type [`f16`], [`bf16`], [`f32`],
-    [`f64`] or [`F128`]. For this conversion, the method rounds to
-    the nearest, with ties rounding to even.
+  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
+    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`F128`]. For
+    this conversion, the method rounds to the nearest, with ties rounding to
+    even.
   * Any other number `src` for which [`ToFixed`] is implemented, in
     which case this method returns
     <code>src.[checked\_to\_fixed][ToFixed::checked_to_fixed]\()</code>.
@@ -218,9 +217,6 @@ assert_eq!(Fix::checked_from_num(",
 assert!(Fix::checked_from_num(2e38).is_none());
 assert!(Fix::checked_from_num(std::f64::NAN).is_none());
 ```
-
-[`bf16`]: half::bf16
-[`f16`]: half::f16
 ";
             #[inline]
             pub fn checked_from_num<Src: ToFixed>(src: Src) -> Option<$Self<Frac>> {
@@ -240,9 +236,10 @@ The other number can be:
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`]. Any fractional bits are discarded, which rounds towards
     &minus;∞.
-  * A floating-point number of type [`f16`], [`bf16`], [`f32`],
-    [`f64`] or [`F128`]. For this conversion, the method rounds to
-    the nearest, with ties rounding to even.
+  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
+    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`F128`]. For
+    this conversion, the method rounds to the nearest, with ties rounding to
+    even.
   * Any other type `Dst` for which [`FromFixed`] is implemented, in
     which case this method returns
     <code>Dst::[checked\_from\_fixed][FromFixed::checked_from_fixed]\(self)</code>.
@@ -287,9 +284,6 @@ assert!(AllInt::",
 let one_point_625 = Fix::from_bits(0b1101 << (4 - 3));
 assert_eq!(one_point_625.checked_to_num::<f32>(), Some(1.625f32));
 ```
-
-[`bf16`]: half::bf16
-[`f16`]: half::f16
 ";
             #[inline]
             #[must_use]
@@ -309,9 +303,10 @@ The other number can be:
   * An integer of type [`i8`], [`i16`], [`i32`], [`i64`], [`i128`],
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`].
-  * A floating-point number of type [`f16`], [`bf16`], [`f32`],
-    [`f64`] or [`F128`]. For this conversion, the method rounds to
-    the nearest, with ties rounding to even.
+  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
+    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`F128`]. For
+    this conversion, the method rounds to the nearest, with ties rounding to
+    even.
   * Any other number `src` for which [`ToFixed`] is implemented, in
     which case this method returns
     <code>src.[saturating\_to\_fixed][ToFixed::saturating_to_fixed]\()</code>.
@@ -361,8 +356,6 @@ assert_eq!(Fix::saturating_from_num(std::f64::NEG_INFINITY), Fix::MIN);
 ```
 
 [NaN]: f64::is_nan
-[`bf16`]: half::bf16
-[`f16`]: half::f16
 ";
             #[inline]
             #[track_caller]
@@ -383,9 +376,10 @@ The other number can be:
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`]. Any fractional bits are discarded, which rounds towards
     &minus;∞.
-  * A floating-point number of type [`f16`], [`bf16`], [`f32`],
-    [`f64`] or [`F128`]. For this conversion, the method rounds to
-    the nearest, with ties rounding to even.
+  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
+    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`F128`]. For
+    this conversion, the method rounds to the nearest, with ties rounding to
+    even.
   * Any other type `Dst` for which [`FromFixed`] is implemented, in
     which case this method returns
     <code>Dst::[saturating\_from\_fixed][FromFixed::saturating_from_fixed]\(self)</code>.
@@ -427,9 +421,6 @@ assert_eq!(",
 let one_point_625 = Fix::from_bits(0b1101 << (4 - 3));
 assert_eq!(one_point_625.saturating_to_num::<f32>(), 1.625f32);
 ```
-
-[`bf16`]: half::bf16
-[`f16`]: half::f16
 ";
             #[inline]
             #[must_use]
@@ -449,9 +440,10 @@ The other number can be:
   * An integer of type [`i8`], [`i16`], [`i32`], [`i64`], [`i128`],
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`].
-  * A floating-point number of type [`f16`], [`bf16`], [`f32`],
-    [`f64`] or [`F128`]. For this conversion, the method rounds to
-    the nearest, with ties rounding to even.
+  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
+    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`F128`]. For
+    this conversion, the method rounds to the nearest, with ties rounding to
+    even.
   * Any other number `src` for which [`ToFixed`] is implemented, in
     which case this method returns
     <code>src.[wrapping\_to\_fixed][ToFixed::wrapping_to_fixed]\()</code>.
@@ -492,8 +484,6 @@ let wrapped = Fix::from_bits(0b1100 << (", $n, " - 4));
 assert_eq!(Fix::wrapping_from_num(large), wrapped);
 ```
 
-[`bf16`]: half::bf16
-[`f16`]: half::f16
 [finite]: f64::is_finite
 ";
             #[inline]
@@ -515,9 +505,10 @@ The other number can be:
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`]. Any fractional bits are discarded, which rounds towards
     &minus;∞.
-  * A floating-point number of type [`f16`], [`bf16`], [`f32`],
-    [`f64`] or [`F128`]. For this conversion, the method rounds to
-    the nearest, with ties rounding to even.
+  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
+    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`F128`]. For
+    this conversion, the method rounds to the nearest, with ties rounding to
+    even.
   * Any other type `Dst` for which [`FromFixed`] is implemented, in
     which case this method returns
     <code>Dst::[wrapping\_from\_fixed][FromFixed::wrapping_from_fixed]\(self)</code>.
@@ -559,9 +550,6 @@ assert_eq!(",
 let one_point_625 = Fix::from_bits(0b1101 << (4 - 3));
 assert_eq!(one_point_625.wrapping_to_num::<f32>(), 1.625f32);
 ```
-
-[`bf16`]: half::bf16
-[`f16`]: half::f16
 ";
             #[inline]
             #[must_use]
@@ -581,9 +569,10 @@ The other number can be:
   * An integer of type [`i8`], [`i16`], [`i32`], [`i64`], [`i128`],
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`].
-  * A floating-point number of type [`f16`], [`bf16`], [`f32`],
-    [`f64`] or [`F128`]. For this conversion, the method rounds to
-    the nearest, with ties rounding to even.
+  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
+    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`F128`]. For
+    this conversion, the method rounds to the nearest, with ties rounding to
+    even.
   * Any other number `src` for which [`ToFixed`] is implemented, in
     which case this method returns
     <code>src.[unwrapped\_to\_fixed][ToFixed::unwrapped_to_fixed]\()</code>.
@@ -620,8 +609,6 @@ let too_large = ", stringify!($Self), "::<U0>::from_bits(0b1101 << (", $n, " - 7
 let _overflow = Fix::unwrapped_from_num(too_large);
 ```
 
-[`bf16`]: half::bf16
-[`f16`]: half::f16
 [finite]: f64::is_finite
 ";
             #[inline]
@@ -646,9 +633,10 @@ The other number can be:
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`]. Any fractional bits are discarded, which rounds towards
     &minus;∞.
-  * A floating-point number of type [`f16`], [`bf16`], [`f32`],
-    [`f64`] or [`F128`]. For this conversion, the method rounds to
-    the nearest, with ties rounding to even.
+  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
+    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`F128`]. For
+    this conversion, the method rounds to the nearest, with ties rounding to
+    even.
   * Any other type `Dst` for which [`FromFixed`] is implemented, in
     which case this method returns
     <code>Dst::[unwrapped\_from\_fixed][FromFixed::unwrapped_from_fixed]\(self)</code>.
@@ -683,9 +671,6 @@ type Fix = ", stringify!($Self), "<U4>;
 type TooFewIntBits = ", stringify!($Self), "<U6>;
 let _overflow = Fix::MAX.unwrapped_to_num::<TooFewIntBits>();
 ```
-
-[`bf16`]: half::bf16
-[`f16`]: half::f16
 ";
             #[inline]
             #[track_caller]
@@ -712,9 +697,10 @@ The other number can be:
   * An integer of type [`i8`], [`i16`], [`i32`], [`i64`], [`i128`],
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`].
-  * A floating-point number of type [`f16`], [`bf16`], [`f32`],
-    [`f64`] or [`F128`]. For this conversion, the method rounds to
-    the nearest, with ties rounding to even.
+  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
+    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`F128`]. For
+    this conversion, the method rounds to the nearest, with ties rounding to
+    even.
   * Any other number `src` for which [`ToFixed`] is implemented, in
     which case this method returns
     <code>src.[overflowing\_to\_fixed][ToFixed::overflowing_to_fixed]\()</code>.
@@ -757,8 +743,6 @@ let wrapped = Fix::from_bits(0b1100 << (", $n, " - 4));
 assert_eq!(Fix::overflowing_from_num(large), (wrapped, true));
 ```
 
-[`bf16`]: half::bf16
-[`f16`]: half::f16
 [finite]: f64::is_finite
 ";
             #[inline]
@@ -782,9 +766,10 @@ The other number can be:
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`]. Any fractional bits are discarded, which rounds towards
     &minus;∞.
-  * A floating-point number of type [`f16`], [`bf16`], [`f32`],
-    [`f64`] or [`F128`]. For this conversion, the method rounds to
-    the nearest, with ties rounding to even.
+  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
+    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`F128`]. For
+    this conversion, the method rounds to the nearest, with ties rounding to
+    even.
   * Any other type `Dst` for which [`FromFixed`] is implemented, in
     which case this method returns
     <code>Dst::[overflowing\_from\_fixed][FromFixed::overflowing_from_fixed]\(self)</code>.
@@ -828,9 +813,6 @@ assert_eq!(does_not_fit.overflowing_to_num::<",
 let one_point_625 = Fix::from_bits(0b1101 << (4 - 3));
 assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
 ```
-
-[`bf16`]: half::bf16
-[`f16`]: half::f16
 ";
             #[inline]
             #[must_use]

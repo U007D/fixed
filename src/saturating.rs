@@ -431,9 +431,11 @@ impl<F: Fixed> Saturating<F> {
     ///   * An integer of type [`i8`], [`i16`], [`i32`], [`i64`], [`i128`],
     ///     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     ///     [`usize`].
-    ///   * A floating-point number of type [`f16`], [`bf16`],
-    ///     [`f32`], [`f64`] or [`F128`]. For this conversion, the
-    ///     method rounds to the nearest, with ties rounding to even.
+    ///   * A floating-point number of type
+    ///     <code>[half]::[f16][half::f16]</code>,
+    ///     <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or
+    ///     [`F128`]. For this conversion, the method rounds to the nearest,
+    ///     with ties rounding to even.
     ///   * Any other number `src` for which [`ToFixed`] is
     ///     implemented, in which case this method returns
     ///     <code>[Saturating]\(src.[saturating\_to\_fixed][ToFixed::saturating_to_fixed]\())</code>.
@@ -469,8 +471,6 @@ impl<F: Fixed> Saturating<F> {
     /// ```
     ///
     /// [`F128`]: crate::F128
-    /// [`bf16`]: half::bf16
-    /// [`f16`]: half::f16
     #[inline]
     #[track_caller]
     pub fn from_num<Src: ToFixed>(src: Src) -> Saturating<F> {
@@ -488,9 +488,11 @@ impl<F: Fixed> Saturating<F> {
     ///     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     ///     [`usize`]. Any fractional bits are discarded, which rounds
     ///     towards &minus;∞.
-    ///   * A floating-point number of type [`f16`], [`bf16`],
-    ///     [`f32`], [`f64`] or [`F128`]. For this conversion, the
-    ///     method rounds to the nearest, with ties rounding to even.
+    ///   * A floating-point number of type
+    ///     <code>[half]::[f16][half::f16]</code>,
+    ///     <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or
+    ///     [`F128`]. For this conversion, the method rounds to the nearest,
+    ///     with ties rounding to even.
     ///   * Any other type `Dst` for which [`FromFixed`] is
     ///     implemented, in which case this method returns
     ///     <code>Dst::[saturating\_from\_fixed][FromFixed::saturating_from_fixed]\(self.0)</code>.
@@ -517,8 +519,6 @@ impl<F: Fixed> Saturating<F> {
     /// ```
     ///
     /// [`F128`]: crate::F128
-    /// [`bf16`]: half::bf16
-    /// [`f16`]: half::f16
     #[inline]
     pub fn to_num<Dst: FromFixed>(self) -> Dst {
         Dst::saturating_from_fixed(self.0)

@@ -330,8 +330,10 @@ major version of the crate.
 
  1. `az`, has no effect. Previously required for the [`az`] cast traits. Now
     these cast traits are always provided.
- 2. `f16`, has no effect. Previously required for conversion to/from [`f16`] and
-    [`bf16`]. Now these conversions are always provided.
+ 2. `f16`, has no effect. Previously required for conversion to/from
+    <code>[half]::[f16][half::f16]</code> and
+    <code>[half]::[bf16][half::bf16]</code>. Now these conversions are always
+    provided.
 
 ## License
 
@@ -400,10 +402,8 @@ shall be dual licensed as above, without any additional terms or conditions.
 [`UpperExp`]: https://doc.rust-lang.org/nightly/core/fmt/trait.UpperExp.html
 [`UpperHex`]: https://doc.rust-lang.org/nightly/core/fmt/trait.UpperHex.html
 [`az`]: https://docs.rs/az/^1/az/index.html
-[`bf16`]: https://docs.rs/half/^2/half/struct.bf16.html
 [`bytemuck`]: https://docs.rs/bytemuck/^1/bytemuck/index.html
 [`checked_from_num`]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.checked_from_num
-[`f16`]: https://docs.rs/half/^2/half/struct.f16.html
 [`from_num`]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.from_num
 [`from_str_binary`]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.from_str_binary
 [`from_str_hex`]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.from_str_hex
@@ -412,3 +412,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [`lit`]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.lit
 [`to_num`]: https://docs.rs/fixed/~1.27/fixed/struct.FixedI32.html#method.to_num
 [`u32`]: https://doc.rust-lang.org/nightly/core/primitive.u32.html
+[half::bf16]: https://docs.rs/half/^2/half/struct.bf16.html
+[half::f16]: https://docs.rs/half/^2/half/struct.f16.html
+[half]: https://docs.rs/half/^2/half/index.html
