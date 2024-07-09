@@ -209,9 +209,9 @@ pub trait FixedOptionalNum: Sealed {}
 /// [optional features]: crate#optional-features
 pub trait FixedOptionalNum: Sealed
 where
-    Self: Zero + Bounded,
+    Self: Zero + Bounded + Inv,
     Self: CheckedAdd + CheckedSub + CheckedNeg + CheckedMul,
-    Self: CheckedRem + CheckedShl + CheckedShr,
+    Self: CheckedDiv + CheckedRem + CheckedShl + CheckedShr,
     Self: SaturatingAdd + SaturatingSub + SaturatingMul,
     Self: WrappingAdd + WrappingSub + WrappingNeg + WrappingMul,
     Self: WrappingShl + WrappingShr,
