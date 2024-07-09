@@ -25,7 +25,7 @@ use crate::{
     FixedU64, FixedU8, F128,
 };
 use bytemuck::TransparentWrapper;
-use half::{bf16, f16};
+use half::{bf16 as half_bf16, f16 as half_f16};
 
 impl ToFixed for bool {
     /// Converts a [`bool`] to a fixed-point number.
@@ -491,8 +491,8 @@ when debug assertions are not enabled.
     };
 }
 
-impl_float! { f16, "half::f16", "{} overflows", |x| x }
-impl_float! { bf16, "bf16", "{} overflows", |x| x }
+impl_float! { half_f16, "half::f16", "{} overflows", |x| x }
+impl_float! { half_bf16, "half::bf16", "{} overflows", |x| x }
 impl_float! { f32, "f32", "{} overflows", |x| x }
 impl_float! { f64, "f64", "{} overflows", |x| x }
 impl_float! { F128, "F128", "F128::from_bits(0x{:032X}) overflows", |x: F128| x.to_bits() }

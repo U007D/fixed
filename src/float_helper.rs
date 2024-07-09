@@ -24,7 +24,7 @@ macro_rules! make_helper {
                 int_helper,
             };
             use core::cmp::Ordering;
-            $(use $path;)?
+            $(use $path as $Float;)?
 
             const PREC: u32 = $prec;
             const EXP_BIAS: i32 = (1 << (<$Bits>::BITS - PREC - 1)) - 1;
@@ -222,8 +222,8 @@ macro_rules! make_helper {
     };
 }
 
-make_helper! { f16(u16, i16, 11); use half::f16 }
-make_helper! { bf16(u16, i16, 8); use half::bf16 }
+make_helper! { half_f16(u16, i16, 11); use half::f16 }
+make_helper! { half_bf16(u16, i16, 8); use half::bf16 }
 make_helper! { f32(u32, i32, 24) }
 make_helper! { f64(u64, i64, 53) }
 make_helper! { F128(u128, i128, 113); use crate::F128 }

@@ -24,7 +24,7 @@ use crate::{
 };
 use core::cmp::Ordering;
 use core::ops::{Shl, Shr};
-use half::{bf16, f16};
+use half::{bf16 as half_bf16, f16 as half_f16};
 
 macro_rules! fixed_cmp_int {
     ($Fixed:ident, $Int:ident) => {
@@ -361,8 +361,8 @@ macro_rules! fixed_cmp_all {
         fixed_cmp_int! { $Fix, u64 }
         fixed_cmp_int! { $Fix, u128 }
         fixed_cmp_int! { $Fix, usize }
-        fixed_cmp_float! { $Fix($Inner), f16, u16 }
-        fixed_cmp_float! { $Fix($Inner), bf16, u16 }
+        fixed_cmp_float! { $Fix($Inner), half_f16, u16 }
+        fixed_cmp_float! { $Fix($Inner), half_bf16, u16 }
         fixed_cmp_float! { $Fix($Inner), f32, u32 }
         fixed_cmp_float! { $Fix($Inner), f64, u64 }
         fixed_cmp_float! { $Fix($Inner), F128, u128 }
