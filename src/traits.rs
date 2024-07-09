@@ -220,7 +220,7 @@ where
 {
 }
 
-#[cfg(any(not(feature = "serde"), feature = "serde-str"))]
+#[cfg(not(feature = "serde"))]
 /// This trait is used to provide supertraits to the [`Fixed`] trait depending
 /// on the crate’s [optional features], and should not be used directly.
 ///
@@ -230,7 +230,7 @@ where
 /// [optional features]: crate#optional-features
 pub trait FixedOptionalSerde: Sealed {}
 
-#[cfg(all(feature = "serde", not(feature = "serde-str")))]
+#[cfg(feature = "serde")]
 /// This trait is used to provide supertraits to the [`Fixed`] trait depending
 /// on the crate’s [optional features], and should not be used directly.
 ///
