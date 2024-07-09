@@ -31,11 +31,12 @@ x86_64-gnulinux:
     paths:
     - cargo/
   script:
-  - rustup toolchain install --profile minimal beta-$TARGET $MSRV-$TARGET
+  - rustup toolchain install --profile minimal beta-$TARGET $MSRV-$TARGET nightly-$TARGET
   - cargo +beta-$TARGET test --features "fail-on-warnings arbitrary borsh num-traits serde std"
   - cargo +beta-$TARGET test --release --features "fail-on-warnings arbitrary borsh num-traits serde std"
   - cargo +$MSRV-$TARGET test --lib --features "fail-on-warnings num-traits std"
   - cargo +$MSRV-$TARGET test --release --lib --features "fail-on-warnings num-traits std"
+  - cargo +nightly-$TARGET test --features "fail-on-warnings nightly-float"
   only:
   - ci
 
@@ -48,11 +49,12 @@ i686-gnulinux:
     paths:
     - cargo/
   script:
-  - rustup toolchain install --profile minimal beta-$TARGET $MSRV-$TARGET
+  - rustup toolchain install --profile minimal beta-$TARGET $MSRV-$TARGET nightly-$TARGET
   - cargo +beta-$TARGET test --features "fail-on-warnings arbitrary borsh num-traits serde std"
   - cargo +beta-$TARGET test --release --features "fail-on-warnings arbitrary borsh num-traits serde std"
   - cargo +$MSRV-$TARGET test --lib --features "fail-on-warnings num-traits std"
   - cargo +$MSRV-$TARGET test --release --lib --features "fail-on-warnings num-traits std"
+  - cargo +nightly-$TARGET test --features "fail-on-warnings nightly-float"
   only:
   - ci
 
