@@ -728,13 +728,13 @@ lossy_fixed_from_bool! { bool -> (FixedU128, FixedI128, 128) }
 // bf16 has minimum subnormal == 2 ^ -(126 + 7) => 133 fractional bits
 // f32 has minimum subnormal == 2 ^ -(126 + 23) => 149 fractional bits
 // f64 has minimum subnormal == 2 ^ -(1022 + 52) => 1074 fractional bits
-// F128 has minimum subnormal == 2 ^ -(16382 + 112) => 16494 fractional bits
+// f128 has minimum subnormal == 2 ^ -(16382 + 112) => 16494 fractional bits
 
 // f16 has maximum normal < 2 * 2 ^ 15 => 16 integer bits
 // bf16 has maximum normal < 2 * 2 ^ 127 => 128 integer bits
 // f32 has maximum normal < 2 * 2 ^ 127 => 128 integer bits
 // f64 has maximum normal < 2 * 2 ^ 1023 => 1024 integer bits
-// F128 has maximum normal < 2 * 2 ^ 16383 => 16384 integer bits
+// f128 has maximum normal < 2 * 2 ^ 16383 => 16384 integer bits
 
 macro_rules! float_from_fixed {
     (
@@ -923,9 +923,9 @@ int_to_float_lossy_lossless! { i32 as i32, FixedI32 -> half_bf16 half_f16 f16 f3
 int_to_float_lossy_lossless! { i64 as i64, FixedI64 -> half_bf16 half_f16 f16 f32 f64; f128 }
 int_to_float_lossy_lossless! { i128 as i128, FixedI128 -> half_bf16 half_f16 f16 f32 f64 f128; }
 #[cfg(target_pointer_width = "16")]
-int_to_float_lossy_lossless! { isize as i16, FixedI16 -> half_bf16 half_f16 f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { isize as i16, FixedI16 -> half_bf16 half_f16 f16 f32 f64 f128; }
 #[cfg(target_pointer_width = "32")]
-int_to_float_lossy_lossless! { isize as i32, FixedI32 -> half_bf16 half_f16 f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { isize as i32, FixedI32 -> half_bf16 half_f16 f16 f32 f64 f128; }
 #[cfg(target_pointer_width = "64")]
 int_to_float_lossy_lossless! { isize as i64, FixedI64 -> half_bf16 half_f16 f16 f32 f64 f128; }
 
