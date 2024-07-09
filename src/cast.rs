@@ -18,7 +18,7 @@ use crate::{
     FixedU8, F128,
 };
 use az::{Cast, CheckedCast, OverflowingCast, SaturatingCast, UnwrappedCast, WrappingCast};
-use half::{bf16, f16};
+use half::{bf16 as half_bf16, f16 as half_f16};
 
 macro_rules! cast {
     ($Src:ident($nbits_src:expr); $Dst:ident($nbits_dst:expr)) => {
@@ -186,7 +186,7 @@ macro_rules! cast_num {
             $Fixed($nbits);
             i8, i16, i32, i64, i128, isize,
             u8, u16, u32, u64, u128, usize,
-            f16, bf16, f32, f64, F128,
+            half_f16, half_bf16, f32, f64, F128,
         }
     )* };
 }

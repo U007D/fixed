@@ -34,7 +34,7 @@ use core::{
     num::FpCategory,
     ops::Neg,
 };
-use half::{bf16, f16};
+use half::{bf16 as half_bf16, f16 as half_f16};
 
 const PREC: u32 = 113;
 const EXP_BITS: u32 = u128::BITS - PREC;
@@ -806,8 +806,8 @@ macro_rules! from_float {
 
 from_float! { f64, u64 }
 from_float! { f32, u32 }
-from_float! { f16, u16 }
-from_float! { bf16, u16 }
+from_float! { half_f16, u16 }
+from_float! { half_bf16, u16 }
 
 /*
 ```rust
@@ -984,7 +984,7 @@ pub mod consts {
 #[cfg(test)]
 mod tests {
     use crate::{traits::FromFixed, F128};
-    use half::{bf16, f16};
+    use half::{bf16 as half_bf16, f16 as half_f16};
 
     // Apart from F128 include f16, bf16, f32, f64 as a sanity check for the tests.
 
@@ -1015,12 +1015,12 @@ mod tests {
     #[test]
     fn decimal_constants_f16() {
         let params = Params {
-            mantissa_digits: f16::MANTISSA_DIGITS,
-            min_exp: f16::MIN_EXP,
-            max_exp: f16::MAX_EXP,
-            digits: f16::DIGITS,
-            min_10_exp: f16::MIN_10_EXP,
-            max_10_exp: f16::MAX_10_EXP,
+            mantissa_digits: half_f16::MANTISSA_DIGITS,
+            min_exp: half_f16::MIN_EXP,
+            max_exp: half_f16::MAX_EXP,
+            digits: half_f16::DIGITS,
+            min_10_exp: half_f16::MIN_10_EXP,
+            max_10_exp: half_f16::MAX_10_EXP,
         };
         params.check();
     }
@@ -1028,12 +1028,12 @@ mod tests {
     #[test]
     fn decimal_constants_bf16() {
         let params = Params {
-            mantissa_digits: bf16::MANTISSA_DIGITS,
-            min_exp: bf16::MIN_EXP,
-            max_exp: bf16::MAX_EXP,
-            digits: bf16::DIGITS,
-            min_10_exp: bf16::MIN_10_EXP,
-            max_10_exp: bf16::MAX_10_EXP,
+            mantissa_digits: half_bf16::MANTISSA_DIGITS,
+            min_exp: half_bf16::MIN_EXP,
+            max_exp: half_bf16::MAX_EXP,
+            digits: half_bf16::DIGITS,
+            min_10_exp: half_bf16::MIN_10_EXP,
+            max_10_exp: half_bf16::MAX_10_EXP,
         };
         params.check();
     }
@@ -1178,27 +1178,28 @@ mod tests {
     #[test]
     fn from_f16() {
         // normal
-        assert_eq!(F128::from(f16::ONE), F128::ONE);
-        assert_eq!(F128::from(f16::NEG_ONE), F128::NEG_ONE);
+        assert_eq!(F128::from(half_f16::ONE), F128::ONE);
+        assert_eq!(F128::from(half_f16::NEG_ONE), F128::NEG_ONE);
         // infinity
-        assert_eq!(F128::from(f16::INFINITY), F128::INFINITY);
-        assert_eq!(F128::from(f16::NEG_INFINITY), F128::NEG_INFINITY);
+        assert_eq!(F128::from(half_f16::INFINITY), F128::INFINITY);
+        assert_eq!(F128::from(half_f16::NEG_INFINITY), F128::NEG_INFINITY);
         // NaN
-        assert!(F128::from(f16::NAN).is_nan());
+        assert!(F128::from(half_f16::NAN).is_nan());
         // zero
-        assert_eq!(F128::from(f16::ZERO), F128::ZERO);
-        assert_eq!(F128::from(f16::NEG_ZERO), F128::ZERO);
-        assert!(F128::from(f16::ZERO).is_sign_positive());
-        assert!(F128::from(f16::NEG_ZERO).is_sign_negative());
+        assert_eq!(F128::from(half_f16::ZERO), F128::ZERO);
+        assert_eq!(F128::from(half_f16::NEG_ZERO), F128::ZERO);
+        assert!(F128::from(half_f16::ZERO).is_sign_positive());
+        assert!(F128::from(half_f16::NEG_ZERO).is_sign_negative());
 
         // subnormal
         let exp_shift = F128::MANTISSA_DIGITS - 1;
         // minimum f16 positive subnormal = 2^(-13 - 11)
         // mantissa = 0
         // biased exponent = 16383 - 13 - 11
-        let exp = (F128::MAX_EXP - 1 + f16::MIN_EXP - f16::MANTISSA_DIGITS as i32) as u128;
+        let exp =
+            (F128::MAX_EXP - 1 + half_f16::MIN_EXP - half_f16::MANTISSA_DIGITS as i32) as u128;
         assert_eq!(
-            F128::from(f16::from_bits(1)),
+            F128::from(half_f16::from_bits(1)),
             F128::from_bits(exp << exp_shift)
         );
         // minimum f16 positive subnormal * 0b1011 = 0b1.011 * 2^(-13 - 11 + 3)
@@ -1207,7 +1208,7 @@ mod tests {
         let mantissa = 3u128 << (F128::MANTISSA_DIGITS - 1 - 3);
         let exp = exp + 3;
         assert_eq!(
-            F128::from(f16::from_bits((1 << 15) | 11)),
+            F128::from(half_f16::from_bits((1 << 15) | 11)),
             F128::from_bits((1 << 127) | (exp << exp_shift) | mantissa)
         );
     }
@@ -1215,27 +1216,28 @@ mod tests {
     #[test]
     fn from_bf16() {
         // normal
-        assert_eq!(F128::from(bf16::ONE), F128::ONE);
-        assert_eq!(F128::from(bf16::NEG_ONE), F128::NEG_ONE);
+        assert_eq!(F128::from(half_bf16::ONE), F128::ONE);
+        assert_eq!(F128::from(half_bf16::NEG_ONE), F128::NEG_ONE);
         // infinity
-        assert_eq!(F128::from(bf16::INFINITY), F128::INFINITY);
-        assert_eq!(F128::from(bf16::NEG_INFINITY), F128::NEG_INFINITY);
+        assert_eq!(F128::from(half_bf16::INFINITY), F128::INFINITY);
+        assert_eq!(F128::from(half_bf16::NEG_INFINITY), F128::NEG_INFINITY);
         // NaN
-        assert!(F128::from(bf16::NAN).is_nan());
+        assert!(F128::from(half_bf16::NAN).is_nan());
         // zero
-        assert_eq!(F128::from(bf16::ZERO), F128::ZERO);
-        assert_eq!(F128::from(bf16::NEG_ZERO), F128::ZERO);
-        assert!(F128::from(bf16::ZERO).is_sign_positive());
-        assert!(F128::from(bf16::NEG_ZERO).is_sign_negative());
+        assert_eq!(F128::from(half_bf16::ZERO), F128::ZERO);
+        assert_eq!(F128::from(half_bf16::NEG_ZERO), F128::ZERO);
+        assert!(F128::from(half_bf16::ZERO).is_sign_positive());
+        assert!(F128::from(half_bf16::NEG_ZERO).is_sign_negative());
 
         // subnormal
         let exp_shift = F128::MANTISSA_DIGITS - 1;
-        // minimum bf16 positive subnormal = 2^(-125 - 8)
+        // minimum half_bf16 positive subnormal = 2^(-125 - 8)
         // mantissa = 0
         // biased exponent = 16383 - 125 - 8
-        let exp = (F128::MAX_EXP - 1 + bf16::MIN_EXP - bf16::MANTISSA_DIGITS as i32) as u128;
+        let exp =
+            (F128::MAX_EXP - 1 + half_bf16::MIN_EXP - half_bf16::MANTISSA_DIGITS as i32) as u128;
         assert_eq!(
-            F128::from(bf16::from_bits(1)),
+            F128::from(half_bf16::from_bits(1)),
             F128::from_bits(exp << exp_shift)
         );
         // minimum bf16 positive subnormal * 0b1011 = 0b1.011 * 2^(-125 - 8 + 3)
@@ -1244,7 +1246,7 @@ mod tests {
         let mantissa = 3u128 << (F128::MANTISSA_DIGITS - 1 - 3);
         let exp = exp + 3;
         assert_eq!(
-            F128::from(bf16::from_bits((1 << 15) | 11)),
+            F128::from(half_bf16::from_bits((1 << 15) | 11)),
             F128::from_bits((1 << 127) | (exp << exp_shift) | mantissa)
         );
     }

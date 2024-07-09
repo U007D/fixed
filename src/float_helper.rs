@@ -23,7 +23,7 @@ macro_rules! make_helper {
             };
             use az::OverflowingCastFrom;
             use core::mem;
-            $(use $path;)?
+            $(use $path as $Float;)?
 
             // msb must be one
             pub fn from_neg_abs(
@@ -224,8 +224,8 @@ macro_rules! make_helper {
     };
 }
 
-make_helper! { f16(u16, i16); use half::f16 }
-make_helper! { bf16(u16, i16); use half::bf16 }
+make_helper! { half_f16(u16, i16); use half::f16 }
+make_helper! { half_bf16(u16, i16); use half::bf16 }
 make_helper! { f32(u32, i32) }
 make_helper! { f64(u64, i64) }
 make_helper! { F128(u128, i128); use crate::F128 }

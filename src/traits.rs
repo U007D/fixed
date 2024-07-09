@@ -49,7 +49,7 @@ use core::{
     },
     str::FromStr,
 };
-use half::{bf16, f16};
+use half::{bf16 as half_bf16, f16 as half_f16};
 #[cfg(feature = "num-traits")]
 use num_traits::{
     bounds::Bounded,
@@ -435,7 +435,7 @@ where
     Self: PartialOrd<i64> + PartialOrd<i128> + PartialOrd<isize>,
     Self: PartialOrd<u8> + PartialOrd<u16> + PartialOrd<u32>,
     Self: PartialOrd<u64> + PartialOrd<u128> + PartialOrd<usize>,
-    Self: PartialOrd<f16> + PartialOrd<bf16>,
+    Self: PartialOrd<half_f16> + PartialOrd<half_bf16>,
     Self: PartialOrd<f32> + PartialOrd<f64>,
     Self: PartialOrd<F128>,
     Self: FixedOptionalArbitrary,

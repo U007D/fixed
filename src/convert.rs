@@ -19,7 +19,7 @@ use crate::{
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8, F128,
 };
-use half::{bf16, f16};
+use half::{bf16 as half_bf16, f16 as half_f16};
 
 macro_rules! i_f_equivalent {
     ($Int:ident, $Fixed:ident) => {
@@ -764,7 +764,7 @@ macro_rules! float_from_fixed {
     };
 }
 
-float_from_fixed! { (FixedU8, FixedI8, 8) -> (f16, 11, 24, 16) }
+float_from_fixed! { (FixedU8, FixedI8, 8) -> (half_f16, 11, 24, 16) }
 float_from_fixed! { (FixedU8, FixedI8, 8) -> (f32, 24, 149, 128) }
 float_from_fixed! { (FixedU8, FixedI8, 8) -> (f64, 53, 1074, 1024) }
 float_from_fixed! { (FixedU8, FixedI8, 8) -> (F128, 113, 16494, 16384) }
@@ -805,7 +805,7 @@ macro_rules! fallible_float_from_fixed {
     };
 }
 
-fallible_float_from_fixed! { (FixedU8, FixedI8) -> f16 }
+fallible_float_from_fixed! { (FixedU8, FixedI8) -> half_f16 }
 fallible_float_from_fixed! { (FixedU8, FixedI8) -> f32 }
 fallible_float_from_fixed! { (FixedU8, FixedI8) -> f64 }
 fallible_float_from_fixed! { (FixedU8, FixedI8) -> F128 }
@@ -839,9 +839,9 @@ macro_rules! fallible_fixed_from_float {
         }
     };
 }
-fallible_fixed_from_float! { f16 -> (FixedI32, 32) }
-fallible_fixed_from_float! { f16 -> (FixedI64, 64) }
-fallible_fixed_from_float! { f16 -> (FixedI128, 128) }
+fallible_fixed_from_float! { half_f16 -> (FixedI32, 32) }
+fallible_fixed_from_float! { half_f16 -> (FixedI64, 64) }
+fallible_fixed_from_float! { half_f16 -> (FixedI128, 128) }
 
 macro_rules! lossy_float_from_fixed {
     ($Src:ident -> $Dst:ident) => {
@@ -861,8 +861,8 @@ macro_rules! lossy_float_from_fixed {
         lossy_float_from_fixed! { $SrcI -> $Dst }
     };
     ($SrcU:ident, $SrcI:ident) => {
-        lossy_float_from_fixed! { ($SrcU, $SrcI) -> f16 }
-        lossy_float_from_fixed! { ($SrcU, $SrcI) -> bf16 }
+        lossy_float_from_fixed! { ($SrcU, $SrcI) -> half_f16 }
+        lossy_float_from_fixed! { ($SrcU, $SrcI) -> half_bf16 }
         lossy_float_from_fixed! { ($SrcU, $SrcI) -> f32 }
         lossy_float_from_fixed! { ($SrcU, $SrcI) -> f64 }
         lossy_float_from_fixed! { ($SrcU, $SrcI) -> F128 }
@@ -916,29 +916,29 @@ macro_rules! int_to_float_lossy_lossless {
     };
 }
 
-int_to_float_lossy_lossless! { i8 as i8, FixedI8 -> bf16; f16 f32 f64 F128 }
-int_to_float_lossy_lossless! { i16 as i16, FixedI16 -> bf16 f16; f32 f64 F128 }
-int_to_float_lossy_lossless! { i32 as i32, FixedI32 -> bf16 f16 f32; f64 F128 }
-int_to_float_lossy_lossless! { i64 as i64, FixedI64 -> bf16 f16 f32 f64; F128 }
-int_to_float_lossy_lossless! { i128 as i128, FixedI128 -> bf16 f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { i8 as i8, FixedI8 -> half_bf16; half_f16 f32 f64 F128 }
+int_to_float_lossy_lossless! { i16 as i16, FixedI16 -> half_bf16 half_f16; f32 f64 F128 }
+int_to_float_lossy_lossless! { i32 as i32, FixedI32 -> half_bf16 half_f16 f32; f64 F128 }
+int_to_float_lossy_lossless! { i64 as i64, FixedI64 -> half_bf16 half_f16 f32 f64; F128 }
+int_to_float_lossy_lossless! { i128 as i128, FixedI128 -> half_bf16 half_f16 f32 f64 F128; }
 #[cfg(target_pointer_width = "16")]
-int_to_float_lossy_lossless! { isize as i16, FixedI16 -> bf16 f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { isize as i16, FixedI16 -> half_bf16 half_f16 f32 f64 F128; }
 #[cfg(target_pointer_width = "32")]
-int_to_float_lossy_lossless! { isize as i32, FixedI32 -> bf16 f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { isize as i32, FixedI32 -> half_bf16 half_f16 f32 f64 F128; }
 #[cfg(target_pointer_width = "64")]
-int_to_float_lossy_lossless! { isize as i64, FixedI64 -> bf16 f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { isize as i64, FixedI64 -> half_bf16 half_f16 f32 f64 F128; }
 
-int_to_float_lossy_lossless! { u8 as u8, FixedU8 -> bf16; f16 f32 f64 F128 }
-int_to_float_lossy_lossless! { u16 as u16, FixedU16 -> bf16 f16; f32 f64 F128 }
-int_to_float_lossy_lossless! { u32 as u32, FixedU32 -> bf16 f16 f32; f64 F128 }
-int_to_float_lossy_lossless! { u64 as u64, FixedU64 -> bf16 f16 f32 f64; F128 }
-int_to_float_lossy_lossless! { u128 as u128, FixedU128 -> bf16 f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { u8 as u8, FixedU8 -> half_bf16; half_f16 f32 f64 F128 }
+int_to_float_lossy_lossless! { u16 as u16, FixedU16 -> half_bf16 half_f16; f32 f64 F128 }
+int_to_float_lossy_lossless! { u32 as u32, FixedU32 -> half_bf16 half_f16 f32; f64 F128 }
+int_to_float_lossy_lossless! { u64 as u64, FixedU64 -> half_bf16 half_f16 f32 f64; F128 }
+int_to_float_lossy_lossless! { u128 as u128, FixedU128 -> half_bf16 half_f16 f32 f64 F128; }
 #[cfg(target_pointer_width = "16")]
-int_to_float_lossy_lossless! { usize as u16, FixedU16 -> bf16 f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { usize as u16, FixedU16 -> half_bf16 half_f16 f32 f64 F128; }
 #[cfg(target_pointer_width = "32")]
-int_to_float_lossy_lossless! { usize as u32, FixedU32 -> bf16 f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { usize as u32, FixedU32 -> half_bf16 half_f16 f32 f64 F128; }
 #[cfg(target_pointer_width = "64")]
-int_to_float_lossy_lossless! { usize as u64, FixedU64 -> bf16 f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { usize as u64, FixedU64 -> half_bf16 half_f16 f32 f64 F128; }
 
 macro_rules! into {
     ($Src:ty: $($Dst:ty),*) => { $(
@@ -1025,19 +1025,19 @@ macro_rules! lossy {
     };
 }
 
-into! { f16: f16 }
-lossy! { f16: bf16; src -> bf16::from_f32(src.into()) }
-into! { f16: f32, f64 }
+into! { half_f16: half_f16 }
+lossy! { half_f16: half_bf16; src -> half_bf16::from_f32(src.into()) }
+into! { half_f16: f32, f64 }
 
-lossy! { bf16: f16; src -> f16::from_f32(src.into()) }
-into! { bf16: bf16, f32, f64 }
+lossy! { half_bf16: half_f16; src -> half_f16::from_f32(src.into()) }
+into! { half_bf16: half_bf16, f32, f64 }
 
-lossy! { f32: f16; src -> f16::from_f32(src) }
-lossy! { f32: bf16; src -> bf16::from_f32(src) }
+lossy! { f32: half_f16; src -> half_f16::from_f32(src) }
+lossy! { f32: half_bf16; src -> half_bf16::from_f32(src) }
 into! { f32: f32, f64 }
 
-lossy! { f64: f16; src -> f16::from_f64(src) }
-lossy! { f64: bf16; src -> bf16::from_f64(src) }
+lossy! { f64: half_f16; src -> half_f16::from_f64(src) }
+lossy! { f64: half_bf16; src -> half_bf16::from_f64(src) }
 lossy! { f64: f32; src -> src as f32 }
 into! { f64: f64 }
 
@@ -1500,13 +1500,19 @@ mod tests {
 
     #[test]
     fn to_f16() {
-        use half::f16;
+        use half::f16 as half_f16;
         for u in 0x00..=0xff {
             let fu = U1F7::from_bits(u);
-            assert_eq!(fu.to_num::<f16>(), f16::from_f32(f32::from(u) / 128.0));
+            assert_eq!(
+                fu.to_num::<half_f16>(),
+                half_f16::from_f32(f32::from(u) / 128.0)
+            );
             let i = u as i8;
             let fi = I1F7::from_bits(i);
-            assert_eq!(fi.to_num::<f16>(), f16::from_f32(f32::from(i) / 128.0));
+            assert_eq!(
+                fi.to_num::<half_f16>(),
+                half_f16::from_f32(f32::from(i) / 128.0)
+            );
 
             for hi in &[
                 0u32,
@@ -1519,10 +1525,16 @@ mod tests {
             ] {
                 let uu = *hi | u32::from(u);
                 let fuu = U25F7::from_bits(uu);
-                assert_eq!(fuu.to_num::<f16>(), f16::from_f32(uu as f32 / 128.0));
+                assert_eq!(
+                    fuu.to_num::<half_f16>(),
+                    half_f16::from_f32(uu as f32 / 128.0)
+                );
                 let ii = uu as i32;
                 let fii = I25F7::from_bits(ii);
-                assert_eq!(fii.to_num::<f16>(), f16::from_f32(ii as f32 / 128.0));
+                assert_eq!(
+                    fii.to_num::<half_f16>(),
+                    half_f16::from_f32(ii as f32 / 128.0)
+                );
             }
 
             for hi in &[
@@ -1536,23 +1548,35 @@ mod tests {
             ] {
                 let uu = *hi | u128::from(u);
                 let fuu = U121F7::from_bits(uu);
-                assert_eq!(fuu.to_num::<f16>(), f16::from_f64(uu as f64 / 128.0));
+                assert_eq!(
+                    fuu.to_num::<half_f16>(),
+                    half_f16::from_f64(uu as f64 / 128.0)
+                );
                 let ii = uu as i128;
                 let fii = I121F7::from_bits(ii);
-                assert_eq!(fii.to_num::<f16>(), f16::from_f64(ii as f64 / 128.0));
+                assert_eq!(
+                    fii.to_num::<half_f16>(),
+                    half_f16::from_f64(ii as f64 / 128.0)
+                );
             }
         }
     }
 
     #[test]
-    fn to_bf16() {
-        use half::bf16;
+    fn to_half_bf16() {
+        use half::bf16 as half_bf16;
         for u in 0x00..=0xff {
             let fu = U1F7::from_bits(u);
-            assert_eq!(fu.to_num::<bf16>(), bf16::from_f32(f32::from(u) / 128.0));
+            assert_eq!(
+                fu.to_num::<half_bf16>(),
+                half_bf16::from_f32(f32::from(u) / 128.0)
+            );
             let i = u as i8;
             let fi = I1F7::from_bits(i);
-            assert_eq!(fi.to_num::<bf16>(), bf16::from_f32(f32::from(i) / 128.0));
+            assert_eq!(
+                fi.to_num::<half_bf16>(),
+                half_bf16::from_f32(f32::from(i) / 128.0)
+            );
 
             for hi in &[
                 0u32,
@@ -1565,10 +1589,16 @@ mod tests {
             ] {
                 let uu = *hi | u32::from(u);
                 let fuu = U25F7::from_bits(uu);
-                assert_eq!(fuu.to_num::<bf16>(), bf16::from_f32(uu as f32 / 128.0));
+                assert_eq!(
+                    fuu.to_num::<half_bf16>(),
+                    half_bf16::from_f32(uu as f32 / 128.0)
+                );
                 let ii = uu as i32;
                 let fii = I25F7::from_bits(ii);
-                assert_eq!(fii.to_num::<bf16>(), bf16::from_f32(ii as f32 / 128.0));
+                assert_eq!(
+                    fii.to_num::<half_bf16>(),
+                    half_bf16::from_f32(ii as f32 / 128.0)
+                );
             }
 
             for hi in &[
@@ -1582,10 +1612,16 @@ mod tests {
             ] {
                 let uu = *hi | u128::from(u);
                 let fuu = U121F7::from_bits(uu);
-                assert_eq!(fuu.to_num::<bf16>(), bf16::from_f64(uu as f64 / 128.0));
+                assert_eq!(
+                    fuu.to_num::<half_bf16>(),
+                    half_bf16::from_f64(uu as f64 / 128.0)
+                );
                 let ii = uu as i128;
                 let fii = I121F7::from_bits(ii);
-                assert_eq!(fii.to_num::<bf16>(), bf16::from_f64(ii as f64 / 128.0));
+                assert_eq!(
+                    fii.to_num::<half_bf16>(),
+                    half_bf16::from_f64(ii as f64 / 128.0)
+                );
             }
         }
     }
@@ -1751,124 +1787,157 @@ mod tests {
     fn lossy_f16() {
         use crate::traits::LossyFrom;
         use core::{f32, f64};
-        use half::f16;
+        use half::f16 as half_f16;
 
-        assert_eq!(f16::lossy_from(f32::NEG_INFINITY), f16::NEG_INFINITY);
-        assert!(f16::lossy_from(f32::NAN).is_nan());
-        assert_eq!(f16::lossy_from(1e-37f32), f16::ZERO);
+        assert_eq!(
+            half_f16::lossy_from(f32::NEG_INFINITY),
+            half_f16::NEG_INFINITY
+        );
+        assert!(half_f16::lossy_from(f32::NAN).is_nan());
+        assert_eq!(half_f16::lossy_from(1e-37f32), half_f16::ZERO);
         // -1.625 << 15 is 1 11110 1010000000 is FA80
-        assert_eq!(f16::lossy_from(-32768f32 * 1.625), f16::from_bits(0xFA80));
-        assert_eq!(f16::lossy_from(32768f32 * 2.), f16::INFINITY);
+        assert_eq!(
+            half_f16::lossy_from(-32768f32 * 1.625),
+            half_f16::from_bits(0xFA80)
+        );
+        assert_eq!(half_f16::lossy_from(32768f32 * 2.), half_f16::INFINITY);
         // 0x8020 is 0x1.004 << 15 is 0 11110 0000000001
         assert_eq!(
-            f16::lossy_from(f32::from(0x8020u16)),
-            f16::from_bits(0x7801)
+            half_f16::lossy_from(f32::from(0x8020u16)),
+            half_f16::from_bits(0x7801)
         );
         // 0x8030 is rounded to 0x8040 (ties to even)
         assert_eq!(
-            f16::lossy_from(f32::from(0x8030u16)),
-            f16::from_bits(0x7802)
+            half_f16::lossy_from(f32::from(0x8030u16)),
+            half_f16::from_bits(0x7802)
         );
         // 0x8050 is rounded to 0x8040 (ties to even)
         assert_eq!(
-            f16::lossy_from(f32::from(0x8050u16)),
-            f16::from_bits(0x7802)
+            half_f16::lossy_from(f32::from(0x8050u16)),
+            half_f16::from_bits(0x7802)
         );
         // 1.0 >> 24 is minimum non-zero subnormal 0 0000 0000000001
-        assert_eq!(f16::lossy_from((-24f32).exp2()), f16::from_bits(0x0001));
         assert_eq!(
-            f16::lossy_from((-24f32).exp2() * 0.5001),
-            f16::from_bits(0x0001)
+            half_f16::lossy_from((-24f32).exp2()),
+            half_f16::from_bits(0x0001)
         );
-        assert_eq!(f16::lossy_from((-24f32).exp2() * 0.5), f16::ZERO);
+        assert_eq!(
+            half_f16::lossy_from((-24f32).exp2() * 0.5001),
+            half_f16::from_bits(0x0001)
+        );
+        assert_eq!(half_f16::lossy_from((-24f32).exp2() * 0.5), half_f16::ZERO);
 
-        assert_eq!(f16::lossy_from(f64::NEG_INFINITY), f16::NEG_INFINITY);
-        assert!(f16::lossy_from(f64::NAN).is_nan());
-        assert_eq!(f16::lossy_from(1e-37f64), f16::ZERO);
+        assert_eq!(
+            half_f16::lossy_from(f64::NEG_INFINITY),
+            half_f16::NEG_INFINITY
+        );
+        assert!(half_f16::lossy_from(f64::NAN).is_nan());
+        assert_eq!(half_f16::lossy_from(1e-37f64), half_f16::ZERO);
         // -1.625 << 15 is 1 11110 1010000000 is FA80
-        assert_eq!(f16::lossy_from(-32768f64 * 1.625), f16::from_bits(0xFA80));
-        assert_eq!(f16::lossy_from(32768f64 * 2.), f16::INFINITY);
+        assert_eq!(
+            half_f16::lossy_from(-32768f64 * 1.625),
+            half_f16::from_bits(0xFA80)
+        );
+        assert_eq!(half_f16::lossy_from(32768f64 * 2.), half_f16::INFINITY);
         // 0x8020 is 0x1.004 << 15 is 0 11110 0000000001
         assert_eq!(
-            f16::lossy_from(f64::from(0x8020u16)),
-            f16::from_bits(0x7801)
+            half_f16::lossy_from(f64::from(0x8020u16)),
+            half_f16::from_bits(0x7801)
         );
         // 0x8030 is rounded to 0x8040 (ties to even)
         assert_eq!(
-            f16::lossy_from(f64::from(0x8030u16)),
-            f16::from_bits(0x7802)
+            half_f16::lossy_from(f64::from(0x8030u16)),
+            half_f16::from_bits(0x7802)
         );
         // 0x8050 is rounded to 0x8040 (ties to even)
         assert_eq!(
-            f16::lossy_from(f64::from(0x8050u16)),
-            f16::from_bits(0x7802)
+            half_f16::lossy_from(f64::from(0x8050u16)),
+            half_f16::from_bits(0x7802)
         );
         // 1.0 >> 24 is minimum non-zero subnormal 0 0000 0000000001
-        assert_eq!(f16::lossy_from((-24f64).exp2()), f16::from_bits(0x0001));
         assert_eq!(
-            f16::lossy_from((-24f64).exp2() * 0.5001),
-            f16::from_bits(0x0001)
+            half_f16::lossy_from((-24f64).exp2()),
+            half_f16::from_bits(0x0001)
         );
-        assert_eq!(f16::lossy_from((-24f32).exp2() * 0.5), f16::ZERO);
+        assert_eq!(
+            half_f16::lossy_from((-24f64).exp2() * 0.5001),
+            half_f16::from_bits(0x0001)
+        );
+        assert_eq!(half_f16::lossy_from((-24f32).exp2() * 0.5), half_f16::ZERO);
     }
 
     #[test]
-    fn lossy_bf16() {
+    fn lossy_half_bf16() {
         use crate::traits::LossyFrom;
         use core::{f32, f64};
-        use half::bf16;
+        use half::bf16 as half_bf16;
 
-        assert_eq!(bf16::lossy_from(f32::NEG_INFINITY), bf16::NEG_INFINITY);
-        assert!(bf16::lossy_from(f32::NAN).is_nan());
-        assert_eq!(bf16::lossy_from(f32::MIN_POSITIVE), bf16::MIN_POSITIVE);
+        assert_eq!(
+            half_bf16::lossy_from(f32::NEG_INFINITY),
+            half_bf16::NEG_INFINITY
+        );
+        assert!(half_bf16::lossy_from(f32::NAN).is_nan());
+        assert_eq!(
+            half_bf16::lossy_from(f32::MIN_POSITIVE),
+            half_bf16::MIN_POSITIVE
+        );
         // -1.625 << 127 is 1 11111110 1010000 is FF50
         assert_eq!(
-            bf16::lossy_from(127f32.exp2() * -1.625),
-            bf16::from_bits(0xFF50)
+            half_bf16::lossy_from(127f32.exp2() * -1.625),
+            half_bf16::from_bits(0xFF50)
         );
         // max is rounded up
-        assert_eq!(bf16::lossy_from(f32::MAX), bf16::INFINITY);
+        assert_eq!(half_bf16::lossy_from(f32::MAX), half_bf16::INFINITY);
         assert_eq!(
-            bf16::lossy_from(f32::from_bits(0x4175_7FFF)),
-            bf16::from_bits(0x4175)
+            half_bf16::lossy_from(f32::from_bits(0x4175_7FFF)),
+            half_bf16::from_bits(0x4175)
         );
         assert_eq!(
-            bf16::lossy_from(f32::from_bits(0x4175_8000)),
-            bf16::from_bits(0x4176)
+            half_bf16::lossy_from(f32::from_bits(0x4175_8000)),
+            half_bf16::from_bits(0x4176)
         );
         assert_eq!(
-            bf16::lossy_from(f32::from_bits(0x4175_8001)),
-            bf16::from_bits(0x4176)
+            half_bf16::lossy_from(f32::from_bits(0x4175_8001)),
+            half_bf16::from_bits(0x4176)
         );
         assert_eq!(
-            bf16::lossy_from(f32::from_bits(0x4176_7FFF)),
-            bf16::from_bits(0x4176)
+            half_bf16::lossy_from(f32::from_bits(0x4176_7FFF)),
+            half_bf16::from_bits(0x4176)
         );
         assert_eq!(
-            bf16::lossy_from(f32::from_bits(0x4176_8000)),
-            bf16::from_bits(0x4176)
+            half_bf16::lossy_from(f32::from_bits(0x4176_8000)),
+            half_bf16::from_bits(0x4176)
         );
         assert_eq!(
-            bf16::lossy_from(f32::from_bits(0x4176_8001)),
-            bf16::from_bits(0x4177)
+            half_bf16::lossy_from(f32::from_bits(0x4176_8001)),
+            half_bf16::from_bits(0x4177)
         );
 
-        assert_eq!(bf16::lossy_from(f64::NEG_INFINITY), bf16::NEG_INFINITY);
-        assert!(bf16::lossy_from(f64::NAN).is_nan());
-        assert_eq!(bf16::lossy_from(1e-100f64), bf16::ZERO);
+        assert_eq!(
+            half_bf16::lossy_from(f64::NEG_INFINITY),
+            half_bf16::NEG_INFINITY
+        );
+        assert!(half_bf16::lossy_from(f64::NAN).is_nan());
+        assert_eq!(half_bf16::lossy_from(1e-100f64), half_bf16::ZERO);
         // -1.625 << 127 is 1 11111110 1010000 is FF50
         assert_eq!(
-            bf16::lossy_from(127f64.exp2() * -1.625),
-            bf16::from_bits(0xFF50)
+            half_bf16::lossy_from(127f64.exp2() * -1.625),
+            half_bf16::from_bits(0xFF50)
         );
-        assert_eq!(bf16::lossy_from(128f64.exp2()), bf16::INFINITY);
+        assert_eq!(half_bf16::lossy_from(128f64.exp2()), half_bf16::INFINITY);
         // 1.0 >> 133 is minimum non-zero subnormal 0 0000000 0000001
-        assert_eq!(bf16::lossy_from((-133f64).exp2()), bf16::from_bits(0x0001));
         assert_eq!(
-            bf16::lossy_from((-133f64).exp2() * 0.5001),
-            bf16::from_bits(0x0001)
+            half_bf16::lossy_from((-133f64).exp2()),
+            half_bf16::from_bits(0x0001)
         );
-        assert_eq!(bf16::lossy_from((-133f32).exp2() * 0.5), bf16::ZERO);
+        assert_eq!(
+            half_bf16::lossy_from((-133f64).exp2() * 0.5001),
+            half_bf16::from_bits(0x0001)
+        );
+        assert_eq!(
+            half_bf16::lossy_from((-133f32).exp2() * 0.5),
+            half_bf16::ZERO
+        );
     }
 
     #[test]

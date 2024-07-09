@@ -21,7 +21,7 @@ use core::{
     cmp::Ordering,
     ops::{Shl, Shr},
 };
-use half::{bf16, f16};
+use half::{bf16 as half_bf16, f16 as half_f16};
 
 macro_rules! fixed_cmp_int {
     ($Fix:ident($nbits:expr), $Int:ident, $IntAs:ident, $IntFixed:ident) => {
@@ -368,8 +368,8 @@ macro_rules! fixed_cmp_prim {
         fixed_cmp_int! { $Fix($nbits), usize, u32, FixedU32 }
         #[cfg(target_pointer_width = "64")]
         fixed_cmp_int! { $Fix($nbits), usize, u64, FixedU64 }
-        fixed_cmp_float! { $Fix($nbits, $Inner), f16, u16 }
-        fixed_cmp_float! { $Fix($nbits, $Inner), bf16, u16 }
+        fixed_cmp_float! { $Fix($nbits, $Inner), half_f16, u16 }
+        fixed_cmp_float! { $Fix($nbits, $Inner), half_bf16, u16 }
         fixed_cmp_float! { $Fix($nbits, $Inner), f32, u32 }
         fixed_cmp_float! { $Fix($nbits, $Inner), f64, u64 }
         fixed_cmp_float! { $Fix($nbits, $Inner), F128, u128 }
@@ -391,7 +391,7 @@ fixed_cmp_prim! { FixedU128(128, u128) }
 mod tests {
     use crate::*;
     use core::cmp::Ordering;
-    use half::{bf16, f16};
+    use half::{bf16 as half_bf16, f16 as half_f16};
 
     #[test]
     fn cmp_signed() {
@@ -697,46 +697,46 @@ mod tests {
 
     #[test]
     fn f16_consts() {
-        assert_eq!(f16::ZERO, FixedI16::<8>::ZERO);
-        assert_eq!(f16::NEG_ZERO, FixedI16::<8>::ZERO);
-        assert_eq!(f16::ZERO, f16::NEG_ZERO);
-        assert_eq!(f16::ONE, FixedI16::<8>::ONE);
-        assert_eq!(f16::NEG_ONE, FixedI16::<8>::NEG_ONE);
+        assert_eq!(half_f16::ZERO, FixedI16::<8>::ZERO);
+        assert_eq!(half_f16::NEG_ZERO, FixedI16::<8>::ZERO);
+        assert_eq!(half_f16::ZERO, half_f16::NEG_ZERO);
+        assert_eq!(half_f16::ONE, FixedI16::<8>::ONE);
+        assert_eq!(half_f16::NEG_ONE, FixedI16::<8>::NEG_ONE);
 
         // min positive normal
-        assert_eq!(f16::MIN_POSITIVE, FixedI16::<14>::DELTA);
-        assert_eq!(f16::MIN_POSITIVE, FixedI16::<24>::from_bits(1 << 10));
+        assert_eq!(half_f16::MIN_POSITIVE, FixedI16::<14>::DELTA);
+        assert_eq!(half_f16::MIN_POSITIVE, FixedI16::<24>::from_bits(1 << 10));
         // max subnormal
-        let max_subnormal = f16::from_bits(f16::MIN_POSITIVE.to_bits() - 1);
+        let max_subnormal = half_f16::from_bits(half_f16::MIN_POSITIVE.to_bits() - 1);
         assert_eq!(max_subnormal, FixedI16::<24>::from_bits((1 << 10) - 1));
         // min positive subnormal
-        assert_eq!(f16::from_bits(1), FixedI16::<24>::DELTA);
+        assert_eq!(half_f16::from_bits(1), FixedI16::<24>::DELTA);
 
         // max, min
-        assert_eq!(f16::MAX, FixedI16::<-5>::from_bits((1 << 11) - 1));
-        assert_eq!(f16::MIN, FixedI16::<-5>::from_bits(1 - (1 << 11)));
+        assert_eq!(half_f16::MAX, FixedI16::<-5>::from_bits((1 << 11) - 1));
+        assert_eq!(half_f16::MIN, FixedI16::<-5>::from_bits(1 - (1 << 11)));
     }
 
     #[test]
     fn bf16_consts() {
-        assert_eq!(bf16::ZERO, FixedI16::<8>::ZERO);
-        assert_eq!(bf16::NEG_ZERO, FixedI16::<8>::ZERO);
-        assert_eq!(bf16::ZERO, bf16::NEG_ZERO);
-        assert_eq!(bf16::ONE, FixedI16::<8>::ONE);
-        assert_eq!(bf16::NEG_ONE, FixedI16::<8>::NEG_ONE);
+        assert_eq!(half_bf16::ZERO, FixedI16::<8>::ZERO);
+        assert_eq!(half_bf16::NEG_ZERO, FixedI16::<8>::ZERO);
+        assert_eq!(half_bf16::ZERO, half_bf16::NEG_ZERO);
+        assert_eq!(half_bf16::ONE, FixedI16::<8>::ONE);
+        assert_eq!(half_bf16::NEG_ONE, FixedI16::<8>::NEG_ONE);
 
         // min positive normal
-        assert_eq!(bf16::MIN_POSITIVE, FixedI16::<126>::DELTA);
-        assert_eq!(bf16::MIN_POSITIVE, FixedI16::<133>::from_bits(1 << 7));
+        assert_eq!(half_bf16::MIN_POSITIVE, FixedI16::<126>::DELTA);
+        assert_eq!(half_bf16::MIN_POSITIVE, FixedI16::<133>::from_bits(1 << 7));
         // max subnormal
-        let max_subnormal = bf16::from_bits(bf16::MIN_POSITIVE.to_bits() - 1);
+        let max_subnormal = half_bf16::from_bits(half_bf16::MIN_POSITIVE.to_bits() - 1);
         assert_eq!(max_subnormal, FixedI16::<133>::from_bits((1 << 7) - 1));
         // min positive subnormal
-        assert_eq!(bf16::from_bits(1), FixedI16::<133>::DELTA);
+        assert_eq!(half_bf16::from_bits(1), FixedI16::<133>::DELTA);
 
         // max, min
-        assert_eq!(bf16::MAX, FixedI16::<-120>::from_bits((1 << 8) - 1));
-        assert_eq!(bf16::MIN, FixedI16::<-120>::from_bits(1 - (1 << 8)));
+        assert_eq!(half_bf16::MAX, FixedI16::<-120>::from_bits((1 << 8) - 1));
+        assert_eq!(half_bf16::MIN, FixedI16::<-120>::from_bits(1 - (1 << 8)));
     }
 
     #[test]
