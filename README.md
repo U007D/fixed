@@ -203,6 +203,7 @@ The conversions supported cover the following cases.
   * The following constants were added to the [`consts`][c-1-28] module and as
     associated constants to fixed-point types:
       * [`SQRT_2PI`][c-r2p-1-28], [`FRAC_1_SQRT_2PI`][c-1r2p-1-28]
+  * The `nightly-float` [experimental feature][feat-exp-1-28] was added.
 
 [c-1-28]: https://docs.rs/fixed/~1.28/fixed/consts/index.html
 [c-1r2p-1-28]: https://docs.rs/fixed/~1.28/fixed/consts/constant.FRAC_1_SQRT_2PI.html
@@ -222,6 +223,7 @@ The conversions supported cover the following cases.
 [f-us-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.unchecked_sub
 [f-wrte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.wrapping_round_ties_even
 [f-wrtte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.wrapping_round_ties_to_even
+[feat-exp-1-28]: https://docs.rs/fixed/~1.28/fixed/index.html#experimental-optional-features
 [tf-1-28]: https://docs.rs/fixed/~1.28/fixed/traits/trait.Fixed.html
 
 ### Version 1.27.0 news (2024-03-27)
