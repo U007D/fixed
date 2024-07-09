@@ -370,6 +370,7 @@ macro_rules! fixed_cmp_prim {
         fixed_cmp_int! { $Fix($nbits), usize, u64, FixedU64 }
         fixed_cmp_float! { $Fix($nbits, $Inner), half_f16, u16 }
         fixed_cmp_float! { $Fix($nbits, $Inner), half_bf16, u16 }
+        fixed_cmp_float! { $Fix($nbits, $Inner), f16, u16 }
         fixed_cmp_float! { $Fix($nbits, $Inner), f32, u32 }
         fixed_cmp_float! { $Fix($nbits, $Inner), f64, u64 }
         fixed_cmp_float! { $Fix($nbits, $Inner), f128, u128 }

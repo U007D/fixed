@@ -29,10 +29,10 @@ The other number can be:
   * An integer of type [`i8`], [`i16`], [`i32`], [`i64`], [`i128`],
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`].
-  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
-    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`f128`]. For
-    this conversion, the method rounds to the nearest, with ties rounding to
-    even.
+  * A floating-point number of type [`f16`], [`f32`], [`f64`], [`f128`],
+    <code>[half]::[f16][half::f16]</code> or
+    <code>[half]::[bf16][half::bf16]</code>. For this conversion, the method
+    rounds to the nearest, with ties rounding to even.
   * Any other number `src` for which [`ToFixed`] is implemented, in
     which case this method returns
     <code>src.[to\_fixed][ToFixed::to_fixed]\()</code>.
@@ -99,10 +99,10 @@ The other number can be:
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`]. Any fractional bits are discarded, which rounds towards
     &minus;∞.
-  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
-    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`f128`]. For
-    this conversion, the method rounds to the nearest, with ties rounding to
-    even.
+  * A floating-point number of type [`f16`], [`f32`], [`f64`], [`f128`],
+    <code>[half]::[f16][half::f16]</code> or
+    <code>[half]::[bf16][half::bf16]</code>. For this conversion, the method
+    rounds to the nearest, with ties rounding to even.
   * Any other type `Dst` for which [`FromFixed`] is implemented, in
     which case this method returns
     <code>Dst::[from\_fixed][FromFixed::from_fixed]\(self)</code>.
@@ -173,10 +173,10 @@ The other number can be:
   * An integer of type [`i8`], [`i16`], [`i32`], [`i64`], [`i128`],
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`].
-  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
-    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`f128`]. For
-    this conversion, the method rounds to the nearest, with ties rounding to
-    even.
+  * A floating-point number of type [`f16`], [`f32`], [`f64`], [`f128`],
+    <code>[half]::[f16][half::f16]</code> or
+    <code>[half]::[bf16][half::bf16]</code>. For this conversion, the method
+    rounds to the nearest, with ties rounding to even.
   * Any other number `src` for which [`ToFixed`] is implemented, in
     which case this method returns
     <code>src.[checked\_to\_fixed][ToFixed::checked_to_fixed]\()</code>.
@@ -240,10 +240,10 @@ The other number can be:
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`]. Any fractional bits are discarded, which rounds towards
     &minus;∞.
-  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
-    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`f128`]. For
-    this conversion, the method rounds to the nearest, with ties rounding to
-    even.
+  * A floating-point number of type [`f16`], [`f32`], [`f64`], [`f128`],
+    <code>[half]::[f16][half::f16]</code> or
+    <code>[half]::[bf16][half::bf16]</code>. For this conversion, the method
+    rounds to the nearest, with ties rounding to even.
   * Any other type `Dst` for which [`FromFixed`] is implemented, in
     which case this method returns
     <code>Dst::[checked\_from\_fixed][FromFixed::checked_from_fixed]\(self)</code>.
@@ -306,10 +306,10 @@ The other number can be:
   * An integer of type [`i8`], [`i16`], [`i32`], [`i64`], [`i128`],
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`].
-  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
-    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`f128`]. For
-    this conversion, the method rounds to the nearest, with ties rounding to
-    even.
+  * A floating-point number of type [`f16`], [`f32`], [`f64`], [`f128`],
+    <code>[half]::[f16][half::f16]</code> or
+    <code>[half]::[bf16][half::bf16]</code>. For this conversion, the method
+    rounds to the nearest, with ties rounding to even.
   * Any other number `src` for which [`ToFixed`] is implemented, in
     which case this method returns
     <code>src.[saturating\_to\_fixed][ToFixed::saturating_to_fixed]\()</code>.
@@ -378,10 +378,10 @@ The other number can be:
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`]. Any fractional bits are discarded, which rounds towards
     &minus;∞.
-  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
-    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`f128`]. For
-    this conversion, the method rounds to the nearest, with ties rounding to
-    even.
+  * A floating-point number of type [`f16`], [`f32`], [`f64`], [`f128`],
+    <code>[half]::[f16][half::f16]</code> or
+    <code>[half]::[bf16][half::bf16]</code>. For this conversion, the method
+    rounds to the nearest, with ties rounding to even.
   * Any other type `Dst` for which [`FromFixed`] is implemented, in
     which case this method returns
     <code>Dst::[saturating\_from\_fixed][FromFixed::saturating_from_fixed]\(self)</code>.
@@ -441,10 +441,10 @@ The other number can be:
   * An integer of type [`i8`], [`i16`], [`i32`], [`i64`], [`i128`],
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`].
-  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
-    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`f128`]. For
-    this conversion, the method rounds to the nearest, with ties rounding to
-    even.
+  * A floating-point number of type [`f16`], [`f32`], [`f64`], [`f128`],
+    <code>[half]::[f16][half::f16]</code> or
+    <code>[half]::[bf16][half::bf16]</code>. For this conversion, the method
+    rounds to the nearest, with ties rounding to even.
   * Any other number `src` for which [`ToFixed`] is implemented, in
     which case this method returns
     <code>src.[wrapping\_to\_fixed][ToFixed::wrapping_to_fixed]\()</code>.
@@ -505,10 +505,10 @@ The other number can be:
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`]. Any fractional bits are discarded, which rounds towards
     &minus;∞.
-  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
-    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`f128`]. For
-    this conversion, the method rounds to the nearest, with ties rounding to
-    even.
+  * A floating-point number of type [`f16`], [`f32`], [`f64`], [`f128`],
+    <code>[half]::[f16][half::f16]</code> or
+    <code>[half]::[bf16][half::bf16]</code>. For this conversion, the method
+    rounds to the nearest, with ties rounding to even.
   * Any other type `Dst` for which [`FromFixed`] is implemented, in
     which case this method returns
     <code>Dst::[wrapping\_from\_fixed][FromFixed::wrapping_from_fixed]\(self)</code>.
@@ -568,10 +568,10 @@ The other number can be:
   * An integer of type [`i8`], [`i16`], [`i32`], [`i64`], [`i128`],
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`].
-  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
-    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`f128`]. For
-    this conversion, the method rounds to the nearest, with ties rounding to
-    even.
+  * A floating-point number of type [`f16`], [`f32`], [`f64`], [`f128`],
+    <code>[half]::[f16][half::f16]</code> or
+    <code>[half]::[bf16][half::bf16]</code>. For this conversion, the method
+    rounds to the nearest, with ties rounding to even.
   * Any other number `src` for which [`ToFixed`] is implemented, in
     which case this method returns
     <code>src.[unwrapped\_to\_fixed][ToFixed::unwrapped_to_fixed]\()</code>.
@@ -632,10 +632,10 @@ The other number can be:
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`]. Any fractional bits are discarded, which rounds towards
     &minus;∞.
-  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
-    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`f128`]. For
-    this conversion, the method rounds to the nearest, with ties rounding to
-    even.
+  * A floating-point number of type [`f16`], [`f32`], [`f64`], [`f128`],
+    <code>[half]::[f16][half::f16]</code> or
+    <code>[half]::[bf16][half::bf16]</code>. For this conversion, the method
+    rounds to the nearest, with ties rounding to even.
   * Any other type `Dst` for which [`FromFixed`] is implemented, in
     which case this method returns
     <code>Dst::[unwrapped\_from\_fixed][FromFixed::unwrapped_from_fixed]\(self)</code>.
@@ -696,10 +696,10 @@ The other number can be:
   * An integer of type [`i8`], [`i16`], [`i32`], [`i64`], [`i128`],
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`].
-  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
-    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`f128`]. For
-    this conversion, the method rounds to the nearest, with ties rounding to
-    even.
+  * A floating-point number of type [`f16`], [`f32`], [`f64`], [`f128`],
+    <code>[half]::[f16][half::f16]</code> or
+    <code>[half]::[bf16][half::bf16]</code>. For this conversion, the method
+    rounds to the nearest, with ties rounding to even.
   * Any other number `src` for which [`ToFixed`] is implemented, in
     which case this method returns
     <code>src.[overflowing\_to\_fixed][ToFixed::overflowing_to_fixed]\()</code>.
@@ -764,10 +764,10 @@ The other number can be:
     [`isize`], [`u8`], [`u16`], [`u32`], [`u64`], [`u128`], or
     [`usize`]. Any fractional bits are discarded, which rounds towards
     &minus;∞.
-  * A floating-point number of type <code>[half]::[f16][half::f16]</code>,
-    <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or [`f128`]. For
-    this conversion, the method rounds to the nearest, with ties rounding to
-    even.
+  * A floating-point number of type [`f16`], [`f32`], [`f64`], [`f128`],
+    <code>[half]::[f16][half::f16]</code> or
+    <code>[half]::[bf16][half::bf16]</code>. For this conversion, the method
+    rounds to the nearest, with ties rounding to even.
   * Any other type `Dst` for which [`FromFixed`] is implemented, in
     which case this method returns
     <code>Dst::[overflowing\_from\_fixed][FromFixed::overflowing_from_fixed]\(self)</code>.

@@ -356,9 +356,7 @@ shall be dual licensed as above, without any additional terms or conditions.
 [`U20F12`]: types::U20F12
 [`UpperExp`]: core::fmt::UpperExp
 [`UpperHex`]: core::fmt::UpperHex
-[`bf16`]: half::bf16
 [`checked_from_num`]: FixedI32::checked_from_num
-[`f16`]: half::f16
 [`from_num`]: FixedI32::from_num
 [`from_str_binary`]: FixedI32::from_str_binary
 [`from_str_hex`]: FixedI32::from_str_hex
@@ -411,7 +409,7 @@ PC9zdmc+Cg==
 #![doc(test(attr(deny(warnings))))]
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
 #![feature(generic_const_exprs)]
-#![feature(f128)]
+#![feature(f16, f128)]
 #![allow(incomplete_features)]
 
 #[cfg(all(not(feature = "std"), test))]

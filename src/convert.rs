@@ -863,6 +863,7 @@ macro_rules! lossy_float_from_fixed {
     ($SrcU:ident, $SrcI:ident) => {
         lossy_float_from_fixed! { ($SrcU, $SrcI) -> half_f16 }
         lossy_float_from_fixed! { ($SrcU, $SrcI) -> half_bf16 }
+        lossy_float_from_fixed! { ($SrcU, $SrcI) -> f16 }
         lossy_float_from_fixed! { ($SrcU, $SrcI) -> f32 }
         lossy_float_from_fixed! { ($SrcU, $SrcI) -> f64 }
         lossy_float_from_fixed! { ($SrcU, $SrcI) -> f128 }
@@ -916,29 +917,29 @@ macro_rules! int_to_float_lossy_lossless {
     };
 }
 
-int_to_float_lossy_lossless! { i8 as i8, FixedI8 -> half_bf16; half_f16 f32 f64 f128 }
-int_to_float_lossy_lossless! { i16 as i16, FixedI16 -> half_bf16 half_f16; f32 f64 f128 }
-int_to_float_lossy_lossless! { i32 as i32, FixedI32 -> half_bf16 half_f16 f32; f64 f128 }
-int_to_float_lossy_lossless! { i64 as i64, FixedI64 -> half_bf16 half_f16 f32 f64; f128 }
-int_to_float_lossy_lossless! { i128 as i128, FixedI128 -> half_bf16 half_f16 f32 f64 f128; }
+int_to_float_lossy_lossless! { i8 as i8, FixedI8 -> half_bf16; half_f16 f16 f32 f64 f128 }
+int_to_float_lossy_lossless! { i16 as i16, FixedI16 -> half_bf16 half_f16 f16; f32 f64 f128 }
+int_to_float_lossy_lossless! { i32 as i32, FixedI32 -> half_bf16 half_f16 f16 f32; f64 f128 }
+int_to_float_lossy_lossless! { i64 as i64, FixedI64 -> half_bf16 half_f16 f16 f32 f64; f128 }
+int_to_float_lossy_lossless! { i128 as i128, FixedI128 -> half_bf16 half_f16 f16 f32 f64 f128; }
 #[cfg(target_pointer_width = "16")]
-int_to_float_lossy_lossless! { isize as i16, FixedI16 -> half_bf16 half_f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { isize as i16, FixedI16 -> half_bf16 half_f16 f16 f32 f64 F128; }
 #[cfg(target_pointer_width = "32")]
-int_to_float_lossy_lossless! { isize as i32, FixedI32 -> half_bf16 half_f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { isize as i32, FixedI32 -> half_bf16 half_f16 f16 f32 f64 F128; }
 #[cfg(target_pointer_width = "64")]
-int_to_float_lossy_lossless! { isize as i64, FixedI64 -> half_bf16 half_f16 f32 f64 f128; }
+int_to_float_lossy_lossless! { isize as i64, FixedI64 -> half_bf16 half_f16 f16 f32 f64 f128; }
 
-int_to_float_lossy_lossless! { u8 as u8, FixedU8 -> half_bf16; half_f16 f32 f64 f128 }
-int_to_float_lossy_lossless! { u16 as u16, FixedU16 -> half_bf16 half_f16; f32 f64 f128 }
-int_to_float_lossy_lossless! { u32 as u32, FixedU32 -> half_bf16 half_f16 f32; f64 f128 }
-int_to_float_lossy_lossless! { u64 as u64, FixedU64 -> half_bf16 half_f16 f32 f64; f128 }
-int_to_float_lossy_lossless! { u128 as u128, FixedU128 -> half_bf16 half_f16 f32 f64 f128; }
+int_to_float_lossy_lossless! { u8 as u8, FixedU8 -> half_bf16; half_f16 f16 f32 f64 f128 }
+int_to_float_lossy_lossless! { u16 as u16, FixedU16 -> half_bf16 half_f16 f16; f32 f64 f128 }
+int_to_float_lossy_lossless! { u32 as u32, FixedU32 -> half_bf16 half_f16 f16 f32; f64 f128 }
+int_to_float_lossy_lossless! { u64 as u64, FixedU64 -> half_bf16 half_f16 f16 f32 f64; f128 }
+int_to_float_lossy_lossless! { u128 as u128, FixedU128 -> half_bf16 half_f16 f16 f32 f64 f128; }
 #[cfg(target_pointer_width = "16")]
-int_to_float_lossy_lossless! { usize as u16, FixedU16 -> half_bf16 half_f16 f32 f64 f128; }
+int_to_float_lossy_lossless! { usize as u16, FixedU16 -> half_bf16 half_f16 f16 f32 f64 f128; }
 #[cfg(target_pointer_width = "32")]
-int_to_float_lossy_lossless! { usize as u32, FixedU32 -> half_bf16 half_f16 f32 f64 f128; }
+int_to_float_lossy_lossless! { usize as u32, FixedU32 -> half_bf16 half_f16 f16 f32 f64 f128; }
 #[cfg(target_pointer_width = "64")]
-int_to_float_lossy_lossless! { usize as u64, FixedU64 -> half_bf16 half_f16 f32 f64 f128; }
+int_to_float_lossy_lossless! { usize as u64, FixedU64 -> half_bf16 half_f16 f16 f32 f64 f128; }
 
 macro_rules! into {
     ($Src:ty: $($Dst:ty),*) => { $(
@@ -1032,14 +1033,24 @@ into! { half_f16: f32, f64 }
 lossy! { half_bf16: half_f16; src -> half_f16::from_f32(src.into()) }
 into! { half_bf16: half_bf16, f32, f64 }
 
+// From<f16> is not implemented for f32
+into! { f16: f16, f64, f128 }
+
 lossy! { f32: half_f16; src -> half_f16::from_f32(src) }
 lossy! { f32: half_bf16; src -> half_bf16::from_f32(src) }
-into! { f32: f32, f64 }
+lossy! { f32: f16; src -> src as f16 }
+into! { f32: f32, f64, f128 }
 
 lossy! { f64: half_f16; src -> half_f16::from_f64(src) }
 lossy! { f64: half_bf16; src -> half_bf16::from_f64(src) }
+lossy! { f64: f16; src -> src as f16 }
 lossy! { f64: f32; src -> src as f32 }
-into! { f64: f64 }
+into! { f64: f64, f128 }
+
+lossy! { f128: f16; src -> src as f16 }
+lossy! { f128: f32; src -> src as f32 }
+lossy! { f128: f64; src -> src as f64 }
+into! { f128: f128 }
 
 /// These are doc tests that should not appear in the docs, but are
 /// useful as doc tests can check to ensure compilation failure.

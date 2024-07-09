@@ -186,7 +186,7 @@ macro_rules! cast_num {
             $Fixed($nbits);
             i8, i16, i32, i64, i128, isize,
             u8, u16, u32, u64, u128, usize,
-            half_f16, half_bf16, f32, f64, f128,
+            half_f16, half_bf16, f16, f32, f64, f128,
         }
     )* };
 }

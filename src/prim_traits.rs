@@ -616,6 +616,7 @@ when debug assertions are not enabled.
 
 impl_float! { half_f16, i16, u16 }
 impl_float! { half_bf16, i16, u16 }
+impl_float! { f16, i16, u16 }
 impl_float! { f32, i32, u32 }
 impl_float! { f64, i64, u64 }
 impl_float! { f128, i128, u128 }
