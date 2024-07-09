@@ -361,10 +361,14 @@ macro_rules! fixed_cmp_all {
         fixed_cmp_int! { $Fix, u64 }
         fixed_cmp_int! { $Fix, u128 }
         fixed_cmp_int! { $Fix, usize }
+        #[cfg(feature = "nightly-float")]
+        fixed_cmp_float! { $Fix($Inner), f16, u16 }
         fixed_cmp_float! { $Fix($Inner), half_f16, u16 }
         fixed_cmp_float! { $Fix($Inner), half_bf16, u16 }
         fixed_cmp_float! { $Fix($Inner), f32, u32 }
         fixed_cmp_float! { $Fix($Inner), f64, u64 }
+        #[cfg(feature = "nightly-float")]
+        fixed_cmp_float! { $Fix($Inner), f128, u128 }
         fixed_cmp_float! { $Fix($Inner), F128, u128 }
         fixed_cmp_float! { $Fix($Inner), F128Bits, u128 }
     };

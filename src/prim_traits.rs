@@ -491,9 +491,13 @@ when debug assertions are not enabled.
     };
 }
 
+#[cfg(feature = "nightly-float")]
+impl_float! { f16, "f16", "f16::from_bits(0x{:04X}) overflows", |x: f16| x.to_bits() }
 impl_float! { half_f16, "half::f16", "{} overflows", |x| x }
 impl_float! { half_bf16, "half::bf16", "{} overflows", |x| x }
 impl_float! { f32, "f32", "{} overflows", |x| x }
 impl_float! { f64, "f64", "{} overflows", |x| x }
+#[cfg(feature = "nightly-float")]
+impl_float! { f128, "f128", "f128::from_bits(0x{:032X}) overflows", |x: f128| x.to_bits() }
 impl_float! { F128, "F128", "F128::from_bits(0x{:032X}) overflows", |x: F128| x.to_bits() }
 impl_float! { F128Bits, "f64", "F128Bits({}) overflows", |x: F128Bits| x.0 }

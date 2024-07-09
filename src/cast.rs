@@ -189,6 +189,8 @@ macro_rules! cast_num {
             u8, u16, u32, u64, u128, usize,
             half_f16, half_bf16, f32, f64, F128, F128Bits,
         }
+        #[cfg(feature = "nightly-float")]
+        cast_num! { $Fixed($LeEqU); f16, f128, }
     )* };
 }
 

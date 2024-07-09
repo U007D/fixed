@@ -801,10 +801,26 @@ macro_rules! from_float {
     };
 }
 
+#[cfg(feature = "nightly-float")]
+impl From<f128> for F128 {
+    fn from(src: f128) -> F128 {
+        F128::from_bits(src.to_bits())
+    }
+}
+
+#[cfg(feature = "nightly-float")]
+impl From<F128> for f128 {
+    fn from(src: F128) -> f128 {
+        f128::from_bits(src.to_bits())
+    }
+}
+
 from_float! { f64, u64 }
 from_float! { f32, u32 }
 from_float! { half_f16, u16 }
 from_float! { half_bf16, u16 }
+#[cfg(feature = "nightly-float")]
+from_float! { f16, u16 }
 
 /*
 ```rust

@@ -222,9 +222,13 @@ macro_rules! make_helper {
     };
 }
 
+#[cfg(feature = "nightly-float")]
+make_helper! { f16(u16, i16, 11) }
 make_helper! { half_f16(u16, i16, 11); use half::f16 }
 make_helper! { half_bf16(u16, i16, 8); use half::bf16 }
 make_helper! { f32(u32, i32, 24) }
 make_helper! { f64(u64, i64, 53) }
+#[cfg(feature = "nightly-float")]
+make_helper! { f128(u128, i128, 113) }
 make_helper! { F128(u128, i128, 113); use crate::F128 }
 make_helper! { F128Bits(u128, i128, 113); use crate::F128Bits }

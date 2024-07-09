@@ -36,6 +36,7 @@ serde-str = ["serde", "serde/std", "std"]
 std = []
 
 # experimental features
+nightly-float = []
 num-traits = ["dep:num-traits"]
 
 # deprecated features

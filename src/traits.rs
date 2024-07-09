@@ -71,379 +71,215 @@ use num_traits::{
 #[cfg(feature = "serde")]
 use serde::{de::Deserialize, ser::Serialize};
 
-macro_rules! comment_features {
-    ($comment:expr) => {
-        #[cfg(all(
-            not(feature = "arbitrary"),
-            not(feature = "borsh"),
-            not(feature = "num-traits"),
-            not(feature = "serde")
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed {}
-        }
+#[cfg(not(feature = "arbitrary"))]
+/// This trait is used to provide supertraits to the [`Fixed`] trait depending
+/// on the crate’s [optional features], and should not be used directly.
+///
+/// If the `arbitrary` feature is enabled, [`Arbitrary`] is a supertrait of
+/// [`Fixed`].
+///
+/// [optional features]: crate#optional-features
+pub trait FixedOptionalArbitrary: Sealed {}
 
-        #[cfg(all(
-            not(feature = "arbitrary"),
-            not(feature = "borsh"),
-            not(feature = "num-traits"),
-            feature = "serde"
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: Serialize + for<'de> Deserialize<'de>,
-            {
-            }
-        }
-
-        // Do *not* add MulAdd constaint, as it conflicts with Fixed::mul_add
-        #[cfg(all(
-            not(feature = "arbitrary"),
-            not(feature = "borsh"),
-            feature = "num-traits",
-            not(feature = "serde")
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: Zero + Bounded + Inv,
-                Self: CheckedAdd + CheckedSub + CheckedNeg + CheckedMul,
-                Self: CheckedDiv + CheckedRem + CheckedShl + CheckedShr,
-                Self: SaturatingAdd + SaturatingSub + SaturatingMul,
-                Self: WrappingAdd + WrappingSub + WrappingNeg + WrappingMul,
-                Self: WrappingShl + WrappingShr,
-                Self: OverflowingAdd + OverflowingSub + OverflowingMul,
-                Self: ToPrimitive + FromPrimitive + FloatConst,
-            {
-            }
-        }
-
-        // Do *not* add MulAdd constaint, as it conflicts with Fixed::mul_add
-        #[cfg(all(
-            not(feature = "arbitrary"),
-            not(feature = "borsh"),
-            feature = "num-traits",
-            feature = "serde"
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: Zero + Bounded + Inv,
-                Self: CheckedAdd + CheckedSub + CheckedNeg + CheckedMul,
-                Self: CheckedDiv + CheckedRem + CheckedShl + CheckedShr,
-                Self: SaturatingAdd + SaturatingSub + SaturatingMul,
-                Self: WrappingAdd + WrappingSub + WrappingNeg + WrappingMul,
-                Self: WrappingShl + WrappingShr,
-                Self: OverflowingAdd + OverflowingSub + OverflowingMul,
-                Self: ToPrimitive + FromPrimitive + FloatConst,
-                Self: Serialize + for<'de> Deserialize<'de>,
-            {
-            }
-        }
-
-        #[cfg(all(
-            not(feature = "arbitrary"),
-            feature = "borsh",
-            not(feature = "num-traits"),
-            not(feature = "serde")
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: BorshSerialize + BorshDeserialize,
-            {}
-        }
-
-        #[cfg(all(
-            not(feature = "arbitrary"),
-            feature = "borsh",
-            not(feature = "num-traits"),
-            feature = "serde"
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: BorshSerialize + BorshDeserialize,
-                Self: Serialize + for<'de> Deserialize<'de>,
-            {
-            }
-        }
-
-        // Do *not* add MulAdd constaint, as it conflicts with Fixed::mul_add
-        #[cfg(all(
-            not(feature = "arbitrary"),
-            feature = "borsh",
-            feature = "num-traits",
-            not(feature = "serde")
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: BorshSerialize + BorshDeserialize,
-                Self: Zero + Bounded + Inv,
-                Self: CheckedAdd + CheckedSub + CheckedNeg + CheckedMul,
-                Self: CheckedDiv + CheckedRem + CheckedShl + CheckedShr,
-                Self: SaturatingAdd + SaturatingSub + SaturatingMul,
-                Self: WrappingAdd + WrappingSub + WrappingNeg + WrappingMul,
-                Self: WrappingShl + WrappingShr,
-                Self: OverflowingAdd + OverflowingSub + OverflowingMul,
-                Self: ToPrimitive + FromPrimitive + FloatConst,
-            {
-            }
-        }
-
-        // Do *not* add MulAdd constaint, as it conflicts with Fixed::mul_add
-        #[cfg(all(
-            not(feature = "arbitrary"),
-            feature = "borsh",
-            feature = "num-traits",
-            feature = "serde"
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: BorshSerialize + BorshDeserialize,
-                Self: Zero + Bounded + Inv,
-                Self: CheckedAdd + CheckedSub + CheckedNeg + CheckedMul,
-                Self: CheckedDiv + CheckedRem + CheckedShl + CheckedShr,
-                Self: SaturatingAdd + SaturatingSub + SaturatingMul,
-                Self: WrappingAdd + WrappingSub + WrappingNeg + WrappingMul,
-                Self: WrappingShl + WrappingShr,
-                Self: OverflowingAdd + OverflowingSub + OverflowingMul,
-                Self: ToPrimitive + FromPrimitive + FloatConst,
-                Self: Serialize + for<'de> Deserialize<'de>,
-            {
-            }
-        }
-
-        #[cfg(all(
-            feature = "arbitrary",
-            not(feature = "borsh"),
-            not(feature = "num-traits"),
-            not(feature = "serde")
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: for<'a> Arbitrary<'a>,
-            {
-            }
-        }
-
-        #[cfg(all(
-            feature = "arbitrary",
-            not(feature = "borsh"),
-            not(feature = "num-traits"),
-            feature = "serde"
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: for<'a> Arbitrary<'a>,
-                Self: Serialize + for<'de> Deserialize<'de>
-            {
-            }
-        }
-
-        // Do *not* add MulAdd constaint, as it conflicts with Fixed::mul_add
-        #[cfg(all(
-            feature = "arbitrary",
-            not(feature = "borsh"),
-            feature = "num-traits",
-            not(feature = "serde")
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: for<'a> Arbitrary<'a>,
-                Self: Zero + Bounded + Inv,
-                Self: CheckedAdd + CheckedSub + CheckedNeg + CheckedMul,
-                Self: CheckedDiv + CheckedRem + CheckedShl + CheckedShr,
-                Self: SaturatingAdd + SaturatingSub + SaturatingMul,
-                Self: WrappingAdd + WrappingSub + WrappingNeg + WrappingMul,
-                Self: WrappingShl + WrappingShr,
-                Self: OverflowingAdd + OverflowingSub + OverflowingMul,
-                Self: ToPrimitive + FromPrimitive + FloatConst,
-            {
-            }
-        }
-
-        // Do *not* add MulAdd constaint, as it conflicts with Fixed::mul_add
-        #[cfg(all(
-            feature = "arbitrary",
-            not(feature = "borsh"),
-            feature = "num-traits",
-            feature = "serde"
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: for<'a> Arbitrary<'a>,
-                Self: Zero + Bounded + Inv,
-                Self: CheckedAdd + CheckedSub + CheckedNeg + CheckedMul,
-                Self: CheckedDiv + CheckedRem + CheckedShl + CheckedShr,
-                Self: SaturatingAdd + SaturatingSub + SaturatingMul,
-                Self: WrappingAdd + WrappingSub + WrappingNeg + WrappingMul,
-                Self: WrappingShl + WrappingShr,
-                Self: OverflowingAdd + OverflowingSub + OverflowingMul,
-                Self: ToPrimitive + FromPrimitive + FloatConst,
-                Self: Serialize + for<'de> Deserialize<'de>,
-            {
-            }
-        }
-
-        #[cfg(all(
-            feature = "arbitrary",
-            feature = "borsh",
-            not(feature = "num-traits"),
-            not(feature = "serde")
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: for<'a> Arbitrary<'a>,
-                Self: BorshSerialize + BorshDeserialize,
-            {
-            }
-        }
-
-        #[cfg(all(
-            feature = "arbitrary",
-            feature = "borsh",
-            not(feature = "num-traits"),
-            feature = "serde"
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: for<'a> Arbitrary<'a>,
-                Self: BorshSerialize + BorshDeserialize,
-                Self: Serialize + for<'de> Deserialize<'de>
-            {
-            }
-        }
-
-        // Do *not* add MulAdd constaint, as it conflicts with Fixed::mul_add
-        #[cfg(all(
-            feature = "arbitrary",
-            feature = "borsh",
-            feature = "num-traits",
-            not(feature = "serde")
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: for<'a> Arbitrary<'a>,
-                Self: BorshSerialize + BorshDeserialize,
-                Self: Zero + Bounded + Inv,
-                Self: CheckedAdd + CheckedSub + CheckedNeg + CheckedMul,
-                Self: CheckedDiv + CheckedRem + CheckedShl + CheckedShr,
-                Self: SaturatingAdd + SaturatingSub + SaturatingMul,
-                Self: WrappingAdd + WrappingSub + WrappingNeg + WrappingMul,
-                Self: WrappingShl + WrappingShr,
-                Self: OverflowingAdd + OverflowingSub + OverflowingMul,
-                Self: ToPrimitive + FromPrimitive + FloatConst,
-            {
-            }
-        }
-
-        // Do *not* add MulAdd constaint, as it conflicts with Fixed::mul_add
-        #[cfg(all(
-            feature = "arbitrary",
-            feature = "borsh",
-            feature = "num-traits",
-            feature = "serde"
-        ))]
-        doc_comment! {
-            $comment;
-            pub trait FixedOptionalFeatures: Sealed
-            where
-                Self: for<'a> Arbitrary<'a>,
-                Self: BorshSerialize + BorshDeserialize,
-                Self: Zero + Bounded + Inv,
-                Self: CheckedAdd + CheckedSub + CheckedNeg + CheckedMul,
-                Self: CheckedDiv + CheckedRem + CheckedShl + CheckedShr,
-                Self: SaturatingAdd + SaturatingSub + SaturatingMul,
-                Self: WrappingAdd + WrappingSub + WrappingNeg + WrappingMul,
-                Self: WrappingShl + WrappingShr,
-                Self: OverflowingAdd + OverflowingSub + OverflowingMul,
-                Self: ToPrimitive + FromPrimitive + FloatConst,
-                Self: Serialize + for<'de> Deserialize<'de>,
-            {
-            }
-        }
-    };
+#[cfg(feature = "arbitrary")]
+/// This trait is used to provide supertraits to the [`Fixed`] trait depending
+/// on the crate’s [optional features], and should not be used directly.
+///
+/// If the `arbitrary` feature is enabled, [`Arbitrary`] is a supertrait of
+/// [`Fixed`].
+///
+/// [optional features]: crate#optional-features
+pub trait FixedOptionalArbitrary: Sealed
+where
+    Self: for<'a> Arbitrary<'a>,
+{
 }
 
-comment_features! {
-    r#"This trait is used to provide supertraits to the [`Fixed`] trait
-depending on the crate’s [optional features], and should not be used directly.
+#[cfg(not(feature = "borsh"))]
+/// This trait is used to provide supertraits to the [`Fixed`] trait depending
+/// on the crate’s [optional features], and should not be used directly.
+///
+/// If the `borsh` experimental feature is enabled, [`BorshSerialize`] and
+/// [`BorshDeserialize`] are supertraits of [`Fixed`].
+///
+/// [optional features]: crate#optional-features
+pub trait FixedOptionalBorsh: Sealed {}
 
- 1. If the `arbitrary` feature is enabled, [`Arbitrary`] is a supertrait of
-    [`Fixed`].
+#[cfg(feature = "borsh")]
+/// This trait is used to provide supertraits to the [`Fixed`] trait depending
+/// on the crate’s [optional features], and should not be used directly.
+///
+/// If the `borsh` experimental feature is enabled, [`BorshSerialize`] and
+/// [`BorshDeserialize`] are supertraits of [`Fixed`].
+///
+/// [optional features]: crate#optional-features
+pub trait FixedOptionalBorsh: Sealed
+where
+    Self: BorshSerialize + BorshDeserialize,
+{
+}
 
- 2. If the `borsh` experimental feature is enabled, [`BorshSerialize`] and
-    [`BorshDeserialize`] are supertraits of [`Fixed`].
+#[cfg(not(feature = "num-traits"))]
+/// This trait is used to provide supertraits to the [`Fixed`] trait depending
+/// on the crate’s [optional features], and should not be used directly.
+///
+/// If the `num-traits` experimental feature is enabled, the following are
+/// supertraits of [`Fixed`]:
+///
+///   * [`Zero`]
+///   * [`Bounded`]
+///   * [`Inv`]
+///   * [`CheckedAdd`], [`CheckedSub`], [`CheckedNeg`],
+///     [`CheckedMul`], [`CheckedDiv`], [`CheckedRem`],
+///     [`CheckedShl`], [`CheckedShr`]
+///   * [`SaturatingAdd`], [`SaturatingSub`], [`SaturatingMul`]
+///   * [`WrappingAdd`], [`WrappingSub`], [`WrappingNeg`],
+///     [`WrappingMul`], [`WrappingShl`], [`WrappingShr`]
+///   * [`OverflowingAdd`], [`OverflowingSub`], [`OverflowingMul`]
+///   * [`ToPrimitive`], [`FromPrimitive`]
+///   * [`FloatConst`]
+///
+/// The following are *not* supertraits of [`Fixed`], even though they
+/// are implemented for fixed-point numbers where applicable:
+///
+///   * [`One`] because not all fixed-point numbers can represent the
+///     value 1
+///   * [`Num`] because it has [`One`] as a supertrait
+///   * [`MulAdd`], [`MulAddAssign`] because
+///     <code>[MulAdd][`MulAdd`]::[mul\_add][`mul_add`]</code>
+///     conflicts with
+///     <code>[Fixed]::[mul\_add][Fixed::mul_add]</code>
+///
+/// Similarly, [`Signed`] and [`Unsigned`] are *not* supertraits of
+/// [`FixedSigned`] and [`FixedUnsigned`] because they have [`Num`] as
+/// a supertrait.
+///
+/// [`MulAddAssign`]: num_traits::ops::mul_add::MulAddAssign
+/// [`MulAdd`]: num_traits::ops::mul_add::MulAdd
+/// [`Num`]: num_traits::Num
+/// [`One`]: num_traits::identities::One
+/// [`Signed`]: num_traits::sign::Signed
+/// [`Unsigned`]: num_traits::sign::Unsigned
+/// [`mul_add`]: num_traits::ops::mul_add::MulAdd::mul_add
+/// [optional features]: crate#optional-features
+pub trait FixedOptionalNum: Sealed {}
 
- 3. If the `num-traits` experimental feature is enabled, the following
-    are supertraits of [`Fixed`]:
+#[cfg(feature = "num-traits")]
+/// This trait is used to provide supertraits to the [`Fixed`] trait depending
+/// on the crate’s [optional features], and should not be used directly.
+///
+/// If the `num-traits` experimental feature is enabled, the following are
+/// supertraits of [`Fixed`]:
+///
+///   * [`Zero`]
+///   * [`Bounded`]
+///   * [`Inv`]
+///   * [`CheckedAdd`], [`CheckedSub`], [`CheckedNeg`],
+///     [`CheckedMul`], [`CheckedDiv`], [`CheckedRem`],
+///     [`CheckedShl`], [`CheckedShr`]
+///   * [`SaturatingAdd`], [`SaturatingSub`], [`SaturatingMul`]
+///   * [`WrappingAdd`], [`WrappingSub`], [`WrappingNeg`],
+///     [`WrappingMul`], [`WrappingShl`], [`WrappingShr`]
+///   * [`OverflowingAdd`], [`OverflowingSub`], [`OverflowingMul`]
+///   * [`ToPrimitive`], [`FromPrimitive`]
+///   * [`FloatConst`]
+///
+/// The following are *not* supertraits of [`Fixed`], even though they
+/// are implemented for fixed-point numbers where applicable:
+///
+///   * [`One`] because not all fixed-point numbers can represent the
+///     value 1
+///   * [`Num`] because it has [`One`] as a supertrait
+///   * [`MulAdd`], [`MulAddAssign`] because
+///     <code>[MulAdd][`MulAdd`]::[mul\_add][`mul_add`]</code>
+///     conflicts with
+///     <code>[Fixed]::[mul\_add][Fixed::mul_add]</code>
+///
+/// Similarly, [`Signed`] and [`Unsigned`] are *not* supertraits of
+/// [`FixedSigned`] and [`FixedUnsigned`] because they have [`Num`] as
+/// a supertrait.
+///
+/// [`MulAddAssign`]: num_traits::ops::mul_add::MulAddAssign
+/// [`MulAdd`]: num_traits::ops::mul_add::MulAdd
+/// [`Num`]: num_traits::Num
+/// [`One`]: num_traits::identities::One
+/// [`Signed`]: num_traits::sign::Signed
+/// [`Unsigned`]: num_traits::sign::Unsigned
+/// [`mul_add`]: num_traits::ops::mul_add::MulAdd::mul_add
+/// [optional features]: crate#optional-features
+pub trait FixedOptionalNum: Sealed
+where
+    Self: Zero + Bounded,
+    Self: CheckedAdd + CheckedSub + CheckedNeg + CheckedMul,
+    Self: CheckedRem + CheckedShl + CheckedShr,
+    Self: SaturatingAdd + SaturatingSub + SaturatingMul,
+    Self: WrappingAdd + WrappingSub + WrappingNeg + WrappingMul,
+    Self: WrappingShl + WrappingShr,
+    Self: OverflowingAdd + OverflowingSub + OverflowingMul,
+    Self: ToPrimitive + FromPrimitive + FloatConst,
+{
+}
 
-      * [`Zero`]
-      * [`Bounded`]
-      * [`Inv`]
-      * [`CheckedAdd`], [`CheckedSub`], [`CheckedNeg`],
-        [`CheckedMul`], [`CheckedDiv`], [`CheckedRem`],
-        [`CheckedShl`], [`CheckedShr`]
-      * [`SaturatingAdd`], [`SaturatingSub`], [`SaturatingMul`]
-      * [`WrappingAdd`], [`WrappingSub`], [`WrappingNeg`],
-        [`WrappingMul`], [`WrappingShl`], [`WrappingShr`]
-      * [`OverflowingAdd`], [`OverflowingSub`], [`OverflowingMul`]
-      * [`ToPrimitive`], [`FromPrimitive`]
-      * [`FloatConst`]
+#[cfg(any(not(feature = "serde"), feature = "serde-str"))]
+/// This trait is used to provide supertraits to the [`Fixed`] trait depending
+/// on the crate’s [optional features], and should not be used directly.
+///
+/// If the `serde` feature is enabled and the `serde-str` feature is disabled,
+/// [`Serialize`] and [`Deserialize`] are supertraits of [`Fixed`].
+///
+/// [optional features]: crate#optional-features
+pub trait FixedOptionalSerde: Sealed {}
 
-    The following are *not* supertraits of [`Fixed`], even though they
-    are implemented for fixed-point numbers where applicable:
+#[cfg(all(feature = "serde", not(feature = "serde-str")))]
+/// This trait is used to provide supertraits to the [`Fixed`] trait depending
+/// on the crate’s [optional features], and should not be used directly.
+///
+/// If the `serde` feature is enabled and the `serde-str` feature is disabled,
+/// [`Serialize`] and [`Deserialize`] are supertraits of [`Fixed`].
+///
+/// [optional features]: crate#optional-features
+pub trait FixedOptionalSerde: Sealed
+where
+    Self: Serialize + for<'de> Deserialize<'de>,
+{
+}
 
-      * [`One`] because not all fixed-point numbers can represent the
-        value 1
-      * [`Num`] because it has [`One`] as a supertrait
-      * [`MulAdd`], [`MulAddAssign`] because
-        <code>[MulAdd][`MulAdd`]::[mul\_add][`mul_add`]</code>
-        conflicts with
-        <code>[Fixed]::[mul\_add][Fixed::mul_add]</code>
+#[cfg(not(feature = "nightly-float"))]
+/// This trait is used to provide supertraits to the [`Fixed`] trait depending
+/// on the crate’s [optional features], and should not be used directly.
+///
+/// If the `nightly-float` feature is enabled, [`PartialOrd<f16>`][PartialOrd]
+/// and [`PartialOrd<f128>`][PartialOrd] are supertraits of [`Fixed`].
+///
+/// [optional features]: crate#optional-features
+pub trait FixedOptionalNightlyFloat: Sealed {}
 
-    Similarly, [`Signed`] and [`Unsigned`] are *not* supertraits of
-    [`FixedSigned`] and [`FixedUnsigned`] because they have [`Num`] as
-    a supertrait.
+#[cfg(feature = "nightly-float")]
+/// This trait is used to provide supertraits to the [`Fixed`] trait depending
+/// on the crate’s [optional features], and should not be used directly.
+///
+/// If the `nightly-float` feature is enabled, [`PartialOrd<f16>`][PartialOrd]
+/// and [`PartialOrd<f128>`][PartialOrd] are supertraits of [`Fixed`].
+///
+/// [optional features]: crate#optional-features
+pub trait FixedOptionalNightlyFloat: Sealed
+where
+    Self: PartialOrd<f16> + PartialOrd<f128>,
+{
+}
 
- 4. If the `serde` feature is enabled, [`Serialize`] and
-    [`Deserialize`] are supertraits of [`Fixed`].
-
-[`MulAddAssign`]: num_traits::ops::mul_add::MulAddAssign
-[`MulAdd`]: num_traits::ops::mul_add::MulAdd
-[`Num`]: num_traits::Num
-[`One`]: num_traits::identities::One
-[`Signed`]: num_traits::sign::Signed
-[`Unsigned`]: num_traits::sign::Unsigned
-[`mul_add`]: num_traits::ops::mul_add::MulAdd::mul_add
-[optional features]: crate#optional-features
-"#
+/// This trait is used to provide supertraits to the [`Fixed`] trait depending
+/// on the crate’s [optional features], and should not be used directly.
+///
+/// [optional features]: crate#optional-features
+pub trait FixedOptionalFeatures: Sealed
+where
+    Self: FixedOptionalArbitrary,
+    Self: FixedOptionalBorsh,
+    Self: FixedOptionalNum,
+    Self: FixedOptionalSerde,
+    Self: FixedOptionalNightlyFloat,
+{
 }
 
 /// This trait provides methods common to all fixed-point numbers.
@@ -4177,6 +4013,11 @@ macro_rules! impl_fixed {
         $Fixed:ident, $IFixed:ident, $UFixed:ident, $LeEqU:ident, $Bits:ident, $NonZeroBits:ident,
         $Signedness:ident
     ) => {
+        impl<Frac: $LeEqU> FixedOptionalArbitrary for $Fixed<Frac> {}
+        impl<Frac: $LeEqU> FixedOptionalBorsh for $Fixed<Frac> {}
+        impl<Frac: $LeEqU> FixedOptionalNum for $Fixed<Frac> {}
+        impl<Frac: $LeEqU> FixedOptionalSerde for $Fixed<Frac> {}
+        impl<Frac: $LeEqU> FixedOptionalNightlyFloat for $Fixed<Frac> {}
         impl<Frac: $LeEqU> FixedOptionalFeatures for $Fixed<Frac> {}
 
         impl<Frac: $LeEqU> Fixed for $Fixed<Frac> {

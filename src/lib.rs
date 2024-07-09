@@ -235,6 +235,14 @@ updated to an incompatible newer version.
  1. `num-traits`, disabled by default. This implements some traits from the
     [*num-traits* crate]. (The plan is to promote this to an optional feature
     once the [*num-traits* crate] reaches version 1.0.0.)
+ 2. `nightly-float`, disabled by default. This requires the nightly compiler,
+    and implements conversions and comparisons with the experimental [`f16`] and
+    [`f128`] primitives. (The plan is to always implement the conversions and
+    comparisons and remove this experimental feature once the primitives are
+    stabilized.)
+
+[`f128`]: https://doc.rust-lang.org/nightly/std/primitive.f128.html
+[`f16`]: https://doc.rust-lang.org/nightly/std/primitive.f16.html
 
 ## Deprecated optional features
 
@@ -347,6 +355,7 @@ PC9zdmc+Cg==
 ")]
 #![doc(test(attr(deny(warnings))))]
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
+#![cfg_attr(feature = "nightly-float", feature(f16, f128))]
 
 #[cfg(all(not(feature = "std"), test))]
 extern crate std;

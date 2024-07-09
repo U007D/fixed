@@ -700,6 +700,7 @@ macro_rules! float_to_fixed {
         }
     };
 }
+
 float_to_fixed! { half_f16, FixedI32, LeEqU32 }
 float_to_fixed! { half_f16, FixedI64, LeEqU64 }
 float_to_fixed! { half_f16, FixedI128, LeEqU128 }
@@ -774,10 +775,14 @@ macro_rules! fixed_to_float_lossy {
         }
     };
     ($Fixed:ident($LeEqU:ident)) => {
+        #[cfg(feature = "nightly-float")]
+        fixed_to_float_lossy! { $Fixed($LeEqU) -> f16 }
         fixed_to_float_lossy! { $Fixed($LeEqU) -> half_f16 }
         fixed_to_float_lossy! { $Fixed($LeEqU) -> half_bf16 }
         fixed_to_float_lossy! { $Fixed($LeEqU) -> f32 }
         fixed_to_float_lossy! { $Fixed($LeEqU) -> f64 }
+        #[cfg(feature = "nightly-float")]
+        fixed_to_float_lossy! { $Fixed($LeEqU) -> f128 }
         fixed_to_float_lossy! { $Fixed($LeEqU) -> F128 }
         fixed_to_float_lossy! { $Fixed($LeEqU) -> F128Bits }
     };
@@ -949,6 +954,57 @@ lossy! { f64: half_f16; src -> half_f16::from_f64(src) }
 lossy! { f64: half_bf16; src -> half_bf16::from_f64(src) }
 lossy! { f64: f32; src -> src as f32 }
 into! { f64: f64 }
+
+#[cfg(feature = "nightly-float")]
+mod nightly_float {
+    use crate::{
+        int_helper::IntFixed,
+        traits::{FromFixed, LosslessTryFrom, LossyFrom, ToFixed},
+        types::extra::{IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, True, U24},
+        FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU16, FixedU32, FixedU64, FixedU8,
+    };
+
+    float_to_fixed! { f16, FixedI32, LeEqU32 }
+    float_to_fixed! { f16, FixedI64, LeEqU64 }
+    float_to_fixed! { f16, FixedI128, LeEqU128 }
+
+    fixed_to_float! { FixedI8(LeEqU8) -> f16 }
+    fixed_to_float! { FixedU8(LeEqU8) -> f16 }
+    fixed_to_float! { FixedI8(LeEqU8) -> f128 }
+    fixed_to_float! { FixedI16(LeEqU16) -> f128 }
+    fixed_to_float! { FixedI32(LeEqU32) -> f128 }
+    fixed_to_float! { FixedI64(LeEqU64) -> f128 }
+    fixed_to_float! { FixedU8(LeEqU8) -> f128 }
+    fixed_to_float! { FixedU16(LeEqU16) -> f128 }
+    fixed_to_float! { FixedU32(LeEqU32) -> f128 }
+    fixed_to_float! { FixedU64(LeEqU64) -> f128 }
+
+    int_to_float_lossy_lossless! { i8 -> ; f16 f128 }
+    int_to_float_lossy_lossless! { i16 -> f16; f128 }
+    int_to_float_lossy_lossless! { i32 -> f16; f128 }
+    int_to_float_lossy_lossless! { i64 -> f16; f128 }
+    int_to_float_lossy_lossless! { i128 -> f16 f128; }
+    int_to_float_lossy_lossless! { isize -> f16 f128; }
+
+    int_to_float_lossy_lossless! { u8 -> ; f16 f128 }
+    int_to_float_lossy_lossless! { u16 -> f16; f128 }
+    int_to_float_lossy_lossless! { u32 -> f16; f128 }
+    int_to_float_lossy_lossless! { u64 -> f16; f128 }
+    int_to_float_lossy_lossless! { u128 -> f16 f128; }
+    int_to_float_lossy_lossless! { usize -> f16 f128; }
+
+    // From<f16> not implemented for f32
+    into! { f16: f16, f64, f128 }
+    into! { f32: f128 }
+    into! { f64: f128 }
+    into! { f128: f128 }
+
+    lossy! { f32: f16; src -> src as f16 }
+    lossy! { f64: f16; src -> src as f16 }
+    lossy! { f128: f16; src -> src as f16 }
+    lossy! { f128: f32; src -> src as f32 }
+    lossy! { f128: f64; src -> src as f64 }
+}
 
 /// These are doc tests that should not appear in the docs, but are
 /// useful as doc tests can check to ensure compilation failure.
