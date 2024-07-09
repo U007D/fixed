@@ -15,7 +15,7 @@
 
 use crate::{
     float_helper, int_helper, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128,
-    FixedU16, FixedU32, FixedU64, FixedU8, F128,
+    FixedU16, FixedU32, FixedU64, FixedU8,
 };
 use core::{
     cmp::Ordering,
@@ -372,7 +372,7 @@ macro_rules! fixed_cmp_prim {
         fixed_cmp_float! { $Fix($nbits, $Inner), half_bf16, u16 }
         fixed_cmp_float! { $Fix($nbits, $Inner), f32, u32 }
         fixed_cmp_float! { $Fix($nbits, $Inner), f64, u64 }
-        fixed_cmp_float! { $Fix($nbits, $Inner), F128, u128 }
+        fixed_cmp_float! { $Fix($nbits, $Inner), f128, u128 }
     };
 }
 
@@ -785,23 +785,23 @@ mod tests {
 
     #[test]
     fn f128_consts() {
-        assert_eq!(F128::ZERO, FixedI128::<64>::ZERO);
-        assert_eq!(F128::NEG_ZERO, FixedI128::<64>::ZERO);
-        assert_eq!(F128::ZERO, F128::NEG_ZERO);
-        assert_eq!(F128::ONE, FixedI128::<64>::ONE);
-        assert_eq!(F128::NEG_ONE, FixedI128::<64>::NEG_ONE);
+        assert_eq!(0f128, FixedI128::<64>::ZERO);
+        assert_eq!(-0f128, FixedI128::<64>::ZERO);
+        assert_eq!(0f128, -0f128);
+        assert_eq!(1f128, FixedI128::<64>::ONE);
+        assert_eq!(-1f128, FixedI128::<64>::NEG_ONE);
 
         // min positive normal
-        assert_eq!(F128::MIN_POSITIVE, FixedI128::<16382>::DELTA);
-        assert_eq!(F128::MIN_POSITIVE, FixedI128::<16494>::from_bits(1 << 112));
+        assert_eq!(f128::MIN_POSITIVE, FixedI128::<16382>::DELTA);
+        assert_eq!(f128::MIN_POSITIVE, FixedI128::<16494>::from_bits(1 << 112));
         // max subnormal
-        let max_subnormal = F128::from_bits(F128::MIN_POSITIVE.to_bits() - 1);
+        let max_subnormal = f128::from_bits(f128::MIN_POSITIVE.to_bits() - 1);
         assert_eq!(max_subnormal, FixedI128::<16494>::from_bits((1 << 112) - 1));
         // min positive subnormal
-        assert_eq!(F128::MIN_POSITIVE_SUB, FixedI128::<16494>::DELTA);
+        assert_eq!(f128::from_bits(1), FixedI128::<16494>::DELTA);
 
         // max, min
-        assert_eq!(F128::MAX, FixedI128::<-16271>::from_bits((1 << 113) - 1));
-        assert_eq!(F128::MIN, FixedI128::<-16271>::from_bits(1 - (1 << 113)));
+        assert_eq!(f128::MAX, FixedI128::<-16271>::from_bits((1 << 113) - 1));
+        assert_eq!(f128::MIN, FixedI128::<-16271>::from_bits(1 - (1 << 113)));
     }
 }

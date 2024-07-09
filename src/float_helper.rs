@@ -228,4 +228,4 @@ make_helper! { half_f16(u16, i16); use half::f16 }
 make_helper! { half_bf16(u16, i16); use half::bf16 }
 make_helper! { f32(u32, i32) }
 make_helper! { f64(u64, i64) }
-make_helper! { F128(u128, i128); use crate::F128 }
+make_helper! { f128(u128, i128) }

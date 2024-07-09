@@ -117,8 +117,8 @@ The conversions supported cover the following cases.
   * The [`Unwrapped`][u-2-0a] methods [`from_str_binary`][u-fsb-2-0a],
     [`from_str_octal`][u-fso-2-0a] and [`from_str_hex`][u-fsh-2-0a] return the
     value directly instead of a [`Result`].
-  * The deprecated `F128Bits` struct has been removed. It was replaced by
-    [`F128`][f128-2-0a] in version 1.18.0.
+  * The deprecated `F128Bits` and `F128` structs have been removed. They were
+    replaced by the [`f128`] primitive.
   * The deprecated `const_fixed_from_int` macro has been removed. It was
     replaced by the [`const_from_int`][f-cfi-2-0a] method in version 1.20.0.
   * The deprecated optional features `az` and `f16` were removed. These features
@@ -150,7 +150,6 @@ The conversions supported cover the following cases.
 [f-cfi-2-0a]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/struct.FixedI32.html#method.const_from_int
 [f-fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/struct.FixedI32.html#associatedconstant.FRAC_BITS
 [f-ib-2-0a]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/struct.FixedI32.html#associatedconstant.INT_BITS
-[f128-2-0a]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/struct.F128.html
 [fb-2-0a]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/traits/trait.FixedBits.html
 [fb-f-2-0a]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/traits/trait.FixedBits.html#associatedtype.Fixed
 [s-2-0a]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/struct.Saturating.html
@@ -456,11 +455,11 @@ To port from version 1 to version 2, the following is required:
     [u-fsh]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/struct.Unwrapped.html#method.from_str_hex
     [u-fso]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/struct.Unwrapped.html#method.from_str_octal
 
-  * The deprecated [`F128Bits`] struct has been removed. It was replaced by
-    [`F128`] in version 1.18.0
+  * The deprecated [`F128Bits`] and [`F128`] structs have been removed. They
+    were replaced by the [`f128`] primitive.
 
     [`F128Bits`]: https://docs.rs/fixed/1/fixed/struct.F128Bits.html
-    [`F128`]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/struct.F128.html
+    [`F128`]: https://docs.rs/fixed/1/fixed/struct.F128.html
 
   * The deprecated [`const_fixed_from_int`] macro has been removed. It was
     replaced by the [`const_from_int`][f-cfi] method in version 1.20.0.
@@ -539,7 +538,7 @@ shall be dual licensed as above, without any additional terms or conditions.
 [`bf16`]: https://docs.rs/half/^2/half/struct.bf16.html
 [`bytemuck`]: https://docs.rs/bytemuck/^1/bytemuck/index.html
 [`checked_from_num`]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/struct.FixedI32.html#method.checked_from_num
-[`f16`]: https://docs.rs/half/^2/half/struct.f16.html
+[`f128`]: https://doc.rust-lang.org/nightly/core/primitive.f128.html
 [`from_num`]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/struct.FixedI32.html#method.from_num
 [`from_str_binary`]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/struct.FixedI32.html#method.from_str_binary
 [`from_str_hex`]: https://docs.rs/fixed/2.0.0-alpha.27.0/fixed/struct.FixedI32.html#method.from_str_hex

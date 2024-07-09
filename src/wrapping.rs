@@ -502,7 +502,7 @@ impl<F: Fixed> Wrapping<F> {
     ///   * A floating-point number of type
     ///     <code>[half]::[f16][half::f16]</code>,
     ///     <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or
-    ///     [`F128`]. For this conversion, the method rounds to the nearest,
+    ///     [`f128`]. For this conversion, the method rounds to the nearest,
     ///     with ties rounding to even.
     ///   * Any other number `src` for which [`ToFixed`] is
     ///     implemented, in which case this method returns
@@ -544,7 +544,6 @@ impl<F: Fixed> Wrapping<F> {
     /// assert_eq!(dst_float, Wrapping(I4F4::from_bits(0b11100)));
     /// ```
     ///
-    /// [`F128`]: crate::F128
     /// [finite]: f64::is_finite
     #[inline]
     #[track_caller]
@@ -566,7 +565,7 @@ impl<F: Fixed> Wrapping<F> {
     ///   * A floating-point number of type
     ///     <code>[half]::[f16][half::f16]</code>,
     ///     <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or
-    ///     [`F128`]. For this conversion, the method rounds to the nearest,
+    ///     [`f128`]. For this conversion, the method rounds to the nearest,
     ///     with ties rounding to even.
     ///   * Any other type `Dst` for which [`FromFixed`] is
     ///     implemented, in which case this method returns
@@ -596,8 +595,6 @@ impl<F: Fixed> Wrapping<F> {
     /// let wrapped = I2F6::from_bits(I2F6::MAX.to_bits() << 2);
     /// assert_eq!(src.to_num::<I2F6>(), wrapped);
     /// ```
-    ///
-    /// [`F128`]: crate::F128
     #[inline]
     pub fn to_num<Dst: FromFixed>(self) -> Dst {
         Dst::wrapping_from_fixed(self.0)

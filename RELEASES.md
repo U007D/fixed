@@ -19,8 +19,8 @@ as-is, without any warranty. -->
   * The [`Unwrapped`][u-2-0a] methods [`from_str_binary`][u-fsb-2-0a],
     [`from_str_octal`][u-fso-2-0a] and [`from_str_hex`][u-fsh-2-0a] return the
     value directly instead of a [`Result`].
-  * The deprecated `F128Bits` struct has been removed. It was replaced by
-    [`F128`][f128-2-0a] in version 1.18.0.
+  * The deprecated `F128Bits` and `F128` structs have been removed. They were
+    replaced by the [`f128`] primitive.
   * The deprecated `const_fixed_from_int` macro has been removed. It was
     replaced by the [`const_from_int`][f-cfi-2-0a] method in version 1.20.0.
   * The deprecated optional features `az` and `f16` were removed. These features
@@ -1550,6 +1550,7 @@ Contributors
 [`Sum`]: https://doc.rust-lang.org/nightly/core/iter/trait.Sum.html
 [`UpperExp`]: https://doc.rust-lang.org/nightly/core/fmt/trait.UpperExp.html
 [`UpperHex`]: https://doc.rust-lang.org/nightly/core/fmt/trait.UpperHex.html
+[`f128`]: https://doc.rust-lang.org/nightly/core/primitive.f128.html
 [`f32`]: https://doc.rust-lang.org/nightly/core/primitive.f32.html
 [`f64`]: https://doc.rust-lang.org/nightly/core/primitive.f64.html
 [`rust-version`]: https://doc.rust-lang.org/nightly/cargo/reference/manifest.html#the-rust-version-field

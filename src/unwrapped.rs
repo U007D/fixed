@@ -505,7 +505,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///   * A floating-point number of type
     ///     <code>[half]::[f16][half::f16]</code>,
     ///     <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or
-    ///     [`F128`]. For this conversion, the method rounds to the nearest,
+    ///     [`f128`]. For this conversion, the method rounds to the nearest,
     ///     with ties rounding to even.
     ///   * Any other number `src` for which [`ToFixed`] is
     ///     implemented, in which case this method returns
@@ -551,7 +551,6 @@ impl<F: Fixed> Unwrapped<F> {
     /// let _overflow = Unwrapped::<I4F4>::from_num(src);
     /// ```
     ///
-    /// [`F128`]: crate::F128
     /// [finite]: f64::is_finite
     #[inline]
     #[track_caller]
@@ -573,7 +572,7 @@ impl<F: Fixed> Unwrapped<F> {
     ///   * A floating-point number of type
     ///     <code>[half]::[f16][half::f16]</code>,
     ///     <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or
-    ///     [`F128`]. For this conversion, the method rounds to the nearest,
+    ///     [`f128`]. For this conversion, the method rounds to the nearest,
     ///     with ties rounding to even.
     ///   * Any other type `Dst` for which [`FromFixed`] is
     ///     implemented, in which case this method returns
@@ -611,8 +610,6 @@ impl<F: Fixed> Unwrapped<F> {
     /// let src = Unwrapped(I4F4::MAX);
     /// let _overflow = src.to_num::<I2F6>();
     /// ```
-    ///
-    /// [`F128`]: crate::F128
     #[inline]
     #[track_caller]
     pub fn to_num<Dst: FromFixed>(self) -> Dst {

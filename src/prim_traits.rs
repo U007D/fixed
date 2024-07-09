@@ -17,7 +17,7 @@ use crate::{
     float_helper, int_helper,
     traits::{Fixed, FixedBits, FixedEquiv, FromFixed, ToFixed},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
-    FixedU8, F128,
+    FixedU8,
 };
 use az::{OverflowingAs, OverflowingCast, OverflowingCastFrom};
 use bytemuck::TransparentWrapper;
@@ -618,4 +618,4 @@ impl_float! { half_f16, i16, u16 }
 impl_float! { half_bf16, i16, u16 }
 impl_float! { f32, i32, u32 }
 impl_float! { f64, i64, u64 }
-impl_float! { F128, i128, u128 }
+impl_float! { f128, i128, u128 }

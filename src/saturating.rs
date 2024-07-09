@@ -498,7 +498,7 @@ impl<F: Fixed> Saturating<F> {
     ///   * A floating-point number of type
     ///     <code>[half]::[f16][half::f16]</code>,
     ///     <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or
-    ///     [`F128`]. For this conversion, the method rounds to the nearest,
+    ///     [`f128`]. For this conversion, the method rounds to the nearest,
     ///     with ties rounding to even.
     ///   * Any other number `src` for which [`ToFixed`] is
     ///     implemented, in which case this method returns
@@ -536,8 +536,6 @@ impl<F: Fixed> Saturating<F> {
     /// let dst_float = Saturating::<I4F4>::from_num(src_float);
     /// assert_eq!(dst_float, Saturating(I4F4::MIN));
     /// ```
-    ///
-    /// [`F128`]: crate::F128
     #[inline]
     #[track_caller]
     pub fn from_num<Src: ToFixed>(src: Src) -> Saturating<F> {
@@ -558,7 +556,7 @@ impl<F: Fixed> Saturating<F> {
     ///   * A floating-point number of type
     ///     <code>[half]::[f16][half::f16]</code>,
     ///     <code>[half]::[bf16][half::bf16]</code>, [`f32`], [`f64`] or
-    ///     [`F128`]. For this conversion, the method rounds to the nearest,
+    ///     [`f128`]. For this conversion, the method rounds to the nearest,
     ///     with ties rounding to even.
     ///   * Any other type `Dst` for which [`FromFixed`] is
     ///     implemented, in which case this method returns
@@ -587,8 +585,6 @@ impl<F: Fixed> Saturating<F> {
     /// let src = Saturating(I4F4::MAX);
     /// assert_eq!(src.to_num::<I2F6>(), I2F6::MAX);
     /// ```
-    ///
-    /// [`F128`]: crate::F128
     #[inline]
     pub fn to_num<Dst: FromFixed>(self) -> Dst {
         Dst::saturating_from_fixed(self.0)

@@ -17,7 +17,7 @@ use crate::{
     traits::{FromFixed, LosslessTryFrom, LossyFrom, ToFixed},
     types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
-    FixedU8, F128,
+    FixedU8,
 };
 use half::{bf16 as half_bf16, f16 as half_f16};
 
@@ -767,16 +767,16 @@ macro_rules! float_from_fixed {
 float_from_fixed! { (FixedU8, FixedI8, 8) -> (half_f16, 11, 24, 16) }
 float_from_fixed! { (FixedU8, FixedI8, 8) -> (f32, 24, 149, 128) }
 float_from_fixed! { (FixedU8, FixedI8, 8) -> (f64, 53, 1074, 1024) }
-float_from_fixed! { (FixedU8, FixedI8, 8) -> (F128, 113, 16494, 16384) }
+float_from_fixed! { (FixedU8, FixedI8, 8) -> (f128, 113, 16494, 16384) }
 
 float_from_fixed! { (FixedU16, FixedI16, 16) -> (f32, 24, 149, 128) }
 float_from_fixed! { (FixedU16, FixedI16, 16) -> (f64, 53, 1074, 1024) }
-float_from_fixed! { (FixedU16, FixedI16, 16) -> (F128, 113, 16494, 16384) }
+float_from_fixed! { (FixedU16, FixedI16, 16) -> (f128, 113, 16494, 16384) }
 
 float_from_fixed! { (FixedU32, FixedI32, 32) -> (f64, 53, 1074, 1024) }
-float_from_fixed! { (FixedU32, FixedI32, 32) -> (F128, 113, 16494, 16384) }
+float_from_fixed! { (FixedU32, FixedI32, 32) -> (f128, 113, 16494, 16384) }
 
-float_from_fixed! { (FixedU64, FixedI64, 64) -> (F128, 113, 16494, 16384) }
+float_from_fixed! { (FixedU64, FixedI64, 64) -> (f128, 113, 16494, 16384) }
 
 macro_rules! fallible_float_from_fixed {
     (
@@ -808,16 +808,16 @@ macro_rules! fallible_float_from_fixed {
 fallible_float_from_fixed! { (FixedU8, FixedI8) -> half_f16 }
 fallible_float_from_fixed! { (FixedU8, FixedI8) -> f32 }
 fallible_float_from_fixed! { (FixedU8, FixedI8) -> f64 }
-fallible_float_from_fixed! { (FixedU8, FixedI8) -> F128 }
+fallible_float_from_fixed! { (FixedU8, FixedI8) -> f128 }
 
 fallible_float_from_fixed! { (FixedU16, FixedI16) -> f32 }
 fallible_float_from_fixed! { (FixedU16, FixedI16) -> f64 }
-fallible_float_from_fixed! { (FixedU16, FixedI16) -> F128 }
+fallible_float_from_fixed! { (FixedU16, FixedI16) -> f128 }
 
 fallible_float_from_fixed! { (FixedU32, FixedI32) -> f64 }
-fallible_float_from_fixed! { (FixedU32, FixedI32) -> F128 }
+fallible_float_from_fixed! { (FixedU32, FixedI32) -> f128 }
 
-fallible_float_from_fixed! { (FixedU64, FixedI64) -> F128 }
+fallible_float_from_fixed! { (FixedU64, FixedI64) -> f128 }
 
 // The only lossless float to fixed possible is from f16 to signed
 // fixed-point numbers with 24 or more fractional bits.
@@ -865,7 +865,7 @@ macro_rules! lossy_float_from_fixed {
         lossy_float_from_fixed! { ($SrcU, $SrcI) -> half_bf16 }
         lossy_float_from_fixed! { ($SrcU, $SrcI) -> f32 }
         lossy_float_from_fixed! { ($SrcU, $SrcI) -> f64 }
-        lossy_float_from_fixed! { ($SrcU, $SrcI) -> F128 }
+        lossy_float_from_fixed! { ($SrcU, $SrcI) -> f128 }
     };
 }
 
@@ -916,29 +916,29 @@ macro_rules! int_to_float_lossy_lossless {
     };
 }
 
-int_to_float_lossy_lossless! { i8 as i8, FixedI8 -> half_bf16; half_f16 f32 f64 F128 }
-int_to_float_lossy_lossless! { i16 as i16, FixedI16 -> half_bf16 half_f16; f32 f64 F128 }
-int_to_float_lossy_lossless! { i32 as i32, FixedI32 -> half_bf16 half_f16 f32; f64 F128 }
-int_to_float_lossy_lossless! { i64 as i64, FixedI64 -> half_bf16 half_f16 f32 f64; F128 }
-int_to_float_lossy_lossless! { i128 as i128, FixedI128 -> half_bf16 half_f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { i8 as i8, FixedI8 -> half_bf16; half_f16 f32 f64 f128 }
+int_to_float_lossy_lossless! { i16 as i16, FixedI16 -> half_bf16 half_f16; f32 f64 f128 }
+int_to_float_lossy_lossless! { i32 as i32, FixedI32 -> half_bf16 half_f16 f32; f64 f128 }
+int_to_float_lossy_lossless! { i64 as i64, FixedI64 -> half_bf16 half_f16 f32 f64; f128 }
+int_to_float_lossy_lossless! { i128 as i128, FixedI128 -> half_bf16 half_f16 f32 f64 f128; }
 #[cfg(target_pointer_width = "16")]
 int_to_float_lossy_lossless! { isize as i16, FixedI16 -> half_bf16 half_f16 f32 f64 F128; }
 #[cfg(target_pointer_width = "32")]
 int_to_float_lossy_lossless! { isize as i32, FixedI32 -> half_bf16 half_f16 f32 f64 F128; }
 #[cfg(target_pointer_width = "64")]
-int_to_float_lossy_lossless! { isize as i64, FixedI64 -> half_bf16 half_f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { isize as i64, FixedI64 -> half_bf16 half_f16 f32 f64 f128; }
 
-int_to_float_lossy_lossless! { u8 as u8, FixedU8 -> half_bf16; half_f16 f32 f64 F128 }
-int_to_float_lossy_lossless! { u16 as u16, FixedU16 -> half_bf16 half_f16; f32 f64 F128 }
-int_to_float_lossy_lossless! { u32 as u32, FixedU32 -> half_bf16 half_f16 f32; f64 F128 }
-int_to_float_lossy_lossless! { u64 as u64, FixedU64 -> half_bf16 half_f16 f32 f64; F128 }
-int_to_float_lossy_lossless! { u128 as u128, FixedU128 -> half_bf16 half_f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { u8 as u8, FixedU8 -> half_bf16; half_f16 f32 f64 f128 }
+int_to_float_lossy_lossless! { u16 as u16, FixedU16 -> half_bf16 half_f16; f32 f64 f128 }
+int_to_float_lossy_lossless! { u32 as u32, FixedU32 -> half_bf16 half_f16 f32; f64 f128 }
+int_to_float_lossy_lossless! { u64 as u64, FixedU64 -> half_bf16 half_f16 f32 f64; f128 }
+int_to_float_lossy_lossless! { u128 as u128, FixedU128 -> half_bf16 half_f16 f32 f64 f128; }
 #[cfg(target_pointer_width = "16")]
-int_to_float_lossy_lossless! { usize as u16, FixedU16 -> half_bf16 half_f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { usize as u16, FixedU16 -> half_bf16 half_f16 f32 f64 f128; }
 #[cfg(target_pointer_width = "32")]
-int_to_float_lossy_lossless! { usize as u32, FixedU32 -> half_bf16 half_f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { usize as u32, FixedU32 -> half_bf16 half_f16 f32 f64 f128; }
 #[cfg(target_pointer_width = "64")]
-int_to_float_lossy_lossless! { usize as u64, FixedU64 -> half_bf16 half_f16 f32 f64 F128; }
+int_to_float_lossy_lossless! { usize as u64, FixedU64 -> half_bf16 half_f16 f32 f64 f128; }
 
 macro_rules! into {
     ($Src:ty: $($Dst:ty),*) => { $(
@@ -1746,40 +1746,39 @@ mod tests {
 
     #[test]
     fn to_f128_bits() {
-        use crate::F128;
         // -01.3A -> sign 1, biased exp 3FFF, mantissa 3A00 << 96
         assert_eq!(
-            I8F8::from_bits(-0x013A).to_num::<F128>(),
-            F128::from_bits(0xBFFF_3A00_u128 << 96)
+            I8F8::from_bits(-0x013A).to_num::<f128>(),
+            f128::from_bits(0xBFFF_3A00_u128 << 96)
         );
-        assert_eq!(I8F8::NEG_ONE.to_num::<F128>(), F128::NEG_ONE);
+        assert_eq!(I8F8::NEG_ONE.to_num::<f128>(), -1f128);
         // -0.5 -> sign 1, biased exp 3FFE, mantissa 0
         assert_eq!(
-            I8F8::from_num(-0.5).to_num::<F128>(),
-            F128::from_bits(0xBFFE_u128 << 112)
+            I8F8::from_num(-0.5).to_num::<f128>(),
+            f128::from_bits(0xBFFE_u128 << 112)
         );
         // -1 >> 128 -> sign 1, biased exp 3F7F, mantissa 0
         assert_eq!(
-            I0F128::from_bits(-1).to_num::<F128>(),
-            F128::from_bits(0xBF7F_u128 << 112)
+            I0F128::from_bits(-1).to_num::<f128>(),
+            f128::from_bits(0xBF7F_u128 << 112)
         );
         // 0 -> sign 0, biased exp 0, mantissa 0
-        assert_eq!(I8F8::ZERO.to_num::<F128>(), F128::from_bits(0));
+        assert_eq!(I8F8::ZERO.to_num::<f128>(), 0f128);
         // 1 >> 128 -> sign 0, biased exp 3F7F, mantissa 0
         assert_eq!(
-            I0F128::DELTA.to_num::<F128>(),
-            F128::from_bits(0x3F7F_u128 << 112)
+            I0F128::DELTA.to_num::<f128>(),
+            f128::from_bits(0x3F7F_u128 << 112)
         );
         // 0.5 -> sign 0, biased exp 3FFE, mantissa 0
         assert_eq!(
-            I8F8::from_num(0.5).to_num::<F128>(),
-            F128::from_bits(0x3FFE_u128 << 112)
+            I8F8::from_num(0.5).to_num::<f128>(),
+            f128::from_bits(0x3FFE_u128 << 112)
         );
-        assert_eq!(I8F8::ONE.to_num::<F128>(), F128::ONE);
+        assert_eq!(I8F8::ONE.to_num::<f128>(), 1f128);
         // 01.3A -> sign 0, biased exp 3FFF, mantissa 3A00 << 96
         assert_eq!(
-            I8F8::from_bits(0x013A).to_num::<F128>(),
-            F128::from_bits(0x3FFF_3A00_u128 << 96)
+            I8F8::from_bits(0x013A).to_num::<f128>(),
+            f128::from_bits(0x3FFF_3A00_u128 << 96)
         );
     }
 

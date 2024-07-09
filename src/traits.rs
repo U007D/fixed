@@ -25,7 +25,7 @@ use crate::{
     helpers::Sealed,
     types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
-    FixedU8, ParseFixedError, F128,
+    FixedU8, ParseFixedError,
 };
 #[cfg(feature = "arbitrary")]
 use arbitrary::Arbitrary;
@@ -437,7 +437,7 @@ where
     Self: PartialOrd<u64> + PartialOrd<u128> + PartialOrd<usize>,
     Self: PartialOrd<half_f16> + PartialOrd<half_bf16>,
     Self: PartialOrd<f32> + PartialOrd<f64>,
-    Self: PartialOrd<F128>,
+    Self: PartialOrd<f128>,
     Self: FixedOptionalArbitrary,
     Self: FixedOptionalBorsh,
     Self: FixedOptionalNum,

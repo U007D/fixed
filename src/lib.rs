@@ -294,10 +294,11 @@ To port from version 1 to version 2, the following is required:
     [u-fsh]: Unwrapped#method.from_str_hex
     [u-fso]: Unwrapped#method.from_str_octal
 
-  * The deprecated [`F128Bits`] struct has been removed. It was replaced by
-    [`F128`] in version 1.18.0
+  * The deprecated [`F128Bits`] and [`F128`] structs have been removed. They
+    were replaced by the [`f128`] primitive.
 
     [`F128Bits`]: https://docs.rs/fixed/1/fixed/struct.F128Bits.html
+    [`F128`]: https://docs.rs/fixed/1/fixed/struct.F128.html
 
   * The deprecated [`const_fixed_from_int`] macro has been removed. It was
     replaced by the [`const_from_int`][f-cfi] method in version 1.20.0.
@@ -410,6 +411,7 @@ PC9zdmc+Cg==
 #![doc(test(attr(deny(warnings))))]
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
 #![feature(generic_const_exprs)]
+#![feature(f128)]
 #![allow(incomplete_features)]
 
 #[cfg(all(not(feature = "std"), test))]
@@ -429,7 +431,6 @@ pub mod consts;
 mod convert;
 mod debug_hex;
 mod display;
-pub mod f128;
 mod fixed_from_bits;
 mod float_helper;
 mod from_str;
@@ -460,8 +461,7 @@ mod wrapping;
 #[cfg(feature = "num-traits")]
 pub use crate::impl_num_traits::RadixParseFixedError;
 pub use crate::{
-    f128::private::F128, from_str::ParseFixedError, saturating::Saturating, unwrapped::Unwrapped,
-    wrapping::Wrapping,
+    from_str::ParseFixedError, saturating::Saturating, unwrapped::Unwrapped, wrapping::Wrapping,
 };
 use crate::{
     log::Base,
