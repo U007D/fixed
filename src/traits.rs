@@ -145,7 +145,10 @@ where
 /// The following are *not* supertraits of [`Fixed`] or [`FixedBoundFrac`], even
 /// though they are implemented for fixed-point numbers where applicable:
 ///
-///   * [`One`] because not all fixed-point numbers can represent the value 1
+///   * [`ConstZero`] because of conflicts with
+///     <code>[Fixed]::[ZERO][Fixed::ZERO]</code>
+///   * [`One`] and [`ConstOne`] because not all fixed-point numbers can
+///     represent the value 1
 ///   * [`Num`] because it has [`One`] as a supertrait
 ///   * [`MulAdd`], [`MulAddAssign`] because
 ///     <code>[MulAdd][`MulAdd`]::[mul\_add][`mul_add`]</code> conflicts with
@@ -156,6 +159,8 @@ where
 /// [`FixedSigned`] and [`FixedUnsigned`] because they have [`Num`] as a
 /// supertrait.
 ///
+/// [`ConstOne`]: num_traits::identities::ConstOne
+/// [`ConstZero`]: num_traits::identities::ConstZero
 /// [`FromBytes`]: num_traits::ops::bytes::FromBytes
 /// [`MulAddAssign`]: num_traits::ops::mul_add::MulAddAssign
 /// [`MulAdd`]: num_traits::ops::mul_add::MulAdd
@@ -195,7 +200,10 @@ pub trait FixedOptionalNum: Sealed {}
 /// The following are *not* supertraits of [`Fixed`] or [`FixedBoundFrac`], even
 /// though they are implemented for fixed-point numbers where applicable:
 ///
-///   * [`One`] because not all fixed-point numbers can represent the value 1
+///   * [`ConstZero`] because of conflicts with
+///     <code>[Fixed]::[ZERO][Fixed::ZERO]</code>
+///   * [`One`] and [`ConstOne`] because not all fixed-point numbers can
+///     represent the value 1
 ///   * [`Num`] because it has [`One`] as a supertrait
 ///   * [`MulAdd`], [`MulAddAssign`] because
 ///     <code>[MulAdd][`MulAdd`]::[mul\_add][`mul_add`]</code> conflicts with
@@ -206,6 +214,8 @@ pub trait FixedOptionalNum: Sealed {}
 /// [`FixedSigned`] and [`FixedUnsigned`] because they have [`Num`] as a
 /// supertrait.
 ///
+/// [`ConstOne`]: num_traits::identities::ConstOne
+/// [`ConstZero`]: num_traits::identities::ConstZero
 /// [`FromBytes`]: num_traits::ops::bytes::FromBytes
 /// [`MulAddAssign`]: num_traits::ops::mul_add::MulAddAssign
 /// [`MulAdd`]: num_traits::ops::mul_add::MulAdd

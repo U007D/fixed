@@ -109,6 +109,7 @@ as-is, without any warranty. -->
   * The experimental feature [`nightly-float`][feat-exp-1-28] was added.
   * For the experimental feature [`num-traits`][feat-exp-1-28], the following
     traits were implemented for all fixed-point numbers:
+      * [`ConstZero`][nt-0-2-cz], [`ConstOne`][nt-0-2-co]
       * [`ToBytes`][nt-0-2-tb], [`FromBytes`][nt-0-2-fb]
 
 [c-1-28]: https://docs.rs/fixed/~1.28/fixed/consts/index.html
@@ -130,6 +131,8 @@ as-is, without any warranty. -->
 [f-wrte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.wrapping_round_ties_even
 [f-wrtte-1-28]: https://docs.rs/fixed/~1.28/fixed/struct.FixedI32.html#method.wrapping_round_ties_to_even
 [feat-exp-1-28]: https://docs.rs/fixed/~1.28/fixed/index.html#experimental-optional-features
+[nt-0-2-co]: https://docs.rs/num-traits/^0.2/num_traits/identities/trait.ConstOne.html
+[nt-0-2-cz]: https://docs.rs/num-traits/^0.2/num_traits/identities/trait.ConstZero.html
 [nt-0-2-fb]: https://docs.rs/num-traits/^0.2/num_traits/ops/bytes/trait.FromBytes.html
 [nt-0-2-tb]: https://docs.rs/num-traits/^0.2/num_traits/ops/bytes/trait.ToBytes.html
 [tf-1-28]: https://docs.rs/fixed/~1.28/fixed/traits/trait.Fixed.html

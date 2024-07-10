@@ -23,7 +23,7 @@ use core::fmt::{Display, Formatter, Result as FmtResult};
 use num_traits::bounds::Bounded;
 use num_traits::cast::{FromPrimitive, ToPrimitive};
 use num_traits::float::FloatConst;
-use num_traits::identities::{One, Zero};
+use num_traits::identities::{ConstOne, ConstZero, One, Zero};
 use num_traits::ops::bytes::{FromBytes, ToBytes};
 use num_traits::ops::checked::{
     CheckedAdd, CheckedDiv, CheckedMul, CheckedNeg, CheckedRem, CheckedShl, CheckedShr, CheckedSub,
@@ -96,6 +96,10 @@ macro_rules! impl_traits {
             }
         }
 
+        impl<const FRAC: i32> ConstZero for $Fixed<FRAC> {
+            const ZERO: Self = Self::ZERO;
+        }
+
         impl<const FRAC: i32> One for $Fixed<FRAC>
         where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
@@ -105,6 +109,14 @@ macro_rules! impl_traits {
             fn one() -> Self {
                 Self::ONE
             }
+        }
+
+        impl<const FRAC: i32> ConstOne for $Fixed<FRAC>
+        where
+            If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
+            If<{ FRAC <= $one_max_frac }>: True,
+        {
+            const ONE: Self = Self::ONE;
         }
 
         impl<const FRAC: i32> Num for $Fixed<FRAC>
