@@ -24,7 +24,7 @@ az = "1.2"
 borsh = { default-features = false, optional = true, version = "1" }
 bytemuck = "1.2"
 half = { default-features = false, version = ">= 1.8, < 3" }
-num-traits = { default-features = false, features = ["i128"], optional = true, version = "0.2.15" }
+num-traits = { default-features = false, features = ["i128"], optional = true, version = "0.2.16" }
 serde = { default-features = false, optional = true, version = "1.0.60" }
 typenum = "1.14"
 
