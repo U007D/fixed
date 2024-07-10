@@ -27,7 +27,7 @@ use core::fmt::{Display, Formatter, Result as FmtResult};
 use num_traits::bounds::Bounded;
 use num_traits::cast::{FromPrimitive, ToPrimitive};
 use num_traits::float::FloatConst;
-use num_traits::identities::{One, Zero};
+use num_traits::identities::{ConstOne, ConstZero, One, Zero};
 
 use num_traits::ops::bytes::{FromBytes, ToBytes};
 use num_traits::ops::checked::{
@@ -101,6 +101,10 @@ macro_rules! impl_traits {
             }
         }
 
+        impl<Frac> ConstZero for $Fixed<Frac> {
+            const ZERO: Self = Self::ZERO;
+        }
+
         impl<Frac: $LeEqU> One for $Fixed<Frac>
         where
             Frac: IsLessOrEqual<$OneMaxFrac, Output = True>,
@@ -109,6 +113,13 @@ macro_rules! impl_traits {
             fn one() -> Self {
                 Self::ONE
             }
+        }
+
+        impl<Frac: $LeEqU> ConstOne for $Fixed<Frac>
+        where
+            Frac: IsLessOrEqual<$OneMaxFrac, Output = True>,
+        {
+            const ONE: Self = Self::ONE;
         }
 
         impl<Frac: $LeEqU> Num for $Fixed<Frac>
