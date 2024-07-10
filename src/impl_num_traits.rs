@@ -13,32 +13,30 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
+use crate::consts;
+use crate::types::extra::{If, True};
 use crate::{
-    consts,
-    types::extra::{If, True},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8, ParseFixedError,
 };
 use core::fmt::{Display, Formatter, Result as FmtResult};
-use num_traits::{
-    bounds::Bounded,
-    cast::{FromPrimitive, ToPrimitive},
-    float::FloatConst,
-    identities::{One, Zero},
-    ops::{
-        checked::{
-            CheckedAdd, CheckedDiv, CheckedMul, CheckedNeg, CheckedRem, CheckedShl, CheckedShr,
-            CheckedSub,
-        },
-        inv::Inv,
-        mul_add::{MulAdd, MulAddAssign},
-        overflowing::{OverflowingAdd, OverflowingMul, OverflowingSub},
-        saturating::{SaturatingAdd, SaturatingMul, SaturatingSub},
-        wrapping::{WrappingAdd, WrappingMul, WrappingNeg, WrappingShl, WrappingShr, WrappingSub},
-    },
-    sign::{Signed, Unsigned},
-    Num,
+use num_traits::bounds::Bounded;
+use num_traits::cast::{FromPrimitive, ToPrimitive};
+use num_traits::float::FloatConst;
+use num_traits::identities::{One, Zero};
+use num_traits::ops::bytes::{FromBytes, ToBytes};
+use num_traits::ops::checked::{
+    CheckedAdd, CheckedDiv, CheckedMul, CheckedNeg, CheckedRem, CheckedShl, CheckedShr, CheckedSub,
 };
+use num_traits::ops::inv::Inv;
+use num_traits::ops::mul_add::{MulAdd, MulAddAssign};
+use num_traits::ops::overflowing::{OverflowingAdd, OverflowingMul, OverflowingSub};
+use num_traits::ops::saturating::{SaturatingAdd, SaturatingMul, SaturatingSub};
+use num_traits::ops::wrapping::{
+    WrappingAdd, WrappingMul, WrappingNeg, WrappingShl, WrappingShr, WrappingSub,
+};
+use num_traits::sign::{Signed, Unsigned};
+use num_traits::Num;
 #[cfg(feature = "std")]
 use std::error::Error;
 
@@ -536,6 +534,38 @@ macro_rules! impl_traits {
             #[inline]
             fn from_f64(n: f64) -> Option<Self> {
                 Self::checked_from_num(n)
+            }
+        }
+
+        impl<const FRAC: i32> ToBytes for $Fixed<FRAC> {
+            type Bytes = [u8; $nbits / 8];
+
+            fn to_be_bytes(&self) -> Self::Bytes {
+                (*self).to_be_bytes()
+            }
+
+            fn to_le_bytes(&self) -> Self::Bytes {
+                (*self).to_le_bytes()
+            }
+
+            fn to_ne_bytes(&self) -> Self::Bytes {
+                (*self).to_ne_bytes()
+            }
+        }
+
+        impl<const FRAC: i32> FromBytes for $Fixed<FRAC> {
+            type Bytes = [u8; $nbits / 8];
+
+            fn from_be_bytes(bytes: &Self::Bytes) -> Self {
+                Self::from_be_bytes(*bytes)
+            }
+
+            fn from_le_bytes(bytes: &Self::Bytes) -> Self {
+                Self::from_le_bytes(*bytes)
+            }
+
+            fn from_ne_bytes(bytes: &Self::Bytes) -> Self {
+                Self::from_ne_bytes(*bytes)
             }
         }
     };

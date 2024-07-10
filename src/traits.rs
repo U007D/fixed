@@ -150,16 +150,19 @@ where
 ///   * [`MulAdd`], [`MulAddAssign`] because
 ///     <code>[MulAdd][`MulAdd`]::[mul\_add][`mul_add`]</code> conflicts with
 ///     <code>[Fixed]::[mul\_add][Fixed::mul_add]</code>
+///   * [`ToBytes`], [`FromBytes`] because of conflicts with [`Fixed`] methods
 ///
 /// Similarly, [`Signed`] and [`Unsigned`] are *not* supertraits of
 /// [`FixedSigned`] and [`FixedUnsigned`] because they have [`Num`] as a
 /// supertrait.
 ///
+/// [`FromBytes`]: num_traits::ops::bytes::FromBytes
 /// [`MulAddAssign`]: num_traits::ops::mul_add::MulAddAssign
 /// [`MulAdd`]: num_traits::ops::mul_add::MulAdd
 /// [`Num`]: num_traits::Num
 /// [`One`]: num_traits::identities::One
 /// [`Signed`]: num_traits::sign::Signed
+/// [`ToBytes`]: num_traits::ops::bytes::ToBytes
 /// [`Unsigned`]: num_traits::sign::Unsigned
 /// [`mul_add`]: num_traits::ops::mul_add::MulAdd::mul_add
 /// [optional features]: crate#optional-features
@@ -197,16 +200,19 @@ pub trait FixedOptionalNum: Sealed {}
 ///   * [`MulAdd`], [`MulAddAssign`] because
 ///     <code>[MulAdd][`MulAdd`]::[mul\_add][`mul_add`]</code> conflicts with
 ///     <code>[Fixed]::[mul\_add][Fixed::mul_add]</code>
+///   * [`ToBytes`], [`FromBytes`] because of conflicts with [`Fixed`] methods
 ///
 /// Similarly, [`Signed`] and [`Unsigned`] are *not* supertraits of
 /// [`FixedSigned`] and [`FixedUnsigned`] because they have [`Num`] as a
 /// supertrait.
 ///
+/// [`FromBytes`]: num_traits::ops::bytes::FromBytes
 /// [`MulAddAssign`]: num_traits::ops::mul_add::MulAddAssign
 /// [`MulAdd`]: num_traits::ops::mul_add::MulAdd
 /// [`Num`]: num_traits::Num
 /// [`One`]: num_traits::identities::One
 /// [`Signed`]: num_traits::sign::Signed
+/// [`ToBytes`]: num_traits::ops::bytes::ToBytes
 /// [`Unsigned`]: num_traits::sign::Unsigned
 /// [`mul_add`]: num_traits::ops::mul_add::MulAdd::mul_add
 /// [optional features]: crate#optional-features
