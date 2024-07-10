@@ -1461,10 +1461,7 @@ use fixed::", stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U", stringify!($nm4), ">;
 
 // hypot(3, 4) == 5
-assert_eq!(
-    Fix::from_num(3).hypot(Fix::from_num(4)),
-    (Fix::from_num(5), false)
-);
+assert_eq!(Fix::from_num(3).hypot(Fix::from_num(4)), Fix::from_num(5));
 ```
 
 [`wrapping_hypot`]: Self::wrapping_hypot
