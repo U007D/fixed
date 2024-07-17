@@ -5,7 +5,7 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-# Version 1.28.0 news (unreleased, not before 2024-07-25)
+# Version 1.28.0 news (2024-07-25)
 
   * The crate now requires rustc version 1.79.0 or later.
   * The following methods were added to all fixed-point numbers and to the
