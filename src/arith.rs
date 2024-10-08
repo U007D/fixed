@@ -22,10 +22,7 @@ use crate::{
 use core::hint;
 use core::{
     iter::{Product, Sum},
-    num::{
-        NonZeroI128, NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroU128, NonZeroU16,
-        NonZeroU32, NonZeroU64, NonZeroU8,
-    },
+    num::NonZero,
     ops::{
         Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div,
         DivAssign, Mul, MulAssign, Neg, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub,
@@ -235,10 +232,7 @@ macro_rules! shift_all {
 }
 
 macro_rules! fixed_arith {
-    (
-        $Fixed:ident($Inner:ident, $nbits:expr, $NonZeroInner:ident),
-        $Signedness:tt
-    ) => {
+    ($Fixed:ident($Inner:ident, $nbits:expr), $Signedness:tt) => {
         if_signed! {
             $Signedness;
             pass_one! { impl Neg for $Fixed { neg } }
@@ -510,32 +504,32 @@ macro_rules! fixed_arith {
         if_unsigned! {
             $Signedness;
 
-            impl<const FRAC: i32> Div<$NonZeroInner> for $Fixed<FRAC> {
+            impl<const FRAC: i32> Div<NonZero<$Inner>> for $Fixed<FRAC> {
                 type Output = $Fixed<FRAC>;
                 #[inline]
-                fn div(self, rhs: $NonZeroInner) -> $Fixed<FRAC> {
+                fn div(self, rhs: NonZero<$Inner>) -> $Fixed<FRAC> {
                     Self::from_bits(self.to_bits() / rhs)
                 }
             }
 
-            refs! { impl Div<$NonZeroInner> for $Fixed { div } }
+            refs! { impl Div<NonZero<$Inner>> for $Fixed { div } }
 
-            impl<const FRAC: i32> DivAssign<$NonZeroInner> for $Fixed<FRAC> {
+            impl<const FRAC: i32> DivAssign<NonZero<$Inner>> for $Fixed<FRAC> {
                 #[inline]
-                fn div_assign(&mut self, rhs: $NonZeroInner) {
+                fn div_assign(&mut self, rhs: NonZero<$Inner>) {
                     *self = (*self).div(rhs)
                 }
             }
 
-            refs_assign! { impl DivAssign<$NonZeroInner> for $Fixed { div_assign } }
+            refs_assign! { impl DivAssign<NonZero<$Inner>> for $Fixed { div_assign } }
 
-            impl<const FRAC: i32> Rem<$NonZeroInner> for $Fixed<FRAC>
+            impl<const FRAC: i32> Rem<NonZero<$Inner>> for $Fixed<FRAC>
             where
                 If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
             {
                 type Output = $Fixed<FRAC>;
                 #[inline]
-                fn rem(self, rhs: $NonZeroInner) -> $Fixed<FRAC> {
+                fn rem(self, rhs: NonZero<$Inner>) -> $Fixed<FRAC> {
                     // Hack to silence overflow operation error if we shift
                     // by FRAC directly.
                     let frac_nbits = FRAC as u32;
@@ -552,7 +546,7 @@ macro_rules! fixed_arith {
                     // SAFETY: rhs_fixed_bits must have some significant bits since
                     // rhs_fixed_bits >> frac_nbits is equal to a non-zero value.
                     debug_assert_ne!(rhs_fixed_bits, 0);
-                    let n = unsafe { $NonZeroInner::new_unchecked(rhs_fixed_bits) };
+                    let n = unsafe { NonZero::<$Inner>::new_unchecked(rhs_fixed_bits) };
                     Self::from_bits(self.to_bits() % n)
                 }
             }
@@ -561,13 +555,13 @@ macro_rules! fixed_arith {
         if_signed! {
             $Signedness;
 
-            impl<const FRAC: i32> Rem<$NonZeroInner> for $Fixed<FRAC>
+            impl<const FRAC: i32> Rem<NonZero<$Inner>> for $Fixed<FRAC>
             where
                 If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
             {
                 type Output = $Fixed<FRAC>;
                 #[inline]
-                fn rem(self, rhs: $NonZeroInner) -> $Fixed<FRAC> {
+                fn rem(self, rhs: NonZero<$Inner>) -> $Fixed<FRAC> {
                     // Hack to silence overflow operation error if we shift
                     // by FRAC directly.
                     let frac_nbits = FRAC as u32;
@@ -615,32 +609,32 @@ macro_rules! fixed_arith {
             }
         }
 
-        refs! { impl Rem<$NonZeroInner> for $Fixed($nbits) { rem } }
+        refs! { impl Rem<NonZero<$Inner>> for $Fixed($nbits) { rem } }
 
-        impl<const FRAC: i32> RemAssign<$NonZeroInner> for $Fixed<FRAC>
+        impl<const FRAC: i32> RemAssign<NonZero<$Inner>> for $Fixed<FRAC>
         where
             If<{ (0 <= FRAC) & (FRAC <= $nbits) }>: True,
         {
             #[inline]
-            fn rem_assign(&mut self, rhs: $NonZeroInner) {
+            fn rem_assign(&mut self, rhs: NonZero<$Inner>) {
                 *self = (*self).rem(rhs)
             }
         }
 
-        refs_assign! { impl RemAssign<$NonZeroInner> for $Fixed($nbits) { rem_assign } }
+        refs_assign! { impl RemAssign<NonZero<$Inner>> for $Fixed($nbits) { rem_assign } }
     };
 }
 
-fixed_arith! { FixedU8(u8, 8, NonZeroU8), Unsigned }
-fixed_arith! { FixedU16(u16, 16, NonZeroU16), Unsigned }
-fixed_arith! { FixedU32(u32, 32, NonZeroU32), Unsigned }
-fixed_arith! { FixedU64(u64, 64, NonZeroU64), Unsigned }
-fixed_arith! { FixedU128(u128, 128, NonZeroU128), Unsigned }
-fixed_arith! { FixedI8(i8, 8, NonZeroI8), Signed }
-fixed_arith! { FixedI16(i16, 16, NonZeroI16), Signed }
-fixed_arith! { FixedI32(i32, 32, NonZeroI32), Signed }
-fixed_arith! { FixedI64(i64, 64, NonZeroI64), Signed }
-fixed_arith! { FixedI128(i128, 128, NonZeroI128), Signed }
+fixed_arith! { FixedU8(u8, 8), Unsigned }
+fixed_arith! { FixedU16(u16, 16), Unsigned }
+fixed_arith! { FixedU32(u32, 32), Unsigned }
+fixed_arith! { FixedU64(u64, 64), Unsigned }
+fixed_arith! { FixedU128(u128, 128), Unsigned }
+fixed_arith! { FixedI8(i8, 8), Signed }
+fixed_arith! { FixedI16(i16, 16), Signed }
+fixed_arith! { FixedI32(i32, 32), Signed }
+fixed_arith! { FixedI64(i64, 64), Signed }
+fixed_arith! { FixedI128(i128, 128), Signed }
 
 macro_rules! mul_div_widen {
     ($Single:ident, $Double:ty, $Signedness:tt, $Unsigned:ty) => {

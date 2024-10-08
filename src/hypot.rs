@@ -15,7 +15,7 @@
 
 use crate::int256;
 use crate::int256::U256;
-use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64};
+use core::num::NonZero;
 
 // The square root method used is based on code by Martin Guy @UKC, June 1985.
 // His method of square root by abacus method is from a book on programming
@@ -23,7 +23,7 @@ use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64};
 // http://medialab.freaknet.org/martin/src/sqrt/
 
 macro_rules! impl_hypot {
-    ($Single:ident, $Double:ident, $NonZeroDouble:ident $(, $Half:ident)?) => {
+    ($Single:ident, $Double:ident $(, $Half:ident)?) => {
         pub const fn $Single(a: $Single, b: $Single) -> ($Single, bool) {
             $(
                 if a <= ($Half::MAX as $Single) && b <= ($Half::MAX as $Single) {
@@ -60,7 +60,7 @@ macro_rules! impl_hypot {
                 y = 1 << ($Double::BITS - 1);
                 bit = 1 << ($Double::BITS - 4);
             } else {
-                let sum_lz = match $NonZeroDouble::new(sum) {
+                let sum_lz = match NonZero::<$Double>::new(sum) {
                     None => return (0, false),
                     Some(s) => s.leading_zeros(),
                 };
@@ -82,10 +82,10 @@ macro_rules! impl_hypot {
     };
 }
 
-impl_hypot! { u8, u16, NonZeroU16 }
-impl_hypot! { u16, u32, NonZeroU32, u8 }
-impl_hypot! { u32, u64, NonZeroU64, u16 }
-impl_hypot! { u64, u128, NonZeroU128, u32 }
+impl_hypot! { u8, u16 }
+impl_hypot! { u16, u32, u8 }
+impl_hypot! { u32, u64, u16 }
+impl_hypot! { u64, u128, u32 }
 
 pub const fn u128(a: u128, b: u128) -> (u128, bool) {
     if a <= (u64::MAX as u128) && b <= (u64::MAX as u128) {
@@ -125,7 +125,7 @@ pub const fn u128(a: u128, b: u128) -> (u128, bool) {
         bit = 1 << 124;
     } else {
         y = U256 { lo: 0, hi: 0 };
-        bit = match NonZeroU128::new(sum.hi) {
+        bit = match NonZero::<u128>::new(sum.hi) {
             None => panic!("small operands; should have used crate::hypot::u64"),
             Some(s) => 1 << (126 - s.leading_zeros() / 2 * 2),
         };

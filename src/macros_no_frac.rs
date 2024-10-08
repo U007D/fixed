@@ -21,7 +21,6 @@ macro_rules! fixed_no_frac {
             = [$nm4:literal, $nm3:literal, $nm2:literal, $nm1:literal, $n:literal, $np1:literal],
         {ISelf, IInner} = {$ISelf:ident, $IInner:ident},
         {USelf, UInner} = {$USelf:ident, $UInner:ident},
-        NonZeroUInner = $NonZeroUInner:ident,
         nbytes = $nbytes:literal,
         {bytes_val, rev_bytes_val} = {$bytes_val:literal, $rev_bytes_val:literal},
         {be_bytes, le_bytes} = {$be_bytes:literal, $le_bytes:literal},
@@ -834,7 +833,7 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log2(), Some(-3));
                     }
                     // Since self > 0, we can work with unsigned.
                     let bits = self.to_bits() as $UInner;
-                    match $NonZeroUInner::new(bits) {
+                    match NonZero::<$UInner>::new(bits) {
                         None => None,
                         Some(s) => (s.ilog2() as i32).checked_sub(Self::FRAC_BITS),
                     }

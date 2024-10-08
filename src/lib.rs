@@ -467,7 +467,7 @@ use crate::{
     types::extra::{If, True},
 };
 use core::hash::{Hash, Hasher};
-use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8};
+use core::num::NonZero;
 
 /// A prelude to import useful traits.
 ///
@@ -526,7 +526,6 @@ macro_rules! fixed {
             = [$nm4:literal, $nm3:literal, $nm2:literal, $nm1:literal, $n:literal, $np1:literal],
         {ISelf, IInner} = {$ISelf:ident, $IInner:ident},
         {USelf, UInner} = {$USelf:ident, $UInner:ident},
-        NonZeroUInner = $NonZeroUInner:ident,
         [ncm3 ..= nc3] = [
             $ncm3:literal, $ncm2:literal, $ncm1:literal,
             $nc0:literal, $nc1:literal, $nc2:literal, $nc3:literal
@@ -639,7 +638,6 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
             [nm4 ..= np1] = [$nm4, $nm3, $nm2, $nm1, $n, $np1],
             {ISelf, IInner} = {$ISelf, $IInner},
             {USelf, UInner} = {$USelf, $UInner},
-            NonZeroUInner = $NonZeroUInner,
             nbytes = $nbytes,
             {bytes_val, rev_bytes_val} = {$bytes_val, $rev_bytes_val},
             {be_bytes, le_bytes} = {$be_bytes, $le_bytes},
@@ -655,7 +653,6 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
             Signedness = $Signedness,
             {nm4, nm1, n} = {$nm4, $nm1, $n},
             {USelf, UInner} = {$USelf, $UInner},
-            NonZeroUInner = $NonZeroUInner,
         }
         fixed_const! {
             Self = $Self,
@@ -673,7 +670,6 @@ fixed! {
     [nm4 ..= np1] = [4, 5, 6, 7, 8, 9],
     {ISelf, IInner} = {FixedI8, i8},
     {USelf, UInner} = {FixedU8, u8},
-    NonZeroUInner = NonZeroU8,
     [ncm3 ..= nc3] = [11, 10, 9, 8, 7, 6, 5],
     nbytes = 1,
     {bytes_val, rev_bytes_val} = {"0x12", "0x12"},
@@ -689,7 +685,6 @@ fixed! {
     [nm4 ..= np1] = [12, 13, 14, 15, 16, 17],
     {ISelf, IInner} = {FixedI16, i16},
     {USelf, UInner} = {FixedU16, u16},
-    NonZeroUInner = NonZeroU16,
     [ncm3 ..= nc3] = [19, 18, 17, 16, 15, 14, 13],
     nbytes = 2,
     {bytes_val, rev_bytes_val} = {"0x1234", "0x3412"},
@@ -705,7 +700,6 @@ fixed! {
     [nm4 ..= np1] = [28, 29, 30, 31, 32, 33],
     {ISelf, IInner} = {FixedI32, i32},
     {USelf, UInner} = {FixedU32, u32},
-    NonZeroUInner = NonZeroU32,
     [ncm3 ..= nc3] = [35, 34, 33, 32, 31, 30, 29],
     nbytes = 4,
     {bytes_val, rev_bytes_val} = {"0x1234_5678", "0x7856_3412"},
@@ -721,7 +715,6 @@ fixed! {
     [nm4 ..= np1] = [60, 61, 62, 63, 64, 65],
     {ISelf, IInner} = {FixedI64, i64},
     {USelf, UInner} = {FixedU64, u64},
-    NonZeroUInner = NonZeroU64,
     [ncm3 ..= nc3] = [67, 66, 65, 64, 63, 62, 61],
     nbytes = 8,
     {bytes_val, rev_bytes_val} = {"0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412"},
@@ -740,7 +733,6 @@ fixed! {
     [nm4 ..= np1] = [124, 125, 126, 127, 128, 129],
     {ISelf, IInner} = {FixedI128, i128},
     {USelf, UInner} = {FixedU128, u128},
-    NonZeroUInner = NonZeroU128,
     [ncm3 ..= nc3] = [131, 130, 129, 128, 127, 126, 125],
     nbytes = 16,
     {bytes_val, rev_bytes_val} = {
@@ -761,7 +753,6 @@ fixed! {
     [nm4 ..= np1] = [4, 5, 6, 7, 8, 9],
     {ISelf, IInner} = {FixedI8, i8},
     {USelf, UInner} = {FixedU8, u8},
-    NonZeroUInner = NonZeroU8,
     [ncm3 ..= nc3] = [10, 9, 8, 7, 6, 5, 4],
     nbytes = 1,
     {bytes_val, rev_bytes_val} = {"0x12", "0x12"},
@@ -777,7 +768,6 @@ fixed! {
     [nm4 ..= np1] = [12, 13, 14, 15, 16, 17],
     {ISelf, IInner} = {FixedI16, i16},
     {USelf, UInner} = {FixedU16, u16},
-    NonZeroUInner = NonZeroU16,
     [ncm3 ..= nc3] = [18, 17, 16, 15, 14, 13, 12],
     nbytes = 2,
     {bytes_val, rev_bytes_val} = {"0x1234", "0x3412"},
@@ -793,7 +783,6 @@ fixed! {
     [nm4 ..= np1] = [28, 29, 30, 31, 32, 33],
     {ISelf, IInner} = {FixedI32, i32},
     {USelf, UInner} = {FixedU32, u32},
-    NonZeroUInner = NonZeroU32,
     [ncm3 ..= nc3] = [34, 33, 32, 31, 30, 29, 28],
     nbytes = 4,
     {bytes_val, rev_bytes_val} = {"0x1234_5678", "0x7856_3412"},
@@ -809,7 +798,6 @@ fixed! {
     [nm4 ..= np1] = [60, 61, 62, 63, 64, 65],
     {ISelf, IInner} = {FixedI64, i64},
     {USelf, UInner} = {FixedU64, u64},
-    NonZeroUInner = NonZeroU64,
     [ncm3 ..= nc3] = [66, 65, 64, 63, 62, 61, 60],
     nbytes = 8,
     {bytes_val, rev_bytes_val} = {"0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412"},
@@ -828,7 +816,6 @@ fixed! {
     [nm4 ..= np1] = [124, 125, 126, 127, 128, 129],
     {ISelf, IInner} = {FixedI128, i128},
     {USelf, UInner} = {FixedU128, u128},
-    NonZeroUInner = NonZeroU128,
     [ncm3 ..= nc3] = [130, 129, 128, 127, 126, 125, 124],
     nbytes = 16,
     {bytes_val, rev_bytes_val} = {
