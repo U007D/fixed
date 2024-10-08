@@ -681,9 +681,9 @@ fn fmt_radix2<U: FmtHelper>(
 ) -> FmtResult {
     let digit_bits = format.digit_bits();
     let int_used_nbits = FmtHelper::int_used_nbits(int);
-    let int_digits = (int_used_nbits + digit_bits - 1) / digit_bits;
+    let int_digits = int_used_nbits.div_ceil(digit_bits);
     let frac_used_nbits = FmtHelper::frac_used_nbits(frac);
-    let mut frac_digits = (frac_used_nbits + digit_bits - 1) / digit_bits;
+    let mut frac_digits = frac_used_nbits.div_ceil(digit_bits);
     if let Some(precision) = fmt.precision() {
         // frac_digits fits in usize, but precision might wrap to 0 in u32
         frac_digits = cmp::min(frac_digits as usize, precision) as u32;
