@@ -416,7 +416,7 @@ use crate::{
         U60, U61, U62, U63, U64, U7, U8,
     },
 };
-use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8};
+use core::num::NonZero;
 use core::{
     hash::{Hash, Hasher},
     marker::PhantomData,
@@ -479,7 +479,6 @@ macro_rules! fixed {
             = [$nm4:literal, $nm3:literal, $nm2:literal, $nm1:literal, $n:literal, $np1:literal],
         {ISelf, IInner} = {$ISelf:ident, $IInner:ident},
         {USelf, UInner} = {$USelf:ident, $UInner:ident},
-        NonZeroUInner = $NonZeroUInner:ident,
         [LeEqUC0 ..= LeEqUC3] = [$LeEqUC0:ident, $LeEqUC1:ident, $LeEqUC2:ident, $LeEqUC3:ident],
         nbytes = $nbytes:literal,
         {bytes_val, rev_bytes_val} = {$bytes_val:literal, $rev_bytes_val:literal $(,)?},
@@ -617,7 +616,6 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
             LeEqU = $LeEqU,
             {nm4, nm1, n} = {$nm4, $nm1, $n},
             {USelf, UInner} = {$USelf, $UInner},
-            NonZeroUInner = $NonZeroUInner,
         }
         fixed_const! {
             Self = $Self,
@@ -638,7 +636,6 @@ fixed! {
     [nm4 ..= np1] = [4, 5, 6, 7, 8, 9],
     {ISelf, IInner} = {FixedI8, i8},
     {USelf, UInner} = {FixedU8, u8},
-    NonZeroUInner = NonZeroU8,
     [LeEqUC0 ..= LeEqUC3] = [U8, U7, U6, U5],
     nbytes = 1,
     {bytes_val, rev_bytes_val} = {"0x12", "0x12"},
@@ -656,7 +653,6 @@ fixed! {
     [nm4 ..= np1] = [12, 13, 14, 15, 16, 17],
     {ISelf, IInner} = {FixedI16, i16},
     {USelf, UInner} = {FixedU16, u16},
-    NonZeroUInner = NonZeroU16,
     [LeEqUC0 ..= LeEqUC3] = [U16, U15, U14, U13],
     nbytes = 2,
     {bytes_val, rev_bytes_val} = {"0x1234", "0x3412"},
@@ -674,7 +670,6 @@ fixed! {
     [nm4 ..= np1] = [28, 29, 30, 31, 32, 33],
     {ISelf, IInner} = {FixedI32, i32},
     {USelf, UInner} = {FixedU32, u32},
-    NonZeroUInner = NonZeroU32,
     [LeEqUC0 ..= LeEqUC3] = [U32, U31, U30, U29],
     nbytes = 4,
     {bytes_val, rev_bytes_val} = {"0x1234_5678", "0x7856_3412"},
@@ -692,7 +687,6 @@ fixed! {
     [nm4 ..= np1] = [60, 61, 62, 63, 64, 65],
     {ISelf, IInner} = {FixedI64, i64},
     {USelf, UInner} = {FixedU64, u64},
-    NonZeroUInner = NonZeroU64,
     [LeEqUC0 ..= LeEqUC3] = [U64, U63, U62, U61],
     nbytes = 8,
     {bytes_val, rev_bytes_val} = {"0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412"},
@@ -713,7 +707,6 @@ fixed! {
     [nm4 ..= np1] = [124, 125, 126, 127, 128, 129],
     {ISelf, IInner} = {FixedI128, i128},
     {USelf, UInner} = {FixedU128, u128},
-    NonZeroUInner = NonZeroU128,
     [LeEqUC0 ..= LeEqUC3] = [U128, U127, U126, U125],
     nbytes = 16,
     {bytes_val, rev_bytes_val} = {
@@ -736,7 +729,6 @@ fixed! {
     [nm4 ..= np1] = [4, 5, 6, 7, 8, 9],
     {ISelf, IInner} = {FixedI8, i8},
     {USelf, UInner} = {FixedU8, u8},
-    NonZeroUInner = NonZeroU8,
     [LeEqUC0 ..= LeEqUC3] = [U7, U6, U5, U4],
     nbytes = 1,
     {bytes_val, rev_bytes_val} = {"0x12", "0x12"},
@@ -754,7 +746,6 @@ fixed! {
     [nm4 ..= np1] = [12, 13, 14, 15, 16, 17],
     {ISelf, IInner} = {FixedI16, i16},
     {USelf, UInner} = {FixedU16, u16},
-    NonZeroUInner = NonZeroU16,
     [LeEqUC0 ..= LeEqUC3] = [U15, U14, U13, U12],
     nbytes = 2,
     {bytes_val, rev_bytes_val} = {"0x1234", "0x3412"},
@@ -772,7 +763,6 @@ fixed! {
     [nm4 ..= np1] = [28, 29, 30, 31, 32, 33],
     {ISelf, IInner} = {FixedI32, i32},
     {USelf, UInner} = {FixedU32, u32},
-    NonZeroUInner = NonZeroU32,
     [LeEqUC0 ..= LeEqUC3] = [U31, U30, U29, U28],
     nbytes = 4,
     {bytes_val, rev_bytes_val} = {"0x1234_5678", "0x7856_3412"},
@@ -790,7 +780,6 @@ fixed! {
     [nm4 ..= np1] = [60, 61, 62, 63, 64, 65],
     {ISelf, IInner} = {FixedI64, i64},
     {USelf, UInner} = {FixedU64, u64},
-    NonZeroUInner = NonZeroU64,
     [LeEqUC0 ..= LeEqUC3] = [U63, U62, U61, U60],
     nbytes = 8,
     {bytes_val, rev_bytes_val} = {"0x1234_5678_9ABC_DE0F", "0x0FDE_BC9A_7856_3412"},
@@ -811,7 +800,6 @@ fixed! {
     [nm4 ..= np1] = [124, 125, 126, 127, 128, 129],
     {ISelf, IInner} = {FixedI128, i128},
     {USelf, UInner} = {FixedU128, u128},
-    NonZeroUInner = NonZeroU128,
     [LeEqUC0 ..= LeEqUC3] = [U127, U126, U125, U124],
     nbytes = 16,
     {bytes_val, rev_bytes_val} = {

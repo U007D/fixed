@@ -13,7 +13,7 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
-use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8};
+use core::num::NonZero;
 
 // The mathematics below is based on the comments from FreeBSD's
 // /usr/src/lib/msun/src/e_sqrt.c.
@@ -131,8 +131,8 @@ use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8};
 //         y << int_nbits - 2sip, frac_nbits - 1 + sip iter, q >> int_nbits - 1 - sip
 
 macro_rules! impl_sqrt {
-    ($u:ident, $NZ:ident) => {
-        pub const fn $u(val: $NZ, frac_nbits: u32) -> $u {
+    ($u:ident) => {
+        pub const fn $u(val: NonZero<$u>, frac_nbits: u32) -> $u {
             let int_nbits = $u::BITS - frac_nbits;
             let odd_frac_nbits = frac_nbits % 2 != 0;
             let leading = val.leading_zeros();
@@ -234,11 +234,11 @@ macro_rules! impl_sqrt {
     };
 }
 
-impl_sqrt! { u8, NonZeroU8 }
-impl_sqrt! { u16, NonZeroU16 }
-impl_sqrt! { u32, NonZeroU32 }
-impl_sqrt! { u64, NonZeroU64 }
-impl_sqrt! { u128, NonZeroU128 }
+impl_sqrt! { u8 }
+impl_sqrt! { u16 }
+impl_sqrt! { u32 }
+impl_sqrt! { u64 }
+impl_sqrt! { u128 }
 
 #[cfg(test)]
 mod tests {

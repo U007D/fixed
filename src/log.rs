@@ -31,8 +31,8 @@ impl Base {
 }
 
 macro_rules! impl_int_part {
-    ($u:ident, $NZ:ident) => {
-        pub const fn $u(val: $NZ, base: Base) -> i32 {
+    ($u:ident) => {
+        pub const fn $u(val: NonZero<$u>, base: Base) -> i32 {
             const MAX_TABLE_SIZE: usize = ($u::BITS.ilog2() - 1) as usize;
 
             let val = val.get();
@@ -78,18 +78,18 @@ macro_rules! impl_int_part {
 
 pub mod int_part {
     use crate::log::Base;
-    use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8};
+    use core::num::NonZero;
 
-    impl_int_part! { u8, NonZeroU8 }
-    impl_int_part! { u16, NonZeroU16 }
-    impl_int_part! { u32, NonZeroU32 }
-    impl_int_part! { u64, NonZeroU64 }
-    impl_int_part! { u128, NonZeroU128 }
+    impl_int_part! { u8 }
+    impl_int_part! { u16 }
+    impl_int_part! { u32 }
+    impl_int_part! { u64 }
+    impl_int_part! { u128 }
 }
 
 macro_rules! impl_frac_part {
-    ($u:ident, $NZ:ident) => {
-        pub const fn $u(val: $NZ, base: Base) -> i32 {
+    ($u:ident) => {
+        pub const fn $u(val: NonZero<$u>, base: Base) -> i32 {
             const MAX_TABLE_SIZE: usize = ($u::BITS.ilog2() - 1) as usize;
 
             let val = val.get();
@@ -135,38 +135,38 @@ macro_rules! impl_frac_part {
 
 pub mod frac_part {
     use crate::log::Base;
-    use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8};
+    use core::num::NonZero;
 
-    impl_frac_part! { u8, NonZeroU8 }
-    impl_frac_part! { u16, NonZeroU16 }
-    impl_frac_part! { u32, NonZeroU32 }
-    impl_frac_part! { u64, NonZeroU64 }
-    impl_frac_part! { u128, NonZeroU128 }
+    impl_frac_part! { u8 }
+    impl_frac_part! { u16 }
+    impl_frac_part! { u32 }
+    impl_frac_part! { u64 }
+    impl_frac_part! { u128 }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::log;
     use crate::log::Base;
-    use core::num::{NonZeroU128, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8};
+    use core::num::NonZero;
 
     // these tests require the maximum table sizes
     #[test]
     fn check_table_size_is_sufficient() {
         let bin = Base::new(2).unwrap();
 
-        assert_eq!(log::int_part::u8(NonZeroU8::MAX, bin), 7);
-        assert_eq!(log::int_part::u16(NonZeroU16::MAX, bin), 15);
-        assert_eq!(log::int_part::u32(NonZeroU32::MAX, bin), 31);
-        assert_eq!(log::int_part::u64(NonZeroU64::MAX, bin), 63);
-        assert_eq!(log::int_part::u128(NonZeroU128::MAX, bin), 127);
+        assert_eq!(log::int_part::u8(NonZero::<u8>::MAX, bin), 7);
+        assert_eq!(log::int_part::u16(NonZero::<u16>::MAX, bin), 15);
+        assert_eq!(log::int_part::u32(NonZero::<u32>::MAX, bin), 31);
+        assert_eq!(log::int_part::u64(NonZero::<u64>::MAX, bin), 63);
+        assert_eq!(log::int_part::u128(NonZero::<u128>::MAX, bin), 127);
 
-        assert_eq!(log::frac_part::u8(NonZeroU8::new(1).unwrap(), bin), -8);
-        assert_eq!(log::frac_part::u16(NonZeroU16::new(1).unwrap(), bin), -16);
-        assert_eq!(log::frac_part::u32(NonZeroU32::new(1).unwrap(), bin), -32);
-        assert_eq!(log::frac_part::u64(NonZeroU64::new(1).unwrap(), bin), -64);
+        assert_eq!(log::frac_part::u8(NonZero::<u8>::new(1).unwrap(), bin), -8);
+        assert_eq!(log::frac_part::u16(NonZero::<u16>::new(1).unwrap(), bin), -16);
+        assert_eq!(log::frac_part::u32(NonZero::<u32>::new(1).unwrap(), bin), -32);
+        assert_eq!(log::frac_part::u64(NonZero::<u64>::new(1).unwrap(), bin), -64);
         assert_eq!(
-            log::frac_part::u128(NonZeroU128::new(1).unwrap(), bin),
+            log::frac_part::u128(NonZero::<u128>::new(1).unwrap(), bin),
             -128
         );
     }

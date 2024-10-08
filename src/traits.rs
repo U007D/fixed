@@ -39,10 +39,7 @@ use core::{
     hash::Hash,
     iter::{Product, Sum},
     mem,
-    num::{
-        NonZeroI128, NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroU128, NonZeroU16,
-        NonZeroU32, NonZeroU64, NonZeroU8, TryFromIntError,
-    },
+    num::{NonZero, TryFromIntError},
     ops::{
         Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div,
         DivAssign, Mul, MulAssign, Neg, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub,
@@ -4026,8 +4023,7 @@ macro_rules! trait_delegate {
 
 macro_rules! impl_fixed {
     (
-        $Fixed:ident, $IFixed:ident, $UFixed:ident, $LeEqU:ident, $Bits:ident, $NonZeroBits:ident,
-        $Signedness:ident
+        $Fixed:ident, $IFixed:ident, $UFixed:ident, $LeEqU:ident, $Bits:ident, $Signedness:ident
     ) => {
         impl<Frac: $LeEqU> FixedOptionalArbitrary for $Fixed<Frac> {}
         impl<Frac: $LeEqU> FixedOptionalBorsh for $Fixed<Frac> {}
@@ -4038,7 +4034,7 @@ macro_rules! impl_fixed {
 
         impl<Frac: $LeEqU> Fixed for $Fixed<Frac> {
             type Bits = $Bits;
-            type NonZeroBits = $NonZeroBits;
+            type NonZeroBits = NonZero<$Bits>;
             type Bytes = [u8; mem::size_of::<$Bits>()];
             type Frac = Frac;
             type Signed = $IFixed<Frac>;
@@ -4565,13 +4561,13 @@ macro_rules! impl_fixed {
     };
 }
 
-impl_fixed! { FixedI8, FixedI8, FixedU8, LeEqU8, i8, NonZeroI8, Signed }
-impl_fixed! { FixedI16, FixedI16, FixedU16, LeEqU16, i16, NonZeroI16, Signed }
-impl_fixed! { FixedI32, FixedI32, FixedU32, LeEqU32, i32, NonZeroI32, Signed }
-impl_fixed! { FixedI64, FixedI64, FixedU64, LeEqU64, i64, NonZeroI64, Signed }
-impl_fixed! { FixedI128, FixedI128, FixedU128, LeEqU128, i128, NonZeroI128, Signed }
-impl_fixed! { FixedU8, FixedI8, FixedU8, LeEqU8, u8, NonZeroU8, Unsigned }
-impl_fixed! { FixedU16, FixedI16, FixedU16, LeEqU16, u16, NonZeroU16, Unsigned }
-impl_fixed! { FixedU32, FixedI32, FixedU32, LeEqU32, u32, NonZeroU32, Unsigned }
-impl_fixed! { FixedU64, FixedI64, FixedU64, LeEqU64, u64, NonZeroU64, Unsigned }
-impl_fixed! { FixedU128, FixedI128, FixedU128, LeEqU128, u128, NonZeroU128, Unsigned }
+impl_fixed! { FixedI8, FixedI8, FixedU8, LeEqU8, i8, Signed }
+impl_fixed! { FixedI16, FixedI16, FixedU16, LeEqU16, i16, Signed }
+impl_fixed! { FixedI32, FixedI32, FixedU32, LeEqU32, i32, Signed }
+impl_fixed! { FixedI64, FixedI64, FixedU64, LeEqU64, i64, Signed }
+impl_fixed! { FixedI128, FixedI128, FixedU128, LeEqU128, i128, Signed }
+impl_fixed! { FixedU8, FixedI8, FixedU8, LeEqU8, u8, Unsigned }
+impl_fixed! { FixedU16, FixedI16, FixedU16, LeEqU16, u16, Unsigned }
+impl_fixed! { FixedU32, FixedI32, FixedU32, LeEqU32, u32, Unsigned }
+impl_fixed! { FixedU64, FixedI64, FixedU64, LeEqU64, u64, Unsigned }
+impl_fixed! { FixedU128, FixedI128, FixedU128, LeEqU128, u128, Unsigned }

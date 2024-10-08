@@ -20,7 +20,6 @@ macro_rules! fixed_frac {
         LeEqU = $LeEqU:ident,
         {nm4, nm1, n} = {$nm4:literal, $nm1:literal, $n:literal},
         {USelf, UInner} = {$USelf:ident, $UInner:ident},
-        NonZeroUInner = $NonZeroUInner:ident,
     ) => {
         /// The implementation of items in this block depends on the
         /// number of fractional bits `Frac`.
@@ -203,7 +202,7 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log2(), Some(-3));
                     }
                     // Since self > 0, we can work with unsigned.
                     let bits = self.to_bits() as $UInner;
-                    match $NonZeroUInner::new(bits) {
+                    match NonZero::<$UInner>::new(bits) {
                         None => None,
                         Some(s) => Some(s.ilog2() as i32 - Self::FRAC_NBITS as i32),
                     }
@@ -240,7 +239,7 @@ assert_eq!(", stringify!($Self), "::<U6>::from_num(0.09375).checked_int_log10(),
                     let bits = self.to_bits() as $UInner;
                     if Self::FRAC_NBITS < $UInner::BITS {
                         let int = bits >> Self::FRAC_NBITS;
-                        if let Some(non_zero) = $NonZeroUInner::new(int) {
+                        if let Some(non_zero) = NonZero::<$UInner>::new(int) {
                             return Some(non_zero.ilog10() as i32);
                         }
                     }
@@ -249,7 +248,7 @@ assert_eq!(", stringify!($Self), "::<U6>::from_num(0.09375).checked_int_log10(),
                     // SAFETY: at this point, we know that self.to_bits() > 0,
                     // and that the integer bits are zero, so the fractional
                     // bits must be non-zero.
-                    let non_zero = unsafe { $NonZeroUInner::new_unchecked(frac) };
+                    let non_zero = unsafe { NonZero::<$UInner>::new_unchecked(frac) };
                     Some(log10::frac_part::$UInner(non_zero))
                 }
             }
@@ -286,7 +285,7 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log(5), Some(-2));
                     let bits = self.to_bits() as $UInner;
                     if Self::FRAC_NBITS < $UInner::BITS {
                         let int = bits >> Self::FRAC_NBITS;
-                        if let Some(non_zero) = $NonZeroUInner::new(int) {
+                        if let Some(non_zero) = NonZero::<$UInner>::new(int) {
                             return Some(log::int_part::$UInner(non_zero, base));
                         }
                     }
@@ -295,7 +294,7 @@ assert_eq!(Fix::from_num(0.1875).checked_int_log(5), Some(-2));
                     // SAFETY: at this point, we know that self.to_bits() > 0,
                     // and that the integer bits are zero, so the fractional
                     // bits must be non-zero.
-                    let non_zero = unsafe { $NonZeroUInner::new_unchecked(frac) };
+                    let non_zero = unsafe { NonZero::<$UInner>::new_unchecked(frac) };
                     Some(log::frac_part::$UInner(non_zero, base))
                 }
             }
@@ -3305,7 +3304,7 @@ assert_eq!(
                             (s, s.is_negative())
                         },
                         {
-                            let Some(nz) = $NonZeroUInner::new(self.to_bits()) else {
+                            let Some(nz) = NonZero::<$UInner>::new(self.to_bits()) else {
                                 return (Self::ZERO, false);
                             };
                             let ret = sqrt::$UInner(nz, Self::FRAC_NBITS);
