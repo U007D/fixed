@@ -162,9 +162,18 @@ mod tests {
         assert_eq!(log::int_part::u128(NonZero::<u128>::MAX, bin), 127);
 
         assert_eq!(log::frac_part::u8(NonZero::<u8>::new(1).unwrap(), bin), -8);
-        assert_eq!(log::frac_part::u16(NonZero::<u16>::new(1).unwrap(), bin), -16);
-        assert_eq!(log::frac_part::u32(NonZero::<u32>::new(1).unwrap(), bin), -32);
-        assert_eq!(log::frac_part::u64(NonZero::<u64>::new(1).unwrap(), bin), -64);
+        assert_eq!(
+            log::frac_part::u16(NonZero::<u16>::new(1).unwrap(), bin),
+            -16
+        );
+        assert_eq!(
+            log::frac_part::u32(NonZero::<u32>::new(1).unwrap(), bin),
+            -32
+        );
+        assert_eq!(
+            log::frac_part::u64(NonZero::<u64>::new(1).unwrap(), bin),
+            -64
+        );
         assert_eq!(
             log::frac_part::u128(NonZero::<u128>::new(1).unwrap(), bin),
             -128
