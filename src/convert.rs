@@ -15,13 +15,13 @@
 
 #![allow(deprecated)]
 
+use crate::int_helper::IntFixed;
+use crate::traits::{FromFixed, LosslessTryFrom, LossyFrom, ToFixed};
+use crate::types::extra::{
+    Diff, IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, True, U0, U1, U127, U128,
+    U15, U16, U24, U31, U32, U63, U64, U7, U8,
+};
 use crate::{
-    int_helper::IntFixed,
-    traits::{FromFixed, LosslessTryFrom, LossyFrom, ToFixed},
-    types::extra::{
-        Diff, IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, True, U0, U1, U127, U128,
-        U15, U16, U24, U31, U32, U63, U64, U7, U8,
-    },
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8, F128,
 };
@@ -957,10 +957,12 @@ into! { f64: f64 }
 
 #[cfg(feature = "nightly-float")]
 mod nightly_float {
+    use crate::int_helper::IntFixed;
+    use crate::traits::{FromFixed, LosslessTryFrom, LossyFrom, ToFixed};
+    use crate::types::extra::{
+        IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, True, U24,
+    };
     use crate::{
-        int_helper::IntFixed,
-        traits::{FromFixed, LosslessTryFrom, LossyFrom, ToFixed},
-        types::extra::{IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, True, U24},
         FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU16, FixedU32, FixedU64, FixedU8,
     };
 
@@ -1012,10 +1014,8 @@ mod nightly_float {
 /// The first snippet succeeds, and acts as a control.
 ///
 /// ```rust
-/// use fixed::{
-///     traits::{LosslessTryFrom, LossyFrom},
-///     types::*,
-/// };
+/// use fixed::traits::{LosslessTryFrom, LossyFrom};
+/// use fixed::types::*;
 /// let _ = I8F8::from(I4F4::default());
 /// let _ = I8F8::from(U7F1::default());
 /// let _ = U8F8::from(U4F4::default());
@@ -1041,7 +1041,8 @@ mod nightly_float {
 /// let _ = I8F8::from(I7F9::default());
 /// ```
 /// ```rust,compile_fail
-/// use fixed::{traits::LosslessTryFrom, types::*};
+/// use fixed::traits::LosslessTryFrom;
+/// use fixed::types::*;
 /// let _ = I8F8::lossless_try_from(I7F9::default());
 /// ```
 ///
@@ -1051,7 +1052,8 @@ mod nightly_float {
 /// let _ = I8F8::from(I9F7::default());
 /// ```
 /// ```rust,compile_fail
-/// use fixed::{traits::LossyFrom, types::*};
+/// use fixed::traits::LossyFrom;
+/// use fixed::types::*;
 /// let _ = I8F8::lossy_from(I9F7::default());
 /// ```
 ///
@@ -1061,7 +1063,8 @@ mod nightly_float {
 /// let _ = I8F8::from(U8F0::default());
 /// ```
 /// ```rust,compile_fail
-/// use fixed::{traits::LossyFrom, types::*};
+/// use fixed::traits::LossyFrom;
+/// use fixed::types::*;
 /// let _ = I8F8::lossy_from(U8F0::default());
 /// ```
 ///
@@ -1071,7 +1074,8 @@ mod nightly_float {
 /// let _ = U8F8::from(U7F9::default());
 /// ```
 /// ```rust,compile_fail
-/// use fixed::{traits::LosslessTryFrom, types::*};
+/// use fixed::traits::LosslessTryFrom;
+/// use fixed::types::*;
 /// let _ = U8F8::lossless_try_from(U7F9::default());
 /// ```
 ///
@@ -1081,7 +1085,8 @@ mod nightly_float {
 /// let _ = U8F8::from(U9F7::default());
 /// ```
 /// ```rust,compile_fail
-/// use fixed::{traits::LossyFrom, types::*};
+/// use fixed::traits::LossyFrom;
+/// use fixed::types::*;
 /// let _ = U8F8::lossy_from(U9F7::default());
 /// ```
 ///
@@ -1091,29 +1096,34 @@ mod nightly_float {
 /// let _ = U8F8::from(I4F4::default());
 /// ```
 /// ```rust,compile_fail
-/// use fixed::{traits::LossyFrom, types::*};
+/// use fixed::traits::LossyFrom;
+/// use fixed::types::*;
 /// let _ = U8F8::lossy_from(I4F4::default());
 /// ```
 ///
 /// Not enough fractional bits.
 /// ```rust,compile_fail
-/// use fixed::{traits::LosslessTryFrom, types::*};
+/// use fixed::traits::LosslessTryFrom;
+/// use fixed::types::*;
 /// let _ = I8F8::lossless_try_from(I55F9::default());
 /// ```
 ///
 /// Not enough integer bits.
 /// ```rust,compile_fail
-/// use fixed::{traits::LossyFrom, types::*};
+/// use fixed::traits::LossyFrom;
+/// use fixed::types::*;
 /// let _ = I8F8::lossy_from(I9F55::default());
 /// ```
 /// ```rust,compile_fail
-/// use fixed::{traits::LossyFrom, types::*};
+/// use fixed::traits::LossyFrom;
+/// use fixed::types::*;
 /// let _ = U8F8::lossy_from(U9F55::default());
 /// ```
 ///
 /// Signed to unsigned.
 /// ```rust,compile_fail
-/// use fixed::{traits::LossyFrom, types::*};
+/// use fixed::traits::LossyFrom;
+/// use fixed::types::*;
 /// let _ = I8F8::lossy_from(U8F56::default());
 /// ```
 ///
@@ -1729,7 +1739,6 @@ mod tests {
     #[test]
     fn lossy_f16() {
         use crate::traits::LossyFrom;
-        use core::{f32, f64};
         use half::f16 as half_f16;
 
         assert_eq!(
@@ -1812,7 +1821,6 @@ mod tests {
     #[test]
     fn lossy_half_bf16() {
         use crate::traits::LossyFrom;
-        use core::{f32, f64};
         use half::bf16 as half_bf16;
 
         assert_eq!(

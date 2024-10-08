@@ -22,7 +22,8 @@ number, and are rounded down at that precision.
 # Examples
 
 ```rust
-use fixed::{consts, types::I4F28};
+use fixed::consts;
+use fixed::types::I4F28;
 let tau = I4F28::from_num(consts::TAU);
 println!("τ = 2π with eight binary places is {tau:.8b}");
 assert_eq!(format!("{tau:.8b}"), "110.01001000");
@@ -295,10 +296,8 @@ pub const CATALAN: U0F128 = U0F128::from_bits(0xEA7C_B89F_409A_E845_2158_22E3_7D
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        consts::*,
-        traits::{Fixed, FromFixed},
-    };
+    use crate::consts::*;
+    use crate::traits::{Fixed, FromFixed};
     use core::{f32, f64};
 
     #[test]

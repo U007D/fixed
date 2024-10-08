@@ -13,12 +13,10 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
+use core::cell::Cell;
+use core::fmt::{Debug, Formatter, Result as FmtResult, Write};
 #[cfg(target_has_atomic = "32")]
 use core::sync::atomic::{AtomicU32, Ordering};
-use core::{
-    cell::Cell,
-    fmt::{Debug, Formatter, Result as FmtResult, Write},
-};
 
 // This is an ugly hack to check whether a `Formatter` has `debug_lower_hex` or
 // `debug_upper_hex`.

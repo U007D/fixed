@@ -401,27 +401,24 @@ pub mod types;
 mod unwrapped;
 mod wrapping;
 
+pub use crate::f128::private::F128;
+pub use crate::from_str::ParseFixedError;
 #[cfg(feature = "num-traits")]
 pub use crate::impl_num_traits::RadixParseFixedError;
-pub use crate::{
-    f128::private::F128, from_str::ParseFixedError, saturating::Saturating, unwrapped::Unwrapped,
-    wrapping::Wrapping,
+use crate::log::Base;
+pub use crate::saturating::Saturating;
+use crate::traits::{FromFixed, ToFixed};
+use crate::types::extra::{
+    Diff, IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, Sum, True, Unsigned, U0, U12,
+    U124, U125, U126, U127, U128, U13, U14, U15, U16, U28, U29, U30, U31, U32, U4, U5, U6, U60,
+    U61, U62, U63, U64, U7, U8,
 };
-use crate::{
-    log::Base,
-    traits::{FromFixed, ToFixed},
-    types::extra::{
-        Diff, IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, Sum, True, Unsigned, U0,
-        U12, U124, U125, U126, U127, U128, U13, U14, U15, U16, U28, U29, U30, U31, U32, U4, U5, U6,
-        U60, U61, U62, U63, U64, U7, U8,
-    },
-};
+pub use crate::unwrapped::Unwrapped;
+pub use crate::wrapping::Wrapping;
+use core::hash::{Hash, Hasher};
+use core::marker::PhantomData;
 use core::num::NonZero;
-use core::{
-    hash::{Hash, Hasher},
-    marker::PhantomData,
-    ops::{Add, Sub},
-};
+use core::ops::{Add, Sub};
 
 /// A prelude to import useful traits.
 ///
@@ -541,7 +538,8 @@ An [alpha version] is already available.
 # Examples
 
 ```rust
-use fixed::{types::extra::U3, ", stringify!($Self), "};
+use fixed::types::extra::U3;
+use fixed::", stringify!($Self), ";
 let eleven = ", stringify!($Self), "::<U3>::from_num(11);
 assert_eq!(eleven, ", stringify!($Self), "::<U3>::from_bits(11 << 3));
 assert_eq!(eleven, 11);
@@ -864,7 +862,8 @@ impl F128Bits {
 ///
 /// ```rust
 /// # #![allow(deprecated)]
-/// use fixed::{const_fixed_from_int, types::I16F16};
+/// use fixed::const_fixed_from_int;
+/// use fixed::types::I16F16;
 /// const_fixed_from_int! {
 ///     // define a constant using an integer
 ///     const FIVE: I16F16 = 5;

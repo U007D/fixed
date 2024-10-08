@@ -13,7 +13,8 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
-use crate::int256::{self, U256};
+use crate::int256;
+use crate::int256::U256;
 use core::num::NonZeroU128;
 
 macro_rules! make_inv_lerp {

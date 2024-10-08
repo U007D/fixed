@@ -13,22 +13,19 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
+use crate::traits::ToFixed;
+use crate::types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8};
 use crate::{
-    traits::ToFixed,
-    types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
 };
 #[cfg(not(debug_assertions))]
 use core::hint;
-use core::{
-    iter::{Product, Sum},
-    num::NonZero,
-    ops::{
-        Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div,
-        DivAssign, Mul, MulAssign, Neg, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub,
-        SubAssign,
-    },
+use core::iter::{Product, Sum};
+use core::num::NonZero;
+use core::ops::{
+    Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div, DivAssign,
+    Mul, MulAssign, Neg, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub, SubAssign,
 };
 
 macro_rules! refs {
@@ -686,7 +683,8 @@ mul_div_widen! { i32, i64, Signed, u32 }
 mul_div_widen! { i64, i128, Signed, u64 }
 
 pub mod u128 {
-    use crate::int256::{self, U256};
+    use crate::int256;
+    use crate::int256::U256;
     use core::num::NonZeroU128;
 
     // 0 <= frac_nbits <= NBITS
@@ -760,7 +758,8 @@ pub mod u128 {
 }
 
 pub mod i128 {
-    use crate::int256::{self, I256};
+    use crate::int256;
+    use crate::int256::I256;
     use core::num::NonZeroI128;
 
     // 0 <= frac_nbits <= NBITS
@@ -1522,10 +1521,8 @@ mod tests {
 
     #[test]
     fn issue_26() {
-        use crate::{
-            types::extra::{U120, U121, U122, U123, U124},
-            FixedI128, FixedU128,
-        };
+        use crate::types::extra::{U120, U121, U122, U123, U124};
+        use crate::{FixedI128, FixedU128};
 
         // issue 26 is about FixedI128<U123>, the others are just some extra tests
 

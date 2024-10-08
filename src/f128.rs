@@ -28,12 +28,10 @@
 //! [`f128` feature]: https://github.com/rust-lang/rust/issues/116909
 
 use crate::F128;
-use core::{
-    cmp::Ordering,
-    hash::{Hash, Hasher},
-    num::FpCategory,
-    ops::Neg,
-};
+use core::cmp::Ordering;
+use core::hash::{Hash, Hasher};
+use core::num::FpCategory;
+use core::ops::Neg;
 use half::{bf16 as half_bf16, f16 as half_f16};
 
 const PREC: u32 = 113;
@@ -68,7 +66,8 @@ pub(crate) mod private {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, F128};
+    /// use fixed::types::I16F16;
+    /// use fixed::F128;
     /// assert_eq!(I16F16::ONE.to_num::<F128>(), F128::ONE);
     /// assert_eq!(I16F16::from_num(F128::ONE), I16F16::ONE);
     ///
@@ -824,11 +823,9 @@ from_float! { f16, u16 }
 
 /*
 ```rust
-use core::{cmp::Ord, convert::TryFrom};
-use rug::{
-    float::{Constant, Round},
-    Assign, Float, Integer,
-};
+use core::cmp::Ord;
+use rug::float::{Constant, Round};
+use rug::{Assign, Float, Integer};
 
 fn decimal_string(val: &Float, prec: i32) -> String {
     let log10 = val.clone().log10();
@@ -996,7 +993,8 @@ pub mod consts {
 
 #[cfg(test)]
 mod tests {
-    use crate::{traits::FromFixed, F128};
+    use crate::traits::FromFixed;
+    use crate::F128;
     use half::{bf16 as half_bf16, f16 as half_f16};
 
     // Apart from F128 include f16, bf16, f32, f64 as a sanity check for the tests.
@@ -1092,7 +1090,8 @@ mod tests {
 
     #[test]
     fn math_constants() {
-        use crate::{consts as fix, f128::consts as f128};
+        use crate::consts as fix;
+        use crate::f128::consts as f128;
         assert_eq!(f128::PI, F128::from_fixed(fix::PI));
         assert_eq!(f128::TAU, F128::from_fixed(fix::TAU));
         assert_eq!(f128::FRAC_PI_2, F128::from_fixed(fix::FRAC_PI_2));

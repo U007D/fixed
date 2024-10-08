@@ -19,13 +19,13 @@ Traits for conversions and for generic use of fixed-point numbers.
 
 #![allow(deprecated)]
 
+use crate::helpers::{Private, Sealed, Widest};
 pub use crate::traits_bits::{
     FixedBits, FixedBitsCast, FixedBitsOptionalArbitrary, FixedBitsOptionalBorsh,
     FixedBitsOptionalNum, FixedBitsOptionalSerde,
 };
+use crate::types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, Unsigned};
 use crate::{
-    helpers::{Private, Sealed, Widest},
-    types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, Unsigned},
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8, ParseFixedError, F128,
 };
@@ -34,19 +34,16 @@ use arbitrary::Arbitrary;
 #[cfg(feature = "borsh")]
 use borsh::{BorshDeserialize, BorshSerialize};
 use bytemuck::{Contiguous, Pod, TransparentWrapper};
-use core::{
-    fmt::{Binary, Debug, Display, LowerExp, LowerHex, Octal, UpperExp, UpperHex},
-    hash::Hash,
-    iter::{Product, Sum},
-    mem,
-    num::{NonZero, TryFromIntError},
-    ops::{
-        Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div,
-        DivAssign, Mul, MulAssign, Neg, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub,
-        SubAssign,
-    },
-    str::FromStr,
+use core::fmt::{Binary, Debug, Display, LowerExp, LowerHex, Octal, UpperExp, UpperHex};
+use core::hash::Hash;
+use core::iter::{Product, Sum};
+use core::mem;
+use core::num::{NonZero, TryFromIntError};
+use core::ops::{
+    Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div, DivAssign,
+    Mul, MulAssign, Neg, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub, SubAssign,
 };
+use core::str::FromStr;
 use half::{bf16 as half_bf16, f16 as half_f16};
 #[cfg(feature = "num-traits")]
 use num_traits::{
@@ -54,16 +51,14 @@ use num_traits::{
     cast::{FromPrimitive, ToPrimitive},
     float::FloatConst,
     identities::Zero,
-    ops::{
-        checked::{
-            CheckedAdd, CheckedDiv, CheckedMul, CheckedNeg, CheckedRem, CheckedShl, CheckedShr,
-            CheckedSub,
-        },
-        inv::Inv,
-        overflowing::{OverflowingAdd, OverflowingMul, OverflowingSub},
-        saturating::{SaturatingAdd, SaturatingMul, SaturatingSub},
-        wrapping::{WrappingAdd, WrappingMul, WrappingNeg, WrappingShl, WrappingShr, WrappingSub},
+    ops::checked::{
+        CheckedAdd, CheckedDiv, CheckedMul, CheckedNeg, CheckedRem, CheckedShl, CheckedShr,
+        CheckedSub,
     },
+    ops::inv::Inv,
+    ops::overflowing::{OverflowingAdd, OverflowingMul, OverflowingSub},
+    ops::saturating::{SaturatingAdd, SaturatingMul, SaturatingSub},
+    ops::wrapping::{WrappingAdd, WrappingMul, WrappingNeg, WrappingShl, WrappingShr, WrappingSub},
 };
 #[cfg(feature = "serde")]
 use serde::{de::Deserialize, ser::Serialize};
@@ -311,10 +306,8 @@ where
 /// # Examples
 ///
 /// ```rust
-/// use fixed::{
-///     traits::Fixed,
-///     types::{I8F8, I16F16},
-/// };
+/// use fixed::traits::Fixed;
+/// use fixed::types::{I8F8, I16F16};
 ///
 /// fn checked_add_twice<F: Fixed>(lhs: F, rhs: F) -> Option<F> {
 ///     lhs.checked_add(rhs)?.checked_add(rhs)
@@ -342,7 +335,8 @@ where
 /// [`u16`] (which can represent 500) can be converted into `F::Bits`.
 ///
 /// ```rust
-/// use fixed::{traits::Fixed, types::U12F4};
+/// use fixed::traits::Fixed;
+/// use fixed::types::U12F4;
 ///
 /// fn checked_add_times_500<F: Fixed>(lhs: F, rhs: F) -> Option<F>
 /// where
@@ -360,7 +354,8 @@ where
 /// following example would fail to compile.
 ///
 /// ```rust,compile_fail
-/// use fixed::{traits::Fixed, types::I12F4};
+/// use fixed::traits::Fixed;
+/// use fixed::types::I12F4;
 ///
 /// fn checked_add_times_500<F: Fixed>(lhs: F, rhs: F) -> Option<F>
 /// where
@@ -380,7 +375,8 @@ where
 /// is [`u8`] or [`i8`].)
 ///
 /// ```rust
-/// use fixed::{traits::Fixed, types::I12F4};
+/// use fixed::traits::Fixed;
+/// use fixed::types::I12F4;
 ///
 /// fn checked_add_times_500<F: Fixed>(lhs: F, rhs: F) -> Option<F>
 /// where
@@ -434,7 +430,8 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{traits::Fixed, types::I16F16};
+    /// use fixed::traits::Fixed;
+    /// use fixed::types::I16F16;
     /// // 32-bit DELTA is 0x0000_0001_i32
     /// const DELTA_BITS: <I16F16 as Fixed>::Bits = I16F16::DELTA.to_bits();
     /// assert_eq!(DELTA_BITS, 1i32);
@@ -446,7 +443,8 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{traits::Fixed, types::I16F16};
+    /// use fixed::traits::Fixed;
+    /// use fixed::types::I16F16;
     /// let val = I16F16::from_num(31);
     /// let non_zero_5 = <I16F16 as Fixed>::NonZeroBits::new(5).unwrap();
     /// assert_eq!(val % non_zero_5, val % 5);
@@ -460,7 +458,8 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{traits::Fixed, types::I16F16};
+    /// use fixed::traits::Fixed;
+    /// use fixed::types::I16F16;
     /// // 32-bit DELTA is 0x0000_0001_i32
     /// const DELTA_LE_BYTES: <I16F16 as Fixed>::Bytes = I16F16::DELTA.to_le_bytes();
     /// assert_eq!(DELTA_LE_BYTES, 1i32.to_le_bytes());
@@ -478,7 +477,9 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{traits::Fixed, types::extra::U16, FixedI32, FixedI64};
+    /// use fixed::traits::Fixed;
+    /// use fixed::types::extra::U16;
+    /// use fixed::{FixedI32, FixedI64};
     /// type Fix1 = FixedI32::<U16>;
     /// assert_eq!(Fix1::FRAC_NBITS, 16);
     /// assert_eq!(Fix1::INT_NBITS, 32 - 16);
@@ -500,10 +501,8 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     traits::Fixed,
-    ///     types::{I16F16, U16F16},
-    /// };
+    /// use fixed::traits::Fixed;
+    /// use fixed::types::{I16F16, U16F16};
     /// // I16F16::Signed is I16F16
     /// assert_eq!(<I16F16 as Fixed>::Signed::FRAC_NBITS, I16F16::FRAC_NBITS);
     /// assert_eq!(<I16F16 as Fixed>::Signed::INT_NBITS, I16F16::INT_NBITS);
@@ -527,10 +526,8 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     traits::Fixed,
-    ///     types::{I16F16, U16F16},
-    /// };
+    /// use fixed::traits::Fixed;
+    /// use fixed::types::{I16F16, U16F16};
     /// // I16F16::Unsigned is U16F16
     /// assert_eq!(<I16F16 as Fixed>::Unsigned::FRAC_NBITS, U16F16::FRAC_NBITS);
     /// assert_eq!(<I16F16 as Fixed>::Unsigned::INT_NBITS, U16F16::INT_NBITS);
@@ -552,10 +549,8 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     traits::Fixed,
-    ///     types::{I16F16, U16F16},
-    /// };
+    /// use fixed::traits::Fixed;
+    /// use fixed::types::{I16F16, U16F16};
     ///
     /// let i = I16F16::from_num(-3.5);
     /// match i.get_signed() {
@@ -581,10 +576,8 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     traits::Fixed,
-    ///     types::{I16F16, U16F16},
-    /// };
+    /// use fixed::traits::Fixed;
+    /// use fixed::types::{I16F16, U16F16};
     ///
     /// let u = U16F16::from_num(3.5);
     /// match u.get_unsigned() {
@@ -610,10 +603,8 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     traits::Fixed,
-    ///     types::{I16F16, U16F16},
-    /// };
+    /// use fixed::traits::Fixed;
+    /// use fixed::types::{I16F16, U16F16};
     ///
     /// let mut i = I16F16::from_num(-3.5);
     /// match i.get_signed_mut() {
@@ -640,10 +631,8 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     traits::Fixed,
-    ///     types::{I16F16, U16F16},
-    /// };
+    /// use fixed::traits::Fixed;
+    /// use fixed::types::{I16F16, U16F16};
     ///
     /// let mut u = U16F16::from_num(3.5);
     /// match u.get_unsigned_mut() {
@@ -3938,7 +3927,8 @@ pub trait ToFixed {
 /// Simlarly, an [`I32F0`] can be treated as an [`i32`].
 ///
 /// ```rust
-/// use fixed::{traits::FixedEquiv, types::I32F0};
+/// use fixed::traits::FixedEquiv;
+/// use fixed::types::I32F0;
 ///
 /// fn increase_by_5(i: &mut i32) {
 ///     *i += 5;

@@ -19,10 +19,8 @@ macro_rules! make_helper {
     ($Float:ident($Bits:ty, $IBits:ident, $prec:expr) $(; use $path:path)?) => {
         #[allow(non_snake_case)]
         pub mod $Float {
-            use crate::{
-                helpers::{FloatKind, ToFixedHelper, ToFloatHelper, Widest},
-                int_helper,
-            };
+            use crate::helpers::{FloatKind, ToFixedHelper, ToFloatHelper, Widest};
+            use crate::int_helper;
             use core::cmp::Ordering;
             $(use $path as $Float;)?
 

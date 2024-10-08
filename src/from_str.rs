@@ -13,17 +13,15 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
+use crate::bytes::{DigitsExp, DigitsUnds};
+use crate::types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8};
 use crate::{
-    bytes::{DigitsExp, DigitsUnds},
-    types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
 };
-use core::{
-    fmt::{Display, Formatter, Result as FmtResult},
-    num::NonZeroU32,
-    str::FromStr,
-};
+use core::fmt::{Display, Formatter, Result as FmtResult};
+use core::num::NonZeroU32;
+use core::str::FromStr;
 #[cfg(feature = "std")]
 use std::error::Error;
 
@@ -831,7 +829,8 @@ unsigned_not_u128! { u64, u32; u128, 27, 64 }
 pub mod u128 {
     unsigned! { u128, u64 }
 
-    use crate::int256::{self, U256};
+    use crate::int256;
+    use crate::int256::U256;
     use core::num::NonZeroU128;
 
     #[inline]
@@ -1003,7 +1002,8 @@ An error which can be returned when parsing a fixed-point number.
 # Examples
 
 ```rust
-use fixed::{types::I16F16, ParseFixedError};
+use fixed::types::I16F16;
+use fixed::ParseFixedError;
 // This string is not a fixed-point number.
 let s = "something completely different (_!_!_)";
 let error: ParseFixedError = match s.parse::<I16F16>() {
@@ -1311,11 +1311,10 @@ impl_from_str! { FixedU128, LeEqU128 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        bytes::DigitsExp,
-        from_str::{self, parse_bounds, Parse, ParseErrorKind, ParseFixedError, Round, Sep},
-        types::*,
-    };
+    use crate::bytes::DigitsExp;
+    use crate::from_str;
+    use crate::from_str::{parse_bounds, Parse, ParseErrorKind, ParseFixedError, Round, Sep};
+    use crate::types::*;
     use std::format;
     #[cfg(not(feature = "std"))]
     use std::string::{String, ToString};

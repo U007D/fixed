@@ -50,7 +50,9 @@ it panics; if wrapping is required use [`wrapping_from_num`] instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, types::I16F16, "#, stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::types::I16F16;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 
 // 1.75 is 1.11 in binary
@@ -115,7 +117,9 @@ it panics; if wrapping is required use [`wrapping_to_num`] instead.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, types::I30F2, "#, stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::types::I30F2;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 
 // 1.75 is 1.11 in binary
@@ -179,11 +183,9 @@ The other number can be:
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U2, U4},
-    types::I16F16,
-    "#, stringify!($Self), ",
-};
+use fixed::types::extra::{U2, U4};
+use fixed::types::I16F16;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 
 // 1.75 is 1.11 in binary
@@ -247,11 +249,9 @@ The other number can be:
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U0, U4, U6},
-    types::I16F16,
-    "#, stringify!($Self), ",
-};
+use fixed::types::extra::{U0, U4, U6};
+use fixed::types::I16F16;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 
 // 1.75 is 1.11 in binary
@@ -318,11 +318,9 @@ This method panics if the value is a floating-point [NaN].
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U2, U4},
-    types::I16F16,
-    "#, stringify!($Self), ",
-};
+use fixed::types::extra::{U2, U4};
+use fixed::types::I16F16;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 
 // 1.75 is 1.11 in binary
@@ -387,11 +385,9 @@ The other number can be:
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U0, U4, U6},
-    types::I16F16,
-    "#, stringify!($Self), ",
-};
+use fixed::types::extra::{U0, U4, U6};
+use fixed::types::I16F16;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 
 // 1.75 is 1.11 in binary
@@ -455,11 +451,9 @@ For floating-point numbers, panics if the value is not [finite].
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U0, U4},
-    types::I16F16,
-    "#, stringify!($Self), ",
-};
+use fixed::types::extra::{U0, U4};
+use fixed::types::I16F16;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 
 // 1.75 is 1.11 in binary
@@ -516,11 +510,9 @@ The other number can be:
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U0, U4, U6},
-    types::I16F16,
-    "#, stringify!($Self), ",
-};
+use fixed::types::extra::{U0, U4, U6};
+use fixed::types::I16F16;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 
 // 1.75 is 1.11 in binary
@@ -586,10 +578,9 @@ For floating-point numbers, also panics if the value is not [finite].
 # Examples
 
 ```rust
-use fixed::{
-    types::{extra::U4, I16F16},
-    "#, stringify!($Self), ",
-};
+use fixed::types::extra::U4;
+use fixed::types::I16F16;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 
 // 1.75 is 1.11 in binary
@@ -600,10 +591,8 @@ assert_eq!(Fix::unwrapped_from_num(src), Fix::from_bits(0b111 << (4 - 2)));
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{
-    types::extra::{U0, U4},
-    ", stringify!($Self), ",
-};
+use fixed::types::extra::{U0, U4};
+use fixed::", stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 let too_large = ", stringify!($Self), "::<U0>::from_bits(0b1101 << (", $n, " - 7));
 let _overflow = Fix::unwrapped_from_num(too_large);
@@ -648,10 +637,9 @@ Panics if the value does not fit.
 # Examples
 
 ```rust
-use fixed::{
-    types::{extra::U4, I16F16},
-    "#, stringify!($Self), ",
-};
+use fixed::types::extra::U4;
+use fixed::types::I16F16;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 
 // 1.75 is 1.11 in binary
@@ -663,10 +651,8 @@ assert_eq!(src.unwrapped_to_num::<I16F16>(), expected);
 The following panics because of overflow.
 
 ```should_panic
-use fixed::{
-    types::extra::{U4, U6},
-    ", stringify!($Self), ",
-};
+use fixed::types::extra::{U4, U6};
+use fixed::", stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 type TooFewIntBits = ", stringify!($Self), "<U6>;
 let _overflow = Fix::MAX.unwrapped_to_num::<TooFewIntBits>();
@@ -712,11 +698,9 @@ For floating-point numbers, panics if the value is not [finite].
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U0, U4},
-    types::I16F16,
-    "#, stringify!($Self), ",
-};
+use fixed::types::extra::{U0, U4};
+use fixed::types::I16F16;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 
 // 1.75 is 1.11 in binary
@@ -777,11 +761,9 @@ The other number can be:
 # Examples
 
 ```rust
-use fixed::{
-    types::extra::{U0, U4, U6},
-    types::I16F16,
-    "#, stringify!($Self), ",
-};
+use fixed::types::extra::{U0, U4, U6};
+use fixed::types::I16F16;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), "<U4>;
 
 // 1.75 is 1.11 in binary
@@ -911,7 +893,8 @@ assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
         /// # Examples
         ///
         /// ```rust
-        #[doc = concat!("use fixed::{types::extra::U4, ", stringify!($Self), "};")]
+        /// use fixed::types::extra::U4;
+        #[doc = concat!("use fixed::", stringify!($Self), ";")]
         #[doc = concat!("type Fix = ", stringify!($Self), "<U4>;")]
         /// const FIVE: Fix = Fix::const_from_int(5);
         /// assert_eq!(FIVE, 5);
@@ -920,7 +903,8 @@ assert_eq!(one_point_625.overflowing_to_num::<f32>(), (1.625f32, false));
         /// The following would fail to compile because of overflow.
         ///
         /// ```rust,compile_fail
-        #[doc = concat!("use fixed::{types::extra::U4, ", stringify!($Self), "};")]
+        /// use fixed::types::extra::U4;
+        #[doc = concat!("use fixed::", stringify!($Self), ";")]
         #[doc = concat!(
             "const _OVERFLOW: ", stringify!($Self), "<U4> = ",
             stringify!($Self), "::const_from_int(",
@@ -982,7 +966,8 @@ in an inline constant expression, or used to initialize a constant.
 For example, here `lit` would be evaluated at compile time:
 
 ```rust
-# use fixed::{types::extra::U4, FixedU32};
+# use fixed::types::extra::U4;
+# use fixed::FixedU32;
 # type Fix = FixedU32<U4>;
 const ONE_AND_HALF: Fix = Fix::lit("1.5");
 # assert_eq!(ONE_AND_HALF, 1.5);
@@ -991,7 +976,8 @@ const ONE_AND_HALF: Fix = Fix::lit("1.5");
 However, here `lit` would be evaluated at run time:
 
 ```rust
-# use fixed::{types::extra::U4, FixedU32};
+# use fixed::types::extra::U4;
+# use fixed::FixedU32;
 # type Fix = FixedU32<U4>;
 // Evaluated at run time.
 let one_and_half = Fix::lit("1.5");
@@ -1001,7 +987,8 @@ let one_and_half = Fix::lit("1.5");
 To evaluate at compile time without introducing a constant into the scope:
 
 ```rust
-# use fixed::{types::extra::U4, FixedU32};
+# use fixed::types::extra::U4;
+# use fixed::FixedU32;
 # type Fix = FixedU32<U4>;
 let one_and_half = const { Fix::lit("1.5") };
 # assert_eq!(one_and_half, 1.5);
@@ -1014,7 +1001,8 @@ Panics if the number is not valid or overflows.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, "#, stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 
 assert_eq!(Fix::lit("1.75"), 1.75);
@@ -1054,7 +1042,8 @@ assert_eq!(Fix::lit("0x0.1C@1"), 1.75);
 This method is useful to write constant fixed-point literals.
 
 ```rust
-use fixed::{types::extra::U4, "#, stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 const ONE_AND_HALF: Fix = Fix::lit("1.5");
 assert_eq!(ONE_AND_HALF, 1.5);
@@ -1084,7 +1073,8 @@ value is scaled by 10 to the power of the exponent.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 assert_eq!(Fix::from_str("1.75"), Ok(Fix::from_num(1.75)));
 "#,
@@ -1123,7 +1113,8 @@ radix is 2, base-2 exponents are equivalent to the other form of exponent.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 // 1.11 in binary is 1.75
 assert_eq!(Fix::from_str_binary("1.11"), Ok(Fix::from_num(1.75)));
@@ -1165,7 +1156,8 @@ parsed value is scaled by 2 to the power of the exponent. For example, for octal
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 // 1.75 is 1.11 in binary, 1.6 in octal
 let f = Fix::from_str_octal("1.6");
@@ -1208,7 +1200,8 @@ hexadecimal “`P8`” means ×2⁸, and is equivalent to “`@2`” which means
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 // 1.C in hexadecimal is 1.75
 assert_eq!(Fix::from_str_hex("1.C"), Ok(Fix::from_num(1.75)));
@@ -1518,7 +1511,8 @@ Panics if the value does not fit or if there is a parsing error.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 // 1.75 is 1.11 in binary
 let f = Fix::unwrapped_from_str("1.75");
@@ -1528,7 +1522,8 @@ assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
 The following panics because of a parsing error.
 
 ```rust,should_panic
-use fixed::{types::extra::U4, "#, stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 let _error = Fix::unwrapped_from_str("1.75.");
 ```
@@ -1557,7 +1552,8 @@ Panics if the value does not fit or if there is a parsing error.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 // 1.75 is 1.11 in binary
 let f = Fix::unwrapped_from_str_binary("1.11");
@@ -1567,7 +1563,8 @@ assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
 The following panics because of a parsing error.
 
 ```rust,should_panic
-use fixed::{types::extra::U4, "#, stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 let _error = Fix::unwrapped_from_str_binary("1.2");
 ```
@@ -1596,7 +1593,8 @@ Panics if the value does not fit or if there is a parsing error.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 // 1.75 is 1.11 in binary, 1.6 in octal
 let f = Fix::unwrapped_from_str_octal("1.6");
@@ -1606,7 +1604,8 @@ assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
 The following panics because of a parsing error.
 
 ```rust,should_panic
-use fixed::{types::extra::U4, "#, stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 let _error = Fix::unwrapped_from_str_octal("1.8");
 ```
@@ -1635,7 +1634,8 @@ Panics if the value does not fit or if there is a parsing error.
 # Examples
 
 ```rust
-use fixed::{types::extra::U4, ", stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 // 1.75 is 1.11 in binary, 1.C in hexadecimal
 let f = Fix::unwrapped_from_str_hex("1.C");
@@ -1645,7 +1645,8 @@ assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
 The following panics because of a parsing error.
 
 ```rust,should_panic
-use fixed::{types::extra::U4, "#, stringify!($Self), "};
+use fixed::types::extra::U4;
+use fixed::"#, stringify!($Self), ";
 type Fix = ", stringify!($Self), r#"<U4>;
 let _error = Fix::unwrapped_from_str_hex("1.G");
 ```

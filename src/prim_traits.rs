@@ -15,12 +15,12 @@
 
 #![allow(deprecated)]
 
+use crate::float_helper;
+use crate::helpers::{FloatKind, FromFloatHelper, Private};
+use crate::int_helper::IntFixed;
+use crate::traits::{Fixed, FixedEquiv, FromFixed, ToFixed};
+use crate::types::extra::U0;
 use crate::{
-    float_helper,
-    helpers::{FloatKind, FromFloatHelper, Private},
-    int_helper::IntFixed,
-    traits::{Fixed, FixedEquiv, FromFixed, ToFixed},
-    types::extra::U0,
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8, F128,
 };

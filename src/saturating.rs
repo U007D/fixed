@@ -13,25 +13,23 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
+use crate::from_str::ParseFixedError;
+use crate::traits::{Fixed, FixedSigned, FixedUnsigned, FromFixed, ToFixed};
+use crate::types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8};
 use crate::{
-    from_str::ParseFixedError,
-    traits::{Fixed, FixedSigned, FixedUnsigned, FromFixed, ToFixed},
-    types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
 };
-use core::{
-    fmt::{
-        Binary, Debug, Display, Formatter, LowerExp, LowerHex, Octal, Result as FmtResult,
-        UpperExp, UpperHex,
-    },
-    iter::{Product, Sum},
-    ops::{
-        Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div,
-        DivAssign, Mul, MulAssign, Neg, Not, Rem, RemAssign, Sub, SubAssign,
-    },
-    str::FromStr,
+use core::fmt::{
+    Binary, Debug, Display, Formatter, LowerExp, LowerHex, Octal, Result as FmtResult, UpperExp,
+    UpperHex,
 };
+use core::iter::{Product, Sum};
+use core::ops::{
+    Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div, DivAssign,
+    Mul, MulAssign, Neg, Not, Rem, RemAssign, Sub, SubAssign,
+};
+use core::str::FromStr;
 
 /// Provides saturating arithmetic on fixed-point numbers.
 ///
@@ -40,7 +38,8 @@ use core::{
 /// # Examples
 ///
 /// ```rust
-/// use fixed::{types::I16F16, Saturating};
+/// use fixed::types::I16F16;
+/// use fixed::Saturating;
 /// let max = Saturating(I16F16::MAX);
 /// let delta = Saturating(I16F16::DELTA);
 /// assert_eq!(I16F16::MAX, (max + delta).0);
@@ -58,7 +57,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating::<I16F16>::ZERO, Saturating(I16F16::ZERO));
     /// ```
     pub const ZERO: Saturating<F> = Saturating(F::ZERO);
@@ -71,7 +71,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating::<I16F16>::DELTA, Saturating(I16F16::DELTA));
     /// ```
     pub const DELTA: Saturating<F> = Saturating(F::DELTA);
@@ -84,7 +85,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating::<I16F16>::MIN, Saturating(I16F16::MIN));
     /// ```
     pub const MIN: Saturating<F> = Saturating(F::MIN);
@@ -97,7 +99,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating::<I16F16>::MAX, Saturating(I16F16::MAX));
     /// ```
     pub const MAX: Saturating<F> = Saturating(F::MAX);
@@ -110,10 +113,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     types::{I16F16, U16F16},
-    ///     Saturating,
-    /// };
+    /// use fixed::types::{I16F16, U16F16};
+    /// use fixed::Saturating;
     /// assert!(Saturating::<I16F16>::IS_SIGNED);
     /// assert!(!Saturating::<U16F16>::IS_SIGNED);
     /// ```
@@ -127,7 +128,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating::<I16F16>::INT_NBITS, I16F16::INT_NBITS);
     /// ```
     pub const INT_NBITS: u32 = F::INT_NBITS;
@@ -140,7 +142,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating::<I16F16>::FRAC_NBITS, I16F16::FRAC_NBITS);
     /// ```
     pub const FRAC_NBITS: u32 = F::FRAC_NBITS;
@@ -154,7 +157,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating::<I16F16>::from_bits(0x1C), Saturating(I16F16::from_bits(0x1C)));
     /// ```
     #[inline]
@@ -171,7 +175,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let w = Saturating(I16F16::from_bits(0x1C));
     /// assert_eq!(w.to_bits(), 0x1C);
     /// ```
@@ -189,7 +194,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let w = Saturating(I16F16::from_bits(0x1234_5678));
     /// if cfg!(target_endian = "big") {
     ///     assert_eq!(Saturating::from_be(w), w);
@@ -211,7 +217,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let w = Saturating(I16F16::from_bits(0x1234_5678));
     /// if cfg!(target_endian = "little") {
     ///     assert_eq!(Saturating::from_le(w), w);
@@ -232,7 +239,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let w = Saturating(I16F16::from_bits(0x1234_5678));
     /// if cfg!(target_endian = "big") {
     ///     assert_eq!(w.to_be(), w);
@@ -254,7 +262,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let w = Saturating(I16F16::from_bits(0x1234_5678));
     /// if cfg!(target_endian = "little") {
     ///     assert_eq!(w.to_le(), w);
@@ -276,7 +285,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let w = Saturating(I16F16::from_bits(0x1234_5678));
     /// let swapped = Saturating(I16F16::from_bits(0x7856_3412));
     /// assert_eq!(w.swap_bytes(), swapped);
@@ -297,7 +307,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let bytes = [0x12, 0x34, 0x56, 0x78];
     /// assert_eq!(
     ///     Saturating::<I16F16>::from_be_bytes(bytes),
@@ -319,7 +330,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let bytes = [0x78, 0x56, 0x34, 0x12];
     /// assert_eq!(
     ///     Saturating::<I16F16>::from_le_bytes(bytes),
@@ -341,7 +353,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let bytes = if cfg!(target_endian = "big") {
     ///     [0x12, 0x34, 0x56, 0x78]
     /// } else {
@@ -366,7 +379,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert_eq!(
     ///     Saturating::<I16F16>::from_bits(0x1234_5678).to_be_bytes(),
     ///     [0x12, 0x34, 0x56, 0x78]
@@ -386,7 +400,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert_eq!(
     ///     Saturating::<I16F16>::from_bits(0x1234_5678).to_le_bytes(),
     ///     [0x78, 0x56, 0x34, 0x12]
@@ -406,7 +421,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let bytes = if cfg!(target_endian = "big") {
     ///     [0x12, 0x34, 0x56, 0x78]
     /// } else {
@@ -452,10 +468,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     types::{I4F4, I16F16},
-    ///     Saturating,
-    /// };
+    /// use fixed::types::{I4F4, I16F16};
+    /// use fixed::Saturating;
     ///
     /// let src = I16F16::from_bits(0x1234_5678);
     /// let dst = Saturating::<I4F4>::from_num(src);
@@ -503,10 +517,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     types::{I16F16, I2F6, I4F4},
-    ///     Saturating,
-    /// };
+    /// use fixed::types::{I16F16, I2F6, I4F4};
+    /// use fixed::Saturating;
     ///
     /// // conversion that fits
     /// let src = Saturating(I4F4::from_num(1.75));
@@ -536,7 +548,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I8F8, Saturating};
+    /// use fixed::types::I8F8;
+    /// use fixed::Saturating;
     /// let max = Saturating(I8F8::MAX);
     /// assert_eq!(Saturating::<I8F8>::from_str_binary("101100111000.1"), Ok(max));
     /// ```
@@ -557,7 +570,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I8F8, Saturating};
+    /// use fixed::types::I8F8;
+    /// use fixed::Saturating;
     /// let max = Saturating(I8F8::MAX);
     /// assert_eq!(Saturating::<I8F8>::from_str_octal("7165.4"), Ok(max));
     /// ```
@@ -578,7 +592,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I8F8, Saturating};
+    /// use fixed::types::I8F8;
+    /// use fixed::Saturating;
     /// let max = Saturating(I8F8::MAX);
     /// assert_eq!(Saturating::<I8F8>::from_str_hex("C0F.FE"), Ok(max));
     /// ```
@@ -602,7 +617,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating(I16F16::from_num(12.25)).int(), Saturating(I16F16::from_num(12)));
     /// assert_eq!(Saturating(I16F16::from_num(-12.25)).int(), Saturating(I16F16::from_num(-13)));
     /// ```
@@ -629,7 +645,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating(I16F16::from_num(12.25)).frac(), Saturating(I16F16::from_num(0.25)));
     /// assert_eq!(Saturating(I16F16::from_num(-12.25)).frac(), Saturating(I16F16::from_num(0.75)));
     /// ```
@@ -650,7 +667,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let three = Saturating(I16F16::from_num(3));
     /// assert_eq!(Saturating(I16F16::from_num(3.9)).round_to_zero(), three);
     /// assert_eq!(Saturating(I16F16::from_num(-3.9)).round_to_zero(), -three);
@@ -671,7 +689,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let two_half = Saturating(I16F16::from_num(5) / 2);
     /// assert_eq!(two_half.ceil(), Saturating(I16F16::from_num(3)));
     /// assert_eq!(Saturating(I16F16::MAX).ceil(), Saturating(I16F16::MAX));
@@ -695,10 +714,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     types::{I0F32, I16F16},
-    ///     Saturating,
-    /// };
+    /// use fixed::types::{I0F32, I16F16};
+    /// use fixed::Saturating;
     /// let two_half = Saturating(I16F16::from_num(5) / 2);
     /// assert_eq!(two_half.floor(), Saturating(I16F16::from_num(2)));
     /// assert_eq!(Saturating(I0F32::MIN).floor(), Saturating(I0F32::MIN));
@@ -719,7 +736,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let two_half = Saturating(I16F16::from_num(5) / 2);
     /// assert_eq!(two_half.round(), Saturating(I16F16::from_num(3)));
     /// assert_eq!((-two_half).round(), Saturating(I16F16::from_num(-3)));
@@ -743,7 +761,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let two_half = Saturating(I16F16::from_num(2.5));
     /// assert_eq!(two_half.round_ties_even(), Saturating(I16F16::from_num(2)));
     /// let three_half = Saturating(I16F16::from_num(3.5));
@@ -765,7 +784,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let w = Saturating(I16F16::from_bits(0x00FF_FF00));
     /// assert_eq!(w.count_ones(), w.0.count_ones());
     /// ```
@@ -783,7 +803,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let w = Saturating(I16F16::from_bits(0x00FF_FF00));
     /// assert_eq!(w.count_zeros(), w.0.count_zeros());
     /// ```
@@ -800,7 +821,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::U16F16, Saturating};
+    /// use fixed::types::U16F16;
+    /// use fixed::Saturating;
     /// let w = Saturating(U16F16::from_bits(0xFF00_00FF));
     /// assert_eq!(w.leading_ones(), w.0.leading_ones());
     /// ```
@@ -818,7 +840,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let w = Saturating(I16F16::from_bits(0x00FF_FF00));
     /// assert_eq!(w.leading_zeros(), w.0.leading_zeros());
     /// ```
@@ -836,7 +859,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::U16F16, Saturating};
+    /// use fixed::types::U16F16;
+    /// use fixed::Saturating;
     /// let w = Saturating(U16F16::from_bits(0xFF00_00FF));
     /// assert_eq!(w.trailing_ones(), w.0.trailing_ones());
     /// ```
@@ -854,7 +878,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let w = Saturating(I16F16::from_bits(0x00FF_FF00));
     /// assert_eq!(w.trailing_zeros(), w.0.trailing_zeros());
     /// ```
@@ -876,7 +901,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I0F32, Saturating};
+    /// use fixed::types::I0F32;
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating(I0F32::lit("0b0.0001")).sqrt().0, I0F32::lit("0b0.01"));
     ///
     /// // This method handles the overflow corner case.
@@ -942,7 +968,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let i = I16F16::from_bits(0x1234_5678);
     /// assert_eq!(Saturating(i).reverse_bits(), Saturating(i.reverse_bits()));
     /// ```
@@ -960,7 +987,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let i = I16F16::from_bits(0x00FF_FF00);
     /// assert_eq!(Saturating(i).rotate_left(12), Saturating(i.rotate_left(12)));
     /// ```
@@ -978,7 +1006,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let i = I16F16::from_bits(0x00FF_FF00);
     /// assert_eq!(Saturating(i).rotate_right(12), Saturating(i.rotate_right(12)));
     /// ```
@@ -996,7 +1025,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert!(Saturating(I16F16::ZERO).is_zero());
     /// assert!(!Saturating(I16F16::from_num(4.3)).is_zero());
     /// ```
@@ -1014,7 +1044,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// type Wr = Saturating<I16F16>;
     /// assert_eq!(Wr::from_num(-1).dist(Wr::from_num(4)), Wr::from_num(5));
     /// assert_eq!(Wr::MIN.dist(Wr::MAX), Wr::MAX);
@@ -1033,7 +1064,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let three = Saturating(I16F16::from_num(3));
     /// let four = Saturating(I16F16::from_num(4));
     /// assert_eq!(three.mean(four), Saturating(I16F16::from_num(3.5)));
@@ -1054,7 +1086,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I8F8, Saturating};
+    /// use fixed::types::I8F8;
+    /// use fixed::Saturating;
     /// type Sa = Saturating<I8F8>;
     /// // hypot(3, 4) == 5
     /// assert_eq!(Sa::from_num(3).hypot(Sa::from_num(4)), Sa::from_num(5));
@@ -1080,7 +1113,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I8F24, Saturating};
+    /// use fixed::types::I8F24;
+    /// use fixed::Saturating;
     /// let quarter = Saturating(I8F24::from_num(0.25));
     /// let frac_1_512 = Saturating(I8F24::ONE / 512);
     /// assert_eq!(quarter.recip(), Saturating(I8F24::from_num(4)));
@@ -1107,7 +1141,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let one_point_5 = Saturating::<I16F16>::from_num(1.5);
     /// let four = Saturating::<I16F16>::from_num(4);
     /// let four_point_5 = Saturating::<I16F16>::from_num(4.5);
@@ -1134,7 +1169,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let half = Saturating(I16F16::from_num(0.5));
     /// let three = Saturating(I16F16::from_num(3));
     /// let four = Saturating(I16F16::from_num(4));
@@ -1158,7 +1194,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let half = Saturating(I16F16::from_num(0.5));
     /// let three = Saturating(I16F16::from_num(3));
     /// let four = Saturating(I16F16::from_num(4));
@@ -1182,7 +1219,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let mut acc = Saturating(I16F16::from_num(3));
     /// acc.mul_acc(Saturating(I16F16::from_num(4)), Saturating(I16F16::from_num(0.5)));
     /// assert_eq!(acc, Saturating(I16F16::from_num(5)));
@@ -1210,7 +1248,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let num = Saturating(I16F16::from_num(7.5));
     /// let den = Saturating(I16F16::from_num(2));
     /// assert_eq!(num.div_euclid(den), Saturating(I16F16::from_num(3)));
@@ -1237,7 +1276,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let num = Saturating(I16F16::from_num(7.5));
     /// let den = Saturating(I16F16::from_num(2));
     /// assert_eq!(num.rem_euclid(den), Saturating(I16F16::from_num(1.5)));
@@ -1264,7 +1304,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let num = Saturating(I16F16::from_num(7.5));
     /// assert_eq!(num.div_euclid_int(2), Saturating(I16F16::from_num(3)));
     /// let min = Saturating(I16F16::MIN);
@@ -1292,7 +1333,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// let num = Saturating(I16F16::from_num(7.5));
     /// assert_eq!(num.rem_euclid_int(2), Saturating(I16F16::from_num(1.5)));
     /// assert_eq!((-num).rem_euclid_int(2), Saturating(I16F16::from_num(0.5)));
@@ -1313,7 +1355,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// type Wr = Saturating<I16F16>;
     /// assert_eq!(Wr::from_num(0.5).lerp(Wr::ZERO, Wr::MAX), Wr::MAX / 2);
     /// assert_eq!(Wr::from_num(1.5).lerp(Wr::ZERO, Wr::MAX), Wr::MAX + Wr::MAX / 2);
@@ -1333,7 +1376,8 @@ impl<F: Fixed> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// type Wr = Saturating<I16F16>;
     /// assert_eq!(
     ///     Wr::from_num(25).inv_lerp(Wr::from_num(20), Wr::from_num(40)),
@@ -1368,7 +1412,8 @@ impl<F: FixedSigned> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I4F4, Saturating};
+    /// use fixed::types::I4F4;
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating(I4F4::from_num(-3)).signed_bits(), 7);      // “_101.0000”
     /// assert_eq!(Saturating(I4F4::from_num(-1)).signed_bits(), 5);      // “___1.0000”
     /// assert_eq!(Saturating(I4F4::from_num(-0.0625)).signed_bits(), 1); // “____.___1”
@@ -1389,7 +1434,8 @@ impl<F: FixedSigned> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert!(Saturating(I16F16::from_num(4.3)).is_positive());
     /// assert!(!Saturating(I16F16::ZERO).is_positive());
     /// assert!(!Saturating(I16F16::from_num(-4.3)).is_positive());
@@ -1406,7 +1452,8 @@ impl<F: FixedSigned> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert!(!Saturating(I16F16::from_num(4.3)).is_negative());
     /// assert!(!Saturating(I16F16::ZERO).is_negative());
     /// assert!(Saturating(I16F16::from_num(-4.3)).is_negative());
@@ -1427,7 +1474,8 @@ impl<F: FixedSigned> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::I16F16, Saturating};
+    /// use fixed::types::I16F16;
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating(I16F16::from_num(-5)).abs(), Saturating(I16F16::from_num(5)));
     /// assert_eq!(Saturating(I16F16::MIN).abs(), Saturating(I16F16::MAX));
     /// ```
@@ -1460,10 +1508,8 @@ impl<F: FixedSigned> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     types::{I0F32, I1F31, I16F16},
-    ///     Saturating,
-    /// };
+    /// use fixed::types::{I0F32, I1F31, I16F16};
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating(<I16F16>::from_num(-3.9)).signum(), Saturating(I16F16::NEG_ONE));
     /// assert_eq!(Saturating(<I16F16>::ZERO).signum(), Saturating(I16F16::ZERO));
     /// assert_eq!(Saturating(<I16F16>::from_num(3.9)).signum(), Saturating(I16F16::ONE));
@@ -1491,10 +1537,8 @@ impl<F: FixedSigned> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     types::{I16F16, U16F16},
-    ///     Saturating,
-    /// };
+    /// use fixed::types::{I16F16, U16F16};
+    /// use fixed::Saturating;
     /// assert_eq!(
     ///     Saturating::<I16F16>::from_num(-5).add_unsigned(U16F16::from_num(3)),
     ///     Saturating::<I16F16>::from_num(-2)
@@ -1518,10 +1562,8 @@ impl<F: FixedSigned> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     types::{I16F16, U16F16},
-    ///     Saturating,
-    /// };
+    /// use fixed::types::{I16F16, U16F16};
+    /// use fixed::Saturating;
     /// assert_eq!(
     ///     Saturating::<I16F16>::from_num(3).sub_unsigned(U16F16::from_num(5)),
     ///     Saturating::<I16F16>::from_num(-2)
@@ -1547,7 +1589,8 @@ impl<F: FixedUnsigned> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::U4F4, Saturating};
+    /// use fixed::types::U4F4;
+    /// use fixed::Saturating;
     /// assert_eq!(Saturating(U4F4::from_num(0)).significant_bits(), 0);      // “____.____”
     /// assert_eq!(Saturating(U4F4::from_num(0.0625)).significant_bits(), 1); // “____.___1”
     /// assert_eq!(Saturating(U4F4::from_num(1)).significant_bits(), 5);      // “___1.0000”
@@ -1567,7 +1610,8 @@ impl<F: FixedUnsigned> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::U16F16, Saturating};
+    /// use fixed::types::U16F16;
+    /// use fixed::Saturating;
     /// assert!(Saturating(U16F16::from_num(0.5)).is_power_of_two());
     /// assert!(Saturating(U16F16::from_num(4)).is_power_of_two());
     /// assert!(!Saturating(U16F16::from_num(5)).is_power_of_two());
@@ -1588,7 +1632,8 @@ impl<F: FixedUnsigned> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{types::U16F16, Saturating};
+    /// use fixed::types::U16F16;
+    /// use fixed::Saturating;
     /// type T = Saturating<U16F16>;
     /// assert_eq!(T::from_bits(0b11_0010).highest_one(), T::from_bits(0b10_0000));
     /// assert_eq!(T::from_num(0.3).highest_one(), T::from_num(0.25));
@@ -1610,10 +1655,8 @@ impl<F: FixedUnsigned> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     types::{I16F16, U16F16},
-    ///     Saturating,
-    /// };
+    /// use fixed::types::{I16F16, U16F16};
+    /// use fixed::Saturating;
     /// assert_eq!(
     ///     Saturating::<U16F16>::from_num(5).add_signed(I16F16::from_num(-3)),
     ///     Saturating::<U16F16>::from_num(2)
@@ -1637,10 +1680,8 @@ impl<F: FixedUnsigned> Saturating<F> {
     /// # Examples
     ///
     /// ```rust
-    /// use fixed::{
-    ///     types::{I16F16, U16F16},
-    ///     Saturating,
-    /// };
+    /// use fixed::types::{I16F16, U16F16};
+    /// use fixed::Saturating;
     /// assert_eq!(
     ///     Saturating::<U16F16>::from_num(5).sub_signed(I16F16::from_num(-3)),
     ///     Saturating::<U16F16>::from_num(8)

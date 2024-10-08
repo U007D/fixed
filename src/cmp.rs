@@ -15,10 +15,11 @@
 
 #![allow(deprecated)]
 
+use crate::float_helper;
+use crate::int_helper;
+use crate::int_helper::IntFixed;
+use crate::types::extra::Unsigned;
 use crate::{
-    float_helper,
-    int_helper::{self, IntFixed},
-    types::extra::Unsigned,
     F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
     FixedU64, FixedU8, F128,
 };
@@ -388,7 +389,7 @@ fixed_cmp_all! { FixedU128(LeEqU128, u128) }
 #[cfg(test)]
 mod tests {
     use crate::*;
-    use core::{cmp::Ordering, f32};
+    use core::cmp::Ordering;
 
     #[test]
     fn cmp_signed() {

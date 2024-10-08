@@ -24,22 +24,19 @@ use az::{
 #[cfg(feature = "borsh")]
 use borsh::{BorshDeserialize, BorshSerialize};
 use bytemuck::{Contiguous, Pod};
-use core::{
-    fmt::{Binary, Debug, Display, LowerExp, LowerHex, Octal, UpperExp, UpperHex},
-    hash::Hash,
-    iter::{Product, Sum},
-    num::ParseIntError,
-    ops::{
-        Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div,
-        DivAssign, Mul, MulAssign, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub,
-        SubAssign,
-    },
-    str::FromStr,
+use core::fmt::{Binary, Debug, Display, LowerExp, LowerHex, Octal, UpperExp, UpperHex};
+use core::hash::Hash;
+use core::iter::{Product, Sum};
+use core::num::ParseIntError;
+use core::ops::{
+    Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div, DivAssign,
+    Mul, MulAssign, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub, SubAssign,
 };
+use core::str::FromStr;
 #[cfg(feature = "num-traits")]
 use num_traits::{
-    cast::{AsPrimitive, FromPrimitive},
     int::PrimInt,
+    cast::{AsPrimitive, FromPrimitive},
     ops::{
         checked::{CheckedNeg, CheckedRem, CheckedShl, CheckedShr},
         euclid::{CheckedEuclid, Euclid},
@@ -94,7 +91,8 @@ macro_rules! impl_bits {
 ///
 /// ```rust
 /// use az::OverflowingAs;
-/// use fixed::{traits::Fixed, types::*};
+/// use fixed::traits::Fixed;
+/// use fixed::types::*;
 /// fn limited_positive_bits<F: Fixed>(fixed: F) -> Option<u32> {
 ///     let bits = fixed.to_bits();
 ///     match bits.overflowing_as::<u32>() {

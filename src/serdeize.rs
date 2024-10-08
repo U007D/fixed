@@ -13,22 +13,18 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
+use crate::types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8};
 use crate::{
-    types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8},
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8, Unwrapped, Wrapping,
 };
-use serde::{
-    de::{Deserialize, Deserializer, Error as DeError},
-    ser::{Serialize, Serializer},
-};
+use serde::de::{Deserialize, Deserializer, Error as DeError};
+use serde::ser::{Serialize, Serializer};
 #[cfg(not(feature = "serde-str"))]
 use {
     core::fmt::{Formatter, Result as FmtResult},
-    serde::{
-        de::{MapAccess, SeqAccess, Visitor},
-        ser::SerializeStruct,
-    },
+    serde::de::{MapAccess, SeqAccess, Visitor},
+    serde::ser::SerializeStruct,
 };
 
 macro_rules! serde_fixed {

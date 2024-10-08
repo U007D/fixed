@@ -21,7 +21,7 @@ pub mod frac_part {
     // MAX / 1000 (0) < val <= MAX (255)
     // -3 <= log <= -1
     #[inline]
-    pub const fn u8(val: NonZero::<u8>) -> i32 {
+    pub const fn u8(val: NonZero<u8>) -> i32 {
         let val = val.get();
         if val > 25 {
             -1
@@ -35,7 +35,7 @@ pub mod frac_part {
     // MAX / 100_000 (0) < val <= MAX (65_535)
     // -5 <= log <= -1
     #[inline]
-    pub const fn u16(val: NonZero::<u16>) -> i32 {
+    pub const fn u16(val: NonZero<u16>) -> i32 {
         let val = val.get();
         if val > 6553 {
             -1
@@ -52,7 +52,7 @@ pub mod frac_part {
 
     // 0 < val <= MAX
     // -10 <= log <= -1
-    pub const fn u32(val: NonZero::<u32>) -> i32 {
+    pub const fn u32(val: NonZero<u32>) -> i32 {
         const MAX: u32 = u32::MAX;
         let mut val = val.get();
         if val <= MAX / 100_000_000 {
@@ -72,7 +72,7 @@ pub mod frac_part {
 
     // 0 < val <= MAX
     // -20 <= log <= -1
-    pub const fn u64(val: NonZero::<u64>) -> i32 {
+    pub const fn u64(val: NonZero<u64>) -> i32 {
         const MAX: u64 = u64::MAX;
         let mut val = val.get();
         let mut log = 0;
@@ -105,7 +105,7 @@ pub mod frac_part {
 
     // 0 < val <= MAX
     // -39 <= log <= -1
-    pub const fn u128(val: NonZero::<u128>) -> i32 {
+    pub const fn u128(val: NonZero<u128>) -> i32 {
         const MAX: u128 = u128::MAX;
         let mut val = val.get();
         let mut log = 0;
@@ -197,8 +197,9 @@ pub mod frac_part {
 // check log10() and log(10) in tandem
 #[cfg(test)]
 mod tests {
+    use crate::log;
     use crate::log::Base;
-    use crate::{log, log10};
+    use crate::log10;
     use core::num::NonZero;
 
     const DEC: Base = match Base::new(10) {
