@@ -35,8 +35,8 @@ use core::ops::{
 use core::str::FromStr;
 #[cfg(feature = "num-traits")]
 use num_traits::{
-    int::PrimInt,
     cast::{AsPrimitive, FromPrimitive},
+    int::PrimInt,
     ops::{
         checked::{CheckedNeg, CheckedRem, CheckedShl, CheckedShr},
         euclid::{CheckedEuclid, Euclid},

@@ -13,9 +13,7 @@
 // <https://www.apache.org/licenses/LICENSE-2.0> and
 // <https://opensource.org/licenses/MIT>.
 
-#[cfg(not(debug_assertions))]
 use core::hint;
-
 use core::num::NonZero;
 
 #[derive(Clone, Copy, Debug)]
