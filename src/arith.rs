@@ -19,7 +19,6 @@ use crate::{
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
 };
-#[cfg(not(debug_assertions))]
 use core::hint;
 use core::iter::{Product, Sum};
 use core::num::NonZero;
@@ -544,16 +543,7 @@ macro_rules! fixed_arith {
                     // so the remainder operation cannot fail.
                     match self.to_bits().checked_rem(rhs_fixed_bits) {
                         Some(rem) => Self::from_bits(rem),
-                        None => {
-                            #[cfg(debug_assertions)]
-                            {
-                                unreachable!();
-                            }
-                            #[cfg(not(debug_assertions))]
-                            unsafe {
-                                hint::unreachable_unchecked();
-                            }
-                        }
+                        None => unsafe { hint::unreachable_unchecked() },
                     }
                 }
             }

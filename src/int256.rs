@@ -233,15 +233,8 @@ pub const fn shl_i256_max_128(a: I256, sh: u32) -> I256 {
 const unsafe fn div_half_u128(r: u128, d: u128, next_half: u64) -> (u128, u128) {
     let (dl, dh) = u128_lo_hi(d);
     // SAFETY: we know d has the most significant bit set because we normalized
-    if dh == 0 {
-        #[cfg(debug_assertions)]
-        {
-            unreachable!();
-        }
-        #[cfg(not(debug_assertions))]
-        unsafe {
-            hint::unreachable_unchecked();
-        }
+    unsafe {
+        hint::assert_unchecked(dh != 0);
     }
     let (mut q, rr) = (r / (dh as u128), r % (dh as u128));
     let m = q * (dl as u128);
