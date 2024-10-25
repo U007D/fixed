@@ -25,7 +25,6 @@ use core::fmt::{
     UpperHex,
 };
 use core::iter::{Product, Sum};
-use core::mem;
 use core::ops::{
     Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div, DivAssign,
     Mul, MulAssign, Neg, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub, SubAssign,
@@ -1952,7 +1951,7 @@ macro_rules! op_shift {
             type Output = Wrapping<F>;
             #[inline]
             fn $op(self, other: $Rhs) -> Wrapping<F> {
-                let nbits = mem::size_of::<F>() as u32 * 8;
+                let nbits = size_of::<F>() as u32 * 8;
                 Wrapping((self.0).$op(other as u32 % nbits))
             }
         }
@@ -1963,7 +1962,7 @@ macro_rules! op_shift {
             type Output = Wrapping<F>;
             #[inline]
             fn $op(self, other: $Rhs) -> Wrapping<F> {
-                let nbits = mem::size_of::<F>() as u32 * 8;
+                let nbits = size_of::<F>() as u32 * 8;
                 Wrapping((self.0).$op(other as u32 % nbits))
             }
         }
@@ -1974,7 +1973,7 @@ macro_rules! op_shift {
             type Output = Wrapping<F>;
             #[inline]
             fn $op(self, other: &$Rhs) -> Wrapping<F> {
-                let nbits = mem::size_of::<F>() as u32 * 8;
+                let nbits = size_of::<F>() as u32 * 8;
                 Wrapping((self.0).$op(*other as u32 % nbits))
             }
         }
@@ -1985,7 +1984,7 @@ macro_rules! op_shift {
             type Output = Wrapping<F>;
             #[inline]
             fn $op(self, other: &$Rhs) -> Wrapping<F> {
-                let nbits = mem::size_of::<F>() as u32 * 8;
+                let nbits = size_of::<F>() as u32 * 8;
                 Wrapping((self.0).$op(*other as u32 % nbits))
             }
         }
@@ -1995,7 +1994,7 @@ macro_rules! op_shift {
         {
             #[inline]
             fn $op_assign(&mut self, other: $Rhs) {
-                let nbits = mem::size_of::<F>() as u32 * 8;
+                let nbits = size_of::<F>() as u32 * 8;
                 (self.0).$op_assign(other as u32 % nbits);
             }
         }
@@ -2005,7 +2004,7 @@ macro_rules! op_shift {
         {
             #[inline]
             fn $op_assign(&mut self, other: &$Rhs) {
-                let nbits = mem::size_of::<F>() as u32 * 8;
+                let nbits = size_of::<F>() as u32 * 8;
                 (self.0).$op_assign(*other as u32 % nbits);
             }
         }

@@ -37,7 +37,6 @@ use bytemuck::{Contiguous, Pod, TransparentWrapper};
 use core::fmt::{Binary, Debug, Display, LowerExp, LowerHex, Octal, UpperExp, UpperHex};
 use core::hash::Hash;
 use core::iter::{Product, Sum};
-use core::mem;
 use core::num::{NonZero, TryFromIntError};
 use core::ops::{
     Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div, DivAssign,
@@ -4025,7 +4024,7 @@ macro_rules! impl_fixed {
         impl<Frac: $LeEqU> Fixed for $Fixed<Frac> {
             type Bits = $Bits;
             type NonZeroBits = NonZero<$Bits>;
-            type Bytes = [u8; mem::size_of::<$Bits>()];
+            type Bytes = [u8; size_of::<$Bits>()];
             type Frac = Frac;
             type Signed = $IFixed<Frac>;
             type Unsigned = $UFixed<Frac>;
