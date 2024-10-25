@@ -44,14 +44,6 @@ for signed numbers like <code>[FixedI32]\<[U32]></code>, and in the range
 0&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;1 for unsigned numbers like
 <code>[FixedU32]\<[U32]></code>.
 
-In version 1 the [*typenum* crate] is used for the fractional bit count `Frac`;
-the plan is to to have a major version 2 with const generics when the Rust
-compiler’s [`generic_const_exprs` feature] is ready and stabilized. An [alpha
-version] is already available.
-
-[`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
-[alpha version]: https://docs.rs/fixed/2.0.0-alpha/fixed/
-
 The main features are
 
   * Representation of binary fixed-point numbers up to 128 bits wide.
@@ -526,10 +518,7 @@ range ",
             ),
             ".
 
-`Frac` is an [`Unsigned`] as provided by the [*typenum* crate]; the plan is to
-to have a major version 2 where `Frac` is replaced by `FRAC` of type [`i32`]
-when the Rust compiler’s [`generic_const_exprs` feature] is ready and stabilized.
-An [alpha version] is already available.
+`Frac` is an [`Unsigned`] as provided by the [*typenum* crate].
 
 `", stringify!($Self), "<Frac>` has the same size, alignment and ABI as
 [`", stringify!($Inner), "`]; it is `#[repr(transparent)]` with
@@ -553,8 +542,6 @@ assert_eq!(two_point_75.to_string(), \"2.8\");
 [*typenum* crate]: https://crates.io/crates/typenum
 [U", $n, "]: crate::types::extra::U", $n, "
 [U0]: crate::types::extra::U0
-[`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
-[alpha version]: https://docs.rs/fixed/2.0.0-alpha/fixed/
 ";
             #[repr(transparent)]
             pub struct $Self<Frac> {

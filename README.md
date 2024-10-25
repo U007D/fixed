@@ -35,14 +35,6 @@ for signed numbers like <code>[FixedI32]\<[U32]></code>, and in the range
 0&nbsp;≤&nbsp;<i>x</i>&nbsp;<&nbsp;1 for unsigned numbers like
 <code>[FixedU32]\<[U32]></code>.
 
-In version 1 the [*typenum* crate] is used for the fractional bit count `Frac`;
-the plan is to to have a major version 2 with const generics when the Rust
-compiler’s [`generic_const_exprs` feature] is ready and stabilized. An [alpha
-version] is already available.
-
-[`generic_const_exprs` feature]: https://github.com/rust-lang/rust/issues/76560
-[alpha version]: https://docs.rs/fixed/2.0.0-alpha/fixed/
-
 The main features are
 
   * Representation of binary fixed-point numbers up to 128 bits wide.
