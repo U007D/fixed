@@ -187,7 +187,7 @@ crate, add it as a dependency inside [*Cargo.toml*]:
 fixed = "1.28"
 ```
 
-The *fixed* crate requires rustc version 1.79.0 or later.
+The *fixed* crate requires rustc version 1.81.0 or later.
 
 ## Optional features
 
