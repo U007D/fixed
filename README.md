@@ -97,6 +97,12 @@ The conversions supported cover the following cases.
 ### Version 1.29.0 news (unreleased)
 
   * The crate now requires rustc version 1.81.0 or later.
+  * Now [`ParseFixedError`][pfe-1-29] implements [`Error`] even when the `std`
+    [optional feature][feat-1-29] is disabled.
+
+[`Error`]: https://doc.rust-lang.org/nightly/core/error/trait.Error.html
+[feat-1-29]: https://docs.rs/fixed/latest/fixed/index.html#optional-features
+[pfe-1-29]: https://docs.rs/fixed/latest/fixed/struct.ParseFixedError.html
 
 ### Version 1.28.0 news (2024-07-25)
 
@@ -259,8 +265,7 @@ The *fixed* crate has these optional feature:
  3. `serde`, disabled by default. This provides serialization support for the
     fixed-point types. This feature requires the [*serde* crate].
  4. `std`, disabled by default. This is for features that are not possible under
-    `no_std`: currently the implementation of the [`Error`] trait for
-    [`ParseFixedError`].
+    `no_std`: currently this is only required for the `serde-str` feature.
  5. `serde-str`, disabled by default. Fixed-point numbers are serialized as
     strings showing the value when using human-readable formats. This feature
     requires the `serde` and the `std` optional features. **Warning:** numbers
@@ -367,7 +372,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [`LowerExp`]: https://doc.rust-lang.org/nightly/core/fmt/trait.LowerExp.html
 [`LowerHex`]: https://doc.rust-lang.org/nightly/core/fmt/trait.LowerHex.html
 [`Octal`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Octal.html
-[`ParseFixedError`]: https://docs.rs/fixed/~1.28/fixed/struct.ParseFixedError.html
 [`ToFixed`]: https://docs.rs/fixed/~1.28/fixed/traits/trait.ToFixed.html
 [`U20F12`]: https://docs.rs/fixed/~1.28/fixed/types/type.U20F12.html
 [`UpperExp`]: https://doc.rust-lang.org/nightly/core/fmt/trait.UpperExp.html

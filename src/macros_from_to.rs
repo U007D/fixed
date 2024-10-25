@@ -217,7 +217,7 @@ assert_eq!(Fix::checked_from_num(",
             ),
             "expected));
 assert!(Fix::checked_from_num(2e38).is_none());
-assert!(Fix::checked_from_num(std::f64::NAN).is_none());
+assert!(Fix::checked_from_num(f64::NAN).is_none());
 ```
 ";
             #[inline]
@@ -350,7 +350,7 @@ assert_eq!(Fix::saturating_from_num(",
             ),
             "expected);
 assert_eq!(Fix::saturating_from_num(2e38), Fix::MAX);
-assert_eq!(Fix::saturating_from_num(std::f64::NEG_INFINITY), Fix::MIN);
+assert_eq!(Fix::saturating_from_num(f64::NEG_INFINITY), Fix::MIN);
 ```
 
 [NaN]: f64::is_nan

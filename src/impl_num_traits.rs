@@ -29,6 +29,7 @@ use num_traits::cast::{FromPrimitive, ToPrimitive};
 use num_traits::float::FloatConst;
 use num_traits::identities::{ConstOne, ConstZero, One, Zero};
 
+use core::error::Error;
 use num_traits::ops::bytes::{FromBytes, ToBytes};
 use num_traits::ops::checked::{
     CheckedAdd, CheckedDiv, CheckedMul, CheckedNeg, CheckedRem, CheckedShl, CheckedShr, CheckedSub,
@@ -42,8 +43,6 @@ use num_traits::ops::wrapping::{
 };
 use num_traits::sign::{Signed, Unsigned};
 use num_traits::Num;
-#[cfg(feature = "std")]
-use std::error::Error;
 
 /// An error which can be returned when parsing a fixed-point number
 /// with a given radix.
@@ -70,7 +69,6 @@ impl Display for RadixParseFixedError {
     }
 }
 
-#[cfg(feature = "std")]
 impl Error for RadixParseFixedError {
     fn description(&self) -> &str {
         self.message()

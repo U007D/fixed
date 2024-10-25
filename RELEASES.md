@@ -8,6 +8,11 @@ as-is, without any warranty. -->
 # Version 1.29.0 (unreleased)
 
   * The crate now requires rustc version 1.81.0 or later.
+  * Now [`ParseFixedError`][pfe-1-29] implements [`Error`] even when the `std`
+    [optional feature][feat-1-29] is disabled.
+
+[feat-1-29]: https://docs.rs/fixed/latest/fixed/index.html#optional-features
+[pfe-1-29]: https://docs.rs/fixed/latest/fixed/struct.ParseFixedError.html
 
 # Version 1.28.0 news (2024-07-25)
 
@@ -1470,6 +1475,7 @@ Contributors
 [`Debug`]: https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html
 [`DivAssign`]: https://doc.rust-lang.org/nightly/core/ops/trait.DivAssign.html
 [`Div`]: https://doc.rust-lang.org/nightly/core/ops/trait.Div.html
+[`Error`]: https://doc.rust-lang.org/nightly/core/error/trait.Error.html
 [`FromStr::from_str`]: https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html#tymethod.from_str
 [`FromStr`]: https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html
 [`From`]: https://doc.rust-lang.org/nightly/core/convert/trait.From.html

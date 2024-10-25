@@ -19,11 +19,10 @@ use crate::{
     FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
     FixedU8,
 };
+use core::error::Error;
 use core::fmt::{Display, Formatter, Result as FmtResult};
 use core::num::NonZeroU32;
 use core::str::FromStr;
-#[cfg(feature = "std")]
-use std::error::Error;
 
 // NOTE ON dec_to_bin
 //
@@ -1075,7 +1074,6 @@ impl Display for ParseFixedError {
     }
 }
 
-#[cfg(feature = "std")]
 impl Error for ParseFixedError {
     fn description(&self) -> &str {
         self.message()

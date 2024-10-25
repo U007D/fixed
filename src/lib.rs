@@ -201,8 +201,7 @@ The *fixed* crate has these optional feature:
  3. `serde`, disabled by default. This provides serialization support for the
     fixed-point types. This feature requires the [*serde* crate].
  4. `std`, disabled by default. This is for features that are not possible under
-    `no_std`: currently the implementation of the [`Error`] trait for
-    [`ParseFixedError`].
+    `no_std`: currently this is only required for the `serde-str` feature.
  5. `serde-str`, disabled by default. Fixed-point numbers are serialized as
     strings showing the value when using human-readable formats. This feature
     requires the `serde` and the `std` optional features. **Warning:** numbers
@@ -280,7 +279,6 @@ shall be dual licensed as above, without any additional terms or conditions.
 [U24]: crate::types::extra::U24
 [`Binary`]: core::fmt::Binary
 [`Display`]: core::fmt::Display
-[`Error`]: std::error::Error
 [`FromStr`]: core::str::FromStr
 [`I20F12`]: crate::types::I20F12
 [`I4F12`]: crate::types::I4F12
