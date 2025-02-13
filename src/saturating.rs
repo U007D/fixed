@@ -1357,9 +1357,9 @@ impl<F: Fixed> Saturating<F> {
     /// ```rust
     /// use fixed::types::I16F16;
     /// use fixed::Saturating;
-    /// type Wr = Saturating<I16F16>;
-    /// assert_eq!(Wr::from_num(0.5).lerp(Wr::ZERO, Wr::MAX), Wr::MAX / 2);
-    /// assert_eq!(Wr::from_num(1.5).lerp(Wr::ZERO, Wr::MAX), Wr::MAX + Wr::MAX / 2);
+    /// type Sa = Saturating<I16F16>;
+    /// assert_eq!(Sa::from_num(0.5).lerp(Sa::ZERO, Sa::MAX), Sa::MAX / 2);
+    /// assert_eq!(Sa::from_num(1.5).lerp(Sa::ZERO, Sa::MAX), Sa::MAX + Sa::MAX / 2);
     /// ```
     #[inline]
     #[must_use]
@@ -1378,10 +1378,10 @@ impl<F: Fixed> Saturating<F> {
     /// ```rust
     /// use fixed::types::I16F16;
     /// use fixed::Saturating;
-    /// type Wr = Saturating<I16F16>;
+    /// type Sa = Saturating<I16F16>;
     /// assert_eq!(
-    ///     Wr::from_num(25).inv_lerp(Wr::from_num(20), Wr::from_num(40)),
-    ///     Wr::from_num(0.25)
+    ///     Sa::from_num(25).inv_lerp(Sa::from_num(20), Sa::from_num(40)),
+    ///     Sa::from_num(0.25)
     /// );
     /// ```
     #[inline]
@@ -1674,12 +1674,12 @@ impl<F: FixedUnsigned> Saturating<F> {
     /// ```rust
     /// use fixed::types::U16F16;
     /// use fixed::Saturating;
-    /// type T = Saturating<U16F16>;
-    /// assert_eq!(T::from_bits(0b11_0010).highest_one(), T::from_bits(0b10_0000));
-    /// assert_eq!(T::from_num(0.3).highest_one(), T::from_num(0.25));
-    /// assert_eq!(T::from_num(4).highest_one(), T::from_num(4));
-    /// assert_eq!(T::from_num(6.5).highest_one(), T::from_num(4));
-    /// assert_eq!(T::ZERO.highest_one(), T::ZERO);
+    /// type Sa = Saturating<U16F16>;
+    /// assert_eq!(Sa::from_bits(0b11_0010).highest_one(), Sa::from_bits(0b10_0000));
+    /// assert_eq!(Sa::from_num(0.3).highest_one(), Sa::from_num(0.25));
+    /// assert_eq!(Sa::from_num(4).highest_one(), Sa::from_num(4));
+    /// assert_eq!(Sa::from_num(6.5).highest_one(), Sa::from_num(4));
+    /// assert_eq!(Sa::ZERO.highest_one(), Sa::ZERO);
     /// ```
     #[inline]
     #[must_use]
