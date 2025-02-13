@@ -1325,6 +1325,75 @@ assert_eq!(Fix::from_num(7.5).rem_euclid(Fix::from_num(2)), Fix::from_num(1.5));
                 }
             }
 
+            /// Unbounded shift left. Computes `self << rhs`, without bounding
+            /// the value of `rhs`.
+            ///
+            #[doc = concat!("If `rhs`&nbsp;≥&nbsp;", $n)]
+            /// the entire value is shifted out, and 0 is returned.
+            ///
+            /// # Examples
+            ///
+            /// ```rust
+            /// use fixed::types::extra::U4;
+            #[doc = concat!("use fixed::", stringify!($Self), ";")]
+            #[doc = concat!("type Fix = ", stringify!($Self), "<U4>;")]
+            /// assert_eq!(Fix::from_num(1.5).unbounded_shl(2), Fix::from_num(1.5) << 2);
+            #[doc = concat!("assert_eq!(Fix::from_num(1.5).unbounded_shl(", $n, "), 0);")]
+            /// ```
+            #[inline]
+            #[must_use = "this returns the result of the operation, without modifying the original"]
+            pub const fn unbounded_shl(self, rhs: u32) -> $Self<Frac> {
+                if rhs < $n {
+                    Self::from_bits(self.to_bits() << rhs)
+                } else {
+                    Self::ZERO
+                }
+            }
+
+            /// Unbounded shift right. Computes `self >> rhs`, without bounding
+            /// the value of `rhs`.
+            ///
+            #[doc = concat!("If `rhs`&nbsp;≥&nbsp;", $n)]
+            /// the entire value is shifted out, and
+            #[doc = if_signed_unsigned!(
+                $Signedness,
+                concat!(
+                    "0 is returned for positive values and ",
+                    "&minus;[`DELTA`][Self::DELTA] is returned for negative values.",
+                ),
+                "0 is returned.",
+            )]
+            ///
+            /// # Examples
+            ///
+            /// ```rust
+            /// use fixed::types::extra::U4;
+            #[doc = concat!("use fixed::", stringify!($Self), ";")]
+            #[doc = concat!("type Fix = ", stringify!($Self), "<U4>;")]
+            /// assert_eq!(Fix::from_num(1.5).unbounded_shr(2), Fix::from_num(1.5) >> 2);
+            #[doc = concat!("assert_eq!(Fix::from_num(1.5).unbounded_shr(", $n, "), 0);")]
+            #[doc = if_signed_unsigned!(
+                $Signedness,
+                concat!(
+                    "assert_eq!(Fix::from_num(-1.5).unbounded_shr(", $n, "), -Fix::DELTA);\n",
+                    "```",
+                ),
+                "```",
+            )]
+            #[inline]
+            #[must_use = "this returns the result of the operation, without modifying the original"]
+            pub const fn unbounded_shr(self, rhs: u32) -> $Self<Frac> {
+                if rhs < $n {
+                    Self::from_bits(self.to_bits() >> rhs)
+                } else {
+                    if_signed_unsigned!(
+                        $Signedness,
+                        Self::wrapping_shr(self, $n - 1),
+                        Self::ZERO,
+                    )
+                }
+            }
+
             if_signed! {
                 $Signedness;
                 comment! {
