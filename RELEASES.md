@@ -14,11 +14,21 @@ as-is, without any warranty. -->
   * The [`cast_signed`][f-cs-1-29] method was added to all unsigned fixed-point
     numbers, to their [`Saturating`][s-1-29], [`Wrapping`][w-1-29] and
     [`Unwrapped`][u-1-29] wrappers, and to the [`Fixed`][tf-1-29] trait
+  * The following methods are now usable in constant context:
+      * [`mul_acc`][f-ma-1-29], [`checked_mul_acc`][f-cma-1-29],
+        [`saturating_mul_acc`][f-sma-1-29], [`wrapping_mul_acc`][f-wma-1-29],
+        [`unwrapped_mul_acc`][f-uma-1-29], [`overflowing_mul_acc`][f-oma-1-29]
   * Now [`ParseFixedError`][pfe-1-29] implements [`Error`] even when the `std`
     [optional feature][feat-1-29] is disabled.
 
+[f-cma-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul_acc
 [f-cs-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedU32.html#method.cast_signed
 [f-cu-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.cast_unsigned
+[f-ma-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.mul_acc
+[f-oma-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_mul_acc
+[f-sma-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_mul_acc
+[f-uma-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_mul_acc
+[f-wma-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_mul_acc
 [feat-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/index.html#optional-features
 [pfe-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.ParseFixedError.html
 [s-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Saturating.html

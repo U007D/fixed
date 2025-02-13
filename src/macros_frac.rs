@@ -576,7 +576,7 @@ assert_eq!(acc, Fix::MAX / 2);
 ";
                 #[inline]
                 #[track_caller]
-                pub fn mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
+                pub const fn mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
                     &mut self,
                     a: $Self<AFrac>,
                     b: $Self<BFrac>,
@@ -1002,7 +1002,7 @@ assert_eq!(acc, Fix::MAX / 2);
 ";
                 #[inline]
                 #[must_use = "this `Option` may be a `None` variant indicating overflow, which should be handled"]
-                pub fn checked_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
+                pub const fn checked_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
                     &mut self,
                     a: $Self<AFrac>,
                     b: $Self<BFrac>,
@@ -1653,7 +1653,7 @@ assert_eq!(acc, Fix::MAX / 2);
                 "```
 ";
                 #[inline]
-                pub fn saturating_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
+                pub const fn saturating_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
                     &mut self,
                     a: $Self<AFrac>,
                     b: $Self<BFrac>,
@@ -2066,7 +2066,7 @@ assert_eq!(acc, Fix::MAX.wrapping_mul_int(4));
 ```
 ";
                 #[inline]
-                pub fn wrapping_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
+                pub const fn wrapping_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
                     &mut self,
                     a: $Self<AFrac>,
                     b: $Self<BFrac>,
@@ -2518,7 +2518,7 @@ acc.unwrapped_mul_acc(Fix::MAX, Fix::ONE);
 ";
                 #[inline]
                 #[track_caller]
-                pub fn unwrapped_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
+                pub const fn unwrapped_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
                     &mut self,
                     a: $Self<AFrac>,
                     b: $Self<BFrac>,
@@ -3176,7 +3176,7 @@ assert_eq!(acc, Fix::MAX / 2);
 ";
                 #[inline]
                 #[must_use = "this returns whether overflow occurs; use `wrapping_mul_acc` if the flag is not needed"]
-                pub fn overflowing_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
+                pub const fn overflowing_mul_acc<AFrac: $LeEqU, BFrac: $LeEqU>(
                     &mut self,
                     a: $Self<AFrac>,
                     b: $Self<BFrac>,
