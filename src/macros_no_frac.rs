@@ -573,6 +573,46 @@ assert_eq!(f.trailing_zeros(), 5);
                 }
             }
 
+            if_signed! {
+                $Signedness;
+                /// Returns the bit pattern of `self` reinterpreted as an
+                /// unsigned fixed-point number of the same size.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// use fixed::types::extra::U4;
+                #[doc = concat!("use fixed::{", stringify!($Self), ", ", stringify!($USelf), "};")]
+                #[doc = concat!("let n = -", stringify!($Self), "::<U4>::DELTA;")]
+                #[doc = concat!("assert_eq!(n.cast_unsigned(), ", stringify!($USelf), "::<U4>::MAX);")]
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn cast_unsigned(self) -> $USelf<Frac> {
+                    $USelf::from_bits(self.to_bits() as $UInner)
+                }
+            }
+
+            if_unsigned! {
+                $Signedness;
+                /// Returns the bit pattern of `self` reinterpreted as a signed
+                /// fixed-point number of the same size.
+                ///
+                /// # Examples
+                ///
+                /// ```rust
+                /// use fixed::types::extra::U4;
+                #[doc = concat!("use fixed::{", stringify!($ISelf), ", ", stringify!($Self), "};")]
+                #[doc = concat!("let n = ", stringify!($Self), "::<U4>::MAX;")]
+                #[doc = concat!("assert_eq!(n.cast_signed(), -", stringify!($ISelf), "::<U4>::DELTA);")]
+                /// ```
+                #[inline]
+                #[must_use]
+                pub const fn cast_signed(self) -> $ISelf<Frac> {
+                    $ISelf::from_bits(self.to_bits() as $IInner)
+                }
+            }
+
             if_unsigned! {
                 $Signedness;
                 comment! {

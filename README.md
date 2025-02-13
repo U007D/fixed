@@ -97,10 +97,16 @@ The conversions supported cover the following cases.
 ### Version 1.29.0 news (unreleased)
 
   * The crate now requires rustc version 1.81.0 or later.
+  * The following method was added to all signed fixed-point numbers:
+      * [`cast_unsigned`][f-cu-1-29]
+  * The following method was added to all unsigned fixed-point numbers:
+      * [`cast_signed`][f-cs-1-29]
   * Now [`ParseFixedError`][pfe-1-29] implements [`Error`] even when the `std`
     [optional feature][feat-1-29] is disabled.
 
 [`Error`]: https://doc.rust-lang.org/nightly/core/error/trait.Error.html
+[f-cs-1-29]: https://docs.rs/fixed/latest/fixed/struct.FixedU32.html#method.cast_signed
+[f-cu-1-29]: https://docs.rs/fixed/latest/fixed/struct.FixedI32.html#method.cast_unsigned
 [feat-1-29]: https://docs.rs/fixed/latest/fixed/index.html#optional-features
 [pfe-1-29]: https://docs.rs/fixed/latest/fixed/struct.ParseFixedError.html
 
