@@ -3213,7 +3213,7 @@ where
     ///   * if the value is positive and the fixed-point number has zero
     ///     or one integer bits such that it cannot hold the value 1.
     ///   * if the value is negative and the fixed-point number has zero
-    ///         integer bits, such that it cannot hold the value &minus;1.
+    ///     integer bits, such that it cannot hold the value &minus;1.
     ///
     /// See also
     /// <code>FixedI32::[checked\_signum][FixedI32::checked_signum]</code>.
@@ -3250,7 +3250,7 @@ where
     ///   * if the value is positive and the fixed-point number has zero
     ///     or one integer bits such that it cannot hold the value 1.
     ///   * if the value is negative and the fixed-point number has zero
-    ///         integer bits, such that it cannot hold the value &minus;1.
+    ///     integer bits, such that it cannot hold the value &minus;1.
     ///
     /// See also
     /// <code>FixedI32::[saturating\_signum][FixedI32::saturating_signum]</code>.
@@ -3288,7 +3288,7 @@ where
     ///   * if the value is positive and the fixed-point number has zero
     ///     or one integer bits such that it cannot hold the value 1.
     ///   * if the value is negative and the fixed-point number has zero
-    ///         integer bits, such that it cannot hold the value &minus;1.
+    ///     integer bits, such that it cannot hold the value &minus;1.
     ///
     /// See also
     /// <code>FixedI32::[wrapping\_signum][FixedI32::wrapping_signum]</code>.
@@ -3332,7 +3332,7 @@ where
     ///   * if the value is positive and the fixed-point number has zero
     ///     or one integer bits such that it cannot hold the value 1.
     ///   * if the value is negative and the fixed-point number has zero
-    ///         integer bits, such that it cannot hold the value &minus;1.
+    ///     integer bits, such that it cannot hold the value &minus;1.
     ///
     /// See also
     /// <code>FixedI32::[unwrapped\_signum][FixedI32::unwrapped_signum]</code>.
@@ -3390,7 +3390,7 @@ where
     ///   * if the value is positive and the fixed-point number has zero
     ///     or one integer bits such that it cannot hold the value 1.
     ///   * if the value is negative and the fixed-point number has zero
-    ///         integer bits, such that it cannot hold the value &minus;1.
+    ///     integer bits, such that it cannot hold the value &minus;1.
     ///
     /// See also
     /// <code>FixedI32::[overflowing\_signum][FixedI32::overflowing_signum]</code>.

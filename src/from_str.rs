@@ -487,7 +487,7 @@ macro_rules! unsigned {
                 return (val, false)
             }
             // max_digits does not count exp_extra_digit, which holds exp bits we'll use.
-            let max_digits = (($Uns::BITS - exp + 2) / 3) as usize;
+            let max_digits = ($Uns::BITS - exp).div_ceil(3) as usize;
             let (digits, mut overflow) = if digits.len() > max_digits {
                 let (_, last_max_digits) = digits.split_at(digits.len() - max_digits);
                 (last_max_digits, true)
@@ -575,7 +575,7 @@ macro_rules! unsigned {
                 return (val, false)
             }
             // max_digits does not count exp_extra_digit, which holds exp bits we'll use.
-            let max_digits = (($Uns::BITS - exp + 3) / 4) as usize;
+            let max_digits = ($Uns::BITS - exp).div_ceil(4) as usize;
             let (digits, mut overflow) = if digits.len() > max_digits {
                 let (_, last_max_digits) = digits.split_at(digits.len() - max_digits);
                 (last_max_digits, true)

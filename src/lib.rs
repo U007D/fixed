@@ -428,7 +428,7 @@ use core::ops::{Add, Sub};
 /// The prelude re-exports the following:
 ///
 ///  * <code>[traits]::{[FromFixed], [ToFixed]}</code>, checked conversions
-///     from/to fixed-point numbers.
+///    from/to fixed-point numbers.
 ///  * <code>[traits]::{[LossyFrom], [LossyInto]}</code>, infallible lossy
 ///    conversions.
 ///  * <code>[traits]::{[LosslessTryFrom], [LosslessTryInto]}</code>, checked

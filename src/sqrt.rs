@@ -137,7 +137,7 @@ macro_rules! impl_sqrt {
             let odd_frac_nbits = frac_nbits % 2 != 0;
             let leading = val.leading_zeros();
             let sig_int_pairs = if odd_frac_nbits {
-                ((int_nbits + 1) / 2) as i32 - ((leading + 1) / 2) as i32
+                int_nbits.div_ceil(2) as i32 - leading.div_ceil(2) as i32
             } else {
                 (int_nbits / 2) as i32 - (leading / 2) as i32
             };

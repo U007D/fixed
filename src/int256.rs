@@ -258,7 +258,7 @@ pub const fn div_rem_u256_u128(mut n: U256, d: NonZero<u128>) -> (U256, u128) {
         (0, d.get())
     } else {
         let n2 = n.hi >> (128 - zeros);
-        n.hi = n.hi << zeros | n.lo >> (128 - zeros);
+        n.hi = (n.hi << zeros) | (n.lo >> (128 - zeros));
         n.lo <<= zeros;
         (n2, d.get() << zeros)
     };
@@ -407,9 +407,9 @@ mod tests {
         for d in 1u8..=255 {
             for n1 in (0u8..=255).step_by(15) {
                 for n0 in (0u8..=255).step_by(15) {
-                    let d = u128::from(d) << 120 | 1;
-                    let n1 = u128::from(n1) << 120 | 1;
-                    let n0 = u128::from(n0) << 120 | 1;
+                    let d = (u128::from(d) << 120) | 1;
+                    let n1 = (u128::from(n1) << 120) | 1;
+                    let n0 = (u128::from(n0) << 120) | 1;
                     check_udiv_rem(U256 { lo: n0, hi: n1 }, d);
                 }
             }
@@ -424,9 +424,9 @@ mod tests {
             }
             for n1 in (-120..=120).step_by(15) {
                 for n0 in (0u8..=255).step_by(15) {
-                    let d = i128::from(d) << 120 | 1;
-                    let n1 = i128::from(n1) << 120 | 1;
-                    let n0 = u128::from(n0) << 120 | 1;
+                    let d = (i128::from(d) << 120) | 1;
+                    let n1 = (i128::from(n1) << 120) | 1;
+                    let n0 = (u128::from(n0) << 120) | 1;
                     check_idiv_rem_signs(I256 { lo: n0, hi: n1 }, d);
                 }
             }
