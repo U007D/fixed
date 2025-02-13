@@ -8,17 +8,23 @@ as-is, without any warranty. -->
 # Version 1.29.0 (unreleased)
 
   * The crate now requires rustc version 1.81.0 or later.
-  * The following method was added to all signed fixed-point numbers:
-      * [`cast_unsigned`][f-cu-1-29]
-  * The following method was added to all unsigned fixed-point numbers:
-      * [`cast_signed`][f-cs-1-29]
+  * The [`cast_unsigned`][f-cu-1-29] method was added to all signed fixed-point
+    numbers, to their [`Saturating`][s-1-29], [`Wrapping`][w-1-29] and
+    [`Unwrapped`][u-1-29] wrappers, and to the [`Fixed`][tf-1-29] trait.
+  * The [`cast_signed`][f-cs-1-29] method was added to all unsigned fixed-point
+    numbers, to their [`Saturating`][s-1-29], [`Wrapping`][w-1-29] and
+    [`Unwrapped`][u-1-29] wrappers, and to the [`Fixed`][tf-1-29] trait
   * Now [`ParseFixedError`][pfe-1-29] implements [`Error`] even when the `std`
     [optional feature][feat-1-29] is disabled.
 
-[f-cs-1-29]: https://docs.rs/fixed/latest/fixed/struct.FixedU32.html#method.cast_signed
-[f-cu-1-29]: https://docs.rs/fixed/latest/fixed/struct.FixedI32.html#method.cast_unsigned
-[feat-1-29]: https://docs.rs/fixed/latest/fixed/index.html#optional-features
-[pfe-1-29]: https://docs.rs/fixed/latest/fixed/struct.ParseFixedError.html
+[f-cs-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedU32.html#method.cast_signed
+[f-cu-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.cast_unsigned
+[feat-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/index.html#optional-features
+[pfe-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.ParseFixedError.html
+[s-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Saturating.html
+[tf-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/traits/trait.Fixed.html
+[u-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Unwrapped.html
+[w-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Wrapping.html
 
 # Version 1.28.0 news (2024-07-25)
 

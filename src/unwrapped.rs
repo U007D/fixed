@@ -1711,6 +1711,26 @@ impl<F: Fixed> Unwrapped<F> {
 }
 
 impl<F: FixedSigned> Unwrapped<F> {
+    /// Returns the bit pattern of `self` reinterpreted as an unsigned
+    /// fixed-point number of the same size.
+    ///
+    /// See also <code>FixedI32::[cast\_unsigned][FixedU32::cast_unsigned]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::{I16F16, U16F16};
+    /// use fixed::Unwrapped;
+    ///
+    /// let n = Unwrapped(-I16F16::DELTA);
+    /// assert_eq!(n.cast_unsigned(), Unwrapped(U16F16::MAX));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn cast_unsigned(self) -> Unwrapped<F::Unsigned> {
+        Unwrapped(self.0.cast_unsigned())
+    }
+
     /// Returns the number of bits required to represent the value.
     ///
     /// The number of bits required includes an initial one for
@@ -1915,6 +1935,26 @@ impl<F: FixedSigned> Unwrapped<F> {
 }
 
 impl<F: FixedUnsigned> Unwrapped<F> {
+    /// Returns the bit pattern of `self` reinterpreted as a signed fixed-point
+    /// number of the same size.
+    ///
+    /// See also <code>FixedU32::[cast\_signed][FixedU32::cast_signed]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::{I16F16, U16F16};
+    /// use fixed::Unwrapped;
+    ///
+    /// let n = Unwrapped(U16F16::MAX);
+    /// assert_eq!(n.cast_signed(), Unwrapped(-I16F16::DELTA));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn cast_signed(self) -> Unwrapped<F::Signed> {
+        Unwrapped(self.0.cast_signed())
+    }
+
     /// Returns the number of bits required to represent the value.
     ///
     /// See also

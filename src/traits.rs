@@ -542,6 +542,55 @@ where
     /// [types]: crate::types
     type Unsigned: FixedUnsigned;
 
+    /// Returns the bit pattern of `self` reinterpreted as a signed fixed-point
+    /// number of the same size.
+    ///
+    /// For signed fixed-point numbers, the returned value is equal to `self`.
+    ///
+    /// See also <code>FixedU32::[cast\_signed][FixedU32::cast_signed]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::traits::Fixed;
+    /// use fixed::types::{I16F16, U16F16};
+    ///
+    /// let i = -I16F16::DELTA;
+    /// let u = U16F16::MAX;
+    /// assert_eq!(i.cast_signed(), i);
+    /// assert_eq!(u.cast_signed(), i);
+    /// ```
+    #[must_use]
+    #[inline]
+    fn cast_signed(self) -> Self::Signed {
+        bytemuck::cast(self)
+    }
+
+    /// Returns the bit pattern of `self` reinterpreted as an unsigned
+    /// fixed-point number of the same size.
+    ///
+    /// For unsigned fixed-point numbers, the returned value is equal to `self`.
+    ///
+    /// See also
+    /// <code>FixedI32::[cast\_unsigned][FixedI32::cast_unsigned]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::traits::Fixed;
+    /// use fixed::types::{I16F16, U16F16};
+    ///
+    /// let i = -I16F16::DELTA;
+    /// let u = U16F16::MAX;
+    /// assert_eq!(i.cast_unsigned(), u);
+    /// assert_eq!(u.cast_unsigned(), u);
+    /// ```
+    #[must_use]
+    #[inline]
+    fn cast_unsigned(self) -> Self::Unsigned {
+        bytemuck::cast(self)
+    }
+
     /// Returns a reference to `self` as [`FixedSigned`] if the type is signed,
     /// or [`None`] if it is unsigned.
     ///

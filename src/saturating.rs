@@ -1401,6 +1401,26 @@ impl<F: Fixed> Saturating<F> {
 }
 
 impl<F: FixedSigned> Saturating<F> {
+    /// Returns the bit pattern of `self` reinterpreted as an unsigned
+    /// fixed-point number of the same size.
+    ///
+    /// See also <code>FixedI32::[cast\_unsigned][FixedU32::cast_unsigned]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::{I16F16, U16F16};
+    /// use fixed::Saturating;
+    ///
+    /// let n = Saturating(-I16F16::DELTA);
+    /// assert_eq!(n.cast_unsigned(), Saturating(U16F16::MAX));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn cast_unsigned(self) -> Saturating<F::Unsigned> {
+        Saturating(self.0.cast_unsigned())
+    }
+
     /// Returns the number of bits required to represent the value.
     ///
     /// The number of bits required includes an initial one for
@@ -1581,6 +1601,26 @@ impl<F: FixedSigned> Saturating<F> {
 }
 
 impl<F: FixedUnsigned> Saturating<F> {
+    /// Returns the bit pattern of `self` reinterpreted as a signed fixed-point
+    /// number of the same size.
+    ///
+    /// See also <code>FixedU32::[cast\_signed][FixedU32::cast_signed]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::{I16F16, U16F16};
+    /// use fixed::Saturating;
+    ///
+    /// let n = Saturating(U16F16::MAX);
+    /// assert_eq!(n.cast_signed(), Saturating(-I16F16::DELTA));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn cast_signed(self) -> Saturating<F::Signed> {
+        Saturating(self.0.cast_signed())
+    }
+
     /// Returns the number of bits required to represent the value.
     ///
     /// See also
