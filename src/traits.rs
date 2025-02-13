@@ -1756,6 +1756,24 @@ where
     #[must_use = "this returns the result of the operation, without modifying the original"]
     fn rem_euclid_int(self, rhs: Self::Bits) -> Self;
 
+    /// Unbounded shift left. Computes `self << rhs`, without bounding the value
+    /// of `rhs`.
+    ///
+    /// See also
+    /// <code>FixedI32::[unbounded\_shl][FixedI32::unbounded_shl]</code> and
+    /// <code>FixedU32::[unbounded\_shl][FixedU32::unbounded_shl]</code>.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn unbounded_shl(self, rhs: u32) -> Self;
+
+    /// Unbounded shift right. Computes `self >> rhs`, without bounding the
+    /// value of `rhs`.
+    ///
+    /// See also
+    /// <code>FixedI32::[unbounded\_shr][FixedI32::unbounded_shr]</code> and
+    /// <code>FixedU32::[unbounded\_shr][FixedU32::unbounded_shr]</code>.
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    fn unbounded_shr(self, rhs: u32) -> Self;
+
     /// Returns the square root.
     ///
     /// See also <code>FixedI32::[sqrt][FixedI32::sqrt]</code> and
@@ -4209,6 +4227,8 @@ macro_rules! impl_fixed {
             trait_delegate! { fn rem_euclid(self, rhs: Self) -> Self }
             trait_delegate! { fn div_euclid_int(self, rhs: Self::Bits) -> Self }
             trait_delegate! { fn rem_euclid_int(self, rhs: Self::Bits) -> Self }
+            trait_delegate! { fn unbounded_shl(self, rhs: u32) -> Self }
+            trait_delegate! { fn unbounded_shr(self, rhs: u32) -> Self }
             trait_delegate! { fn sqrt(self) -> Self }
             trait_delegate! { fn lerp(self, start: Self, end: Self) -> Self }
             trait_delegate! { fn inv_lerp(self, start: Self, end: Self) -> Self }

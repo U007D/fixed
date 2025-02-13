@@ -97,14 +97,16 @@ The conversions supported cover the following cases.
 ### Version 1.29.0 news (unreleased)
 
   * The crate now requires rustc version 1.83.0 or later.
-  * The following methods were added to all fixed-point numbers:
+  * The following methods were added to all fixed-point numbers, to the
+    [`Fixed`][tf-1-29] trait, and to the [`Saturating`][s-1-29],
+    [`Wrapping`][w-1-29] and [`Unwrapped`][u-1-29] wrappers:
       * [`unbounded_shl`][f-ushl-1-29], [`unbounded_shr`][f-ushr-1-29]
   * The [`cast_unsigned`][f-cu-1-29] method was added to all signed fixed-point
     numbers, to their [`Saturating`][s-1-29], [`Wrapping`][w-1-29] and
     [`Unwrapped`][u-1-29] wrappers, and to the [`Fixed`][tf-1-29] trait.
   * The [`cast_signed`][f-cs-1-29] method was added to all unsigned fixed-point
     numbers, to their [`Saturating`][s-1-29], [`Wrapping`][w-1-29] and
-    [`Unwrapped`][u-1-29] wrappers, and to the [`Fixed`][tf-1-29] trait
+    [`Unwrapped`][u-1-29] wrappers, and to the [`Fixed`][tf-1-29] trait.
   * The following methods are now usable in constant context:
       * [`mul_acc`][f-ma-1-29], [`checked_mul_acc`][f-cma-1-29],
         [`saturating_mul_acc`][f-sma-1-29], [`wrapping_mul_acc`][f-wma-1-29],

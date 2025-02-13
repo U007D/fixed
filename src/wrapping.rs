@@ -1349,6 +1349,54 @@ impl<F: Fixed> Wrapping<F> {
         Wrapping(self.0.wrapping_rem_euclid_int(divisor))
     }
 
+    /// Unbounded shift left. Computes `self << rhs`, without bounding the value
+    /// of `rhs`.
+    ///
+    /// See also
+    /// <code>FixedI32::[unbounded\_shl][FixedI32::unbounded_shl]</code> and
+    /// <code>FixedU32::[unbounded\_shl][FixedU32::unbounded_shl]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::I16F16;
+    /// use fixed::Wrapping;
+    /// type Wr = Wrapping<I16F16>;
+    /// let num = Wrapping(I16F16::from_num(1.5));
+    /// assert_eq!(num.unbounded_shl(5), num << 5);
+    /// assert_eq!(num.unbounded_shl(32), Wr::ZERO);
+    /// ```
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    #[inline]
+    pub fn unbounded_shl(self, rhs: u32) -> Wrapping<F> {
+        Wrapping(self.0.unbounded_shl(rhs))
+    }
+
+    /// Unbounded shift right. Computes `self >> rhs`, without bounding the
+    /// value of `rhs`.
+    ///
+    /// See also
+    /// <code>FixedI32::[unbounded\_shr][FixedI32::unbounded_shr]</code> and
+    /// <code>FixedU32::[unbounded\_shr][FixedU32::unbounded_shr]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::I16F16;
+    /// use fixed::Wrapping;
+    /// type Wr = Wrapping<I16F16>;
+    /// let num = Wrapping(I16F16::from_num(1.5));
+    /// assert_eq!(num.unbounded_shr(5), num >> 5);
+    /// assert_eq!(num.unbounded_shr(32), Wr::ZERO);
+    /// assert_eq!((-num).unbounded_shr(5), (-num) >> 5);
+    /// assert_eq!((-num).unbounded_shr(32), -Wr::DELTA);
+    /// ```
+    #[must_use = "this returns the result of the operation, without modifying the original"]
+    #[inline]
+    pub fn unbounded_shr(self, rhs: u32) -> Wrapping<F> {
+        Wrapping(self.0.unbounded_shr(rhs))
+    }
+
     /// Linear interpolation between `start` and `end`.
     ///
     /// See also
