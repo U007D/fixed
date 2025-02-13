@@ -96,7 +96,7 @@ The conversions supported cover the following cases.
 
 ### Version 1.29.0 news (unreleased)
 
-  * The crate now requires rustc version 1.81.0 or later.
+  * The crate now requires rustc version 1.83.0 or later.
   * The [`cast_unsigned`][f-cu-1-29] method was added to all signed fixed-point
     numbers, to their [`Saturating`][s-1-29], [`Wrapping`][w-1-29] and
     [`Unwrapped`][u-1-29] wrappers, and to the [`Fixed`][tf-1-29] trait.
@@ -263,7 +263,7 @@ crate, add it as a dependency inside [*Cargo.toml*]:
 fixed = "1.28"
 ```
 
-The *fixed* crate requires rustc version 1.81.0 or later.
+The *fixed* crate requires rustc version 1.83.0 or later.
 
 ## Optional features
 

@@ -16,7 +16,7 @@ keywords = ["dsp", "embedded", "fixed", "math", "numerics"]
 license = "MIT/Apache-2.0"
 readme = "README.md"
 repository = "https://gitlab.com/tspiteri/fixed"
-rust-version = "1.81"
+rust-version = "1.83"
 
 [dependencies]
 arbitrary = { optional = true, version = "1" }
