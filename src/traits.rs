@@ -1008,6 +1008,43 @@ where
     /// and <code>FixedU32::[from\_str\_hex][FixedU32::from_str_hex]</code>.
     fn from_str_hex(src: &str) -> Result<Self, ParseFixedError>;
 
+    /// Parses an ASCII-byte slice containing binary digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[from\_ascii\_binary][FixedI32::from_ascii_binary]</code>
+    /// and
+    /// <code>FixedU32::[from\_ascii\_binary][FixedU32::from_ascii_binary]</code>.
+    fn from_ascii(src: &[u8]) -> Result<Self, ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing binary digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[from\_ascii\_binary][FixedI32::from_ascii_binary]</code>
+    /// and
+    /// <code>FixedU32::[from\_ascii\_binary][FixedU32::from_ascii_binary]</code>.
+    fn from_ascii_binary(src: &[u8]) -> Result<Self, ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing octal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[from\_ascii\_octal][FixedI32::from_ascii_octal]</code> and
+    /// <code>FixedU32::[from\_ascii\_octal][FixedU32::from_ascii_octal]</code>.
+    fn from_ascii_octal(src: &[u8]) -> Result<Self, ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing hexadecimal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also <code>FixedI32::[from\_ascii\_hex][FixedI32::from_ascii_hex]</code>
+    /// and <code>FixedU32::[from\_ascii\_hex][FixedU32::from_ascii_hex]</code>.
+    fn from_ascii_hex(src: &[u8]) -> Result<Self, ParseFixedError>;
+
     /// Parses a string slice containing decimal digits to return a
     /// fixed-point number, saturating on overflow.
     ///
@@ -1052,6 +1089,50 @@ where
     /// <code>FixedU32::[saturating\_from\_str\_hex][FixedU32::saturating_from_str_hex]</code>.
     fn saturating_from_str_hex(src: &str) -> Result<Self, ParseFixedError>;
 
+    /// Parses an ASCII-byte slice containing decimal digits to return a
+    /// fixed-point number, saturating on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_from\_ascii][FixedI32::saturating_from_ascii]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_from\_ascii][FixedU32::saturating_from_ascii]</code>.
+    fn saturating_from_ascii(src: &[u8]) -> Result<Self, ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing binary digits to return a
+    /// fixed-point number, saturating on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_from\_ascii\_binary][FixedI32::saturating_from_ascii_binary]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_from\_ascii\_binary][FixedU32::saturating_from_ascii_binary]</code>.
+    fn saturating_from_ascii_binary(src: &[u8]) -> Result<Self, ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing octal digits to return a
+    /// fixed-point number, saturating on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_from\_ascii\_octal][FixedI32::saturating_from_ascii_octal]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_from\_ascii\_octal][FixedU32::saturating_from_ascii_octal]</code>.
+    fn saturating_from_ascii_octal(src: &[u8]) -> Result<Self, ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing hexadecimal digits to return a
+    /// fixed-point number, saturating on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_from\_ascii\_hex][FixedI32::saturating_from_ascii_hex]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_from\_ascii\_hex][FixedU32::saturating_from_ascii_hex]</code>.
+    fn saturating_from_ascii_hex(src: &[u8]) -> Result<Self, ParseFixedError>;
+
     /// Parses a string slice containing decimal digits to return a
     /// fixed-point number, wrapping on overflow.
     ///
@@ -1095,6 +1176,50 @@ where
     /// and
     /// <code>FixedU32::[wrapping\_from\_str\_hex][FixedU32::wrapping_from_str_hex]</code>.
     fn wrapping_from_str_hex(src: &str) -> Result<Self, ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing decimal digits to return a
+    /// fixed-point number, wrapping on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_ascii][FixedI32::wrapping_from_ascii]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_ascii][FixedU32::wrapping_from_ascii]</code>.
+    fn wrapping_from_ascii(src: &[u8]) -> Result<Self, ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing binary digits to return a
+    /// fixed-point number, wrapping on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_ascii\_binary][FixedI32::wrapping_from_ascii_binary]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_ascii\_binary][FixedU32::wrapping_from_ascii_binary]</code>.
+    fn wrapping_from_ascii_binary(src: &[u8]) -> Result<Self, ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing octal digits to return a
+    /// fixed-point number, wrapping on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_ascii\_octal][FixedI32::wrapping_from_ascii_octal]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_ascii\_octal][FixedU32::wrapping_from_ascii_octal]</code>.
+    fn wrapping_from_ascii_octal(src: &[u8]) -> Result<Self, ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing hexadecimal digits to return a
+    /// fixed-point number, wrapping on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_ascii\_hex][FixedI32::wrapping_from_ascii_hex]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_ascii\_hex][FixedU32::wrapping_from_ascii_hex]</code>.
+    fn wrapping_from_ascii_hex(src: &[u8]) -> Result<Self, ParseFixedError>;
 
     /// Parses a string slice containing decimal digits to return a
     /// fixed-point number, panicking on overflow.
@@ -1160,6 +1285,70 @@ where
     #[track_caller]
     fn unwrapped_from_str_hex(src: &str) -> Self;
 
+    /// Parses an ASCII-byte slice containing decimal digits to return a
+    /// fixed-point number, panicking on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_from\_ascii][FixedI32::unwrapped_from_ascii]</code>
+    /// and
+    /// <code>FixedU32::[unwrapped\_from\_ascii][FixedU32::unwrapped_from_ascii]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the value does not fit or if there is a parsing error.
+    #[track_caller]
+    fn unwrapped_from_ascii(src: &[u8]) -> Self;
+
+    /// Parses an ASCII-byte slice containing binary digits to return a
+    /// fixed-point number, panicking on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_from\_ascii\_binary][FixedI32::unwrapped_from_ascii_binary]</code>
+    /// and
+    /// <code>FixedU32::[unwrapped\_from\_ascii\_binary][FixedU32::unwrapped_from_ascii_binary]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the value does not fit or if there is a parsing error.
+    #[track_caller]
+    fn unwrapped_from_ascii_binary(src: &[u8]) -> Self;
+
+    /// Parses an ASCII-byte slice containing octal digits to return a
+    /// fixed-point number, panicking on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_from\_ascii\_octal][FixedI32::unwrapped_from_ascii_octal]</code>
+    /// and
+    /// <code>FixedU32::[unwrapped\_from\_ascii\_octal][FixedU32::unwrapped_from_ascii_octal]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the value does not fit or if there is a parsing error.
+    #[track_caller]
+    fn unwrapped_from_ascii_octal(src: &[u8]) -> Self;
+
+    /// Parses an ASCII-byte slice containing hexadecimal digits to return a
+    /// fixed-point number, panicking on overflow.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[unwrapped\_from\_ascii\_hex][FixedI32::unwrapped_from_ascii_hex]</code>
+    /// and
+    /// <code>FixedU32::[unwrapped\_from\_ascii\_hex][FixedU32::unwrapped_from_ascii_hex]</code>.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the value does not fit or if there is a parsing error.
+    #[track_caller]
+    fn unwrapped_from_ascii_hex(src: &[u8]) -> Self;
+
     /// Parses a string slice containing decimal digits to return a
     /// fixed-point number.
     ///
@@ -1219,6 +1408,66 @@ where
     /// and
     /// <code>FixedU32::[overflowing\_from\_str\_hex][FixedU32::overflowing_from_str_hex]</code>.
     fn overflowing_from_str_hex(src: &str) -> Result<(Self, bool), ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing decimal digits to return a
+    /// fixed-point number.
+    ///
+    /// Returns a [tuple] of the fixed-point number and a [`bool`],
+    /// indicating whether an overflow has occurred. On overflow, the
+    /// wrapped value is returned.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_from\_ascii][FixedI32::overflowing_from_ascii]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_from\_ascii][FixedU32::overflowing_from_ascii]</code>.
+    fn overflowing_from_ascii(src: &[u8]) -> Result<(Self, bool), ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing binary digits to return a
+    /// fixed-point number.
+    ///
+    /// Returns a [tuple] of the fixed-point number and a [`bool`],
+    /// indicating whether an overflow has occurred. On overflow, the
+    /// wrapped value is returned.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_from\_ascii\_binary][FixedI32::overflowing_from_ascii_binary]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_from\_ascii\_binary][FixedU32::overflowing_from_ascii_binary]</code>.
+    fn overflowing_from_ascii_binary(src: &[u8]) -> Result<(Self, bool), ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing octal digits to return a
+    /// fixed-point number.
+    ///
+    /// Returns a [tuple] of the fixed-point number and a [`bool`],
+    /// indicating whether an overflow has occurred. On overflow, the
+    /// wrapped value is returned.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_from\_ascii\_octal][FixedI32::overflowing_from_ascii_octal]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_from\_ascii\_octal][FixedU32::overflowing_from_ascii_octal]</code>.
+    fn overflowing_from_ascii_octal(src: &[u8]) -> Result<(Self, bool), ParseFixedError>;
+
+    /// Parses an ASCII-byte slice containing hexadecimal digits to return a
+    /// fixed-point number.
+    ///
+    /// Returns a [tuple] of the fixed-point number and a [`bool`],
+    /// indicating whether an overflow has occurred. On overflow, the
+    /// wrapped value is returned.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[overflowing\_from\_ascii\_hex][FixedI32::overflowing_from_ascii_hex]</code>
+    /// and
+    /// <code>FixedU32::[overflowing\_from\_ascii\_hex][FixedU32::overflowing_from_ascii_hex]</code>.
+    fn overflowing_from_ascii_hex(src: &[u8]) -> Result<(Self, bool), ParseFixedError>;
 
     /// Returns the integer part.
     ///
@@ -4039,7 +4288,7 @@ pub trait FixedEquiv {
 }
 
 macro_rules! trait_delegate {
-    (fn $method:ident($($param:ident: $Param:ty),*) -> $Ret:ty) => {
+    (fn $method:ident($($param:ident: $Param:ty),*$(,)?) -> $Ret:ty) => {
         #[inline]
         fn $method($($param: $Param),*) -> $Ret {
             Self::$method($($param),*)
@@ -4131,6 +4380,10 @@ macro_rules! impl_fixed {
             trait_delegate! { fn from_str_binary(src: &str) -> Result<Self, ParseFixedError> }
             trait_delegate! { fn from_str_octal(src: &str) -> Result<Self, ParseFixedError> }
             trait_delegate! { fn from_str_hex(src: &str) -> Result<Self, ParseFixedError> }
+            trait_delegate! { fn from_ascii(src: &[u8]) -> Result<Self, ParseFixedError> }
+            trait_delegate! { fn from_ascii_binary(src: &[u8]) -> Result<Self, ParseFixedError> }
+            trait_delegate! { fn from_ascii_octal(src: &[u8]) -> Result<Self, ParseFixedError> }
+            trait_delegate! { fn from_ascii_hex(src: &[u8]) -> Result<Self, ParseFixedError> }
             trait_delegate! {
                 fn saturating_from_str(src: &str) -> Result<Self, ParseFixedError>
             }
@@ -4144,6 +4397,18 @@ macro_rules! impl_fixed {
                 fn saturating_from_str_hex(src: &str) -> Result<Self, ParseFixedError>
             }
             trait_delegate! {
+                fn saturating_from_ascii(src: &[u8]) -> Result<Self, ParseFixedError>
+            }
+            trait_delegate! {
+                fn saturating_from_ascii_binary(src: &[u8]) -> Result<Self, ParseFixedError>
+            }
+            trait_delegate! {
+                fn saturating_from_ascii_octal(src: &[u8]) -> Result<Self, ParseFixedError>
+            }
+            trait_delegate! {
+                fn saturating_from_ascii_hex(src: &[u8]) -> Result<Self, ParseFixedError>
+            }
+            trait_delegate! {
                 fn wrapping_from_str(src: &str) -> Result<Self, ParseFixedError>
             }
             trait_delegate! {
@@ -4155,10 +4420,26 @@ macro_rules! impl_fixed {
             trait_delegate! {
                 fn wrapping_from_str_hex(src: &str) -> Result<Self, ParseFixedError>
             }
+            trait_delegate! {
+                fn wrapping_from_ascii(src: &[u8]) -> Result<Self, ParseFixedError>
+            }
+            trait_delegate! {
+                fn wrapping_from_ascii_binary(src: &[u8]) -> Result<Self, ParseFixedError>
+            }
+            trait_delegate! {
+                fn wrapping_from_ascii_octal(src: &[u8]) -> Result<Self, ParseFixedError>
+            }
+            trait_delegate! {
+                fn wrapping_from_ascii_hex(src: &[u8]) -> Result<Self, ParseFixedError>
+            }
             trait_delegate! { fn unwrapped_from_str(src: &str) -> Self }
             trait_delegate! { fn unwrapped_from_str_binary(src: &str) -> Self }
             trait_delegate! { fn unwrapped_from_str_octal(src: &str) -> Self }
             trait_delegate! { fn unwrapped_from_str_hex(src: &str) -> Self }
+            trait_delegate! { fn unwrapped_from_ascii(src: &[u8]) -> Self }
+            trait_delegate! { fn unwrapped_from_ascii_binary(src: &[u8]) -> Self }
+            trait_delegate! { fn unwrapped_from_ascii_octal(src: &[u8]) -> Self }
+            trait_delegate! { fn unwrapped_from_ascii_hex(src: &[u8]) -> Self }
             trait_delegate! {
                 fn overflowing_from_str(src: &str) -> Result<(Self, bool), ParseFixedError>
             }
@@ -4170,6 +4451,20 @@ macro_rules! impl_fixed {
             }
             trait_delegate! {
                 fn overflowing_from_str_hex(src: &str) -> Result<(Self, bool), ParseFixedError>
+            }
+            trait_delegate! {
+                fn overflowing_from_ascii(src: &[u8]) -> Result<(Self, bool), ParseFixedError>
+            }
+            trait_delegate! {
+                fn overflowing_from_ascii_binary(
+                    src: &[u8],
+                ) -> Result<(Self, bool), ParseFixedError>
+            }
+            trait_delegate! {
+                fn overflowing_from_ascii_octal(src: &[u8]) -> Result<(Self, bool), ParseFixedError>
+            }
+            trait_delegate! {
+                fn overflowing_from_ascii_hex(src: &[u8]) -> Result<(Self, bool), ParseFixedError>
             }
             trait_delegate! { fn int(self) -> Self }
             trait_delegate! { fn frac(self) -> Self }
