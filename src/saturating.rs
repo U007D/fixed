@@ -602,6 +602,94 @@ impl<F: Fixed> Saturating<F> {
         F::saturating_from_str_hex(src).map(Saturating)
     }
 
+    /// Parses an ASCII-byte slice containing decimal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_from\_ascii][FixedI32::saturating_from_ascii]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_from\_ascii][FixedU32::saturating_from_ascii]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::I8F8;
+    /// use fixed::Saturating;
+    /// let max = Saturating(I8F8::MAX);
+    /// assert_eq!(Saturating::<I8F8>::from_ascii(b"9999"), Ok(max));
+    /// ```
+    #[inline]
+    pub fn from_ascii(src: &[u8]) -> Result<Saturating<F>, ParseFixedError> {
+        F::saturating_from_ascii(src).map(Saturating)
+    }
+
+    /// Parses an ASCII-byte slice containing binary digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_from\_ascii\_binary][FixedI32::saturating_from_ascii_binary]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_from\_ascii\_binary][FixedU32::saturating_from_ascii_binary]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::I8F8;
+    /// use fixed::Saturating;
+    /// let max = Saturating(I8F8::MAX);
+    /// assert_eq!(Saturating::<I8F8>::from_ascii_binary(b"101100111000.1"), Ok(max));
+    /// ```
+    #[inline]
+    pub fn from_ascii_binary(src: &[u8]) -> Result<Saturating<F>, ParseFixedError> {
+        F::saturating_from_ascii_binary(src).map(Saturating)
+    }
+
+    /// Parses an ASCII-byte slice containing octal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_from\_ascii\_octal][FixedI32::saturating_from_ascii_octal]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_from\_ascii\_octal][FixedU32::saturating_from_ascii_octal]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::I8F8;
+    /// use fixed::Saturating;
+    /// let max = Saturating(I8F8::MAX);
+    /// assert_eq!(Saturating::<I8F8>::from_ascii_octal(b"7165.4"), Ok(max));
+    /// ```
+    #[inline]
+    pub fn from_ascii_octal(src: &[u8]) -> Result<Saturating<F>, ParseFixedError> {
+        F::saturating_from_ascii_octal(src).map(Saturating)
+    }
+
+    /// Parses an ASCII-byte slice containing hexadecimal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[saturating\_from\_ascii\_hex][FixedI32::saturating_from_ascii_hex]</code>
+    /// and
+    /// <code>FixedU32::[saturating\_from\_ascii\_hex][FixedU32::saturating_from_ascii_hex]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::I8F8;
+    /// use fixed::Saturating;
+    /// let max = Saturating(I8F8::MAX);
+    /// assert_eq!(Saturating::<I8F8>::from_ascii_hex(b"C0F.FE"), Ok(max));
+    /// ```
+    #[inline]
+    pub fn from_ascii_hex(src: &[u8]) -> Result<Saturating<F>, ParseFixedError> {
+        F::saturating_from_ascii_hex(src).map(Saturating)
+    }
+
     /// Returns the integer part.
     ///
     /// Note that since the numbers are stored in two’s complement,

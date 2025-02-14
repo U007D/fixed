@@ -607,6 +607,95 @@ impl<F: Fixed> Wrapping<F> {
         F::wrapping_from_str_hex(src).map(Wrapping)
     }
 
+    /// Parses an ASCII-byte slice containing decimal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_ascii][FixedI32::wrapping_from_ascii]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_ascii][FixedU32::wrapping_from_ascii]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::I8F8;
+    /// use fixed::Wrapping;
+    /// // 16 + 3/4 = 16.75
+    /// let check = Wrapping(I8F8::from_bits((16 << 8) + (3 << 8) / 4));
+    /// assert_eq!(Wrapping::<I8F8>::from_ascii(b"16.75"), Ok(check));
+    /// ```
+    #[inline]
+    pub fn from_ascii(src: &[u8]) -> Result<Wrapping<F>, ParseFixedError> {
+        F::wrapping_from_ascii(src).map(Wrapping)
+    }
+
+    /// Parses an ASCII-byte slice containing binary digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_ascii\_binary][FixedI32::wrapping_from_ascii_binary]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_ascii\_binary][FixedU32::wrapping_from_ascii_binary]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::I8F8;
+    /// use fixed::Wrapping;
+    /// let check = Wrapping(I8F8::from_bits(0b1110001 << (8 - 1)));
+    /// assert_eq!(Wrapping::<I8F8>::from_ascii_binary(b"101100111000.1"), Ok(check));
+    /// ```
+    #[inline]
+    pub fn from_ascii_binary(src: &[u8]) -> Result<Wrapping<F>, ParseFixedError> {
+        F::wrapping_from_ascii_binary(src).map(Wrapping)
+    }
+
+    /// Parses an ASCII-byte slice containing octal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_ascii\_octal][FixedI32::wrapping_from_ascii_octal]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_ascii\_octal][FixedU32::wrapping_from_ascii_octal]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::I8F8;
+    /// use fixed::Wrapping;
+    /// let check = Wrapping(I8F8::from_bits(0o1654 << (8 - 3)));
+    /// assert_eq!(Wrapping::<I8F8>::from_ascii_octal(b"7165.4"), Ok(check));
+    /// ```
+    #[inline]
+    pub fn from_ascii_octal(src: &[u8]) -> Result<Wrapping<F>, ParseFixedError> {
+        F::wrapping_from_ascii_octal(src).map(Wrapping)
+    }
+
+    /// Parses an ASCII-byte slice containing hexadecimal digits to return a fixed-point number.
+    ///
+    /// Rounding is to the nearest, with ties rounded to even.
+    ///
+    /// See also
+    /// <code>FixedI32::[wrapping\_from\_ascii\_hex][FixedI32::wrapping_from_ascii_hex]</code>
+    /// and
+    /// <code>FixedU32::[wrapping\_from\_ascii\_hex][FixedU32::wrapping_from_ascii_hex]</code>.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use fixed::types::I8F8;
+    /// use fixed::Wrapping;
+    /// let check = Wrapping(I8F8::from_bits(0xFFE));
+    /// assert_eq!(Wrapping::<I8F8>::from_ascii_hex(b"C0F.FE"), Ok(check));
+    /// ```
+    #[inline]
+    pub fn from_ascii_hex(src: &[u8]) -> Result<Wrapping<F>, ParseFixedError> {
+        F::wrapping_from_ascii_hex(src).map(Wrapping)
+    }
+
     /// Returns the integer part.
     ///
     /// Note that since the numbers are stored in two’s complement,
