@@ -7,6 +7,10 @@
 
 skip_tags: true
 
+branches:
+  except:
+    - www
+
 environment:
   MSRV: 1.83.0
   matrix:
