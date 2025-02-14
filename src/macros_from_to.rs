@@ -1089,10 +1089,7 @@ assert_eq!(Fix::from_str("1.25e-1"), Ok(Fix::from_num(0.125)));
 "#;
             #[inline]
             pub const fn from_str(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::from_str_radix(src.as_bytes(), 10, Self::FRAC_NBITS) {
-                    Ok(bits) => Ok($Self::from_bits(bits)),
-                    Err(e) => Err(e),
-                }
+                Self::from_ascii(src.as_bytes())
             }
         }
 
@@ -1132,10 +1129,7 @@ assert_eq!(Fix::from_str_binary("11101.01e-2"), Ok(Fix::from_num(7.3125)));
 "#;
             #[inline]
             pub const fn from_str_binary(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::from_str_radix(src.as_bytes(), 2, Self::FRAC_NBITS) {
-                    Ok(bits) => Ok($Self::from_bits(bits)),
-                    Err(e) => Err(e),
-                }
+                Self::from_ascii_binary(src.as_bytes())
             }
         }
 
@@ -1175,10 +1169,7 @@ assert_eq!(neg, Ok(-check));
 "#;
             #[inline]
             pub const fn from_str_octal(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::from_str_radix(src.as_bytes(), 8, Self::FRAC_NBITS) {
-                    Ok(bits) => Ok($Self::from_bits(bits)),
-                    Err(e) => Err(e),
-                }
+                Self::from_ascii_octal(src.as_bytes())
             }
         }
 
@@ -1217,7 +1208,169 @@ assert_eq!(Fix::from_str_hex(".01C@+2"), Ok(Fix::from_num(1.75)));
 "#;
             #[inline]
             pub const fn from_str_hex(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::from_str_radix(src.as_bytes(), 16, Self::FRAC_NBITS) {
+                Self::from_ascii_hex(src.as_bytes())
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing decimal digits to return a fixed-point number.
+
+Rounding is to the nearest, with ties rounded to even.
+
+The number can have an optional exponent. The separator “`e`”, “`E`” or “`@`”
+can be used to start an exponent, which is then followed by an optional sign
+“`+`” or “`-`”, and then by a decimal integer which is the exponent. The parsed
+value is scaled by 10 to the power of the exponent.
+
+# Examples
+
+```rust
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<U4>;
+assert_eq!(Fix::from_ascii(b"1.75"), Ok(Fix::from_num(1.75)));
+"#,
+            if_signed_else_empty_str! {
+                $Signedness;
+                r#"assert_eq!(Fix::from_ascii(b"-1.75"), Ok(Fix::from_num(-1.75)));
+"#,
+            },
+            r#"assert_eq!(Fix::from_ascii(b"0.00625E+3"), Ok(Fix::from_num(6.25)));
+assert_eq!(Fix::from_ascii(b"1.25e-1"), Ok(Fix::from_num(0.125)));
+```
+"#;
+            #[inline]
+            pub const fn from_ascii(src: &[u8]) -> Result<$Self<Frac>, ParseFixedError> {
+                match from_str::$Inner::from_str_radix(src, 10, Self::FRAC_NBITS) {
+                    Ok(bits) => Ok($Self::from_bits(bits)),
+                    Err(e) => Err(e),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing binary digits to return a fixed-point number.
+
+Rounding is to the nearest, with ties rounded to even.
+
+The number can have an optional exponent. The separator “`e`”, “`E`” or “`@`”
+can be used to start an exponent, which is then followed by an optional sign
+“`+`” or “`-`”, and then by a decimal integer which is the exponent. The parsed
+value is scaled by the radix (2 for binary) to the power of the exponent.
+
+Base-2 exponents are supported too, using the separator “`p`” or “`P`”. The
+parsed value is scaled by 2 to the power of the exponent. For binary, since the
+radix is 2, base-2 exponents are equivalent to the other form of exponent.
+
+# Examples
+
+```rust
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<U4>;
+// 1.11 in binary is 1.75
+assert_eq!(Fix::from_ascii_binary(b"1.11"), Ok(Fix::from_num(1.75)));
+"#,
+            if_signed_else_empty_str! {
+                $Signedness;
+                r#"assert_eq!(Fix::from_ascii_binary(b"-1.11"), Ok(Fix::from_num(-1.75)));
+"#,
+            },
+            r#"
+// 111.0101 in binary is 7.3125
+assert_eq!(Fix::from_ascii_binary(b"1.110101e2"), Ok(Fix::from_num(7.3125)));
+assert_eq!(Fix::from_ascii_binary(b"11101.01e-2"), Ok(Fix::from_num(7.3125)));
+```
+"#;
+            #[inline]
+            pub const fn from_ascii_binary(src: &[u8]) -> Result<$Self<Frac>, ParseFixedError> {
+                match from_str::$Inner::from_str_radix(src, 2, Self::FRAC_NBITS) {
+                    Ok(bits) => Ok($Self::from_bits(bits)),
+                    Err(e) => Err(e),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing octal digits to return a fixed-point number.
+
+Rounding is to the nearest, with ties rounded to even.
+
+The number can have an optional exponent. The separator “`e`”, “`E`” or “`@`”
+can be used to start an exponent, which is then followed by an optional sign
+“`+`” or “`-`”, and then by a decimal integer which is the exponent. The parsed
+value is scaled by 8 to the power of the exponent.
+
+Base-2 exponents are supported too, using the separator “`p`” or “`P`”. The
+parsed value is scaled by 2 to the power of the exponent. For example, for octal
+“`P6`” means ×2⁶, and is equivalent to “`E2`” which means ×8².
+
+# Examples
+
+```rust
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<U4>;
+// 1.75 is 1.11 in binary, 1.6 in octal
+let f = Fix::from_ascii_octal(b"1.6");
+let check = Fix::from_bits(0b111 << (4 - 2));
+assert_eq!(f, Ok(check));
+"#,
+            if_signed_else_empty_str! {
+                $Signedness;
+                r#"let neg = Fix::from_ascii_octal(b"-1.6");
+assert_eq!(neg, Ok(-check));
+"#,
+            },
+            r#"assert_eq!(Fix::from_ascii_octal(b"160e-2"), Ok(check));
+```
+"#;
+            #[inline]
+            pub const fn from_ascii_octal(src: &[u8]) -> Result<$Self<Frac>, ParseFixedError> {
+                match from_str::$Inner::from_str_radix(src, 8, Self::FRAC_NBITS) {
+                    Ok(bits) => Ok($Self::from_bits(bits)),
+                    Err(e) => Err(e),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing hexadecimal digits to return
+a fixed-point number.
+
+Rounding is to the nearest, with ties rounded to even.
+
+The number can have an optional exponent. Since “`e`” and “`E`” are valid
+hexadecimal digits, they cannot be used as a separator to start an exponent, so
+“`@`” is used instead. This is then followed by an optional sign “`+`” or “`-`”,
+and then by a decimal integer which is the exponent. The parsed value is scaled
+by 16 to the power of the exponent.
+
+Base-2 exponents are supported too, using the separator “`p`” or “`P`”. The
+parsed value is scaled by 2 to the power of the exponent. For example, for
+hexadecimal “`P8`” means ×2⁸, and is equivalent to “`@2`” which means ×16².
+
+# Examples
+
+```rust
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<U4>;
+// 1.C in hexadecimal is 1.75
+assert_eq!(Fix::from_ascii_hex(b"1.C"), Ok(Fix::from_num(1.75)));
+"#,
+            if_signed_else_empty_str! {
+                $Signedness;
+                r#"assert_eq!(Fix::from_ascii_hex(b"-1.C"), Ok(Fix::from_num(-1.75)));
+"#,
+            },
+            r#"assert_eq!(Fix::from_ascii_hex(b"1C@-1"), Ok(Fix::from_num(1.75)));
+assert_eq!(Fix::from_ascii_hex(b".01C@+2"), Ok(Fix::from_num(1.75)));
+```
+"#;
+            #[inline]
+            pub const fn from_ascii_hex(src: &[u8]) -> Result<$Self<Frac>, ParseFixedError> {
+                match from_str::$Inner::from_str_radix(src, 16, Self::FRAC_NBITS) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1249,14 +1402,7 @@ assert_eq!(U8F8::saturating_from_str("-1"), Ok(U8F8::ZERO));
 ";
             #[inline]
             pub const fn saturating_from_str(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::saturating_from_str_radix(
-                    src.as_bytes(),
-                    10,
-                    Self::FRAC_NBITS,
-                ) {
-                    Ok(bits) => Ok($Self::from_bits(bits)),
-                    Err(e) => Err(e),
-                }
+                Self::saturating_from_ascii(src.as_bytes())
             }
         }
 
@@ -1287,14 +1433,7 @@ assert_eq!(U8F8::saturating_from_str_binary("-1"), Ok(U8F8::ZERO));
             pub const fn saturating_from_str_binary(
                 src: &str,
             ) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::saturating_from_str_radix(
-                    src.as_bytes(),
-                    2,
-                    Self::FRAC_NBITS,
-                ) {
-                    Ok(bits) => Ok($Self::from_bits(bits)),
-                    Err(e) => Err(e),
-                }
+                Self::saturating_from_ascii_binary(src.as_bytes())
             }
         }
 
@@ -1325,14 +1464,7 @@ assert_eq!(U8F8::saturating_from_str_octal("-1"), Ok(U8F8::ZERO));
             pub const fn saturating_from_str_octal(
                 src: &str,
             ) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::saturating_from_str_radix(
-                    src.as_bytes(),
-                    8,
-                    Self::FRAC_NBITS,
-                ) {
-                    Ok(bits) => Ok($Self::from_bits(bits)),
-                    Err(e) => Err(e),
-                }
+                Self::saturating_from_ascii_octal(src.as_bytes())
             }
         }
 
@@ -1363,11 +1495,138 @@ assert_eq!(U8F8::saturating_from_str_hex("-1"), Ok(U8F8::ZERO));
             pub const fn saturating_from_str_hex(
                 src: &str,
             ) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::saturating_from_str_radix(
-                    src.as_bytes(),
-                    16,
-                    Self::FRAC_NBITS
-                ) {
+                Self::saturating_from_ascii_hex(src.as_bytes())
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing decimal digits to return a
+fixed-point number, saturating on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Examples
+
+```rust
+",
+            if_signed_unsigned!(
+                $Signedness,
+                r#"use fixed::types::I8F8;
+assert_eq!(I8F8::saturating_from_ascii(b"9999"), Ok(I8F8::MAX));
+assert_eq!(I8F8::saturating_from_ascii(b"-9999"), Ok(I8F8::MIN));
+"#,
+                r#"use fixed::types::U8F8;
+assert_eq!(U8F8::saturating_from_ascii(b"9999"), Ok(U8F8::MAX));
+assert_eq!(U8F8::saturating_from_ascii(b"-1"), Ok(U8F8::ZERO));
+"#,
+            ),
+            "```
+";
+            #[inline]
+            pub const fn saturating_from_ascii(src: &[u8]) -> Result<$Self<Frac>, ParseFixedError> {
+                match from_str::$Inner::saturating_from_str_radix(src, 10, Self::FRAC_NBITS) {
+                    Ok(bits) => Ok($Self::from_bits(bits)),
+                    Err(e) => Err(e),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing binary digits to return a
+fixed-point number, saturating on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Examples
+
+```rust
+",
+            if_signed_unsigned!(
+                $Signedness,
+                r#"use fixed::types::I8F8;
+assert_eq!(I8F8::saturating_from_ascii_binary(b"101100111000"), Ok(I8F8::MAX));
+assert_eq!(I8F8::saturating_from_ascii_binary(b"-101100111000"), Ok(I8F8::MIN));
+"#,
+                r#"use fixed::types::U8F8;
+assert_eq!(U8F8::saturating_from_ascii_binary(b"101100111000"), Ok(U8F8::MAX));
+assert_eq!(U8F8::saturating_from_ascii_binary(b"-1"), Ok(U8F8::ZERO));
+"#,
+            ),
+            "```
+";
+            #[inline]
+            pub const fn saturating_from_ascii_binary(
+                src: &[u8],
+            ) -> Result<$Self<Frac>, ParseFixedError> {
+                match from_str::$Inner::saturating_from_str_radix(src, 2, Self::FRAC_NBITS) {
+                    Ok(bits) => Ok($Self::from_bits(bits)),
+                    Err(e) => Err(e),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing octal digits to return a
+fixed-point number, saturating on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Examples
+
+```rust
+",
+            if_signed_unsigned!(
+                $Signedness,
+                r#"use fixed::types::I8F8;
+assert_eq!(I8F8::saturating_from_ascii_octal(b"7777"), Ok(I8F8::MAX));
+assert_eq!(I8F8::saturating_from_ascii_octal(b"-7777"), Ok(I8F8::MIN));
+"#,
+                r#"use fixed::types::U8F8;
+assert_eq!(U8F8::saturating_from_ascii_octal(b"7777"), Ok(U8F8::MAX));
+assert_eq!(U8F8::saturating_from_ascii_octal(b"-1"), Ok(U8F8::ZERO));
+"#,
+            ),
+            "```
+";
+            #[inline]
+            pub const fn saturating_from_ascii_octal(
+                src: &[u8],
+            ) -> Result<$Self<Frac>, ParseFixedError> {
+                match from_str::$Inner::saturating_from_str_radix(src, 8, Self::FRAC_NBITS) {
+                    Ok(bits) => Ok($Self::from_bits(bits)),
+                    Err(e) => Err(e),
+                }
+            }
+        }
+
+        comment! {
+            "Prases an ASCII-byte slice containing hexadecimal digits to return
+a fixed-point number, saturating on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Examples
+
+```rust
+",
+            if_signed_unsigned!(
+                $Signedness,
+                r#"use fixed::types::I8F8;
+assert_eq!(I8F8::saturating_from_ascii_hex(b"FFFF"), Ok(I8F8::MAX));
+assert_eq!(I8F8::saturating_from_ascii_hex(b"-FFFF"), Ok(I8F8::MIN));
+"#,
+                r#"use fixed::types::U8F8;
+assert_eq!(U8F8::saturating_from_ascii_hex(b"FFFF"), Ok(U8F8::MAX));
+assert_eq!(U8F8::saturating_from_ascii_hex(b"-1"), Ok(U8F8::ZERO));
+"#,
+            ),
+            "```
+";
+            #[inline]
+            pub const fn saturating_from_ascii_hex(
+                src: &[u8],
+            ) -> Result<$Self<Frac>, ParseFixedError> {
+                match from_str::$Inner::saturating_from_str_radix(src, 16, Self::FRAC_NBITS) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1401,14 +1660,7 @@ assert_eq!(U8F8::wrapping_from_str("-9999.5"), Ok(U8F8::from_num(240.5)));
 ";
             #[inline]
             pub const fn wrapping_from_str(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::wrapping_from_str_radix(
-                    src.as_bytes(),
-                    10,
-                    Self::FRAC_NBITS
-                ) {
-                    Ok(bits) => Ok($Self::from_bits(bits)),
-                    Err(e) => Err(e),
-                }
+                Self::wrapping_from_ascii(src.as_bytes())
             }
         }
 
@@ -1441,14 +1693,7 @@ assert_eq!(U8F8::wrapping_from_str_binary("-101100111000.1"), Ok(check.wrapping_
             pub const fn wrapping_from_str_binary(
                 src: &str,
             ) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::wrapping_from_str_radix(
-                    src.as_bytes(),
-                    2,
-                    Self::FRAC_NBITS
-                ) {
-                    Ok(bits) => Ok($Self::from_bits(bits)),
-                    Err(e) => Err(e),
-                }
+                Self::wrapping_from_ascii_binary(src.as_bytes())
             }
         }
 
@@ -1481,14 +1726,7 @@ assert_eq!(U8F8::wrapping_from_str_octal("-7165.4"), Ok(check.wrapping_neg()));
             pub const fn wrapping_from_str_octal(
                 src: &str,
             ) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::wrapping_from_str_radix(
-                    src.as_bytes(),
-                    8,
-                    Self::FRAC_NBITS
-                ) {
-                    Ok(bits) => Ok($Self::from_bits(bits)),
-                    Err(e) => Err(e),
-                }
+                Self::wrapping_from_ascii_octal(src.as_bytes())
             }
         }
 
@@ -1519,11 +1757,144 @@ assert_eq!(U8F8::wrapping_from_str_hex("-C0F.FE"), Ok(check.wrapping_neg()));
 ";
             #[inline]
             pub const fn wrapping_from_str_hex(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::wrapping_from_str_radix(
-                    src.as_bytes(),
-                    16,
-                    Self::FRAC_NBITS
-                ) {
+                Self::wrapping_from_ascii_hex(src.as_bytes())
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing decimal digits to return a
+fixed-point number, wrapping on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Examples
+
+```rust
+",
+            if_signed_unsigned!(
+                $Signedness,
+                r#"use fixed::types::I8F8;
+// 9999.5 = 15.5 + 256 × n
+assert_eq!(I8F8::wrapping_from_ascii(b"9999.5"), Ok(I8F8::from_num(15.5)));
+assert_eq!(I8F8::wrapping_from_ascii(b"-9999.5"), Ok(I8F8::from_num(-15.5)));
+"#,
+                r#"use fixed::types::U8F8;
+// 9999.5 = 15.5 + 256 × n
+assert_eq!(U8F8::wrapping_from_ascii(b"9999.5"), Ok(U8F8::from_num(15.5)));
+assert_eq!(U8F8::wrapping_from_ascii(b"-9999.5"), Ok(U8F8::from_num(240.5)));
+"#,
+            ),
+            "```
+";
+            #[inline]
+            pub const fn wrapping_from_ascii(src: &[u8]) -> Result<$Self<Frac>, ParseFixedError> {
+                match from_str::$Inner::wrapping_from_str_radix(src, 10, Self::FRAC_NBITS) {
+                    Ok(bits) => Ok($Self::from_bits(bits)),
+                    Err(e) => Err(e),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing binary digits to return a
+fixed-point number, wrapping on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Examples
+
+```rust
+",
+            if_signed_unsigned!(
+                $Signedness,
+                r#"use fixed::types::I8F8;
+let check = I8F8::from_bits(0b1110001 << (8 - 1));
+assert_eq!(I8F8::wrapping_from_ascii_binary(b"101100111000.1"), Ok(check));
+assert_eq!(I8F8::wrapping_from_ascii_binary(b"-101100111000.1"), Ok(-check));
+"#,
+                r#"use fixed::types::U8F8;
+let check = U8F8::from_bits(0b1110001 << (8 - 1));
+assert_eq!(U8F8::wrapping_from_ascii_binary(b"101100111000.1"), Ok(check));
+assert_eq!(U8F8::wrapping_from_ascii_binary(b"-101100111000.1"), Ok(check.wrapping_neg()));
+"#,
+            ),
+            "```
+";
+            #[inline]
+            pub const fn wrapping_from_ascii_binary(
+                src: &[u8],
+            ) -> Result<$Self<Frac>, ParseFixedError> {
+                match from_str::$Inner::wrapping_from_str_radix(src, 2, Self::FRAC_NBITS) {
+                    Ok(bits) => Ok($Self::from_bits(bits)),
+                    Err(e) => Err(e),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing octal digits to return a
+fixed-point number, wrapping on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Examples
+
+```rust
+",
+            if_signed_unsigned!(
+                $Signedness,
+                r#"use fixed::types::I8F8;
+let check = I8F8::from_bits(0o1654 << (8 - 3));
+assert_eq!(I8F8::wrapping_from_ascii_octal(b"7165.4"), Ok(check));
+assert_eq!(I8F8::wrapping_from_ascii_octal(b"-7165.4"), Ok(-check));
+"#,
+                r#"use fixed::types::U8F8;
+let check = U8F8::from_bits(0o1654 << (8 - 3));
+assert_eq!(U8F8::wrapping_from_ascii_octal(b"7165.4"), Ok(check));
+assert_eq!(U8F8::wrapping_from_ascii_octal(b"-7165.4"), Ok(check.wrapping_neg()));
+"#,
+            ),
+            "```
+";
+            #[inline]
+            pub const fn wrapping_from_ascii_octal(
+                src: &[u8],
+            ) -> Result<$Self<Frac>, ParseFixedError> {
+                match from_str::$Inner::wrapping_from_str_radix(src, 8, Self::FRAC_NBITS) {
+                    Ok(bits) => Ok($Self::from_bits(bits)),
+                    Err(e) => Err(e),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing hexadecimal digits to return
+a fixed-point number, wrapping on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Examples
+
+```rust
+",
+            if_signed_unsigned!(
+                $Signedness,
+                r#"use fixed::types::I8F8;
+let check = I8F8::from_bits(0xFFE);
+assert_eq!(I8F8::wrapping_from_ascii_hex(b"C0F.FE"), Ok(check));
+assert_eq!(I8F8::wrapping_from_ascii_hex(b"-C0F.FE"), Ok(-check));
+"#,
+                r#"use fixed::types::U8F8;
+let check = U8F8::from_bits(0xFFE);
+assert_eq!(U8F8::wrapping_from_ascii_hex(b"C0F.FE"), Ok(check));
+assert_eq!(U8F8::wrapping_from_ascii_hex(b"-C0F.FE"), Ok(check.wrapping_neg()));
+"#,
+            ),
+            "```
+";
+            #[inline]
+            pub const fn wrapping_from_ascii_hex(src: &[u8]) -> Result<$Self<Frac>, ParseFixedError> {
+                match from_str::$Inner::wrapping_from_str_radix(src, 16, Self::FRAC_NBITS) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1564,10 +1935,7 @@ let _error = Fix::unwrapped_from_str("1.75.");
             #[track_caller]
             #[must_use]
             pub const fn unwrapped_from_str(src: &str) -> $Self<Frac> {
-                match $Self::from_str(src) {
-                    Ok(o) => o,
-                    Err(e) => panic!("{}", e.message()),
-                }
+                Self::unwrapped_from_ascii(src.as_bytes())
             }
         }
 
@@ -1605,10 +1973,7 @@ let _error = Fix::unwrapped_from_str_binary("1.2");
             #[track_caller]
             #[must_use]
             pub const fn unwrapped_from_str_binary(src: &str) -> $Self<Frac> {
-                match $Self::from_str_binary(src) {
-                    Ok(o) => o,
-                    Err(e) => panic!("{}", e.message()),
-                }
+                Self::unwrapped_from_ascii_binary(src.as_bytes())
             }
         }
 
@@ -1646,10 +2011,7 @@ let _error = Fix::unwrapped_from_str_octal("1.8");
             #[track_caller]
             #[must_use]
             pub const fn unwrapped_from_str_octal(src: &str) -> $Self<Frac> {
-                match $Self::from_str_octal(src) {
-                    Ok(o) => o,
-                    Err(e) => panic!("{}", e.message()),
-                }
+                Self::unwrapped_from_ascii_octal(src.as_bytes())
             }
         }
 
@@ -1687,7 +2049,168 @@ let _error = Fix::unwrapped_from_str_hex("1.G");
             #[track_caller]
             #[must_use]
             pub const fn unwrapped_from_str_hex(src: &str) -> $Self<Frac> {
-                match $Self::from_str_hex(src) {
+                Self::unwrapped_from_ascii_hex(src.as_bytes())
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing decimal digits to return a
+fixed-point number, panicking on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Panics
+
+Panics if the value does not fit or if there is a parsing error.
+
+# Examples
+
+```rust
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<U4>;
+// 1.75 is 1.11 in binary
+let f = Fix::unwrapped_from_ascii(b"1.75");
+assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
+```
+
+The following panics because of a parsing error.
+
+```rust,should_panic
+use fixed::types::extra::U4;
+use fixed::"#, stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<U4>;
+let _error = Fix::unwrapped_from_ascii(b"1.75.");
+```
+"#;
+            #[inline]
+            #[track_caller]
+            #[must_use]
+            pub const fn unwrapped_from_ascii(src: &[u8]) -> $Self<Frac> {
+                match $Self::from_ascii(src) {
+                    Ok(o) => o,
+                    Err(e) => panic!("{}", e.message()),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing binary digits to return a
+fixed-point number, panicking on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Panics
+
+Panics if the value does not fit or if there is a parsing error.
+
+# Examples
+
+```rust
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<U4>;
+// 1.75 is 1.11 in binary
+let f = Fix::unwrapped_from_ascii_binary(b"1.11");
+assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
+```
+
+The following panics because of a parsing error.
+
+```rust,should_panic
+use fixed::types::extra::U4;
+use fixed::"#, stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<U4>;
+let _error = Fix::unwrapped_from_ascii_binary(b"1.2");
+```
+"#;
+            #[inline]
+            #[track_caller]
+            #[must_use]
+            pub const fn unwrapped_from_ascii_binary(src: &[u8]) -> $Self<Frac> {
+                match $Self::from_ascii_binary(src) {
+                    Ok(o) => o,
+                    Err(e) => panic!("{}", e.message()),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing octal digits to return a
+fixed-point number, panicking on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Panics
+
+Panics if the value does not fit or if there is a parsing error.
+
+# Examples
+
+```rust
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<U4>;
+// 1.75 is 1.11 in binary, 1.6 in octal
+let f = Fix::unwrapped_from_ascii_octal(b"1.6");
+assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
+```
+
+The following panics because of a parsing error.
+
+```rust,should_panic
+use fixed::types::extra::U4;
+use fixed::"#, stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<U4>;
+let _error = Fix::unwrapped_from_ascii_octal(b"1.8");
+```
+"#;
+            #[inline]
+            #[track_caller]
+            #[must_use]
+            pub const fn unwrapped_from_ascii_octal(src: &[u8]) -> $Self<Frac> {
+                match $Self::from_ascii_octal(src) {
+                    Ok(o) => o,
+                    Err(e) => panic!("{}", e.message()),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing hexadecimal digits to return
+a fixed-point number, wrapping on overflow.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Panics
+
+Panics if the value does not fit or if there is a parsing error.
+
+# Examples
+
+```rust
+use fixed::types::extra::U4;
+use fixed::", stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<U4>;
+// 1.75 is 1.11 in binary, 1.C in hexadecimal
+let f = Fix::unwrapped_from_ascii_hex(b"1.C");
+assert_eq!(f, Fix::from_bits(0b111 << (4 - 2)));
+```
+
+The following panics because of a parsing error.
+
+```rust,should_panic
+use fixed::types::extra::U4;
+use fixed::"#, stringify!($Self), ";
+type Fix = ", stringify!($Self), r#"<U4>;
+let _error = Fix::unwrapped_from_ascii_hex(b"1.G");
+```
+"#;
+            #[inline]
+            #[track_caller]
+            #[must_use]
+            pub const fn unwrapped_from_ascii_hex(src: &[u8]) -> $Self<Frac> {
+                match $Self::from_ascii_hex(src) {
                     Ok(o) => o,
                     Err(e) => panic!("{}", e.message()),
                 }
@@ -1726,14 +2249,7 @@ assert_eq!(U8F8::overflowing_from_str("9999.5"), Ok((U8F8::from_num(15.5), true)
             pub const fn overflowing_from_str(
                 src: &str,
             ) -> Result<($Self<Frac>, bool), ParseFixedError> {
-                match from_str::$Inner::overflowing_from_str_radix(
-                    src.as_bytes(),
-                    10,
-                    Self::FRAC_NBITS
-                ) {
-                    Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
-                    Err(e) => Err(e),
-                }
+                Self::overflowing_from_ascii(src.as_bytes())
             }
         }
 
@@ -1769,14 +2285,7 @@ assert_eq!(U8F8::overflowing_from_str_binary("101100111000.1"), Ok((check, true)
             pub const fn overflowing_from_str_binary(
                 src: &str,
             ) -> Result<($Self<Frac>, bool), ParseFixedError> {
-                match from_str::$Inner::overflowing_from_str_radix(
-                    src.as_bytes(),
-                    2,
-                    Self::FRAC_NBITS
-                ) {
-                    Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
-                    Err(e) => Err(e),
-                }
+                Self::overflowing_from_ascii_binary(src.as_bytes())
             }
         }
 
@@ -1812,14 +2321,7 @@ assert_eq!(U8F8::overflowing_from_str_octal("7165.4"), Ok((check, true)));
             pub const fn overflowing_from_str_octal(
                 src: &str,
             ) -> Result<($Self<Frac>, bool), ParseFixedError> {
-                match from_str::$Inner::overflowing_from_str_radix(
-                    src.as_bytes(),
-                    8,
-                    Self::FRAC_NBITS
-                ) {
-                    Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
-                    Err(e) => Err(e),
-                }
+                Self::overflowing_from_ascii_octal(src.as_bytes())
             }
         }
 
@@ -1855,11 +2357,163 @@ assert_eq!(U8F8::overflowing_from_str_hex("C0F.FE"), Ok((check, true)));
             pub const fn overflowing_from_str_hex(
                 src: &str,
             ) -> Result<($Self<Frac>, bool), ParseFixedError> {
-                match from_str::$Inner::overflowing_from_str_radix(
-                    src.as_bytes(),
-                    16,
-                    Self::FRAC_NBITS
-                ) {
+                Self::overflowing_from_ascii_hex(src.as_bytes())
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing decimal digits to return a fixed-point number.
+
+Returns a [tuple] of the fixed-point number and a [`bool`] indicating
+whether an overflow has occurred. On overflow, the wrapped value is
+returned.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Examples
+
+```rust
+",
+            if_signed_unsigned!(
+                $Signedness,
+                r#"use fixed::types::I8F8;
+assert_eq!(I8F8::overflowing_from_ascii(b"99.5"), Ok((I8F8::from_num(99.5), false)));
+// 9999.5 = 15.5 + 256 × n
+assert_eq!(I8F8::overflowing_from_ascii(b"-9999.5"), Ok((I8F8::from_num(-15.5), true)));
+"#,
+                r#"use fixed::types::U8F8;
+assert_eq!(U8F8::overflowing_from_ascii(b"99.5"), Ok((U8F8::from_num(99.5), false)));
+// 9999.5 = 15.5 + 256 × n
+assert_eq!(U8F8::overflowing_from_ascii(b"9999.5"), Ok((U8F8::from_num(15.5), true)));
+"#,
+            ),
+            "```
+";
+            #[inline]
+            pub const fn overflowing_from_ascii(
+                src: &[u8],
+            ) -> Result<($Self<Frac>, bool), ParseFixedError> {
+                match from_str::$Inner::overflowing_from_str_radix(src, 10, Self::FRAC_NBITS) {
+                    Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
+                    Err(e) => Err(e),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing binary digits to return a
+fixed-point number.
+
+Returns a [tuple] of the fixed-point number and a [`bool`] indicating
+whether an overflow has occurred. On overflow, the wrapped value is
+returned.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Examples
+
+```rust
+",
+            if_signed_unsigned!(
+                $Signedness,
+                r#"use fixed::types::I8F8;
+let check = I8F8::from_bits(0b1110001 << (8 - 1));
+assert_eq!(I8F8::overflowing_from_ascii_binary(b"111000.1"), Ok((check, false)));
+assert_eq!(I8F8::overflowing_from_ascii_binary(b"-101100111000.1"), Ok((-check, true)));
+"#,
+                r#"use fixed::types::U8F8;
+let check = U8F8::from_bits(0b1110001 << (8 - 1));
+assert_eq!(U8F8::overflowing_from_ascii_binary(b"111000.1"), Ok((check, false)));
+assert_eq!(U8F8::overflowing_from_ascii_binary(b"101100111000.1"), Ok((check, true)));
+"#,
+            ),
+            "```
+";
+            #[inline]
+            pub const fn overflowing_from_ascii_binary(
+                src: &[u8],
+            ) -> Result<($Self<Frac>, bool), ParseFixedError> {
+                match from_str::$Inner::overflowing_from_str_radix(src, 2, Self::FRAC_NBITS) {
+                    Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
+                    Err(e) => Err(e),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing octal digits to return a
+fixed-point number.
+
+Returns a [tuple] of the fixed-point number and a [`bool`] indicating
+whether an overflow has occurred. On overflow, the wrapped value is
+returned.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Examples
+
+```rust
+",
+            if_signed_unsigned!(
+                $Signedness,
+                r#"use fixed::types::I8F8;
+let check = I8F8::from_bits(0o1654 << (8 - 3));
+assert_eq!(I8F8::overflowing_from_ascii_octal(b"165.4"), Ok((check, false)));
+assert_eq!(I8F8::overflowing_from_ascii_octal(b"-7165.4"), Ok((-check, true)));
+"#,
+                r#"use fixed::types::U8F8;
+let check = U8F8::from_bits(0o1654 << (8 - 3));
+assert_eq!(U8F8::overflowing_from_ascii_octal(b"165.4"), Ok((check, false)));
+assert_eq!(U8F8::overflowing_from_ascii_octal(b"7165.4"), Ok((check, true)));
+"#,
+            ),
+            "```
+";
+            #[inline]
+            pub const fn overflowing_from_ascii_octal(
+                src: &[u8],
+            ) -> Result<($Self<Frac>, bool), ParseFixedError> {
+                match from_str::$Inner::overflowing_from_str_radix(src, 8, Self::FRAC_NBITS) {
+                    Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
+                    Err(e) => Err(e),
+                }
+            }
+        }
+
+        comment! {
+            "Parses an ASCII-byte slice containing hexadecimal digits to return
+a fixed-point number.
+
+Returns a [tuple] of the fixed-point number and a [`bool`] indicating
+whether an overflow has occurred. On overflow, the wrapped value is
+returned.
+
+Rounding is to the nearest, with ties rounded to even.
+
+# Examples
+
+```rust
+",
+            if_signed_unsigned!(
+                $Signedness,
+                r#"use fixed::types::I8F8;
+let check = I8F8::from_bits(0xFFE);
+assert_eq!(I8F8::overflowing_from_ascii_hex(b"F.FE"), Ok((check, false)));
+assert_eq!(I8F8::overflowing_from_ascii_hex(b"-C0F.FE"), Ok((-check, true)));
+"#,
+                r#"use fixed::types::U8F8;
+let check = U8F8::from_bits(0xFFE);
+assert_eq!(U8F8::overflowing_from_ascii_hex(b"F.FE"), Ok((check, false)));
+assert_eq!(U8F8::overflowing_from_ascii_hex(b"C0F.FE"), Ok((check, true)));
+"#,
+            ),
+            "```
+";
+            #[inline]
+            pub const fn overflowing_from_ascii_hex(
+                src: &[u8],
+            ) -> Result<($Self<Frac>, bool), ParseFixedError> {
+                match from_str::$Inner::overflowing_from_str_radix(src, 16, Self::FRAC_NBITS) {
                     Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
                     Err(e) => Err(e),
                 }
