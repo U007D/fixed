@@ -733,7 +733,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// use fixed::Unwrapped;
     /// // 16 + 3/4 = 16.75
     /// let check = Unwrapped(I8F8::from_bits((16 << 8) + (3 << 8) / 4));
-    /// assert_eq!(Unwrapped::<I8F8>::from_ascii_dec(b"16.75"), check);
+    /// assert_eq!(Unwrapped::<I8F8>::from_ascii(b"16.75"), check);
     /// ```
     ///
     /// The following panics because of a parsing error.
@@ -741,12 +741,12 @@ impl<F: Fixed> Unwrapped<F> {
     /// ```rust,should_panic
     /// use fixed::types::I8F8;
     /// use fixed::Unwrapped;
-    /// let _error = Unwrapped::<I8F8>::from_ascii_dec(b"1.2.");
+    /// let _error = Unwrapped::<I8F8>::from_ascii(b"1.2.");
     /// ```
     #[inline]
     #[track_caller]
     #[must_use]
-    pub fn from_ascii_dec(src: &[u8]) -> Unwrapped<F> {
+    pub fn from_ascii(src: &[u8]) -> Unwrapped<F> {
         Unwrapped(F::unwrapped_from_ascii(src))
     }
 
@@ -769,7 +769,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// use fixed::types::I8F8;
     /// use fixed::Unwrapped;
     /// let check = Unwrapped(I8F8::from_bits(0b1110001 << (8 - 1)));
-    /// assert_eq!(Unwrapped::<I8F8>::from_ascii_binary(b"111000.1"), Ok(check));
+    /// assert_eq!(Unwrapped::<I8F8>::from_ascii_binary(b"111000.1"), check);
     /// ```
     ///
     /// The following panics because of a parsing error.
@@ -779,18 +779,10 @@ impl<F: Fixed> Unwrapped<F> {
     /// use fixed::Unwrapped;
     /// let _error = Unwrapped::<I8F8>::from_ascii_binary(b"1.2");
     /// ```
-    ///
-    /// # Compatibility note
-    ///
-    /// This method either returns [`Ok`] or panics, and never returns [`Err`].
-    /// In version 2, this method will not return a [`Result`], but will return
-    /// the fixed-point number directly similarly to [`from_ascii_dec`].
-    ///
-    /// [`from_ascii_dec`]: Self::from_ascii_dec
     #[inline]
     #[track_caller]
-    pub fn from_ascii_binary(src: &[u8]) -> Result<Unwrapped<F>, ParseFixedError> {
-        Ok(Unwrapped(F::unwrapped_from_ascii_binary(src)))
+    pub fn from_ascii_binary(src: &[u8]) -> Unwrapped<F> {
+        Unwrapped(F::unwrapped_from_ascii_binary(src))
     }
 
     /// Parses an ASCII-byte slice containing octal digits to return a fixed-point number.
@@ -812,7 +804,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// use fixed::types::I8F8;
     /// use fixed::Unwrapped;
     /// let check = Unwrapped(I8F8::from_bits(0o1654 << (8 - 3)));
-    /// assert_eq!(Unwrapped::<I8F8>::from_ascii_octal(b"165.4"), Ok(check));
+    /// assert_eq!(Unwrapped::<I8F8>::from_ascii_octal(b"165.4"), check);
     /// ```
     ///
     /// The following panics because of a parsing error.
@@ -822,18 +814,10 @@ impl<F: Fixed> Unwrapped<F> {
     /// use fixed::Unwrapped;
     /// let _error = Unwrapped::<I8F8>::from_ascii_octal(b"1.8");
     /// ```
-    ///
-    /// # Compatibility note
-    ///
-    /// This method either returns [`Ok`] or panics, and never returns [`Err`].
-    /// In version 2, this method will not return a [`Result`], but will return
-    /// the fixed-point number directly similarly to [`from_ascii_dec`].
-    ///
-    /// [`from_ascii_dec`]: Self::from_ascii_dec
     #[inline]
     #[track_caller]
-    pub fn from_ascii_octal(src: &[u8]) -> Result<Unwrapped<F>, ParseFixedError> {
-        Ok(Unwrapped(F::unwrapped_from_ascii_octal(src)))
+    pub fn from_ascii_octal(src: &[u8]) -> Unwrapped<F> {
+        Unwrapped(F::unwrapped_from_ascii_octal(src))
     }
 
     /// Parses an ASCII-byte slice containing hexadecimal digits to return a fixed-point number.
@@ -855,7 +839,7 @@ impl<F: Fixed> Unwrapped<F> {
     /// use fixed::types::I8F8;
     /// use fixed::Unwrapped;
     /// let check = Unwrapped(I8F8::from_bits(0xFFE));
-    /// assert_eq!(Unwrapped::<I8F8>::from_ascii_hex(b"F.FE"), Ok(check));
+    /// assert_eq!(Unwrapped::<I8F8>::from_ascii_hex(b"F.FE"), check);
     /// ```
     ///
     /// The following panics because of a parsing error.
@@ -865,18 +849,10 @@ impl<F: Fixed> Unwrapped<F> {
     /// use fixed::Unwrapped;
     /// let _error = Unwrapped::<I8F8>::from_ascii_hex(b"1.G");
     /// ```
-    ///
-    /// # Compatibility note
-    ///
-    /// This method either returns [`Ok`] or panics, and never returns [`Err`].
-    /// In version 2, this method will not return a [`Result`], but will return
-    /// the fixed-point number directly similarly to [`from_ascii_dec`].
-    ///
-    /// [`from_ascii_dec`]: Self::from_ascii_dec
     #[inline]
     #[track_caller]
-    pub fn from_ascii_hex(src: &[u8]) -> Result<Unwrapped<F>, ParseFixedError> {
-        Ok(Unwrapped(F::unwrapped_from_ascii_hex(src)))
+    pub fn from_ascii_hex(src: &[u8]) -> Unwrapped<F> {
+        Unwrapped(F::unwrapped_from_ascii_hex(src))
     }
 
     /// Returns the integer part.
