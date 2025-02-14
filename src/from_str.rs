@@ -95,7 +95,7 @@ macro_rules! all {
 
         #[inline]
         pub const fn from_str_radix(
-            s: &str,
+            s: &[u8],
             radix: u32,
             frac_nbits: u32,
         ) -> Result<$Single, ParseFixedError> {
@@ -110,16 +110,15 @@ macro_rules! all {
 
         #[inline]
         pub const fn saturating_from_str_radix(
-            s: &str,
+            s: &[u8],
             radix: u32,
             frac_nbits: u32,
         ) -> Result<$Single, ParseFixedError> {
             match overflowing_from_str_radix(s, radix, frac_nbits) {
                 Ok((val, false)) => Ok(val),
                 Ok((_, true)) => {
-                    let bytes = s.as_bytes();
-                    let starts_with_minus = match bytes.first() {
-                        Some(s) => *s == b'-',
+                    let starts_with_minus = match s.first() {
+                        Some(byte) => *byte == b'-',
                         None => false,
                     };
                     if starts_with_minus {
@@ -134,7 +133,7 @@ macro_rules! all {
 
         #[inline]
         pub const fn wrapping_from_str_radix(
-            s: &str,
+            s: &[u8],
             radix: u32,
             frac_nbits: u32,
         ) -> Result<$Single, ParseFixedError> {
@@ -146,12 +145,11 @@ macro_rules! all {
 
         #[inline]
         pub const fn overflowing_from_str_radix(
-            s: &str,
+            s: &[u8],
             radix: u32,
             frac_nbits: u32,
         ) -> Result<($Single, bool), ParseFixedError> {
-            let bytes = s.as_bytes();
-            match from_str(bytes, radix, Sep::Error, frac_nbits) {
+            match from_str(s, radix, Sep::Error, frac_nbits) {
                 Ok(val) => Ok(val),
                 Err(kind) => Err(ParseFixedError { kind }),
             }
@@ -195,20 +193,19 @@ macro_rules! signed {
                 Ok((abs, overflow))
             }
 
-            pub const fn lit(s: &str, frac_nbits: u32) -> Result<$Single, ParseFixedError> {
-                let mut bytes = s.as_bytes();
-                if bytes.is_empty() {
+            pub const fn lit(mut s: &[u8], frac_nbits: u32) -> Result<$Single, ParseFixedError> {
+                if s.is_empty() {
                     return Err(ParseFixedError {
                         kind: ParseErrorKind::NoDigits,
                     });
                 }
-                let neg = if bytes[0] == b'-' {
-                    bytes = bytes.split_at(1).1;
+                let neg = if s[0] == b'-' {
+                    s = s.split_at(1).1;
                     true
                 } else {
                     false
                 };
-                let abs = match crate::from_str::$Uns::lit_no_sign(bytes, frac_nbits) {
+                let abs = match crate::from_str::$Uns::lit_no_sign(s, frac_nbits) {
                     Ok(val) => val,
                     Err(kind) => return Err(ParseFixedError { kind }),
                 };
@@ -278,8 +275,8 @@ macro_rules! unsigned {
         }
 
         #[inline]
-        pub const fn lit(s: &str, frac_nbits: u32) -> Result<$Uns, ParseFixedError> {
-            match lit_no_sign(s.as_bytes(), frac_nbits) {
+        pub const fn lit(s: &[u8], frac_nbits: u32) -> Result<$Uns, ParseFixedError> {
+            match lit_no_sign(s, frac_nbits) {
                 Ok(val) => Ok(val),
                 Err(kind) => Err(ParseFixedError { kind }),
             }

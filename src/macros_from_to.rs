@@ -1053,7 +1053,7 @@ assert_eq!(ONE_AND_HALF, 1.5);
             #[track_caller]
             #[must_use]
             pub const fn lit(src: &str) -> $Self<Frac> {
-                match from_str::$Inner::lit(src, Self::FRAC_NBITS) {
+                match from_str::$Inner::lit(src.as_bytes(), Self::FRAC_NBITS) {
                     Ok(s) => $Self::from_bits(s),
                     Err(e) => panic!("{}", e.lit_message()),
                 }
@@ -1089,7 +1089,7 @@ assert_eq!(Fix::from_str("1.25e-1"), Ok(Fix::from_num(0.125)));
 "#;
             #[inline]
             pub const fn from_str(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::from_str_radix(src, 10, Self::FRAC_NBITS) {
+                match from_str::$Inner::from_str_radix(src.as_bytes(), 10, Self::FRAC_NBITS) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1132,7 +1132,7 @@ assert_eq!(Fix::from_str_binary("11101.01e-2"), Ok(Fix::from_num(7.3125)));
 "#;
             #[inline]
             pub const fn from_str_binary(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::from_str_radix(src, 2, Self::FRAC_NBITS) {
+                match from_str::$Inner::from_str_radix(src.as_bytes(), 2, Self::FRAC_NBITS) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1175,7 +1175,7 @@ assert_eq!(neg, Ok(-check));
 "#;
             #[inline]
             pub const fn from_str_octal(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::from_str_radix(src, 8, Self::FRAC_NBITS) {
+                match from_str::$Inner::from_str_radix(src.as_bytes(), 8, Self::FRAC_NBITS) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1217,7 +1217,7 @@ assert_eq!(Fix::from_str_hex(".01C@+2"), Ok(Fix::from_num(1.75)));
 "#;
             #[inline]
             pub const fn from_str_hex(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::from_str_radix(src, 16, Self::FRAC_NBITS) {
+                match from_str::$Inner::from_str_radix(src.as_bytes(), 16, Self::FRAC_NBITS) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1249,7 +1249,11 @@ assert_eq!(U8F8::saturating_from_str("-1"), Ok(U8F8::ZERO));
 ";
             #[inline]
             pub const fn saturating_from_str(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::saturating_from_str_radix(src, 10, Self::FRAC_NBITS) {
+                match from_str::$Inner::saturating_from_str_radix(
+                    src.as_bytes(),
+                    10,
+                    Self::FRAC_NBITS,
+                ) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1283,7 +1287,11 @@ assert_eq!(U8F8::saturating_from_str_binary("-1"), Ok(U8F8::ZERO));
             pub const fn saturating_from_str_binary(
                 src: &str,
             ) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::saturating_from_str_radix(src, 2, Self::FRAC_NBITS) {
+                match from_str::$Inner::saturating_from_str_radix(
+                    src.as_bytes(),
+                    2,
+                    Self::FRAC_NBITS,
+                ) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1317,7 +1325,11 @@ assert_eq!(U8F8::saturating_from_str_octal("-1"), Ok(U8F8::ZERO));
             pub const fn saturating_from_str_octal(
                 src: &str,
             ) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::saturating_from_str_radix(src, 8, Self::FRAC_NBITS) {
+                match from_str::$Inner::saturating_from_str_radix(
+                    src.as_bytes(),
+                    8,
+                    Self::FRAC_NBITS,
+                ) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1351,7 +1363,11 @@ assert_eq!(U8F8::saturating_from_str_hex("-1"), Ok(U8F8::ZERO));
             pub const fn saturating_from_str_hex(
                 src: &str,
             ) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::saturating_from_str_radix(src, 16, Self::FRAC_NBITS) {
+                match from_str::$Inner::saturating_from_str_radix(
+                    src.as_bytes(),
+                    16,
+                    Self::FRAC_NBITS
+                ) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1385,7 +1401,11 @@ assert_eq!(U8F8::wrapping_from_str("-9999.5"), Ok(U8F8::from_num(240.5)));
 ";
             #[inline]
             pub const fn wrapping_from_str(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::wrapping_from_str_radix(src, 10, Self::FRAC_NBITS) {
+                match from_str::$Inner::wrapping_from_str_radix(
+                    src.as_bytes(),
+                    10,
+                    Self::FRAC_NBITS
+                ) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1421,7 +1441,11 @@ assert_eq!(U8F8::wrapping_from_str_binary("-101100111000.1"), Ok(check.wrapping_
             pub const fn wrapping_from_str_binary(
                 src: &str,
             ) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::wrapping_from_str_radix(src, 2, Self::FRAC_NBITS) {
+                match from_str::$Inner::wrapping_from_str_radix(
+                    src.as_bytes(),
+                    2,
+                    Self::FRAC_NBITS
+                ) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1457,7 +1481,11 @@ assert_eq!(U8F8::wrapping_from_str_octal("-7165.4"), Ok(check.wrapping_neg()));
             pub const fn wrapping_from_str_octal(
                 src: &str,
             ) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::wrapping_from_str_radix(src, 8, Self::FRAC_NBITS) {
+                match from_str::$Inner::wrapping_from_str_radix(
+                    src.as_bytes(),
+                    8,
+                    Self::FRAC_NBITS
+                ) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1491,7 +1519,11 @@ assert_eq!(U8F8::wrapping_from_str_hex("-C0F.FE"), Ok(check.wrapping_neg()));
 ";
             #[inline]
             pub const fn wrapping_from_str_hex(src: &str) -> Result<$Self<Frac>, ParseFixedError> {
-                match from_str::$Inner::wrapping_from_str_radix(src, 16, Self::FRAC_NBITS) {
+                match from_str::$Inner::wrapping_from_str_radix(
+                    src.as_bytes(),
+                    16,
+                    Self::FRAC_NBITS
+                ) {
                     Ok(bits) => Ok($Self::from_bits(bits)),
                     Err(e) => Err(e),
                 }
@@ -1694,7 +1726,11 @@ assert_eq!(U8F8::overflowing_from_str("9999.5"), Ok((U8F8::from_num(15.5), true)
             pub const fn overflowing_from_str(
                 src: &str,
             ) -> Result<($Self<Frac>, bool), ParseFixedError> {
-                match from_str::$Inner::overflowing_from_str_radix(src, 10, Self::FRAC_NBITS) {
+                match from_str::$Inner::overflowing_from_str_radix(
+                    src.as_bytes(),
+                    10,
+                    Self::FRAC_NBITS
+                ) {
                     Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
                     Err(e) => Err(e),
                 }
@@ -1733,7 +1769,11 @@ assert_eq!(U8F8::overflowing_from_str_binary("101100111000.1"), Ok((check, true)
             pub const fn overflowing_from_str_binary(
                 src: &str,
             ) -> Result<($Self<Frac>, bool), ParseFixedError> {
-                match from_str::$Inner::overflowing_from_str_radix(src, 2, Self::FRAC_NBITS) {
+                match from_str::$Inner::overflowing_from_str_radix(
+                    src.as_bytes(),
+                    2,
+                    Self::FRAC_NBITS
+                ) {
                     Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
                     Err(e) => Err(e),
                 }
@@ -1772,7 +1812,11 @@ assert_eq!(U8F8::overflowing_from_str_octal("7165.4"), Ok((check, true)));
             pub const fn overflowing_from_str_octal(
                 src: &str,
             ) -> Result<($Self<Frac>, bool), ParseFixedError> {
-                match from_str::$Inner::overflowing_from_str_radix(src, 8, Self::FRAC_NBITS) {
+                match from_str::$Inner::overflowing_from_str_radix(
+                    src.as_bytes(),
+                    8,
+                    Self::FRAC_NBITS
+                ) {
                     Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
                     Err(e) => Err(e),
                 }
@@ -1811,7 +1855,11 @@ assert_eq!(U8F8::overflowing_from_str_hex("C0F.FE"), Ok((check, true)));
             pub const fn overflowing_from_str_hex(
                 src: &str,
             ) -> Result<($Self<Frac>, bool), ParseFixedError> {
-                match from_str::$Inner::overflowing_from_str_radix(src, 16, Self::FRAC_NBITS) {
+                match from_str::$Inner::overflowing_from_str_radix(
+                    src.as_bytes(),
+                    16,
+                    Self::FRAC_NBITS
+                ) {
                     Ok((bits, overflow)) => Ok(($Self::from_bits(bits), overflow)),
                     Err(e) => Err(e),
                 }
