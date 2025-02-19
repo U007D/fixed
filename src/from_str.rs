@@ -14,10 +14,10 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::bytes::{DigitsExp, DigitsUnds};
-use crate::types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8};
+use crate::types::extra::{LeEqU8, LeEqU16, LeEqU32, LeEqU64, LeEqU128};
 use crate::{
-    FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
-    FixedU8,
+    FixedI8, FixedI16, FixedI32, FixedI64, FixedI128, FixedU8, FixedU16, FixedU32, FixedU64,
+    FixedU128,
 };
 use core::error::Error;
 use core::fmt::{Display, Formatter, Result as FmtResult};
@@ -1308,7 +1308,7 @@ impl_from_str! { FixedU128, LeEqU128 }
 mod tests {
     use crate::bytes::DigitsExp;
     use crate::from_str;
-    use crate::from_str::{parse_bounds, Parse, ParseErrorKind, ParseFixedError, Round, Sep};
+    use crate::from_str::{Parse, ParseErrorKind, ParseFixedError, Round, Sep, parse_bounds};
     use crate::types::*;
     use std::format;
     #[cfg(not(feature = "std"))]

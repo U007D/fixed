@@ -15,10 +15,10 @@
 
 #![allow(deprecated)]
 
-use crate::types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8};
+use crate::types::extra::{LeEqU8, LeEqU16, LeEqU32, LeEqU64, LeEqU128};
 use crate::{
-    F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
-    FixedU64, FixedU8, F128,
+    F128, F128Bits, FixedI8, FixedI16, FixedI32, FixedI64, FixedI128, FixedU8, FixedU16, FixedU32,
+    FixedU64, FixedU128,
 };
 use az::{Cast, CheckedCast, OverflowingCast, SaturatingCast, UnwrappedCast, WrappingCast};
 use half::{bf16 as half_bf16, f16 as half_f16};

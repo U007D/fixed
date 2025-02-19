@@ -18,11 +18,7 @@ pub struct Base(u32);
 
 impl Base {
     pub const fn new(base: u32) -> Option<Base> {
-        if base >= 2 {
-            Some(Base(base))
-        } else {
-            None
-        }
+        if base >= 2 { Some(Base(base)) } else { None }
     }
 
     pub const fn get(self) -> u32 {

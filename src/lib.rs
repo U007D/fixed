@@ -399,9 +399,9 @@ use crate::log::Base;
 pub use crate::saturating::Saturating;
 use crate::traits::{FromFixed, ToFixed};
 use crate::types::extra::{
-    Diff, IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, Sum, True, Unsigned, U0, U12,
-    U124, U125, U126, U127, U128, U13, U14, U15, U16, U28, U29, U30, U31, U32, U4, U5, U6, U60,
-    U61, U62, U63, U64, U7, U8,
+    Diff, IsLessOrEqual, LeEqU8, LeEqU16, LeEqU32, LeEqU64, LeEqU128, Sum, True, U0, U4, U5, U6,
+    U7, U8, U12, U13, U14, U15, U16, U28, U29, U30, U31, U32, U60, U61, U62, U63, U64, U124, U125,
+    U126, U127, U128, Unsigned,
 };
 pub use crate::unwrapped::Unwrapped;
 pub use crate::wrapping::Wrapping;
@@ -955,7 +955,7 @@ fn _compile_fail_tests() {}
 
 #[cfg(test)]
 mod tests {
-    use crate::types::{I0F32, I16F16, I1F31, U0F32, U16F16};
+    use crate::types::{I0F32, I1F31, I16F16, U0F32, U16F16};
 
     #[test]
     fn rounding_signed() {

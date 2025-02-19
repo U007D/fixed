@@ -18,8 +18,8 @@ Type aliases for all supported fixed-point numbers.
 */
 
 use crate::{
-    FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
-    FixedU8,
+    FixedI8, FixedI16, FixedI32, FixedI64, FixedI128, FixedU8, FixedU16, FixedU32, FixedU64,
+    FixedU128,
 };
 
 pub mod extra;

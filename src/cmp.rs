@@ -20,8 +20,8 @@ use crate::int_helper;
 use crate::int_helper::IntFixed;
 use crate::types::extra::Unsigned;
 use crate::{
-    F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
-    FixedU64, FixedU8, F128,
+    F128, F128Bits, FixedI8, FixedI16, FixedI32, FixedI64, FixedI128, FixedU8, FixedU16, FixedU32,
+    FixedU64, FixedU128,
 };
 use core::cmp::Ordering;
 use core::ops::{Shl, Shr};

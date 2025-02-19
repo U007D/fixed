@@ -24,10 +24,10 @@ pub use crate::traits_bits::{
     FixedBits, FixedBitsCast, FixedBitsOptionalArbitrary, FixedBitsOptionalBorsh,
     FixedBitsOptionalNum, FixedBitsOptionalSerde,
 };
-use crate::types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, Unsigned};
+use crate::types::extra::{LeEqU8, LeEqU16, LeEqU32, LeEqU64, LeEqU128, Unsigned};
 use crate::{
-    F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
-    FixedU64, FixedU8, ParseFixedError, F128,
+    F128, F128Bits, FixedI8, FixedI16, FixedI32, FixedI64, FixedI128, FixedU8, FixedU16, FixedU32,
+    FixedU64, FixedU128, ParseFixedError,
 };
 #[cfg(feature = "arbitrary")]
 use arbitrary::Arbitrary;

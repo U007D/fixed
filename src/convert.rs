@@ -18,12 +18,12 @@
 use crate::int_helper::IntFixed;
 use crate::traits::{FromFixed, LosslessTryFrom, LossyFrom, ToFixed};
 use crate::types::extra::{
-    Diff, IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, True, U0, U1, U127, U128,
-    U15, U16, U24, U31, U32, U63, U64, U7, U8,
+    Diff, IsLessOrEqual, LeEqU8, LeEqU16, LeEqU32, LeEqU64, LeEqU128, True, U0, U1, U7, U8, U15,
+    U16, U24, U31, U32, U63, U64, U127, U128,
 };
 use crate::{
-    F128Bits, FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32,
-    FixedU64, FixedU8, F128,
+    F128, F128Bits, FixedI8, FixedI16, FixedI32, FixedI64, FixedI128, FixedU8, FixedU16, FixedU32,
+    FixedU64, FixedU128,
 };
 use core::ops::Sub;
 use half::{bf16 as half_bf16, f16 as half_f16};
@@ -960,10 +960,10 @@ mod nightly_float {
     use crate::int_helper::IntFixed;
     use crate::traits::{FromFixed, LosslessTryFrom, LossyFrom, ToFixed};
     use crate::types::extra::{
-        IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, True, U24,
+        IsLessOrEqual, LeEqU8, LeEqU16, LeEqU32, LeEqU64, LeEqU128, True, U24,
     };
     use crate::{
-        FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU16, FixedU32, FixedU64, FixedU8,
+        FixedI8, FixedI16, FixedI32, FixedI64, FixedI128, FixedU8, FixedU16, FixedU32, FixedU64,
     };
 
     float_to_fixed! { f16, FixedI32, LeEqU32 }

@@ -14,10 +14,10 @@
 // <https://opensource.org/licenses/MIT>.
 
 use crate::traits::ToFixed;
-use crate::types::extra::{LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8};
+use crate::types::extra::{LeEqU8, LeEqU16, LeEqU32, LeEqU64, LeEqU128};
 use crate::{
-    FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
-    FixedU8,
+    FixedI8, FixedI16, FixedI32, FixedI64, FixedI128, FixedU8, FixedU16, FixedU32, FixedU64,
+    FixedU128,
 };
 use core::hint;
 use core::iter::{Product, Sum};
@@ -1036,7 +1036,7 @@ mod tests {
     #[test]
     #[allow(clippy::modulo_one)]
     fn rem_int() {
-        use crate::types::{I0F32, I16F16, I1F31};
+        use crate::types::{I0F32, I1F31, I16F16};
         check_rem_int(-0x8000, -0x8000);
         check_rem_int(-0x8000, -0x7fff);
         check_rem_int(-0x8000, 0x7fff);
@@ -1120,7 +1120,7 @@ mod tests {
 
     #[test]
     fn div_rem_nonzerou() {
-        use crate::types::{U0F32, U16F16, U1F31, U31F1, U32F0};
+        use crate::types::{U0F32, U1F31, U16F16, U31F1, U32F0};
         use core::num::NonZeroU32;
         let half_bits = u32::from(u16::MAX);
         let vals = &[
@@ -1160,7 +1160,7 @@ mod tests {
 
     #[test]
     fn rem_nonzeroi() {
-        use crate::types::{I0F32, I16F16, I1F31, I31F1, I32F0};
+        use crate::types::{I0F32, I1F31, I16F16, I31F1, I32F0};
         use core::num::NonZeroI32;
         let vals = &[
             i32::MIN,

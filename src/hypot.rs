@@ -161,7 +161,7 @@ pub const fn u128(a: u128, b: u128) -> (u128, bool) {
 #[cfg(test)]
 mod tests {
     use crate::hypot;
-    use crate::types::{U1F127, U1F15, U1F31, U1F63, U1F7};
+    use crate::types::{U1F7, U1F15, U1F31, U1F63, U1F127};
 
     #[test]
     fn check_max() {

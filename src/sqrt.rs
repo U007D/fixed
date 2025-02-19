@@ -243,12 +243,12 @@ impl_sqrt! { u128 }
 #[cfg(test)]
 mod tests {
     use crate::types::extra::{
-        U0, U1, U125, U126, U127, U128, U13, U14, U15, U16, U17, U29, U3, U30, U31, U32, U33, U4,
-        U5, U6, U61, U62, U63, U64, U65, U7, U8, U9,
+        U0, U1, U3, U4, U5, U6, U7, U8, U9, U13, U14, U15, U16, U17, U29, U30, U31, U32, U33, U61,
+        U62, U63, U64, U65, U125, U126, U127, U128,
     };
     use crate::{
-        FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
-        FixedU8,
+        FixedI8, FixedI16, FixedI32, FixedI64, FixedI128, FixedU8, FixedU16, FixedU32, FixedU64,
+        FixedU128,
     };
 
     macro_rules! check_sqrt {

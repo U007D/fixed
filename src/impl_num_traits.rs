@@ -16,12 +16,12 @@
 use crate::consts;
 use crate::traits::Fixed;
 use crate::types::extra::{
-    IsLessOrEqual, LeEqU128, LeEqU16, LeEqU32, LeEqU64, LeEqU8, True, U126, U127, U14, U15, U30,
-    U31, U6, U62, U63, U7,
+    IsLessOrEqual, LeEqU8, LeEqU16, LeEqU32, LeEqU64, LeEqU128, True, U6, U7, U14, U15, U30, U31,
+    U62, U63, U126, U127,
 };
 use crate::{
-    FixedI128, FixedI16, FixedI32, FixedI64, FixedI8, FixedU128, FixedU16, FixedU32, FixedU64,
-    FixedU8, ParseFixedError,
+    FixedI8, FixedI16, FixedI32, FixedI64, FixedI128, FixedU8, FixedU16, FixedU32, FixedU64,
+    FixedU128, ParseFixedError,
 };
 use core::fmt::{Display, Formatter, Result as FmtResult};
 use num_traits::bounds::Bounded;
@@ -30,6 +30,7 @@ use num_traits::float::FloatConst;
 use num_traits::identities::{ConstOne, ConstZero, One, Zero};
 
 use core::error::Error;
+use num_traits::Num;
 use num_traits::ops::bytes::{FromBytes, ToBytes};
 use num_traits::ops::checked::{
     CheckedAdd, CheckedDiv, CheckedMul, CheckedNeg, CheckedRem, CheckedShl, CheckedShr, CheckedSub,
@@ -42,7 +43,6 @@ use num_traits::ops::wrapping::{
     WrappingAdd, WrappingMul, WrappingNeg, WrappingShl, WrappingShr, WrappingSub,
 };
 use num_traits::sign::{Signed, Unsigned};
-use num_traits::Num;
 
 /// An error which can be returned when parsing a fixed-point number
 /// with a given radix.

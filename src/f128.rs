@@ -993,8 +993,8 @@ pub mod consts {
 
 #[cfg(test)]
 mod tests {
-    use crate::traits::FromFixed;
     use crate::F128;
+    use crate::traits::FromFixed;
     use half::{bf16 as half_bf16, f16 as half_f16};
 
     // Apart from F128 include f16, bf16, f32, f64 as a sanity check for the tests.

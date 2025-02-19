@@ -35,6 +35,7 @@ use core::ops::{
 use core::str::FromStr;
 #[cfg(feature = "num-traits")]
 use num_traits::{
+    Num, NumAssignRef, NumRef,
     cast::{AsPrimitive, FromPrimitive},
     int::PrimInt,
     ops::{
@@ -45,7 +46,6 @@ use num_traits::{
         saturating::{SaturatingAdd, SaturatingMul, SaturatingSub},
         wrapping::{WrappingAdd, WrappingMul, WrappingNeg, WrappingShl, WrappingShr, WrappingSub},
     },
-    Num, NumAssignRef, NumRef,
 };
 #[cfg(feature = "serde")]
 use serde::{de::Deserialize, ser::Serialize};
