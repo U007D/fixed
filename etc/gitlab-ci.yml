@@ -115,8 +115,8 @@ x86_64-gnulinux-tarpaulin:
     - cargo/
   script:
   - rustup toolchain install --profile minimal beta-$TARGET
-  - cargo +beta-$TARGET install --version 0.30.0 --locked cargo-tarpaulin
-  - stdbuf -oL cargo +beta-$TARGET tarpaulin --verbose --ignore-tests --fail-under $REQ_COVERAGE --exclude-files build.rs --features "arbitrary borsh num-traits serde std" | tee tarpaulin.log
+  - cargo +beta-$TARGET install --version 0.32.0 --locked cargo-tarpaulin
+  - cargo +beta-$TARGET tarpaulin --verbose --ignore-tests --fail-under $REQ_COVERAGE --exclude-files build.rs --features "arbitrary borsh num-traits serde std"
   only:
   - ci
 
