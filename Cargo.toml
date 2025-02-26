@@ -7,7 +7,7 @@
 
 [package]
 name = "fixed"
-version = "1.28.0"
+version = "1.29.0"
 categories = ["algorithms", "embedded", "mathematics", "no-std"]
 description = "Fixed-point numbers."
 documentation = "https://docs.rs/fixed"
@@ -23,14 +23,16 @@ arbitrary = { optional = true, version = "1" }
 az = "1.2"
 borsh = { default-features = false, optional = true, version = "1" }
 bytemuck = "1.2"
+defmt = { optional = true, version = "1.0.1" }
 half = { default-features = false, version = ">= 1.8, < 3" }
 num-traits = { default-features = false, features = ["i128"], optional = true, version = "0.2.18" }
-serde = { default-features = false, optional = true, version = "1.0.60" }
+serde = { default-features = false, optional = true, version = "1.0.210" }
 typenum = "1.14"
 
 [features]
 arbitrary = ["dep:arbitrary"]
 borsh = ["dep:borsh"]
+defmt = ["dep:defmt"]
 serde = ["dep:serde"]
 serde-str = ["serde", "serde/std", "std"]
 std = []

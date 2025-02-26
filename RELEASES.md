@@ -5,7 +5,7 @@ modification, are permitted in any medium without royalty provided the
 copyright notice and this notice are preserved. This file is offered
 as-is, without any warranty. -->
 
-# Version 1.29.0 (unreleased)
+# Version 1.29.0 (2025-02-26)
 
   * The crate now requires rustc version 1.83.0 or later.
   * The following methods were added to all fixed-point numbers, to the
@@ -43,42 +43,42 @@ as-is, without any warranty. -->
   * Now [`ParseFixedError`][pfe-1-29] implements [`Error`] even when the `std`
     [optional feature][feat-1-29] is disabled.
 
-[f-cma-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.checked_mul_acc
-[f-cs-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedU32.html#method.cast_signed
-[f-cu-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.cast_unsigned
-[f-fa-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.from_ascii
-[f-fab-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.from_ascii_binary
-[f-fah-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.from_ascii_hex
-[f-fao-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.from_ascii_octal
-[f-ma-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.mul_acc
-[f-ofa-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_from_ascii
-[f-ofab-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_from_ascii_binary
-[f-ofah-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_from_ascii_hex
-[f-ofao-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_from_ascii_octal
-[f-oma-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.overflowing_mul_acc
-[f-sfa-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_from_ascii
-[f-sfab-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_from_ascii_binary
-[f-sfah-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_from_ascii_hex
-[f-sfao-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_from_ascii_octal
-[f-sma-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.saturating_mul_acc
-[f-ufa-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_from_ascii
-[f-ufab-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_from_ascii_binary
-[f-ufah-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_from_ascii_hex
-[f-ufao-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_from_ascii_octal
-[f-uma-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unwrapped_mul_acc
-[f-ushl-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unbounded_shl
-[f-ushr-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.unbounded_shr
-[f-wfa-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_from_ascii
-[f-wfab-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_from_ascii_binary
-[f-wfah-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_from_ascii_hex
-[f-wfao-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_from_ascii_octal
-[f-wma-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.FixedI32.html#method.wrapping_mul_acc
-[feat-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/index.html#optional-features
-[pfe-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.ParseFixedError.html
-[s-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Saturating.html
-[tf-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/traits/trait.Fixed.html
-[u-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Unwrapped.html
-[w-1-29]: https://tspiteri.gitlab.io/fixed/dev/fixed/struct.Wrapping.html
+[f-cma-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.checked_mul_acc
+[f-cs-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedU32.html#method.cast_signed
+[f-cu-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.cast_unsigned
+[f-fa-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.from_ascii
+[f-fab-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.from_ascii_binary
+[f-fah-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.from_ascii_hex
+[f-fao-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.from_ascii_octal
+[f-ma-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.mul_acc
+[f-ofa-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.overflowing_from_ascii
+[f-ofab-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.overflowing_from_ascii_binary
+[f-ofah-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.overflowing_from_ascii_hex
+[f-ofao-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.overflowing_from_ascii_octal
+[f-oma-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.overflowing_mul_acc
+[f-sfa-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.saturating_from_ascii
+[f-sfab-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.saturating_from_ascii_binary
+[f-sfah-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.saturating_from_ascii_hex
+[f-sfao-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.saturating_from_ascii_octal
+[f-sma-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.saturating_mul_acc
+[f-ufa-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.unwrapped_from_ascii
+[f-ufab-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.unwrapped_from_ascii_binary
+[f-ufah-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.unwrapped_from_ascii_hex
+[f-ufao-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.unwrapped_from_ascii_octal
+[f-uma-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.unwrapped_mul_acc
+[f-ushl-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.unbounded_shl
+[f-ushr-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.unbounded_shr
+[f-wfa-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.wrapping_from_ascii
+[f-wfab-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.wrapping_from_ascii_binary
+[f-wfah-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.wrapping_from_ascii_hex
+[f-wfao-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.wrapping_from_ascii_octal
+[f-wma-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.FixedI32.html#method.wrapping_mul_acc
+[feat-1-29]: https://docs.rs/fixed/~1.29/fixed/index.html#optional-features
+[pfe-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.ParseFixedError.html
+[s-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.Saturating.html
+[tf-1-29]: https://docs.rs/fixed/~1.29/fixed/traits/trait.Fixed.html
+[u-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.Unwrapped.html
+[w-1-29]: https://docs.rs/fixed/~1.29/fixed/struct.Wrapping.html
 
 # Version 1.28.0 news (2024-07-25)
 
