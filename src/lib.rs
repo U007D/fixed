@@ -363,6 +363,8 @@ mod cmp_fixed;
 pub mod consts;
 mod convert;
 mod debug_hex;
+#[cfg(feature = "defmt")]
+mod defmt;
 mod display;
 pub mod f128;
 mod float_helper;
